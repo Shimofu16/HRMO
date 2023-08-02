@@ -1,0 +1,83 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            Department
+        </h2>
+    </x-slot>
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="mt-5 md:mt-0 md:col-span-2">
+                <form action="{{ route('departments.store') }}" method="POST">
+                    @csrf
+                    <div class="shadow overflow-hidden sm:rounded-md">
+                        <div class="px-4 py-5 bg-white sm:p-6">
+                            <div class="grid grid-cols-6 gap-6">
+                                <div class="col-span-6 sm:col-span-3">
+                                    <label for="dep_code" class="block font-medium text-gray-700">Department
+                                        Code</label>
+                                    <input type="text" name="dep_code" id="dep_code"
+                                        class="form-input mt-1 block w-full text-xl" required>
+                                </div>
+                                <div class="col-span-6 sm:col-span-3">
+                                    <label for="dep_name" class="block font-medium text-gray-700">Department
+                                        Name</label>
+                                    <input type="text" name="dep_name" id="dep_name"
+                                        class="form-input mt-1 block w-full text-xl" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
+                            <x-primary-button class="ml-3">
+                                {{ __('Create') }}
+                            </x-primary-button>
+                                <a href="{{ route('employees.index') }}"
+                                    class="text-gray-500 hover:text-gray-700 font-bold py-2 px-4 rounded">Back</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <table class="min-w-full border bg-white">
+                <thead>
+                    <tr>
+                        <th class="border-b px-4 py-2 text-left">#</th>
+                        <th class="border-b px-4 py-2 text-left">Code</th>
+                        <th class="border-b px-4 py-2 text-left">Name</th>
+                        <th class="border-b px-4 py-2">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($departments as $department)
+                        <tr>
+                            <td class="border-b px-4 py-2">{{ $loop->iteration }}</td>
+                            <td class="border-b px-4 py-2">{{ $department->dep_code }}</td>
+                            <td class="border-b px-4 py-2">{{ $department->dep_name }}</td>
+                            <td class="border-b px-4 py-2">
+                                <a href="{{ route('departments.edit', $department) }}"
+                                    class="text-blue-500 hover:text-blue-700">Edit</a>
+                                <form class="inline-block" action="{{ route('departments.destroy', $department) }}"
+                                    method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-500 hover:text-red-700">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <!-- Pagination links -->
+            <div class="mt-0">
+                {{ $departments->links() }}
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+</x-app-layout>
