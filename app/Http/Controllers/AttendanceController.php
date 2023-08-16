@@ -75,6 +75,9 @@ class AttendanceController extends Controller
             $hour_worked = $diff / 60;
 
             $total_salary_for_today = ($salary_per_hour * $hour_worked) - $minute_late;
+            if ($total_salary_for_today < 0) {
+                $total_salary_for_today = 0;
+            }
             // dd($total_salary_for_today,$salary_per_hour,$hour_worked,$minute_late,$subTotal,$salary_grade,$not_worked_hour);
             //salary per attendance
             $status = $attendance->status . '/' . $status;

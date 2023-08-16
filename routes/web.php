@@ -30,9 +30,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('employees', EmployeeController::class)->names([
@@ -173,8 +171,6 @@ Route::middleware(['auth'])->group(function () {
 
     // Payslip List Routes
     Route::get('/payslips-index', [PayslipController::class, 'index'])->name('payslips-index.index');
-
-
 });
 
 
@@ -184,4 +180,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
