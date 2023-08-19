@@ -11,6 +11,7 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="{{ asset('assets/apexcharts/apexcharts.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/datatables/dataTables.tailwindcss.min.css') }}">
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
@@ -28,12 +29,17 @@
             @endif
 
             <!-- Page Content -->
-            <main>
+            <main class="px-5">
                 {{ $slot }}
             </main>
         </div>
     </body>
     @include('sweetalert::alert')
     <script src="{{ asset('assets/apexcharts/apexcharts.min.js') }}"></script>
+    <script src="{{ asset('assets/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('assets/datatables/jquery.datatables.min.js') }}"></script>
+    <script>
+        $('.data-table').DataTable();
+    </script>
     @yield('scripts')
 </html>

@@ -27,19 +27,22 @@ class DashboardController extends Controller
         $totalSalaryPerMonth = $this->getTotalSalaryPer(true);
         $totalAllowancePerMonth = $this->getTotalAllowancePer(true);
         $totalDeductionPerMonth = $this->getTotalDeductionPer(true);
+        $totalNetPayPerMonth = $this->getTotalNetPayPer($totalSalaryPerMonth, $totalAllowancePerMonth, $totalDeductionPerMonth);
 
         $totalSalaryPerYear = $this->getTotalSalaryPer(false);
         $totalAllowancePerYear = $this->getTotalAllowancePer(false);
         $totalDeductionPerYear = $this->getTotalDeductionPer(false);
-        // $totalNetPay = $this->getTotalNetPay($totalSalary, $totalAllowance, $totalDeduction);
+        $totalNetPayPerYear = $this->getTotalNetPayPer($totalSalaryPerYear, $totalAllowancePerYear, $totalDeductionPerYear);
+
 
         // dd($totalEmployeesPerCategories,$totalSalaryPerMonth, $totalAllowancePerMonth, $totalDeductionPerMonth,$totalSalaryPerYear);
-        return view('dashboard', compact('totalEmployeesPerCategories', 'totalSalaryPerMonth', 'totalAllowancePerMonth', 'totalDeductionPerMonth','totalSalaryPerYear','totalAllowancePerYear','totalDeductionPerYear'));
+        return view('dashboard', compact('totalEmployeesPerCategories', 'totalSalaryPerMonth', 'totalAllowancePerMonth', 'totalDeductionPerMonth', 'totalSalaryPerYear', 'totalAllowancePerYear', 'totalDeductionPerYear', 'totalNetPayPerMonth', 'totalNetPayPerYear'));
     }
     private function getTotalSalaryPer($isPerMonth)
     {
         $total = 0;
         $attendances =      Attendance::with('employee')->get();
+        $totalSalary = [];
         if ($isPerMonth) {
             $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December',];
             foreach ($months as $monthKey => $month) {
@@ -59,7 +62,7 @@ class DashboardController extends Controller
                     }
                 }
             }
-        }else{
+        } else {
             // get all year in attendance
             $years = Attendance::selectRaw('YEAR(created_at) year')->distinct()->get()->pluck('year');
             // to array
@@ -91,8 +94,9 @@ class DashboardController extends Controller
     {
         $total = 0;
         $employeeAllowances = EmployeeAllowance::with('employee')->get();
+        $totalAllowance = [];
         if ($isPerMonth) {
-            $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November','December',];
+            $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December',];
             foreach ($months as $monthKey => $month) {
                 foreach ($employeeAllowances as $key => $employeeAllowance) {
                     $total = 0;
@@ -110,7 +114,7 @@ class DashboardController extends Controller
                     }
                 }
             }
-        }else{
+        } else {
             // get all year in attendance
             $years = EmployeeAllowance::selectRaw('YEAR(created_at) year')->distinct()->get()->pluck('year');
             // to array
@@ -141,8 +145,9 @@ class DashboardController extends Controller
     {
         $total = 0;
         $employeeDeductions = EmployeeDeduction::with('employee')->get();
+        $totalDeduction = [];
         if ($isPerMonth) {
-            $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September','October','November','December',];
+            $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December',];
             foreach ($months as $monthKey => $month) {
                 foreach ($employeeDeductions as $key => $employeeDeduction) {
                     $total = 0;
@@ -160,7 +165,7 @@ class DashboardController extends Controller
                     }
                 }
             }
-        }else{
+        } else {
             // get all year in attendance
             $years = EmployeeDeduction::selectRaw('YEAR(created_at) year')->distinct()->get()->pluck('year');
             // to array
@@ -187,9 +192,15 @@ class DashboardController extends Controller
         $totalDeduction = collect($totalDeduction);
         return $totalDeduction;
     }
-    private function getTotalNetPay($totalSalary, $totalAllowance, $totalDeduction)
+    private function getTotalNetPayPer($totalSalary, $totalAllowance, $totalDeduction)
     {
-        return $totalSalary + $totalAllowance - $totalDeduction;
+        $totalNetPay = 0;
+        $sumOfTotalSalary = $totalSalary->sum('total');
+        $sumOfTotalAllowance = $totalAllowance->sum('total');
+        $sumOfTotalDeduction = $totalDeduction->sum('total');
+        $totalNetPay = $sumOfTotalSalary + $sumOfTotalAllowance - $sumOfTotalDeduction;
+
+        return $totalNetPay;
     }
 
     /**

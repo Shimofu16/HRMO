@@ -15,8 +15,10 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('employee_id');
             $table->string('status'); //*on-time, *late, *undertime, *absent
-            $table->timestamp('time_in');
-            $table->timestamp('time_out')->nullable();
+            $table->dateTime('time_in');
+            $table->string('time_in_image')->nullable();
+            $table->dateTime('time_out')->nullable();
+            $table->string('time_out_image')->nullable();
             $table->string('salary')->nullable();
             $table->foreign('employee_id')->references('id')->on('employees');
             $table->timestamps();

@@ -7,6 +7,7 @@ use App\Models\Employee;
 use App\Models\EmployeeSalary;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class AttendanceController extends Controller
 {
@@ -23,7 +24,7 @@ class AttendanceController extends Controller
 
 
 
-    private function checkStatus($isTimeIn, $attendance = null)
+    private function checkStatus($isTimeIn, $image, $attendance = null, $employee = null)
     {
         $status = '';
         $timezone = 'Asia/Manila'; // Set the timezone to the Philippines
@@ -39,14 +40,32 @@ class AttendanceController extends Controller
         $lateThreshold = '08:10:00'; // 8:10am
         $timeOut = '17:00:00'; // 5pm
 
+        $image_parts = explode(";base64,", $image);
+        $image_base64 = base64_decode(end($image_parts));
+        $fileName = uniqid() . '' . '.png';
+        $path = 'uploads/attendance/';
+
+
         if ($isTimeIn) {
+            $path = $path . $employee->name . '/';
+            $fileName = uniqid() . ' Time in' . '.png';
+            $filePath = $path . $fileName;
             if ($current_time >= $timeIn && $current_time <= $lateThreshold) {
 
                 $status = 'On-Time';
             } elseif ($current_time > $lateThreshold) {
                 $status = 'Late'; // Return "late" instead of "absent" if the employee times in after the allowed threshold but before the late threshold.
             }
+            Attendance::create([
+                'employee_id' => $employee->id,
+                'status' => $status,
+                'time_in' => now(),
+                'time_in_image' => $filePath,
+            ]);
         } else {
+            $path = $path . $attendance->employee->name . '/';
+            $fileName = uniqid() . ' Time out' . '.png';
+            $filePath = $path . $fileName;
             //(((((salaryGrade)/2)/working days)/8hrs)-NotWorkedHour)
             $salary_grade = $attendance->employee->sgrade->sg_amount;
             $working_days = 15;
@@ -57,37 +76,53 @@ class AttendanceController extends Controller
             $minute_late = 0;
             $hour_worked = 0;
             $subTotal = (($salary_grade / 2) / $working_days) / $required_hours_work;
+            $status = 'On-Time';
+            $salary_per_hour = $subTotal;
+            $attendance_timeIn = Carbon::parse($attendance->time_in);
+            $defaultTimeIn = Carbon::parse($timeIn);
+            $defaultTimeOut = Carbon::parse($timeOut);
+            // if the current time is less than the time out
             if ($current_time <= $timeOut) {
                 $status = 'Under-time';
                 // get the difference in minutes
-                $diff = $now->diffInMinutes($current_time);
+                $diff = $defaultTimeOut->diffInMinutes($current_time);
                 $not_worked_hour = $diff / 60;
                 $salary_per_hour = $subTotal - $not_worked_hour;
             }
+            // Convert the string values to Carbon objects
+            $attendance_timeIn = Carbon::parse($attendance->time_in);
+            $defaultTimeIn = Carbon::parse($timeIn);
 
             if ($attendance->status == 'Late') {
                 // get how many minutes late
-                $diff = $now->diffInMinutes($attendance->time_in);
-                $minute_late = $diff / 60;
+                $minute_late = $defaultTimeIn->diffInMinutes($attendance->time_in);
             }
             // get hours of worked
-            $diff = $now->diffInMinutes($current_time);
-            $hour_worked = $diff / 60;
+            // Calculate the difference in hours
+            $hour_worked = $attendance_timeIn->diffInHours($timeOut);
+
 
             $total_salary_for_today = ($salary_per_hour * $hour_worked) - $minute_late;
+            // if the total salary is less than 0, set it to 0
             if ($total_salary_for_today < 0) {
                 $total_salary_for_today = 0;
             }
-            // dd($total_salary_for_today,$salary_per_hour,$hour_worked,$minute_late,$subTotal,$salary_grade,$not_worked_hour);
+
+            // dd($total_salary_for_today, $salary_per_hour, $hour_worked, $minute_late, $subTotal, $salary_grade, $not_worked_hour,$status);
             //salary per attendance
+
             $status = $attendance->status . '/' . $status;
+            $filePath = $path . $fileName;
             $attendance->update([
                 'status' => $status,
                 'time_out' => now(),
                 'salary' => $total_salary_for_today,
+                'time_out_image' => $filePath,
             ]);
         }
+        // Save the image using Laravel's Storage facade
 
+        Storage::disk('public')->put($filePath, $image_base64);
         return $status;
     }
     // public function setAbsents()
@@ -111,12 +146,14 @@ class AttendanceController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         // check if the time is 10 am
-         if (now()->format('H:i:s') >= '10:00:00') {
+        if (now()->format('H:i:s') >= '10:00:00') {
             return redirect()->back()->with('error', 'Attendance time is over!');
         }
         $request->validate([
             'employee_id' => 'required|exists:employees,emp_no',
+            'image' => 'required',
         ]);
         $employee = Employee::where('emp_no', $request->input('employee_id'))->first();
 
@@ -127,24 +164,17 @@ class AttendanceController extends Controller
 
         if (!$existingAttendance) {
             // Create a new attendance record only if it doesn't exist for the current date
-            $status = $this->checkStatus(true);
-
-            Attendance::create([
-                'employee_id' => $employee->id,
-                'status' => $status,
-                'time_in' => now(),
-            ]);
-
+            $status = $this->checkStatus(true, $request->get('image'), null, $employee);
             return redirect()->back()->with('success', 'Attendance recorded successfully!');
         }
 
         return redirect()->back()->with('error', 'Attendance already recorded for the day!');
     }
-    public function update($id)
+    public function update(Request $request, $id)
     {
         $attendance = Attendance::find($id);
         $attendance = Attendance::find($id);
-        $this->checkStatus(false, $attendance);
+        $this->checkStatus(false, $request->get('image'), $attendance);
 
         return redirect()->back()->with('success', 'Attendance updated successfully!');
     }
@@ -154,5 +184,27 @@ class AttendanceController extends Controller
         // Retrieve attendance history records and pass them to the view
         $attendanceHistory = Attendance::with('employee')->orderBy('created_at', 'desc')->get();
         return view('attendances.history', compact('attendanceHistory'));
+    }
+    public function history($filter_by = null, $filter = null)
+    {
+        // get all year and month in attendance
+        $years = Attendance::selectRaw('YEAR(created_at) year')->distinct()->get()->pluck('year');
+        $months = Attendance::selectRaw('MONTH(created_at) month')->distinct()->get()->pluck('month');
+        // convert months to string
+
+        // to array
+        $years = $years->toArray();
+        $months = $months->toArray();
+        // get attendance
+        $attendances = Attendance::query()->where('time_out', '!=', null);
+        if ($filter_by == 'month') {
+            $attendances->whereMonth('created_at', $filter);
+        }
+        if ($filter_by == 'year') {
+            $attendances->whereYear('created_at', $filter);
+        }
+
+        $attendances = $attendances->get();
+        return view('attendances.history', compact('attendances', 'years', 'months'));
     }
 }

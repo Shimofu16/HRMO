@@ -171,6 +171,9 @@ Route::middleware(['auth'])->group(function () {
 
     // Payslip List Routes
     Route::get('/payslips-index', [PayslipController::class, 'index'])->name('payslips-index.index');
+
+    // Attendance History
+    Route::get('/attendances-history/{filter?}', [AttendanceController::class, 'history'])->name('attendances-history.index');
 });
 
 

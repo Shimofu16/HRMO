@@ -42,7 +42,7 @@
 
     <div class="py-12">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <table class="min-w-full bg-white border">
+            <table class="min-w-full bg-white border data-table">
                 <thead>
                     <tr>
                         <th class="px-4 py-2 text-left border-b">#</th>

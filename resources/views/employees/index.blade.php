@@ -93,7 +93,7 @@
                     Employee</a>
             </div>
 
-            <table class="min-w-full bg-white border">
+            <table class="min-w-full bg-white border data-table">
                 <thead>
                     <tr>
                         <th class="px-4 py-4 text-left border-b">#</th>
