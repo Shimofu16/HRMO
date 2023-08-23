@@ -12,13 +12,7 @@
                     @csrf
                     <div class="overflow-hidden shadow sm:rounded-md">
                         <div class="px-4 py-5 bg-white sm:p-6">
-                            <div class="grid grid-cols-6 gap-6">
-                                <div class="col-span-6 sm:col-span-2">
-                                    <label for="emp_no" class="block font-medium text-gray-700">Employee ID</label>
-                                    <input type="text" name="emp_no" id="emp_no"
-                                        class="block w-full mt-1 form-input" required>
-                                </div>
-
+                            <div class="grid grid-cols-6 gap-6">    
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="name" class="block font-medium text-gray-700">Name</label>
                                     <input type="text" name="name" id="name"

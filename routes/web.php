@@ -34,7 +34,6 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('employees', EmployeeController::class)->names([
-        'index' => 'employees.index',
         'create' => 'employees.create',
         'store' => 'employees.store',
         'show' => 'employees.show',
@@ -43,16 +42,24 @@ Route::middleware(['auth'])->group(function () {
         'destroy' => 'employees.destroy',
     ]);
 
-    Route::resource('payrolls', PayrollController::class)->names([
-        'index' => 'payrolls.index',
-        'create' => 'payrolls.create',
-        'store' => 'payrolls.store',
-        'show' => 'payrolls.show',
-        'edit' => 'payrolls.edit',
-        'update' => 'payrolls.update',
-        'destroy' => 'payrolls.destroy',
-        'generateSlip' => 'payrolls.generateSlip',
-    ]);
+
+    // Payrolls
+    Route::prefix('payrolls')->controller(PayrollController::class)->name('payrolls.')->group(function () {
+        Route::get('/{department_id?}',  'index')->name('index');
+        Route::get('/show/{payroll}',  'show')->name('show');
+        Route::get('/dtr/{id}',  'dtr')->name('dtr');
+    });
+    // Route::resource('payrolls', PayrollController::class)->names([
+    //     'create' => 'payrolls.create',
+    //     'store' => 'payrolls.store',
+    //     'edit' => 'payrolls.edit',
+    //     'update' => 'payrolls.update',
+    //     'destroy' => 'payrolls.destroy',
+    //     'generateSlip' => 'payrolls.generateSlip',
+    // ]);
+
+
+
 
     Route::resource('departments', DepartmentController::class)->names([
         'index' => 'departments.index',
@@ -173,7 +180,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/payslips-index', [PayslipController::class, 'index'])->name('payslips-index.index');
 
     // Attendance History
-    Route::get('/attendances-history/{filter?}', [AttendanceController::class, 'history'])->name('attendances-history.index');
+    Route::get('/attendances-history', [AttendanceController::class, 'history'])->name('attendances-history.index');
+    Route::get('/attendances-history/{date}', [AttendanceController::class, 'historyShow'])->name('attendances-history.show');
+
+
+    // employee
+    Route::get('/employees/{filter_by?}/{filter_id?}', [EmployeeController::class, 'index'])->name('employees.index');
 });
 
 

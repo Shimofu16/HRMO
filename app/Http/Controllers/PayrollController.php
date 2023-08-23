@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Allowance;
+use App\Models\Attendance;
 use App\Models\Payroll;
 use App\Models\Department;
 use App\Models\Employee;
@@ -14,22 +15,57 @@ class PayrollController extends Controller
     /**
      * Display a listing of payroll records.
      */
-    public function index()
+    public function index($department_id = null)
     {
-        // Retrieve all payroll records from the database
-        $payrolls = Payroll::all();
+        try {
+            // Retrieve all payroll records from the database
+            // get all the departments
+            $employee_departments = Department::query()->whereHas('employees')->distinct('dep_name');
+            if ($department_id) {
+                $employee_departments->where('id', $department_id);
+            }
+            $employee_departments = $employee_departments->get();
 
-        $departments = Department::all();
-        // Other code to retrieve the payrolls
+            // get all the months in attendance
+            $months = Attendance::distinct('month')->get();
+            $payrolls = $this->getPayroll($employee_departments, $months);
+            // dd($payrolls, $employee_departments, $months);
+            $departments = Department::all();
+            // Other code to retrieve the payrolls
 
-        // Pass the payroll records to the view
-        return view('payrolls.index', compact('departments', 'payrolls'));
-
+            // Pass the payroll records to the view
+            return view('payrolls.index', compact('departments', 'payrolls'));
+        } catch (\Throwable $th) {
+            dd($th->getMessage());
+        }
     }
 
     /**
      * Show the form for creating a new payroll record.
      */
+    private function getPayroll($departments, $months)
+    {
+        $payrolls = [];
+        $days = ['1-15', '16-31'];
+        foreach ($departments as $key => $department) {
+            foreach ($months as $key => $month) {
+                foreach ($days as $key => $day) {
+                    $uniqueKey = "{$department->id}_{$month->month}_{$day}";
+
+                    if (!isset($payrolls[$uniqueKey])) {
+                        $payrolls[$uniqueKey] = [
+                            'department_id' => $department->id,
+                            'department' => $department->dep_name,
+                            'month' => date('F', strtotime($month->created_at)),
+                            'year' => date('Y'),
+                            'date_from_to' => $day,
+                        ];
+                    }
+                }
+            }
+        }
+        return $payrolls;
+    }
     public function create()
     {
         $departments = Department::all();
@@ -51,24 +87,24 @@ class PayrollController extends Controller
         $payroll->save();
 
         return redirect()->route('payrolls.index')->with('success', 'Payroll record created successfully.');
-
     }
 
     /**
      * Display the specified payroll record.
      */
-    public function show(Payroll $payroll)
+    public function show($payroll)
     {
-        $employees = Employee::all();
-
-        $allowances = Allowance::all();
-
-        $sgrades = Sgrade::all();
-
-        $departments = Department::all();
-
+        $payroll = json_decode(urldecode($payroll), true);
+        $employees = Department::find($payroll['department_id'])->employees;
         // Pass the payroll record to the view
-        return view('payrolls.show', compact('payroll', 'employees', 'allowances', 'sgrades', 'departments'));
+        return view('payrolls.show', compact('payroll', 'employees'));
+    }
+    public function dtr($id)
+    {
+       $employee = Employee::find($id);
+       $attendances = $employee->attendances;
+        // Pass the payroll record to the view
+        return view('payrolls.dtr', compact('employee', 'attendances'));
     }
 
     /**
@@ -113,5 +149,4 @@ class PayrollController extends Controller
         // Pass the payroll record to the view
         return view('payrolls.generateSlip', compact('payroll'));
     }
-
 }

@@ -21,20 +21,27 @@ class EmployeeController extends Controller
     /**
      * Display a listing of employees.
      */
-    public function index()
+    public function index($filter_by = null, $filter_id = null)
     {
         // Retrieve all employees from the database with their associated sgrade
-        $employees = Employee::with('sgrade', 'allowance', 'deduction')
-        ->orderBy('name', 'asc')
-        ->paginate(10);
+        $employees = Employee::query()->orderBy('name', 'asc');
+        $department = null;
+        $category = null;
+        $departments = Department::all();
+        $categories = Category::all();
+        if ($filter_by == "department") {
+            $employees->where('department_id', $filter_id);
 
-        $sgrades = Sgrade::all();
-        $allowances = Allowance::all();
-        $deductions = Deduction::all();
+        }
+        if ($filter_by == "category") {
+            $employees->where('category_id', $filter_id);
+        }
 
-        // Pass the employees and sgrades to the view
-        return view('employees.index', compact('employees', 'sgrades', 'allowances', 'deductions'));
+        // get all the employees
+        $employees = $employees->get();
+        return view('employees.index', compact('employees', 'departments', 'categories', 'department', 'category'));
     }
+
 
     /**
      * Show the form for creating a new employee.
@@ -82,9 +89,13 @@ class EmployeeController extends Controller
         //     return redirect()->back()->withErrors($validator)->withInput();
         // }
             // dd($request->all());
+        $department = Department::find($request->input('department_id'));
+        $employee_department_count = $department->employees()->count() + 1;
+        $employee_count = Employee::count() + 1;
+        $employee_code = $department->dep_code.'-'.$employee_department_count.''.$employee_count;
         // Create a new employee instance
         $employeeId = Employee::create([
-            'emp_no' => $request->input('emp_no'),
+            'emp_no' => $employee_code,
             'oinumber' => $request->input('oinumber'),
             'sgrade_id' => $request->input('sgrade_id'),
             'name' => $request->input('name'),
@@ -191,7 +202,7 @@ class EmployeeController extends Controller
     {
         $employee->allowances()->delete();
         $employee->deductions()->delete();
-        
+
         $employee->delete();
 
         return redirect()->route('employees.index')

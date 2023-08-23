@@ -81,16 +81,69 @@
 
     <div class="py-6">
         <div class="mx-auto max-w-9xl sm:px-6 lg:px-8">
-            <div class="flex justify-end">
-                <input type="text" class="px-4 py-2 border-2 border-gray-300 rounded-md" placeholder="Search...">
-                <button
-                    class="'inline-flex items-center px-4 py-2 bg-purple-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-purple-700 focus:bg-gray-700 active:bg-purple-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">Search</button>
+            <div class="flex items-center justify-between">
+                <div class="buttons">
+                    <a href="{{ route('employees.create') }}"
+                        class="'inline-flex items-center px-4 py-2 bg-purple-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-purple-700 focus:bg-gray-700 active:bg-purple-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">Add
+                        Employee</a>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <div class="relative">
+                        {{-- reset button --}}
+                        <a href="{{ route('employees.index') }}"
+                            class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                            Reset
+                        </a>
+
+                    </div>
+                    <div class="relative">
+                        <x-dropdown align="left" width="w-full">
+                            <x-slot name="trigger">
+                                <button
+                                    class="w-full bg-white border border-gray-300 px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300 text-left">
+                                    Select a Department
+                                </button>
+                            </x-slot>
+
+                            <x-slot name="content">
+                                @foreach ($departments as $department)
+                                    <x-dropdown-link :href="route('employees.index', [
+                                        'filter_by' => 'department',
+                                        'filter_id' => $department->id,
+                                    ])">
+                                        {{ $department->dep_name }}
+                                    </x-dropdown-link>
+                                @endforeach
+                            </x-slot>
+                        </x-dropdown>
+                    </div>
+
+                    <div class="relative">
+                        <x-dropdown align="left" width="w-full">
+                            <x-slot name="trigger">
+                                <button
+                                    class="w-full bg-white border border-gray-300 px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300 text-left">
+                                    Select a Category
+                                </button>
+                            </x-slot>
+
+                            <x-slot name="content">
+                                @foreach ($categories as $category)
+                                    <x-dropdown-link :href="route('employees.index', [
+                                        'filter_by' => 'category',
+                                        'filter_id' => $category->id,
+                                    ])">
+                                        {{ $category->category_name }}
+                                    </x-dropdown-link>
+                                @endforeach
+                            </x-slot>
+                        </x-dropdown>
+                    </div>
+                </div>
             </div>
 
             <div class="mb-4">
-                <a href="{{ route('employees.create') }}"
-                    class="'inline-flex items-center px-4 py-2 bg-purple-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-purple-700 focus:bg-gray-700 active:bg-purple-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">Add
-                    Employee</a>
+
             </div>
 
             <table class="min-w-full bg-white border data-table">
@@ -114,7 +167,7 @@
                     @foreach ($employees as $employee)
                         <tr>
                             <td class="px-4 py-3 border-b">
-                                {{ ($employees->currentPage() - 1) * $employees->perPage() + $loop->iteration }}</td>
+                                {{ $loop->iteration }}</td>
                             <td class="px-4 py-3 border-b">{{ $employee->emp_no }}</td>
                             <td class="px-4 py-3 border-b">{{ $employee->name }}</td>
                             <td class="px-4 py-3 border-b">{{ $employee->oinumber }}</td>
@@ -127,14 +180,16 @@
                             <td class="px-4 py-3 border-b">
                                 <div class="flex flex-col">
                                     @foreach ($employee->allowances as $allowance)
-                                        <span>{{ $allowance->allowance->allowance_code }} - {{ $allowance->allowance->allowance_amount }}</span>
+                                        <span>{{ $allowance->allowance->allowance_code }} -
+                                            {{ $allowance->allowance->allowance_amount }}</span>
                                     @endforeach
                                 </div>
                             </td>
                             <td class="px-4 py-3 border-b">
                                 <div class="flex flex-col">
                                     @foreach ($employee->deductions as $deduction)
-                                        <span>{{ $deduction->deduction->deduction_code }} - {{ $deduction->deduction->deduction_amount }}</span>
+                                        <span>{{ $deduction->deduction->deduction_code }} -
+                                            {{ $deduction->deduction->deduction_amount }}</span>
                                     @endforeach
                                 </div>
 
@@ -154,26 +209,8 @@
                     @endforeach
                 </tbody>
             </table>
-            <!-- Pagination links -->
-            <div class="mt-0">
-                {{ $employees->links() }}
-            </div>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#searchButton').click(function() {
-                var searchQuery = $('#searchInput').val().trim();
-                filterTable(searchQuery);
-            });
 
-            function filterTable(query) {
-                // Perform filtering logic here
-                // You can update the table rows based on the search query
-                // For example, you can hide/show rows that match the query
-            }
-        });
-    </script>
 </x-app-layout>

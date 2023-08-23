@@ -125,7 +125,8 @@ class Employee extends Model
         $from = sprintf('%04d-%02d-%02d', $year, $month, $from);
         $to = sprintf('%04d-%02d-%02d', $year, $month, $to);
 
-        $attendances = $this->attendances()->whereMonth('created_at', $month)->whereYear('created_at', $year)->whereBetween('created_at', [$from, $to])->get();
+
+        $attendances = $this->attendances()->whereBetween('created_at', [$from, $to])->get();
         // dd($attendances, $month, $year, $from, $to);
         // Sum up the allowance amounts
         foreach ($attendances as $attendance) {

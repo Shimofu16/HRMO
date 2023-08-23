@@ -15,4 +15,7 @@ class Attendance extends Model
     {
         return $this->belongsTo(Employee::class, 'employee_id');
     }
+    public function totalEmployee(){
+        return Attendance::whereDate('created_at', $this->created_at)->count();
+    }
 }

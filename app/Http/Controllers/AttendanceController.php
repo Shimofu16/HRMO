@@ -125,21 +125,6 @@ class AttendanceController extends Controller
         Storage::disk('public')->put($filePath, $image_base64);
         return $status;
     }
-    // public function setAbsents()
-    // {
-    //     // get all the employee without attendance today
-    //     $employees = Employee::whereDoesntHave('attendances', function ($query) {
-    //         $query->whereDate('created_at', now());
-    //     })->get();
-    //     foreach ($employees as $employee) {
-    //         Attendance::create([
-    //             'employee_id' => $employee->id,
-    //             'status' => 'Absent',
-    //             'time_in' => now(),
-    //             'time_out' => now(),
-    //         ]);
-    //     }
-    // }
 
 
 
@@ -152,15 +137,13 @@ class AttendanceController extends Controller
             return redirect()->back()->with('error', 'Attendance time is over!');
         }
         $request->validate([
-            'employee_id' => 'required|exists:employees,emp_no',
+            'employee_no' => 'required|exists:employees,emp_no',
             'image' => 'required',
         ]);
-        $employee = Employee::where('emp_no', $request->input('employee_id'))->first();
-
+        
+        $employee = Employee::with('attendances')->where('emp_no', $request->input('employee_no'))->first();
         // Check if the employee has attendance for the current date
-        $existingAttendance = Attendance::where('employee_id', $employee->id)
-            ->whereDate('time_in', Carbon::today())
-            ->first();
+        $existingAttendance = $employee->attendances()->whereDate('created_at', now())->first();
 
         if (!$existingAttendance) {
             // Create a new attendance record only if it doesn't exist for the current date
@@ -172,10 +155,9 @@ class AttendanceController extends Controller
     }
     public function update(Request $request, $id)
     {
-        $attendance = Attendance::find($id);
+        // dd($request->all(), $id);
         $attendance = Attendance::find($id);
         $this->checkStatus(false, $request->get('image'), $attendance);
-
         return redirect()->back()->with('success', 'Attendance updated successfully!');
     }
 
@@ -185,26 +167,19 @@ class AttendanceController extends Controller
         $attendanceHistory = Attendance::with('employee')->orderBy('created_at', 'desc')->get();
         return view('attendances.history', compact('attendanceHistory'));
     }
-    public function history($filter_by = null, $filter = null)
+    public function history()
     {
-        // get all year and month in attendance
-        $years = Attendance::selectRaw('YEAR(created_at) year')->distinct()->get()->pluck('year');
-        $months = Attendance::selectRaw('MONTH(created_at) month')->distinct()->get()->pluck('month');
-        // convert months to string
+        // Retrieve distinct creation dates from the Attendance records
+        $attendances = Attendance::selectRaw('DATE(created_at) as created_at')->distinct()->get();
 
-        // to array
-        $years = $years->toArray();
-        $months = $months->toArray();
-        // get attendance
-        $attendances = Attendance::query()->where('time_out', '!=', null);
-        if ($filter_by == 'month') {
-            $attendances->whereMonth('created_at', $filter);
-        }
-        if ($filter_by == 'year') {
-            $attendances->whereYear('created_at', $filter);
-        }
-
-        $attendances = $attendances->get();
-        return view('attendances.history', compact('attendances', 'years', 'months'));
+    
+        return view('attendances.history', compact('attendances'));
+    }
+    
+    public function historyShow($date)
+    {
+        // get all dates in attendance and there shuld be no duplicate date
+        $attendances = Attendance::with('employee')->whereDate('created_at', $date)->get();
+        return view('attendances.show', compact('attendances','date'));
     }
 }
