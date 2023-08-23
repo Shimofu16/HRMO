@@ -68,7 +68,7 @@
 
                                 @endphp
                                 <a href="{{ route('payrolls.show', $encoded) }}"
-                                    class="text-green-500 hover:text-green-700">Show</a>
+                                    class="text-green-500 hover:text-green-700">View</a>
                             </td>
                         </tr>
                     @endforeach
