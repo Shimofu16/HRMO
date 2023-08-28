@@ -4,6 +4,10 @@
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
                 Attendance History - {{ date('F d, Y', strtotime($date))}}
             </h2>
+            <a href="{{ route('attendances-history.index') }}"
+            class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-800 border border-transparent rounded-md hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            Back
+        </a>
     </x-slot>
     <div class="grid grid-cols-1 gap-3 mt-4 md:grid-cols-2 xl:grid-cols-6">
 
@@ -45,9 +49,9 @@
                         </thead>
                         <tbody>
                             @php
-                                $defaultTimeIn = \Carbon\Carbon::createFromFormat('H:i:s', '08:00:00');
-                                $defaultTimeOut = \Carbon\Carbon::createFromFormat('H:i:s', '17:00:00');
-                                $lateThreshold = \Carbon\Carbon::createFromFormat('H:i:s', '08:10:00');
+                                // parse the date and add 5pm for default time out and 8:30am for late
+                                $defaultTimeOut = \Carbon\Carbon::parse($date)->addHours(17);
+                                $lateThreshold = \Carbon\Carbon::parse($date)->addHours(8)->addMinutes(30);
                             @endphp
                             @foreach ($attendances as $attendance)
                                 <tr>

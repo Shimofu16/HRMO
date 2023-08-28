@@ -28,7 +28,7 @@
             </div>
         </a>
     </div>
-    <div class="py-12">
+    {{-- <div class="py-12">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
@@ -45,8 +45,6 @@
                         @csrf
                         <div class="overflow-hidden shadow sm:rounded-md">
                             <div class="px-4 py-5 bg-white sm:p-6">
-                                {{-- put a row and 2 columns here --}}
-
                                 <div class="md:col-span-6">
                                     <div class="flex flex-col items-center me-5">
                                         <h3 class="mb-0 text-2xl font-bold">Camera</h3>
@@ -87,11 +85,11 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
-    <div class="py-12">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <table class="min-w-full bg-white border data-table">
+    <div class="py-12 ">
+        <div class="mx-auto bg-white max-w-7xl sm:p-6 lg:p-8">
+            <table class="min-w-full border data-table">
                 <thead>
                     <tr>
                         <th class="px-4 py-2 text-left border-b">#</th>
@@ -99,7 +97,7 @@
                         <th class="px-4 py-2 text-left border-b">Time In</th>
                         <th class="px-4 py-2 border-b">Time Out</th>
                         <th class="px-4 py-2 text-left border-b">Status</th>
-                        <th class="px-4 py-2 text-left border-b">Action</th>
+                        {{-- <th class="px-4 py-2 text-left border-b">Action</th> --}}
                     </tr>
                 </thead>
                 <tbody>
@@ -112,7 +110,7 @@
                                 {{ $attendance->time_out ? date('h:i:s A', strtotime($attendance->time_out)) : '' }}
                             </td>
                             <td class="px-4 py-2 border-b">{{ $attendance->status }}</td>
-                            <td class="px-4 py-2 border-b">
+                            {{-- <td class="px-4 py-2 border-b">
                                 <form class="inline-block" action="{{ route('attendances.update', $attendance->id) }}"
                                     method="POST" id="timeOut{{ $attendance->id }}">
                                     @csrf
@@ -122,7 +120,7 @@
                                         {{ $attendance->time_out ? 'disabled' : '' }}
                                         onClick="take_snapshot(false, {{ $attendance->id }})">Time Out</button>
                                 </form>
-                            </td>
+                            </td> --}}
                         </tr>
                     @endforeach
                 </tbody>
@@ -143,7 +141,7 @@
             });
         }, 1000);
     </script>
-    <script language="JavaScript">
+    {{-- <script language="JavaScript">
         Webcam.set({
             width: 300,
             height: 300,
@@ -173,5 +171,5 @@
                 document.querySelector('#timeOut' + id).submit();
             }
         }
-    </script>
+    </script> --}}
 </x-app-layout>

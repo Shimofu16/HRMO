@@ -12,6 +12,7 @@ use App\Http\Controllers\AllowanceController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeductionController;
+use App\Http\Controllers\EmployeeAttendanceController;
 use App\Http\Controllers\PayslipController;
 use App\Http\Controllers\ScheduleController;
 
@@ -153,6 +154,8 @@ Route::middleware(['auth'])->group(function () {
     ]);
 
 
+
+
     Route::get('/payrolls/{payroll}/slip', 'PayrollController@slip')->name('payrolls.slip');
 
     // Department List Routes
@@ -188,7 +191,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/employees/{filter_by?}/{filter_id?}', [EmployeeController::class, 'index'])->name('employees.index');
 });
 
-
+Route::prefix('employee/attendance')->name('employee.attendance.')->controller(EmployeeAttendanceController::class)->group(function () {
+    Route::get('',  'index')->name('index');
+    Route::post('/store/{isTimeIn}',  'store')->name('store');
+});
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

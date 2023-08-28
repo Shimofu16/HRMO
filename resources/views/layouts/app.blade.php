@@ -45,28 +45,12 @@
     $('.data-table').DataTable({
         info: false,
         ordering: false,
+        // add 5 into choices
+        lengthMenu: [ 5,10, 25, 50, 75, 100 ]
 
     });
 </script>
-<Style>
-    /* paginate_button design
-    .dataTables_paginate .paginate_button {
-        padding: 0.5rem 0.75rem;
-        margin-left: 0.5rem;
-        border-radius: 0.25rem;
-        border: 1px solid #d2d6dc;
-        background-color: #fff;
-        color: #718096;
-        cursor: pointer;
-    }
 
-    align show etries and paginate button to one row
-    .dataTables_length,
-    .dataTables_paginate {
-        display: flex;
-        align-items: center;
-    } */
-</Style>
 @yield('scripts')
 
 </html>
