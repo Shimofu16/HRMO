@@ -193,7 +193,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::prefix('employee/attendance')->name('employee.attendance.')->controller(EmployeeAttendanceController::class)->group(function () {
     Route::get('',  'index')->name('index');
-    Route::post('/store/{isTimeIn}',  'store')->name('store');
+    Route::post('/store',  'store')->name('store');
 });
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

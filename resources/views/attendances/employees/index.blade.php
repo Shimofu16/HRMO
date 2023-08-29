@@ -16,16 +16,7 @@
             {{-- second column --}}
             <div class="">
                 <div class="flex flex-col items-center justify-center h-full p-4">
-                    @php
-                        $isTimeIn = 1;
-                        // set the 10am
-                        $time = date('H:i:s', strtotime('10:00:00'));
-                        // check if the current time is > 10am
-                        if (date('H:i:s') > $time) {
-                            $isTimeIn = 0;
-                        }
-                    @endphp
-                    <form action="{{ route('employee.attendance.store', ['isTimeIn' => $isTimeIn]) }}" method="post"
+                    <form action="{{ route('employee.attendance.store') }}" method="post"
                         id="attendance">
                         @csrf
                         <div id="my_camera"></div>
@@ -46,10 +37,20 @@
                                 </datalist>
                             </div>
                         </div>
+                        <div class="grid grid-cols-6 gap-6">
+                            <div class="col-span-6 sm:col-span-6">
+                               {{-- generate a select for time in and time out --}}
+                                <label for="type" class="block font-medium text-gray-700">Type</label>
+                                <select name="type" id="type" class="block w-full mt-1 rounded-md shadow-sm form-input"
+                                    required>
+                                    <option value="1">Time In</option>
+                                    <option value="0">Time Out</option>
+                                </select>
+                            </div>
+                        </div>
                         <div class="mt-4 text-center">
                             <button class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
-                                type="button" onclick="take_snapshot()">Time
-                                {{ $isTimeIn == 1 ? 'In' : 'Out' }}</button>
+                                type="button" onclick="take_snapshot()">Submit</button>
                         </div>
                     </form>
                 </div>
