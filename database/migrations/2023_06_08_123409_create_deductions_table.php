@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('deduction_code');
             $table->string('deduction_name');
+            $table->string('deduction_type');
             $table->decimal('deduction_amount',8 ,2);
             $table->timestamps();
         });

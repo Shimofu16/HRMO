@@ -46,11 +46,13 @@ class PayrollController extends Controller
     private function getPayroll($departments, $months)
     {
         $payrolls = [];
-        $days = ['1-15', '16-31'];
+        $fromTo = ['1-15', '16-31'];
         foreach ($departments as $key => $department) {
             foreach ($months as $key => $month) {
-                foreach ($days as $key => $day) {
-                    $uniqueKey = "{$department->id}_{$month->month}_{$day}";
+                foreach ($fromTo as $key => $itemDay) {
+                    $uniqueKey = "{$department->id}_{$month->month}_{$itemDay}";
+
+
 
                     if (!isset($payrolls[$uniqueKey])) {
                         $payrolls[$uniqueKey] = [
@@ -58,7 +60,7 @@ class PayrollController extends Controller
                             'department' => $department->dep_name,
                             'month' => date('F', strtotime($month->created_at)),
                             'year' => date('Y'),
-                            'date_from_to' => $day,
+                            'date_from_to' => $itemDay,
                         ];
                     }
                 }
@@ -66,6 +68,7 @@ class PayrollController extends Controller
         }
         return $payrolls;
     }
+
     public function create()
     {
         $departments = Department::all();
@@ -99,12 +102,24 @@ class PayrollController extends Controller
         // Pass the payroll record to the view
         return view('payrolls.show', compact('payroll', 'employees'));
     }
-    public function dtr($id)
+    public function dtr($id, $payroll)
     {
-       $employee = Employee::find($id);
-       $attendances = $employee->attendances;
+        $payroll = json_decode(urldecode($payroll), true);
+        $dates = explode('-', $payroll['date_from_to']);
+        $from = $dates[0];
+        $to = $dates[1];
+
+        $employee = Employee::find($id);
+        $presents = $employee->countAttendance('present', $payroll['month'], $payroll['year'], $from, $to);
+        $absents = $employee->countAttendance('absent', $payroll['month'], $payroll['year'], $from, $to);
+        $lates = $employee->countAttendance('late', $payroll['month'], $payroll['year'], $from, $to);
+        $undertimes = $employee->countAttendance('undertime', $payroll['month'], $payroll['year'], $from, $to);
+        $attendances = $employee->attendances;
+
+
+
         // Pass the payroll record to the view
-        return view('payrolls.dtr', compact('employee', 'attendances'));
+        return view('payrolls.dtr', compact('employee', 'attendances', 'presents', 'absents', 'lates', 'undertimes','payroll'));
     }
 
     /**

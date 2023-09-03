@@ -36,18 +36,18 @@ class EmployeeAttendanceController extends Controller
 
         $now = Carbon::now($timezone);
         $current_time = $now->format('H:i:s');
-        $timeIn = '08:00:00'; // 8am
+        $timeIn = '08:01:00'; // 8am
         $lateThreshold = '08:10:00'; // 8:10am
         $tenAMThreshold = '10:00:00'; // 10:00am
         $timeOut = '17:00:00'; // 5pm
 
         if ($isTimeIn ==  1) {
             // Check if employee is on time, half-day or late
-            if ($current_time >= $timeIn && $current_time <= $lateThreshold) {
-                $status = 'On-Time';
+            if ($current_time < $timeIn || ($current_time >= $timeIn && $current_time <= $lateThreshold)) {
+                $status = 'Time In';
             } elseif ($current_time > $tenAMThreshold) {
                 $status = 'Half-Day';
-            } elseif ($current_time > $lateThreshold) {
+            } elseif ($current_time >= $lateThreshold && ($current_time > $timeIn || $current_time < $tenAMThreshold)) {
                 $status = 'Late';
             }
 
@@ -77,39 +77,73 @@ class EmployeeAttendanceController extends Controller
             // Calculate the difference in minutes between the attendance time in and the default time in
             $minute_late = $defaultTimeIn->diffInMinutes($attendance->time_in);
 
+            //check if the employee has sick leave left
+            $sick_leave = $employee->sick_leave;
+            $sick_leave_left = $this->computeSickLeave($sick_leave, $minute_late);
+
             // Check if the current time is less than the time out
-            if ($current_time <= $timeOut) {
+            if ($current_time < $timeOut) {
                 $status = 'Under-time';
                 // Calculate the difference in minutes between the default time out and the current time
                 $diff = $defaultTimeOut->diffInMinutes($current_time);
                 $not_worked_hour = $diff / 60;
                 $salary_per_hour = $subTotal - $not_worked_hour;
-            } else {
+            } elseif ($current_time >= $timeOut) {
                 $salary_per_hour = $subTotal;
+                $status = 'Time Out';
             }
 
             // Calculate the total salary for the day
-            $total_salary_for_today = ($salary_per_hour * $hour_worked) - $minute_late;
+            $total_salary_for_today = ($salary_per_hour * $hour_worked);
 
             // Ensure that the total salary is not negative
             if ($total_salary_for_today < 0) {
                 $total_salary_for_today = 0;
             }
 
-            // Update attendance record
+            // Set the status to the previous status concatenated with the new status
             $status = $attendance->status . '/' . $status;
 
+            // Update the employee's sick leave
+            $employee->update(['sick_leave' => $sick_leave_left]);
+
+            // Update the attendance record
             $attendance->update([
                 'status' => $status,
                 'time_out' => $now,
                 'salary' => $total_salary_for_today,
                 'time_out_image' => $filePath,
+                'isPresent' => 1,
             ]);
         }
         // Save the image using Laravel's Storage facade
 
         Storage::disk('public')->put($filePath, $image);
         return $status;
+    }
+
+    private function computeSickLeave($sick_leave, $minute_late)
+    {
+        $sick_leave_left = 0;
+
+        // Create a Carbon instance for the current date
+        $currentDate = Carbon::now();
+
+        // Create a Carbon instance for a date one month ago
+        $oneMonthAgo = Carbon::now()->subMonth();
+
+        // Set the sick leave deduction per minute
+        $slpDeductionPerMinute =  0.002;
+        // Compute the sick leave deduction per minute
+        $sick_leave_left = $sick_leave - ($minute_late * $slpDeductionPerMinute);
+
+        // Compare the month and year of the two Carbon instances
+        if ($currentDate->format('Ym') != $oneMonthAgo->format('Ym')) {
+            // If the month and year are not the same, reset the sick leave left to 1.25
+            $sick_leave_left = 1.25 - ($minute_late * $slpDeductionPerMinute);
+        }
+
+        return $sick_leave_left;
     }
 
     /**

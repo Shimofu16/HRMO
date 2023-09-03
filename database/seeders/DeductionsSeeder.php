@@ -14,18 +14,48 @@ class DeductionsSeeder extends Seeder
     public function run(): void
     {
         $deductions = [
-            ['deduction_code' => 'WHT', 'deduction_name' => 'Withholding Tax', 'deduction_amount' => '300'],
-            ['deduction_code' => 'Life&Ret.', 'deduction_name' => 'Life and Retirement', 'deduction_amount' => '500'],
-            ['deduction_code' => 'PhilHealth', 'deduction_name' => 'PhilHealth Contribution', 'deduction_amount' => '200'],
-            ['deduction_code' => 'Pag-ibig', 'deduction_name' => 'Pag-ibig Contribution', 'deduction_amount' => '100'],
-            ['deduction_code' => 'Lanbank', 'deduction_name' => 'Landbank', 'deduction_amount' => '700'],
-            ['deduction_code' => 'PI-Loan', 'deduction_name' => 'Pag-ibig Loan', 'deduction_amount' => '600'],
-            ['deduction_code' => 'Conso/MPL', 'deduction_name' => 'Consilidated/Multi-Purpose Loan', 'deduction_amount' => '400'],
-            ['deduction_code' => 'Educ-Loan', 'deduction_name' => 'Education Loan', 'deduction_amount' => '120'],
-            ['deduction_code' => 'POL-Loan', 'deduction_name' => 'Policy Loan', 'deduction_amount' => '130'],
-            ['deduction_code' => 'GFAL', 'deduction_name' => 'GSIS Financial Assistance Loan', 'deduction_amount' => '380'],
-            ['deduction_code' => 'Comp-Loan', 'deduction_name' => 'Computer Loan', 'deduction_amount' => '890'],
-        // Add more departments here
+            [
+                'deduction_code' => 'SSS',
+                'deduction_name' => 'Social Security System',
+                'deduction_type' => 'Mandatory',
+                'deduction_amount' => 1000,
+            ],
+            [
+                'deduction_code' => 'PhilHealth',
+                'deduction_name' => 'PhilHealth',
+                'deduction_type' => 'Mandatory',
+                'deduction_amount' => 500,
+            ],
+            [
+                'deduction_code' => 'PagIbig',
+                'deduction_name' => 'PagIbig',
+                'deduction_type' => 'Mandatory',
+                'deduction_amount' => 200,
+            ],
+            [
+                'deduction_code' => 'Withholding Tax',
+                'deduction_name' => 'Withholding Tax',
+                'deduction_type' => 'Mandatory',
+                'deduction_amount' => 1000,
+            ],
+            [
+                'deduction_code' => 'SSS Loan',
+                'deduction_name' => 'SSS Loan',
+                'deduction_type' => 'Non Mandatory',
+                'deduction_amount' => 1000,
+            ],
+            [
+                'deduction_code' => 'PagIbig Loan',
+                'deduction_name' => 'PagIbig Loan',
+                'deduction_type' => 'Non Mandatory',
+                'deduction_amount' => 1000,
+            ],
+            [
+                'deduction_code' => 'Cash Advance',
+                'deduction_name' => 'Cash Advance',
+                'deduction_type' => 'Non Mandatory',
+                'deduction_amount' => 1000,
+            ],
         ];
 
         // Loop through the departments array and create records

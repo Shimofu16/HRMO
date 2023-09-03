@@ -12,7 +12,7 @@
                     @csrf
                     <div class="overflow-hidden shadow sm:rounded-md">
                         <div class="px-4 py-5 bg-white sm:p-6">
-                            <div class="grid grid-cols-6 gap-6">    
+                            <div class="grid grid-cols-6 gap-6">
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="name" class="block font-medium text-gray-700">Name</label>
                                     <input type="text" name="name" id="name"
@@ -39,9 +39,10 @@
 
 
                                 <div class="col-span-6 sm:col-span-2">
-                                    <label for="department_id" class="block font-medium text-gray-700">Department</label>
-                                    <select name="department_id" id="department_id" class="block w-full mt-1 form-select"
-                                        required>
+                                    <label for="department_id"
+                                        class="block font-medium text-gray-700">Department</label>
+                                    <select name="department_id" id="department_id"
+                                        class="block w-full mt-1 form-select" required>
                                         <option value="" disabled selected>--Please select here--</option>
                                         @foreach ($departments as $department)
                                             <option value="{{ $department->id }}">{{ $department->dep_code }}</option>
@@ -50,12 +51,14 @@
                                 </div>
 
                                 <div class="col-span-6 sm:col-span-2">
-                                    <label for="designation_id" class="block font-medium text-gray-700">Designation</label>
-                                    <select name="designation_id" id="designation_id" class="block w-full mt-1 form-select"
-                                        required>
+                                    <label for="designation_id"
+                                        class="block font-medium text-gray-700">Designation</label>
+                                    <select name="designation_id" id="designation_id"
+                                        class="block w-full mt-1 form-select" required>
                                         <option value="" disabled selected>--Please select here--</option>
                                         @foreach ($designations as $designation)
-                                            <option value="{{ $designation->id }}">{{ $designation->designation_code }}</option>
+                                            <option value="{{ $designation->id }}">{{ $designation->designation_code }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -107,14 +110,42 @@
 
                                 <div class="col-span-6 sm:col-span-2">
                                     <label class="block font-medium text-gray-700">Deduction</label>
-                                    @foreach ($deductions as $id => $deduction_code)
-                                        <div class="flex items-center mt-1">
-                                            <input type="checkbox" name="deduction[]" id="deduction_{{ $id }}"
-                                            value="{{ $id }}" class="mr-2 form-checkbox">
-                                            <label for="deduction_{{ $id }}"
-                                                class="text-gray-900">{{ $deduction_code }}</label>
+                                    <div class="flex flex-wrap -mx-2">
+                                        <div class="w-full">
+                                            <h2 class="text-xm">Mandatory Deductions</h2>
                                         </div>
-                                    @endforeach
+                                        @foreach ($deductions as $deduction)
+                                            @if ($deduction->deduction_type === 'Mandatory')
+                                                <div class="w-1/2 px-2">
+                                                    <input type="checkbox" name="deduction[]"
+                                                        id="deduction_{{ $deduction->id }}"
+                                                        value="{{ $deduction->id }}" class="mr-2 form-checkbox" checked>
+                                                    <label for="deduction_{{ $deduction->id }}"
+                                                        class="text-gray-900">{{ $deduction->deduction_code }}</label>
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                    </div>
+
+                                    <div class="flex flex-wrap -mx-2 mt-4">
+                                        <div class="w-full">
+                                            <h2 class="text-xm">Non Mandatory Deductions</h2>
+                                        </div>
+                                        @foreach ($deductions as $deduction)
+                                            @if ($deduction->deduction_type === 'Non Mandatory')
+                                                <div class="w-1/2 px-2">
+                                                    <input type="checkbox" name="deduction[]"
+                                                        id="deduction_{{ $deduction->id }}"
+                                                        value="{{ $deduction->id }}" class="mr-2 form-checkbox">
+                                                    <label for="deduction_{{ $deduction->id }}"
+                                                        class="text-gray-900">{{ $deduction->deduction_code }}</label>
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                    </div>
+
+
+
                                 </div>
                             </div>
                         </div>

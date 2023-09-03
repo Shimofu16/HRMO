@@ -156,10 +156,10 @@
                         <th class="px-4 py-4 text-left border-b">Department</th>
                         <th class="px-4 py-4 text-left border-b">Designation</th>
                         <th class="px-4 py-4 text-left border-b">Category</th>
-                        {{-- <th class="px-4 py-4 text-left border-b">Schedule</th> --}}
                         <th class="px-4 py-4 text-left border-b">Salary<br>Grade</th>
                         <th class="px-4 py-4 text-left border-b">Allowance</th>
                         <th class="px-4 py-4 text-left border-b">Deduction</th>
+                        <th class="px-4 py-4 text-left border-b">Sick Leave</th>
                         <th class="px-4 py-4 border-b">Actions</th>
                     </tr>
                 </thead>
@@ -193,6 +193,9 @@
                                     @endforeach
                                 </div>
 
+                            </td>
+                            <td class="px-4 py-3 border-b">
+                                {{ number_format($employee->sick_leave) }} pts
                             </td>
                             <td class="px-4 py-3 border-b">
 

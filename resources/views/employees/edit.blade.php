@@ -42,7 +42,8 @@
                                 </select>
                             </div>
                             <div class="col-span-6 sm:col-span-2">
-                                <label for="designation_id" class="block mb-2 font-bold text-gray-700">Designation</label>
+                                <label for="designation_id"
+                                    class="block mb-2 font-bold text-gray-700">Designation</label>
                                 <select name="designation_id" id="designation_id" class="form-select mt-1 block w-full"
                                     required>
                                     @foreach ($designations as $designation)
@@ -56,7 +57,8 @@
 
                             <div class="col-span-6 sm:col-span-2">
                                 <label for="category_id" class="block mb-2 font-bold text-gray-700">Category</label>
-                                <select name="category_id" id="category_id" class="form-select mt-1 block w-full" required>
+                                <select name="category_id" id="category_id" class="form-select mt-1 block w-full"
+                                    required>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}"
                                             {{ $category->id === $employee->category_id ? 'selected' : '' }}>
@@ -83,30 +85,56 @@
                             <div class="col-span-6 sm:col-span-2">
                                 <label class="block font-medium text-gray-700">Allowance</label>
                                 @foreach ($allowances as $allowance)
-                                <div class="flex items-center mt-1">
-                                    <input type="checkbox" name="allowance[]" id="allowance_{{ $allowance->id }}"
-                                        value="{{ $allowance->id }}" class="mr-2 form-checkbox"
-                                        {{ $employee->allowances->contains('allowance_id', $allowance->id) ? 'checked' : '' }}>
-                                    <label for="allowance_{{ $allowance->id }}"
-                                        class="text-gray-900">{{ $allowance->allowance_code }}</label>
-                                </div>
-                            @endforeach
+                                    <div class="flex items-center mt-1">
+                                        <input type="checkbox" name="allowance[]" id="allowance_{{ $allowance->id }}"
+                                            value="{{ $allowance->id }}" class="mr-2 form-checkbox"
+                                            {{ $employee->allowances->contains('allowance_id', $allowance->id) ? 'checked' : '' }}>
+                                        <label for="allowance_{{ $allowance->id }}"
+                                            class="text-gray-900">{{ $allowance->allowance_code }}</label>
+                                    </div>
+                                @endforeach
 
                             </div>
 
 
                             <div class="col-span-6 sm:col-span-2">
                                 <label class="block font-medium text-gray-700">Deduction</label>
-                                @foreach ($deductions as $deduction)
-    <div class="flex items-center mt-1">
-        <input type="checkbox" name="deduction[]"
-            id="deduction_{{ $deduction->id }}" value="{{ $deduction->id }}"
-            class="mr-2 form-checkbox"
-            {{ $employee->deductions->contains('deduction_id', $deduction->id) ? 'checked' : '' }}>
-        <label for="deduction_{{ $deduction->id }}"
-            class="text-gray-900">{{ $deduction->deduction_code }}</label>
-    </div>
-@endforeach
+                                <div class="flex flex-col mt-4">
+                                    <div>
+                                        <h2 class="text-lg font-semibold">Mandatory Deductions</h2>
+                                    </div>
+                                    @foreach ($deductions as $deduction)
+                                        @if ($deduction->deduction_type === 'Mandatory')
+                                            <div class="flex items-center mt-1">
+                                                <input type="checkbox" name="deduction[]"
+                                                    id="deduction_{{ $deduction->id }}" value="{{ $deduction->id }}"
+                                                    class="mr-2 form-checkbox"
+                                                    {{ $employee->deductions->contains('deduction_id', $deduction->id) ? 'checked' : '' }}>
+                                                <label for="deduction_{{ $deduction->id }}"
+                                                    class="text-gray-900">{{ $deduction->deduction_code }}</label>
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+
+                                <div class="flex flex-col mt-4">
+                                    <div>
+                                        <h2 class="text-lg font-semibold">Non Mandatory Deductions</h2>
+                                    </div>
+                                    @foreach ($deductions as $deduction)
+                                        @if ($deduction->deduction_type === 'Non Mandatory')
+                                            <div class="flex items-center mt-1">
+                                                <input type="checkbox" name="deduction[]"
+                                                    id="deduction_{{ $deduction->id }}" value="{{ $deduction->id }}"
+                                                    class="mr-2 form-checkbox"
+                                                    {{ $employee->deductions->contains('deduction_id', $deduction->id) ? 'checked' : '' }}>
+                                                <label for="deduction_{{ $deduction->id }}"
+                                                    class="text-gray-900">{{ $deduction->deduction_code }}</label>
+                                            </div>
+                                        @endif
+                                    @endforeach
+                                </div>
+
 
                             </div>
                         </div>

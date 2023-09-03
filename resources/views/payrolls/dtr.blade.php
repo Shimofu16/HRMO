@@ -2,10 +2,52 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                {{ $employee->name }} - Attendance
+                {{ $employee->name }} - Attendance from {{ date('F', strtotime($payroll['month'])) }} {{ $payroll['date_from_to'] }}, {{ $payroll['year'] }}
             </h2>
     </x-slot>
 
+    <div class="grid grid-cols-1 gap-3 mt-4 md:grid-cols-2 xl:grid-cols-6">
+
+        <!-- Department List Card -->
+        <a href="#">
+            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                <div class="p-6 bg-white border-b border-gray-200">
+                    <h2 class="mb-2 text-lg font-semibold text-center">No. of Times Presents</h2>
+                    <!-- Card content here -->
+                    <h5 class="text-3xl font-bold text-center">{{ $presents }}</h5>
+                </div>
+            </div>
+        </a>
+        <a href="#">
+            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                <div class="p-6 bg-white border-b border-gray-200">
+                    <h2 class="mb-2 text-lg font-semibold text-center">No. of Times Absents</h2>
+                    <!-- Card content here -->
+                    <h5 class="text-3xl font-bold text-center">{{ $absents }}</h5>
+                </div>
+            </div>
+        </a>
+        <a href="#">
+            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                <div class="p-6 bg-white border-b border-gray-200">
+                    <h2 class="mb-2 text-lg font-semibold text-center">No. of Late</h2>
+                    <!-- Card content here -->
+                    <h5 class="text-3xl font-bold text-center">{{ $lates }}</h5>
+                </div>
+            </div>
+        </a>
+        <a href="#">
+            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                <div class="p-6 bg-white border-b border-gray-200">
+                    <h2 class="mb-2 text-lg font-semibold text-center">No. of Under-time</h2>
+                    <!-- Card content here -->
+                    <h5 class="text-3xl font-bold text-center">{{ $undertimes }}</h5>
+                </div>
+            </div>
+        </a>
+
+
+    </div>
     <div class="py-12">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">

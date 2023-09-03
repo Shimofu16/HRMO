@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use App\Models\Department;
 use App\Models\Employee;
 use App\Models\EmployeeSalary;
 use Carbon\Carbon;
@@ -11,20 +12,28 @@ use Illuminate\Support\Facades\Storage;
 
 class AttendanceController extends Controller
 {
-    public function index()
+    public function index($filter_by = null, $filter_id = null)
     {
-        $attendances = Attendance::with('employee')->whereDate('created_at', now())->get();
-        // dd($attendances);
+        $attendances = Attendance::query()->with('employee')->whereDate('created_at', now());
+        if ($filter_by =="department") {
+            $attendances->whereHas('employee', function ($query) use ($filter_id) {
+                $query->where('department_id', $filter_id);
+            });
+            // $attendances = $attendances->get();
+            // dd($attendances);
+        }
 
         $employees = Employee::all();
+        $departments = Department::all();
+        $attendances = $attendances->get();
 
-        return view('attendances.index', compact('attendances', 'employees'));
+        return view('attendances.index', compact('attendances', 'employees', 'departments'));
     }
 
 
 
 
-    
+
 
 
 
@@ -80,6 +89,6 @@ class AttendanceController extends Controller
     {
         // get all dates in attendance and there shuld be no duplicate date
         $attendances = Attendance::with('employee')->whereDate('created_at', $date)->get();
-        return view('attendances.show', compact('attendances','date'));
+        return view('attendances.show', compact('attendances', 'date'));
     }
 }

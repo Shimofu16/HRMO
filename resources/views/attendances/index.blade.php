@@ -28,67 +28,68 @@
             </div>
         </a>
     </div>
-    {{-- <div class="py-12">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-2xl font-bold">Attendance</h2>
-                        <div class="text-right">
-                            <p class="text-xl font-medium">
-                                <span id="digital-clock"></span>
-                                <span id="current-date">{{ \Carbon\Carbon::now()->format('F d, Y') }}</span>
-                            </p>
-                        </div>
-                    </div>
-                    <form action="{{ route('attendances.store') }}" method="POST" id="timeIn">
-                        @csrf
-                        <div class="overflow-hidden shadow sm:rounded-md">
-                            <div class="px-4 py-5 bg-white sm:p-6">
-                                <div class="md:col-span-6">
-                                    <div class="flex flex-col items-center me-5">
-                                        <h3 class="mb-0 text-2xl font-bold">Camera</h3>
-                                        <div id="my_camera"></div>
-                                        <div id="results" sty></div>
-                                    </div>
-                                    <input type="hidden" name="image" class="image-tag">
-                                </div>
 
-
-
-                                <div class="grid grid-cols-6 gap-6">
-                                    <div class="col-span-6 sm:col-span-6">
-                                        <label for="employee_no" class="block font-medium text-gray-700">Employee ID
-                                            Number</label>
-                                            <input list="employees" type="text" name="employee_no" id="employee_no"
-                                            class="block w-full mt-1 rounded-md shadow-sm form-input" autofocus
-                                            required>
-                                        <datalist id="employees">
-                                            @foreach ($employees as $employee)
-                                                <option value="{{ $employee->emp_no }}">
-                                                    {{ $employee->name }}
-                                                </option>
-                                            @endforeach
-                                        </datalist>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="px-4 py-3 text-right bg-gray-50 sm:px-6">
-                                <button
-                                    class="'inline-flex items-center px-4 py-2 bg-green-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-400 focus:bg-gray-700 active:bg-green-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
-                                    type="button" onClick="take_snapshot(true)">
-                                    {{ __('Time In') }}
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div> --}}
 
     <div class="py-12 ">
         <div class="mx-auto bg-white max-w-7xl sm:p-6 lg:p-8">
+            <div class="flex items-center justify-between mb-3">
+                <div class="buttons">
+
+                </div>
+                <div class="flex items-center space-x-2">
+                    <div class="relative">
+                        {{-- reset button --}}
+                        <a href="{{ route('attendances.index') }}"
+                            class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                            Reset
+                        </a>
+
+                    </div>
+                    <div class="relative">
+                        <x-dropdown align="left" width="w-full">
+                            <x-slot name="trigger">
+                                <button
+                                    class="w-full bg-white border border-gray-300 px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300 text-left">
+                                    Select a Department
+                                </button>
+                            </x-slot>
+
+                            <x-slot name="content">
+                                @foreach ($departments as $department)
+                                    <x-dropdown-link :href="route('attendances.index', [
+                                        'filter_by' => 'department',
+                                        'filter_id' => $department->id,
+                                    ])">
+                                        {{ $department->dep_name }}
+                                    </x-dropdown-link>
+                                @endforeach
+                            </x-slot>
+                        </x-dropdown>
+                    </div>
+
+                    {{-- <div class="relative">
+                        <x-dropdown align="left" width="w-full">
+                            <x-slot name="trigger">
+                                <button
+                                    class="w-full bg-white border border-gray-300 px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300 text-left">
+                                    Select a Category
+                                </button>
+                            </x-slot>
+
+                            <x-slot name="content">
+                                @foreach ($categories as $category)
+                                    <x-dropdown-link :href="route('employees.index', [
+                                        'filter_by' => 'category',
+                                        'filter_id' => $category->id,
+                                    ])">
+                                        {{ $category->category_name }}
+                                    </x-dropdown-link>
+                                @endforeach
+                            </x-slot>
+                        </x-dropdown>
+                    </div> --}}
+                </div>
+            </div>
             <table class="min-w-full border data-table">
                 <thead>
                     <tr>

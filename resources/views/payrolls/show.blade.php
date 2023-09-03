@@ -17,7 +17,7 @@
                 </a>
 
             </div>
-       
+
         </div>
         <div class="mx-auto max-w-9xl sm:px-6 lg:px-8">
             <table class="min-w-full bg-white border data-table">
@@ -39,7 +39,7 @@
                 <tbody>
                     @php
                         $totalNetPay = 0; // Variable to store the total net pay
-                    
+
                     @endphp
                     @foreach ($employees as $employee)
                         @php
@@ -81,13 +81,16 @@
                             </td>
                             <td class=" p-3 ">{{ number_format($netPay, 2) }}</td>
                             <td class="px-4 py-2 text-center border-b">
+                                @php
+                                $encoded = urlencode(json_encode($payroll));
 
-                                <a href="{{ route('payrolls.dtr',['id' =>  $employee->id]) }}"
+                            @endphp
+                                <a href="{{ route('payrolls.dtr',['id' =>  $employee->id, 'payroll' => $encoded]) }}"
                                     class="text-green-500 hover:text-green-700">View</a>
                             </td>
                         </tr>
                     @endforeach
-                    
+
                 </tbody>
                 <tfoot>
                     <tr>
@@ -96,7 +99,7 @@
                     </tr>
                 </tfoot>
             </table>
-         
+
         </div>
     </div>
 </x-app-layout>

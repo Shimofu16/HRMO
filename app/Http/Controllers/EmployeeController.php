@@ -60,7 +60,7 @@ class EmployeeController extends Controller
 
         $allowances = Allowance::pluck('allowance_code', 'id');
 
-        $deductions = Deduction::pluck('deduction_code', 'id');
+        $deductions = Deduction::all();
 
         return view('employees.create', compact('departments', 'categories', 'designations', 'schedules', 'sgrades', 'allowances', 'deductions'));
     }

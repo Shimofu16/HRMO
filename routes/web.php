@@ -48,7 +48,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('payrolls')->controller(PayrollController::class)->name('payrolls.')->group(function () {
         Route::get('/{department_id?}',  'index')->name('index');
         Route::get('/show/{payroll}',  'show')->name('show');
-        Route::get('/dtr/{id}',  'dtr')->name('dtr');
+        Route::get('/dtr/{id}/{payroll}',  'dtr')->name('dtr');
     });
     // Route::resource('payrolls', PayrollController::class)->names([
     //     'create' => 'payrolls.create',
@@ -143,7 +143,7 @@ Route::middleware(['auth'])->group(function () {
     ]);
 
     Route::resource('attendances', AttendanceController::class)->names([
-        'index' => 'attendances.index',
+
         'create' => 'attendances.create',
         'store' => 'attendances.store',
         'history' => 'attendances.history',
@@ -181,6 +181,9 @@ Route::middleware(['auth'])->group(function () {
 
     // Payslip List Routes
     Route::get('/payslips-index', [PayslipController::class, 'index'])->name('payslips-index.index');
+
+    // Attendance
+    Route::get('attendances/{filter_by?}/{filter_id?}', [AttendanceController::class,'index'])->name('attendances.index');
 
     // Attendance History
     Route::get('/attendances-history', [AttendanceController::class, 'history'])->name('attendances-history.index');

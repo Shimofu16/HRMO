@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -134,5 +135,47 @@ class Employee extends Model
         }
 
         return $totalSalary;
+    }
+    public function countAttendance($type, $month, $year, $from, $to)
+    {
+        $count = 0;
+        $month = Carbon::parse($month)->format('m');
+        $year = Carbon::parse($year)->format('Y');
+        $from = Carbon::create($year, $month, $from)->subDay();
+        $to = Carbon::create($year, $month, $to)->addDay();
+
+        if ($type === "present") {
+            $count = $this->attendances()
+                ->whereBetween('created_at', [$from, $to])
+                ->where('isPresent', 1)
+                ->count();
+        }
+        if ($type === "absent") {
+            $count = $this->attendances()
+                ->whereBetween('created_at', [$from, $to])
+                ->where('isPresent', 0)
+                ->count();
+        }
+        if ($type === "late") {
+            $count = $this->attendances()
+                ->whereBetween('created_at', [$from, $to])
+                ->where(function ($query) {
+                    $query->where('status', 'LIKE', '%late%');
+                })
+                ->where('isPresent', 1)
+                ->count();
+        }
+        if ($type === "undertime") {
+            $count = $this->attendances()
+                ->whereBetween('created_at', [$from, $to])
+                ->where(function ($query) {
+                    $query->where('status', 'LIKE', '%undertime%');
+                })
+                ->where('isPresent', 1)
+                ->count();
+        }
+
+
+        return $count;
     }
 }
