@@ -180,7 +180,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/schedules-index/employees', [ScheduleController::class, 'index'])->name('schedules-index.employees');
 
     // Payslip List Routes
-    Route::get('/payslips-index', [PayslipController::class, 'index'])->name('payslips-index.index');
+    Route::get('/payslips', [PayslipController::class, 'index'])->name('payslips-index.index');
+    Route::get('/payslips/{department_id}/{filter}', [PayslipController::class, 'show'])->name('payslips.show');
 
     // Attendance
     Route::get('attendances/{filter_by?}/{filter_id?}', [AttendanceController::class,'index'])->name('attendances.index');
@@ -198,6 +199,9 @@ Route::prefix('employee/attendance')->name('employee.attendance.')->controller(E
     Route::get('',  'index')->name('index');
     Route::post('/store',  'store')->name('store');
 });
+
+
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

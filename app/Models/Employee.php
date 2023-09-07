@@ -136,6 +136,13 @@ class Employee extends Model
 
         return $totalSalary;
     }
+
+    public function getDeductionsBy($type){
+        return $this->deductions()->whereHas('deduction', function($query) use ($type){
+            $query->where('deduction_type', $type);
+        })->get();
+    }
+
     public function countAttendance($type, $month, $year, $from, $to)
     {
         $count = 0;

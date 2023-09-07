@@ -140,7 +140,8 @@ class EmployeeAttendanceController extends Controller
         // Compare the month and year of the two Carbon instances
         if ($currentDate->format('Ym') != $oneMonthAgo->format('Ym')) {
             // If the month and year are not the same, reset the sick leave left to 1.25
-            $sick_leave_left = 1.25 - ($minute_late * $slpDeductionPerMinute);
+            $sick_leave = 1.25 + $sick_leave;
+            $sick_leave_left = $sick_leave - ($minute_late * $slpDeductionPerMinute);
         }
 
         return $sick_leave_left;
