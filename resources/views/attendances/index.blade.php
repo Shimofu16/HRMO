@@ -8,16 +8,6 @@
 
     <div class="grid grid-cols-1 gap-3 mt-4 md:grid-cols-2 xl:grid-cols-6">
 
-        <!-- Department List Card -->
-        <a href="{{ route('attendances.index') }}">
-            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    <h2 class="mb-2 text-lg font-semibold text-center">Attendance List</h2>
-                    <!-- Card content here -->
-                </div>
-            </div>
-        </a>
-
         <!-- Position List Card -->
         <a href="{{ route('attendances-history.index') }}">
             <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
@@ -130,18 +120,7 @@
     </div>
     <script src="{{ asset('assets/webcam/webcam.min.js') }}"></script>
 
-    <script>
-        // Update the digital clock every second
-        setInterval(() => {
-            const now = new Date();
-            const clockElement = document.getElementById('digital-clock');
-            clockElement.textContent = now.toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-        }, 1000);
-    </script>
+   
     {{-- <script language="JavaScript">
         Webcam.set({
             width: 300,

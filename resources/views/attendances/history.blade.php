@@ -5,33 +5,27 @@
                 {{ __('Attendance History') }}
             </h2>
     </x-slot>
-    <div class="grid grid-cols-1 gap-3 mt-4 md:grid-cols-2 xl:grid-cols-6">
 
-        <!-- Department List Card -->
-        <a href="{{ route('attendances.index') }}">
-            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    <h2 class="mb-2 text-lg font-semibold text-center">Attendance List</h2>
-                    <!-- Card content here -->
-                </div>
-            </div>
-        </a>
-
-        <!-- Position List Card -->
-        <a
-            href="{{ route('attendances-history.index') }}">
-            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    <h2 class="mb-2 text-lg font-semibold text-center">Attendance History</h2>
-                    <!-- Card content here -->
-                </div>
-            </div>
-        </a>
-    </div>
     <div class="py-12">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
+        <div class="mx-auto bg-white max-w-7xl sm:p-6 lg:p-8">
+
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="buttons">
+
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="relative">
+                                <a href="{{ route('attendances.index') }}"
+                                    class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                    Back to Attendance
+                                </a>
+
+                            </div>
+
+
+
+                        </div>
+                    </div>
                     <table class="min-w-full bg-white border data-table">
                         <thead>
                             <tr>
@@ -55,8 +49,6 @@
                             @endforeach
                         </tbody>
                     </table>
-                </div>
-            </div>
         </div>
     </div>
 </x-app-layout>

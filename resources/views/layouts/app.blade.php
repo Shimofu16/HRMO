@@ -35,6 +35,7 @@
         <main class="px-5">
             {{ $slot }}
         </main>
+
     </div>
 </body>
 @include('sweetalert::alert')
@@ -42,14 +43,18 @@
 <script src="{{ asset('assets/jquery/jquery.min.js') }}"></script>
 <script src="{{ asset('assets/datatables/jquery.datatables.min.js') }}"></script>
 <script>
-    $('.data-table').DataTable({
-        info: false,
-        ordering: false,
-        // add 5 into choices
-        lengthMenu: [ 5,10, 25, 50, 75, 100 ]
+    $(document).ready(function() {
+        const dataTableOptions = {
+            info: false,
+            ordering: false,
+            lengthMenu: {!! json_encode(Route::is('attendances.index') ?  [ [50, 75, 100, -1], [50, 75, 100, "All"] ] : [5, 10, 25, 50, 75, 100]) !!},
+        };
 
+        $('.data-table').DataTable(dataTableOptions);
     });
 </script>
+
+
 
 @yield('scripts')
 

@@ -78,9 +78,8 @@ class AttendanceController extends Controller
     }
     public function history()
     {
-        // Retrieve distinct creation dates from the Attendance records
-        $attendances = Attendance::selectRaw('DATE(created_at) as created_at')->distinct()->get();
-
+        // Retrieve distinct creation dates from the Attendance records and format it desc
+        $attendances = Attendance::selectRaw('DATE(created_at) as date')->distinct()->orderBy('date', 'desc')->get();
 
         return view('attendances.history', compact('attendances'));
     }
@@ -89,6 +88,7 @@ class AttendanceController extends Controller
     {
         // get all dates in attendance and there shuld be no duplicate date
         $attendances = Attendance::with('employee')->whereDate('created_at', $date)->get();
+        
         return view('attendances.show', compact('attendances', 'date'));
     }
 }

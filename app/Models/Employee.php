@@ -94,6 +94,23 @@ class Employee extends Model
         return $this->hasMany(EmployeeDeduction::class);
     }
 
+    /**
+     * Get the sick leave associated with the employee.
+     */
+    public function sickLeave()
+    {
+        return $this->hasOne(SickLeave::class);
+    }
+
+    /**
+     * Get the sick leave request associated with the employee.
+     */
+    public function sickLeaveRequests()
+    {
+        return $this->hasMany(SickLeaveRequest::class);
+    }
+
+
     public function computeAllowance()
     {
         $totalAllowance = 0;
@@ -137,8 +154,9 @@ class Employee extends Model
         return $totalSalary;
     }
 
-    public function getDeductionsBy($type){
-        return $this->deductions()->whereHas('deduction', function($query) use ($type){
+    public function getDeductionsBy($type)
+    {
+        return $this->deductions()->whereHas('deduction', function ($query) use ($type) {
             $query->where('deduction_type', $type);
         })->get();
     }

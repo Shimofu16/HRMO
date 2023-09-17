@@ -37,17 +37,16 @@ class EmployeeAttendanceController extends Controller
         $now = Carbon::now($timezone);
         $current_time = $now->format('H:i:s');
         $timeIn = '08:01:00'; // 8am
-        $lateThreshold = '08:10:00'; // 8:10am
         $tenAMThreshold = '10:00:00'; // 10:00am
-        $timeOut = '17:00:00'; // 5pm
+        $timeOut = '17:59:00'; // 5pm
 
         if ($isTimeIn ==  1) {
             // Check if employee is on time, half-day or late
-            if ($current_time < $timeIn || ($current_time >= $timeIn && $current_time <= $lateThreshold)) {
-                $status = 'Time In';
+            if ($current_time < $timeIn) {
+                $status = 'On-time';
             } elseif ($current_time > $tenAMThreshold) {
                 $status = 'Half-Day';
-            } elseif ($current_time >= $lateThreshold && ($current_time > $timeIn || $current_time < $tenAMThreshold)) {
+            } elseif ($current_time > $timeIn) {
                 $status = 'Late';
             }
 
@@ -67,19 +66,31 @@ class EmployeeAttendanceController extends Controller
             $required_hours_work = 8;
             $subTotal = (($salary_grade / 2) / $working_days) / $required_hours_work;
 
+            // Create Carbon instances for the default time in and time out
             $defaultTimeIn = Carbon::parse($timeIn);
             $defaultTimeOut = Carbon::parse($timeOut);
             $attendanceTimeIn = Carbon::parse($attendance->time_in);
 
-            // Calculate the difference in hours
+            // Calculate the hours worked
             $hour_worked = $attendanceTimeIn->diffInHours($defaultTimeOut);
 
-            // Calculate the difference in minutes between the attendance time in and the default time in
+            // Calculate the minutes late
             $minute_late = $defaultTimeIn->diffInMinutes($attendance->time_in);
 
-            //check if the employee has sick leave left
-            $sick_leave = $employee->sick_leave;
-            $sick_leave_left = $this->computeSickLeave($sick_leave, $minute_late);
+            $currentMonth = Carbon::now()->format('m');
+
+            // Check if the employee's sick leave was updated this month
+            if ($employee->sickLeave->updated_at->format('m') != $currentMonth) {
+                $employee->sickLeave->update(['sick_leave_balance' => $employee->sickLeave->sick_leave_balance + 1.25]);
+            }
+
+            // Get the employee's sick leave balance
+            $sick_leave = $employee->sickLeave->sick_leave_balance;
+
+            // check if the employee has sick leave left
+            if ($sick_leave > 0) {
+                $sick_leave = $this->computeSickLeave($sick_leave, $minute_late);
+            }
 
             // Check if the current time is less than the time out
             if ($current_time < $timeOut) {
@@ -88,13 +99,13 @@ class EmployeeAttendanceController extends Controller
                 $diff = $defaultTimeOut->diffInMinutes($current_time);
                 $not_worked_hour = $diff / 60;
                 $salary_per_hour = $subTotal - $not_worked_hour;
-            } elseif ($current_time >= $timeOut) {
+            } elseif ($current_time > $timeOut) {
                 $salary_per_hour = $subTotal;
                 $status = 'Time Out';
             }
 
             // Calculate the total salary for the day
-            $total_salary_for_today = ($salary_per_hour * $hour_worked);
+            $total_salary_for_today = ($salary_per_hour * $hour_worked) - (($sick_leave == 0) ? $minute_late : 0);
 
             // Ensure that the total salary is not negative
             if ($total_salary_for_today < 0) {
@@ -105,7 +116,7 @@ class EmployeeAttendanceController extends Controller
             $status = $attendance->status . '/' . $status;
 
             // Update the employee's sick leave
-            $employee->update(['sick_leave' => $sick_leave_left]);
+            $employee->sickLeave->update(['sick_leave_balance' => $sick_leave]);
 
             // Update the attendance record
             $attendance->update([
@@ -116,8 +127,8 @@ class EmployeeAttendanceController extends Controller
                 'isPresent' => 1,
             ]);
         }
-        // Save the image using Laravel's Storage facade
 
+        // Save the image using Laravel's Storage facade
         Storage::disk('public')->put($filePath, $image);
         return $status;
     }
@@ -142,6 +153,11 @@ class EmployeeAttendanceController extends Controller
             // If the month and year are not the same, reset the sick leave left to 1.25
             $sick_leave = 1.25 + $sick_leave;
             $sick_leave_left = $sick_leave - ($minute_late * $slpDeductionPerMinute);
+        }
+
+        // check if sick_leave_left is less than 0
+        if ($sick_leave_left < 0) {
+            $sick_leave_left = 0;
         }
 
         return $sick_leave_left;

@@ -11,6 +11,7 @@ use App\Models\Allowance;
 use App\Models\Deduction;
 use App\Models\EmployeeAllowance;
 use App\Models\EmployeeDeduction;
+use App\Models\EmployeeSickLeave;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -118,6 +119,10 @@ class EmployeeController extends Controller
                 'deduction_id' => $value,
             ]);
         }
+        EmployeeSickLeave::create([
+            'employee_id' => $employeeId,
+            'sick_leave' => 0,
+        ]);
 
         // Redirect to the index page with a success message
         return redirect()->route('employees.index')->with('success', 'Employee created successfully.');

@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('emp_no');
             $table->string('oinumber');
             $table->string('name');
-            $table->double('sick_leave')->default(1.25);
             $table->timestamps();
 
             $table->foreignId('sgrade_id')->nullable()->constrained('sgrades')->onDelete('cascade')->onUpdate('cascade');

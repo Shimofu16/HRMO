@@ -40,9 +40,10 @@
         @page {
             margin: 2px;
         }
+
         .page-break {
-    page-break-after: always;
-}
+            page-break-after: always;
+        }
     </style>
 </head>
 
@@ -60,7 +61,7 @@
             // dd($mandatoryDeductions,$nonmandatoryDeductions,$totalDeduction);
         @endphp
         {{-- page break every 2 --}}
-        <div class="{{  ($loop->iteration % 2) ? '' : 'page-break' ; }}" id="canvas" >
+        <div class="{{ $loop->iteration % 2 ? '' : 'page-break' }}" id="canvas">
             <table class="table  border-2">
                 <tr class="border p-4 m-2">
                     <td colspan="9" class="border-dashed-right">
@@ -154,5 +155,3 @@
 </body>
 
 </html>
-
-    0
