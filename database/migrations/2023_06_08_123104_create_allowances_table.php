@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('deductions', function (Blueprint $table) {
+        Schema::create('allowances', function (Blueprint $table) {
             $table->id();
-            $table->string('deduction_code');
-            $table->string('deduction_name');
-            $table->string('deduction_range');
-            $table->string('deduction_type');
-            $table->decimal('deduction_amount',8 ,2);
+            $table->string('allowance_code');
+            $table->string('allowance_name');
+            $table->string('allowance_range');
+            $table->decimal('allowance_amount', 8,2);
+            $table->foreignId('category_id')->constrained('categories');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('deductions');
+        Schema::dropIfExists('allowances');
     }
 };

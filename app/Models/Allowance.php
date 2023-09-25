@@ -13,11 +13,18 @@ class Allowance extends Model
         'allowance_code',
         'allowance_name',
         'allowance_amount',
+        'allowance_range',
+        'category_id',
         // Other fillable attributes
     ];
 
     public function employees()
     {
         return $this->hasMany(Employee::class,'allowance');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 }

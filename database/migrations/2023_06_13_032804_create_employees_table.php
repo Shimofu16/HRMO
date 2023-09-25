@@ -19,6 +19,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreignId('sgrade_id')->nullable()->constrained('sgrades')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('salary_grade_step_id')->nullable()->constrained('salary_grade_steps')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('designation_id')->nullable()->constrained('designations')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('cascade')->onUpdate('cascade');

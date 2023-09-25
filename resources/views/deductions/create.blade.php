@@ -21,6 +21,20 @@
                                     <label for="deduction_amount" class="block font-medium text-gray-700">Amount</label>
                                     <input type="text" name="deduction_amount" id="deduction_amount" class="form-input mt-1 block w-full" required>
                                 </div>
+                                <div class="col-span-6 sm:col-span-6">
+                                    <label for="deduction_range" class="block font-medium text-gray-700">Range</label>
+                                    <input type="text" name="deduction_range" id="deduction_range" class="form-input mt-1 block w-full" required placeholder="Ex: 1-15 or 16-31">
+                                </div>
+                                <div class="col-span-6 sm:col-span-6">
+                                    <label for="dediction_type" class="block font-medium text-gray-700">Type</label>
+                                    <select name="dediction_type" id="dediction_type" class="block w-full mt-1 form-select"
+                                        required>
+                                        <option value="" disabled selected>--Please select here--</option>
+                                        <option value="Mandatory">Mandatory</option>
+                                        <option value="Non-Madatory">Non-Madatory</option>
+                                    </select>
+                                </div>
+                                </div>
                             </div>
                         </div>
                         <div class="px-4 py-3 bg-gray-50 text-right sm:px-6">

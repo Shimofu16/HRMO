@@ -71,6 +71,7 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
+        
         // try {
         // // Validate the input and store the employee
         // $validator = Validator::make($request->all(), [
@@ -104,14 +105,18 @@ class EmployeeController extends Controller
             'designation_id' => $request->input('designation_id'),
             'category_id' => $request->input('category_id'),
             'schedule_id' => $request->input('schedule_id'),
+
         ])->id;
         $allowances = $request->input('allowance');
         $deductions = $request->input('deduction');
-        foreach ($allowances as $key => $value) {
-            EmployeeAllowance::create([
-                'employee_id' => $employeeId,
-                'allowance_id' => $value,
-            ]);
+        $sick_leave = $request->input('sick_leave');
+        if ($allowances) {
+            foreach ($allowances as $key => $value) {
+                EmployeeAllowance::create([
+                    'employee_id' => $employeeId,
+                    'allowance_id' => $value,
+                ]);
+            }
         }
         foreach ($deductions as $key => $value) {
             EmployeeDeduction::create([
@@ -121,7 +126,7 @@ class EmployeeController extends Controller
         }
         EmployeeSickLeave::create([
             'employee_id' => $employeeId,
-            'sick_leave' => 0,
+            'sick_leave' => ($sick_leave) ? $sick_leave : 1.25,
         ]);
 
         // Redirect to the index page with a success message

@@ -99,7 +99,7 @@ class Employee extends Model
      */
     public function sickLeave()
     {
-        return $this->hasOne(SickLeave::class);
+        return $this->hasOne(EmployeeSickLeave::class, 'employee_id');
     }
 
     /**

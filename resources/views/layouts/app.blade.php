@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="{{ asset('assets/jquery/jquery.dataTables.min.css') }}">
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
 </head>
 
 <body class="font-sans antialiased">
@@ -47,7 +48,9 @@
         const dataTableOptions = {
             info: false,
             ordering: false,
-            lengthMenu: {!! json_encode(Route::is('attendances.index') ?  [ [50, 75, 100, -1], [50, 75, 100, "All"] ] : [5, 10, 25, 50, 75, 100]) !!},
+            lengthMenu: {!! json_encode(
+                Route::is('attendances.index') ? [[50, 75, 100, -1], [50, 75, 100, 'All']] : [5, 10, 25, 50, 75, 100],
+            ) !!},
         };
 
         $('.data-table').DataTable(dataTableOptions);
@@ -55,7 +58,7 @@
 </script>
 
 
-
+@livewireScripts
 @yield('scripts')
 
 </html>

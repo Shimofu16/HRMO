@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Allowance;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class AllowanceController extends Controller
@@ -10,8 +11,8 @@ class AllowanceController extends Controller
     public function index()
     {
         $allowances = Allowance::all();
-
-        return view('allowances.index', compact('allowances'));
+        $categories = Category::all();
+        return view('allowances.index', compact('allowances','categories'));
     }
 
     public function create()
@@ -25,6 +26,8 @@ class AllowanceController extends Controller
             'allowance_code' => 'required',
             'allowance_name' => 'required',
             'allowance_amount' => 'required',
+            'allowance_range' => 'required',
+            'category_id' => 'required',
         ]);
 
         Allowance::create($request->all());

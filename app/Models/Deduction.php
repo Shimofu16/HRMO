@@ -13,6 +13,8 @@ class Deduction extends Model
         'deduction_code',
         'deduction_name',
         'deduction_amount',
+        'deduction_type',
+        'deduction_range',
         // Other fillable attributes
     ];
 

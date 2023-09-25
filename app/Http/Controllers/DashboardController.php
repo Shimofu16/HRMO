@@ -15,7 +15,7 @@ class DashboardController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($filter = "month")
     {
         $totalEmployeesPerCategories = Category::with('employees')->get()->map(function ($category) {
             return [
@@ -23,20 +23,21 @@ class DashboardController extends Controller
                 'total' => $category->employees->count(),
             ];
         });
-        // get total salary, allowance, deduction, net salary
-        $totalSalaryPerMonth = $this->getTotalSalaryPer(true);
-        $totalAllowancePerMonth = $this->getTotalAllowancePer(true);
-        $totalDeductionPerMonth = $this->getTotalDeductionPer(true);
-        $totalNetPayPerMonth = $this->getTotalNetPayPer($totalSalaryPerMonth, $totalAllowancePerMonth, $totalDeductionPerMonth);
+        $totalEmployees = Employee::all()->count();
 
-        $totalSalaryPerYear = $this->getTotalSalaryPer(false);
-        $totalAllowancePerYear = $this->getTotalAllowancePer(false);
-        $totalDeductionPerYear = $this->getTotalDeductionPer(false);
-        $totalNetPayPerYear = $this->getTotalNetPayPer($totalSalaryPerYear, $totalAllowancePerYear, $totalDeductionPerYear);
+        $isPerMonth = ($filter == "month") ? true : false;
+        // get total salary, allowance, deduction, net salary
+        $totalSalary = $this->getTotalSalaryPer($isPerMonth);
+        $totalAllowance = $this->getTotalAllowancePer($isPerMonth);
+        $totalDeduction = $this->getTotalDeductionPer($isPerMonth);
+        $totalNetPay = $this->getTotalNetPayPer($totalSalary, $totalAllowance, $totalDeduction);
+
+
+
 
 
         // dd($totalEmployeesPerCategories,$totalSalaryPerMonth, $totalAllowancePerMonth, $totalDeductionPerMonth,$totalSalaryPerYear);
-        return view('dashboard', compact('totalEmployeesPerCategories', 'totalSalaryPerMonth', 'totalAllowancePerMonth', 'totalDeductionPerMonth', 'totalSalaryPerYear', 'totalAllowancePerYear', 'totalDeductionPerYear', 'totalNetPayPerMonth', 'totalNetPayPerYear'));
+        return view('dashboard', compact('totalEmployeesPerCategories', 'totalEmployees', 'totalSalary', 'totalAllowance', 'totalDeduction', 'totalNetPay'));
     }
     private function getTotalSalaryPer($isPerMonth)
     {
@@ -52,14 +53,14 @@ class DashboardController extends Controller
                         $total += $attendance->salary;
                     }
                     // if there is same month in array, add the total
-                    if (isset($totalSalary[$monthKey])) {
-                        $totalSalary[$monthKey]['total'] += $total;
-                    } else {
-                        $totalSalary[$monthKey] = [
-                            'month' => $month,
-                            'total' => $total,
-                        ];
-                    }
+                    // if (isset($totalSalary[$monthKey])) {
+                    //     $totalSalary[$monthKey]['total'] += $total;
+                    // } else {
+                    //     $totalSalary[$monthKey] = [
+                    //         'month' => $month,
+                    //         'total' => $total,
+                    //     ];
+                    // }
                 }
             }
         } else {
@@ -88,7 +89,7 @@ class DashboardController extends Controller
         }
         // to collection
         $totalSalary = collect($totalSalary);
-        return $totalSalary;
+        return $total;
     }
     private function getTotalAllowancePer($isPerMonth)
     {
@@ -139,7 +140,7 @@ class DashboardController extends Controller
             }
         }
         $totalAllowance = collect($totalAllowance);
-        return $totalAllowance;
+        return $total;
     }
     private function getTotalDeductionPer($isPerMonth)
     {
@@ -190,17 +191,18 @@ class DashboardController extends Controller
             }
         }
         $totalDeduction = collect($totalDeduction);
-        return $totalDeduction;
+        return $total;
     }
     private function getTotalNetPayPer($totalSalary, $totalAllowance, $totalDeduction)
     {
         $totalNetPay = 0;
-        $sumOfTotalSalary = $totalSalary->sum('total');
-        $sumOfTotalAllowance = $totalAllowance->sum('total');
-        $sumOfTotalDeduction = $totalDeduction->sum('total');
-        $totalNetPay = $sumOfTotalSalary + $sumOfTotalAllowance - $sumOfTotalDeduction;
+        // $sumOfTotalSalary = $totalSalary->sum('total');
+        // $sumOfTotalAllowance = $totalAllowance->sum('total');
+        // $sumOfTotalDeduction = $totalDeduction->sum('total');
+        // $totalNetPay = $sumOfTotalSalary + $sumOfTotalAllowance - $sumOfTotalDeduction;
 
-        return $totalNetPay;
+
+        return $totalSalary + $totalAllowance - $totalDeduction;
     }
 
     /**

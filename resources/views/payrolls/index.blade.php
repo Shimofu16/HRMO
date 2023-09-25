@@ -51,7 +51,7 @@
                         <th class="px-4 py-2 text-left border-b">Month</th>
                         <th class="px-4 py-2 text-left border-b">Year</th>
                         <th class="px-4 py-2 text-left border-b">Date From To</th>
-                        <th class="px-4 py-2 border-b">Actions</th>
+                        <th class="px-4 py-2 text-center border-b">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -62,13 +62,18 @@
                             <td class="px-4 py-2 border-b">{{ $payroll['month'] }}</td>
                             <td class="px-4 py-2 border-b">{{ $payroll['year'] }}</td>
                             <td class="px-4 py-2 border-b">{{ $payroll['date_from_to'] }}</td>
-                            <td class="px-4 py-2 text-center border-b">
+                            <td class="px-4 py-2 border-b">
                                 @php
                                     $encoded = urlencode(json_encode($payroll));
-
                                 @endphp
                                 <a href="{{ route('payrolls.show', $encoded) }}"
-                                    class="text-green-500 hover:text-green-700">View</a>
+                                    class="text-green-500 hover:text-green-700 mr-3">View</a>
+                                <a href="{{ route('payslips.show', [
+                                    'department_id' => $payroll['department_id'],
+                                    'filter' => $payroll['date_from_to'],
+                                ]) }}"
+                                    class="text-blue-500 hover:text-blue-700">Generate Payslip</a>
+
                             </td>
                         </tr>
                     @endforeach

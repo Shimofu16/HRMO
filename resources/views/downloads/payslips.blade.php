@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="./assets/bootstrap/bootstrap.min.css" type="text/css" />
     <style>
         .border-2 {
-            border: 2px solid #1a1a1a;
+            border-bottom: 2px solid #1a1a1a !important;
         }
 
         .border-dashed-right {
@@ -38,11 +38,31 @@
         }
 
         @page {
-            margin: 2px;
+            margin: 0px;
         }
 
         .page-break {
             page-break-after: always;
+        }
+        .title{
+            font-size: 18px;
+            font-weight: 900;
+        }
+        .sub-title{
+            font-size: 15px;
+            font-weight: 900;
+        }
+        .body{
+            font-size: 13px;
+        }
+        .fw-400{
+            font-weight: 400;
+        }
+        .fw-700{
+            font-weight: 700;
+        }
+        body{
+            font-family: sans-serif !important;
         }
     </style>
 </head>
@@ -66,46 +86,65 @@
                 <tr class="border p-4 m-2">
                     <td colspan="9" class="border-dashed-right">
                         <div class="title mb-2 text-center">
-                            <h6 class="text-xl font-semibold">MUNICIPALITY OF CALAUAN</h6>
-                            <span class="block">{{ $department->dep_name }}</span>
+                            <h6 class="title">MUNICIPALITY OF CALAUAN</h6>
+                            <span class="block sub-title">{{ $department->dep_name }}</span>
                         </div>
                         <table class="no-padding">
                             <tr>
                                 <td>
-                                    <span class="font-semibold">Name: {{ $employee->name }}</span>
+                                    <span class="text-right">
+                                        <span class="sub-title font-semibold">Name:</span>
+                                        <span class="fw-400">{{ $employee->name }}</span>
+                                    </span>
                                 </td>
-                                <td class="text-right">
-                                    <span class="font-semibold ">Period:
-                                        {{ $filter['from'] }}-{{ $filter['to'] }}</span>
+                                <td >
+                                    <span class="text-right">
+                                        <span class="sub-title font-semibold">Period:</span>
+                                        <span class="fw-400">{{ $filter['from'] }}-{{ $filter['to'] }}</span>
+                                    </span>
                                 </td>
                             </tr>
                         </table>
                         <table class=" mt-4 ">
                             <tr>
                                 <td colspan="4" class="border-dashed-right">
-                                    <h6 class="text-center font-semibold mb-2">EARNINGS</h6>
-                                    <span class="font-semibold">MONTHLY SALARY:
-                                        {{ number_format($salary_grade) }}</span><br>
-                                    <span class="font-semibold">AMOUNT EARNED:
-                                        {{ number_format($salary_grade / 2) }}</span><br>
-                                    <h6 class="text-center font-semibold mb-2">ALLOWANCES</h6>
+                                    <h6 class="text-center  mb-2 sub-title">EARNINGS</h6>
+                                        <span>
+                                            <span class="sub-title font-semibold">Monthly Salary:</span>
+                                            <span class="fw-400">{{ number_format($salary_grade) }}</span>
+                                        </span>
+                                        <br>
+                                        <span>
+                                            <span class="sub-title font-semibold">Amount Earned:</span>
+                                            <span class="fw-400">{{ number_format($salary_grade /2) }}</span>
+                                        </span>
+                                        <br>
+                                    <h6 class="text-center  mb-2 mt-3">ALLOWANCES</h6>
                                     @foreach ($allowances as $itemallowance)
-                                        <span class="mb- block">{{ $itemallowance->allowance->allowance_name }} -
-                                            {{ number_format($itemallowance->allowance->allowance_amount) }}</span><br>
+                                            <span class="mb-1">
+                                                <span class="fw-400">{{ $itemallowance->allowance->allowance_name }} -
+                                                    {{ number_format($itemallowance->allowance->allowance_amount) }}</span>
+                                            </span>
+                                            <br>
                                     @endforeach
                                 </td>
                                 <td colspan="4 px-2">
-                                    <h6 class="text-center font-semibold mb-2">DEDUCTION</h6>
-                                    <span class="font-semibold">MANDATORY</span>
+                                    <h6 class="text-center  mb-2 sub-title">DEDUCTION</h6>
+                                    <span class="sub-title">MANDATORY</span>
                                     @foreach ($mandatoryDeductions as $mandatoryDeduction)
-                                        <span class="mb- block">{{ $mandatoryDeduction->deduction->deduction_name }} -
-                                            {{ number_format($mandatoryDeduction->deduction->deduction_amount) }}</span><br>
+                                    <span class="mb-1">
+                                        <span class="fw-400">{{ $mandatoryDeduction->deduction->deduction_name }} -
+                                            {{ number_format($mandatoryDeduction->deduction->deduction_amount) }}</span>
+                                    </span>
+                                    <br>
                                     @endforeach
-                                    <span class="mt-3 font-semibold">NON-MANDATORY</span>
+                                    <span class="mt-3 sub-title">NON-MANDATORY</span>
                                     @foreach ($nonmandatoryDeductions as $nonmandatoryDeduction)
-                                        <span class="mb- block">{{ $nonmandatoryDeduction->deduction->deduction_name }}
-                                            -
-                                            {{ number_format($nonmandatoryDeduction->deduction->deduction_amount) }}</span><br>
+                                    <span class="mb-1">
+                                        <span class="fw-400">{{ $nonmandatoryDeduction->deduction->deduction_name }} -
+                                            {{ number_format($nonmandatoryDeduction->deduction->deduction_amount) }}</span>
+                                    </span>
+                                    <br>
                                     @endforeach
                                 </td>
                             </tr>
@@ -114,17 +153,17 @@
                         <table class="no-padding">
                             <tr>
                                 <td>
-                                    <h6 class="mt-3 font-semibold">Total Amount Earned:
+                                    <h6 class="mt-3 sub-title">Total Amount Earned:
                                         {{ number_format($totalAmountEarned) }}
                                     </h6>
                                 </td>
                                 <td>
-                                    <h6 class="mt-3 font-semibold">Total Deduction:
+                                    <h6 class="mt-3 sub-title">Total Deduction:
                                         {{ number_format($totalDeduction) }}
                                     </h6>
                                 </td>
                                 <td>
-                                    <h6 class="mt-3 font-semibold">NET PAY: {{ number_format($netpay) }}</h6>
+                                    <h6 class="mt-3 sub-title">NET PAY: {{ number_format($netpay) }}</h6>
                                 </td>
                             </tr>
                         </table>
@@ -132,20 +171,20 @@
                     </td>
                     <td>
                         <div class="text-center mb-2">
-                            <h6 class="text-xl font-semibold">MUNICIPALITY OF CALAUAN</h6>
-                            <h6 class="font-semibold">RECEIPT {{ $employee->emp_no }}</h6>
+                            <h6 class="title">MUNICIPALITY OF CALAUAN</h6>
+                            <h6 class="sub-title">RECEIPT {{ $employee->emp_no }}</h6>
                             <span> &nbsp;</span>
                         </div>
                         <div class="contents">
-                            <h6>Received: </h6>
-                            <h6 class="mb-3 text-center">NET PAY ₱ {{ number_format($netpay) }}</h6>
-                            <h6>For Period:</h6>
-                            <h6 class="mb-4 text-center">{{ $filter['from'] }}-{{ $filter['to'] }}</h6>
-                            <h6 class="mb-5">Received By: </h6>
+                            <h6 class="sub-title">Received: </h6>
+                            <h6 class="mb-3 text-center sub-title">NET PAY ₱ {{ number_format($netpay) }}</h6>
+                            <h6 class="sub-title">For Period:</h6>
+                            <h6 class="mb-4 text-center sub-title">{{ $filter['from'] }}-{{ $filter['to'] }}</h6>
+                            <h6 class="mb-5 sub-title">Received By: </h6>
                             <h6 class="px-3 border-bottom-2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h6>
-                            <h6 class="mb-3 text-center">{{ $employee->name }}</h6>
+                            <h6 class="mb-3 text-center title">{{ $employee->name }}</h6>
                             <h6 class="px-3 border-bottom-2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h6>
-                            <h6 class="text-center">DATE </h6>
+                            <h6 class="text-center title">DATE </h6>
                         </div>
                     </td>
                 </tr>

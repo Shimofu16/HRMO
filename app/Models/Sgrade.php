@@ -25,4 +25,9 @@ class Sgrade extends Model
     {
         return $this->hasMany(Payroll::class, 'pr_sgrade');
     }
+
+    public function steps()
+    {
+        return $this->hasMany(SalaryGradeStep::class, 'salary_grade_id');
+    }
 }

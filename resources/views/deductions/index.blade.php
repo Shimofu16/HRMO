@@ -26,6 +26,21 @@
                                     <input type="text" name="deduction_amount" id="deduction_amount" class="form-input mt-1 block w-full" required>
                                 </div>
                             </div>
+                            <div class="grid grid-cols-6 gap-6">
+                                  <div class="col-span-3 sm:col-span-3">
+                                    <label for="deduction_range" class="block font-medium text-gray-700">Range</label>
+                                    <input type="text" name="deduction_range" id="deduction_range" class="form-input mt-1 block w-full" required placeholder="Ex: 1-15 or 16-31">
+                                </div>
+                                <div class="col-span-3 sm:col-span-3">
+                                    <label for="deduction_type" class="block font-medium text-gray-700">Type</label>
+                                    <select name="deduction_type" id="deduction_type" class="block w-full mt-1 form-select"
+                                        required>
+                                        <option value="" disabled selected>--Please select here--</option>
+                                        <option value="Mandatory">Mandatory</option>
+                                        <option value="Non-Madatory">Non-Madatory</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                         <div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
                             <x-primary-button class="ml-3">
@@ -49,6 +64,8 @@
                         <th class="border-b px-4 py-2 text-left">Code</th>
                         <th class="border-b px-4 py-2 text-left">Name</th>
                         <th class="border-b px-4 py-2 text-left">Amount</th>
+                        <th class="border-b px-4 py-2 text-left">Range</th>
+                        <th class="border-b px-4 py-2 text-left">Type</th>
                         <th class="border-b px-4 py-2">Actions</th>
                     </tr>
                 </thead>
@@ -59,6 +76,8 @@
                             <td class="border-b px-4 py-2">{{ $deduction->deduction_code }}</td>
                             <td class="border-b px-4 py-2">{{ $deduction->deduction_name }}</td>
                             <td class="border-b px-4 py-2">{{ $deduction->deduction_amount }}</td>
+                            <td class="border-b px-4 py-2">{{ $deduction->deduction_range }}</td>
+                            <td class="border-b px-4 py-2">{{ $deduction->deduction_type }}</td>
                             <td class="border-b px-4 py-2">
                                 <a href="{{ route('deductions.edit', $deduction) }}"
                                     class="text-blue-500 hover:text-blue-700">Edit</a>

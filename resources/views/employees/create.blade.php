@@ -25,7 +25,11 @@
                                     <input type="text" name="oinumber" id="oinumber"
                                         class="block w-full mt-1 form-input" required>
                                 </div>
-
+                                <div class="col-span-6 sm:col-span-2">
+                                    <label for="sick_leave" class="block font-medium text-gray-700">Sick Leave</label>
+                                    <input type="number" step="0.01" name="sick_leave" id="sick_leave"
+                                        class="block w-full mt-1 form-input" required>
+                                </div>
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="sgrade_id" class="block font-medium text-gray-700">Salary Grade</label>
                                     <select name="sgrade_id" id="sgrade_id" class="block w-full mt-1 form-select"
@@ -62,40 +66,70 @@
                                         @endforeach
                                     </select>
                                 </div>
-
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="category_id" class="block font-medium text-gray-700">Category</label>
                                     <select name="category_id" id="category_id" class="block w-full mt-1 form-select"
                                         required>
-                                        <option value="" disabled selected>--Please select here--</option>
+                                        <option value="" selected>--Please select here--</option>
                                         @foreach ($categories as $category)
-                                            <option value="{{ $category->id }}">{{ $category->category_code }}</option>
+                                            <option value="{{ $category->id }}">{{ $category->category_code }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
-
-                                {{-- <div class="col-span-6 sm:col-span-2">
-                                    <label for="schedule_id" class="block font-medium text-gray-700">Schedule</label>
-                                    <select name="schedule_id" id="schedule_id" class="block w-full mt-1 form-select"
-                                        required>
-                                        <option value="" disabled selected>--Please select here--</option>
-                                        @foreach ($schedules as $schedule)
-                                            <option value="{{ $schedule->id }}">{{ $schedule->sched_name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div> --}}
 
                                 <div class="col-span-6 sm:col-span-2">
                                     <label class="block font-medium text-gray-700">Allowance</label>
-                                    @foreach ($allowances as $id => $allowance_code)
-                                        <div class="flex items-center mt-1">
-                                            <input type="checkbox" name="allowance[]" id="allowance_{{ $id }}"
-                                                value="{{ $id }}" class="mr-2 form-checkbox">
-                                            <label for="allowance_{{ $id }}"
-                                                class="text-gray-900">{{ $allowance_code }}</label>
-                                        </div>
-                                    @endforeach
+                                    <div id="allowanceContainer">
+                                        <!-- Allowances will be loaded here -->
+                                    </div>
                                 </div>
+
+                                <script>
+                                    document.getElementById('category_id').addEventListener('change', function() {
+                                        var categoryId = this.value;
+                                        var allowanceContainer = document.getElementById('allowanceContainer');
+
+                                        // Clear the allowance container
+                                        allowanceContainer.innerHTML = '';
+
+                                        if (categoryId) {
+                                            // Send an AJAX request to fetch allowances based on the selected category
+                                            var xhr = new XMLHttpRequest();
+                                            xhr.open('GET', '/getAllowances?category_id=' + categoryId, true);
+
+                                            xhr.onload = function() {
+                                                if (xhr.status >= 200 && xhr.status < 400) {
+                                                    // Parse the JSON response
+                                                    var allowances = JSON.parse(xhr.responseText);
+
+                                                    // Populate the allowance container with checkboxes
+                                                    allowances.forEach(function(allowance) {
+                                                        var checkbox = document.createElement('input');
+                                                        checkbox.type = 'checkbox';
+                                                        checkbox.name = 'allowance[]';
+                                                        checkbox.value = allowance.id;
+                                                        checkbox.id = 'allowance_' + allowance.id;
+
+                                                        var label = document.createElement('label');
+                                                        label.htmlFor = 'allowance_' + allowance.id;
+                                                        label.appendChild(document.createTextNode(allowance.allowance_code));
+
+                                                        var div = document.createElement('div');
+                                                        div.classList.add('flex', 'items-center', 'mt-1');
+                                                        div.appendChild(checkbox);
+                                                        div.appendChild(label);
+
+                                                        allowanceContainer.appendChild(div);
+                                                    });
+                                                }
+                                            };
+
+                                            xhr.send();
+                                        }
+                                    });
+                                </script>
+
 
                                 {{-- <div class="col-span-6 sm:col-span-2">
                                     <label for="deduction" class="block font-medium text-gray-700">Deduction</label>
@@ -114,24 +148,30 @@
                                         <div class="w-full">
                                             <h2 class="text-xm">Mandatory Deductions</h2>
                                         </div>
-                                        @foreach ($deductions as $deduction)
+                                        @forelse ($deductions as $deduction)
                                             @if ($deduction->deduction_type === 'Mandatory')
                                                 <div class="w-1/2 px-2">
                                                     <input type="checkbox" name="deduction[]"
+                                                        value="{{ $deduction->id }}" class="mr-2 form-checkbox hidden"
+                                                        checked>
+                                                    <input type="checkbox" 
                                                         id="deduction_{{ $deduction->id }}"
-                                                        value="{{ $deduction->id }}" class="mr-2 form-checkbox" checked>
+                                                        value="{{ $deduction->id }}" class="mr-2 form-checkbox"
+                                                        checked disabled>
                                                     <label for="deduction_{{ $deduction->id }}"
                                                         class="text-gray-900">{{ $deduction->deduction_code }}</label>
                                                 </div>
                                             @endif
-                                        @endforeach
+                                        @empty
+                                            <p>No deduction found.</p>
+                                        @endforelse
                                     </div>
 
                                     <div class="flex flex-wrap -mx-2 mt-4">
                                         <div class="w-full">
                                             <h2 class="text-xm">Non Mandatory Deductions</h2>
                                         </div>
-                                        @foreach ($deductions as $deduction)
+                                        @forelse ($deductions as $deduction)
                                             @if ($deduction->deduction_type === 'Non Mandatory')
                                                 <div class="w-1/2 px-2">
                                                     <input type="checkbox" name="deduction[]"
@@ -139,11 +179,12 @@
                                                         value="{{ $deduction->id }}" class="mr-2 form-checkbox">
                                                     <label for="deduction_{{ $deduction->id }}"
                                                         class="text-gray-900">{{ $deduction->deduction_code }}</label>
-                                                </div>
+                                                </div>z
                                             @endif
-                                        @endforeach
+                                        @empty
+                                            <p>No deduction found.</p>
+                                        @endforelse
                                     </div>
-
 
 
                                 </div>
@@ -157,8 +198,10 @@
                                 class="px-4 py-2 font-bold text-gray-500 rounded hover:text-gray-700">Back</a>
                         </div>
                     </div>
+
                 </form>
             </div>
         </div>
     </div>
+
 </x-app-layout>

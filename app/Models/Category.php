@@ -19,4 +19,9 @@ class Category extends Model
     {
         return $this->hasMany(Employee::class, 'category_id');
     }
+
+    public function allowances()
+    {
+        return $this->hasMany(Allowance::class);
+    }
 }

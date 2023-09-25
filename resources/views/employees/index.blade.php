@@ -195,7 +195,7 @@
 
                             </td>
                             <td class="px-4 py-3 border-b">
-                                {{ number_format($employee->sick_leave) }} pts
+                                {{ number_format($employee->sickLeave->sick_leave) }} pts
                             </td>
                             <td class="px-4 py-3 border-b">
 

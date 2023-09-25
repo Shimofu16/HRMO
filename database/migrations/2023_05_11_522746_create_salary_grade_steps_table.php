@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('allowances', function (Blueprint $table) {
+        Schema::create('salary_grade_steps', function (Blueprint $table) {
             $table->id();
-            $table->string('allowance_code');
-            $table->string('allowance_name');
-            $table->decimal('allowance_amount', 8,2);
+            $table->foreignId('salary_grade_id')->constrained('sgrades')->cascadeOnDelete();
+            $table->string('step');
+            $table->decimal('amount',);
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('allowances');
+        Schema::dropIfExists('salary_grade_steps');
     }
 };

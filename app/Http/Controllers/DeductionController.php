@@ -25,6 +25,8 @@ class DeductionController extends Controller
             'deduction_code' => 'required',
             'deduction_name' => 'required',
             'deduction_amount' => 'required',
+            'deduction_type' => 'required',
+            'deduction_range' => 'required',
         ]);
 
         Deduction::create($request->all());

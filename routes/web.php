@@ -14,7 +14,10 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeductionController;
 use App\Http\Controllers\EmployeeAttendanceController;
 use App\Http\Controllers\PayslipController;
+use App\Http\Controllers\SalaryGradeStepController;
 use App\Http\Controllers\ScheduleController;
+use App\Models\Allowance;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,7 +34,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard/{filter?}', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('employees', EmployeeController::class)->names([
@@ -112,6 +115,7 @@ Route::middleware(['auth'])->group(function () {
         'destroy' => 'allowances.destroy',
     ]);
 
+
     Route::resource('deductions', DeductionController::class)->names([
         'index' => 'deductions.index',
         'create' => 'deductions.create',
@@ -184,7 +188,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/payslips/{department_id}/{filter}', [PayslipController::class, 'show'])->name('payslips.show');
 
     // Attendance
-    Route::get('attendances/{filter_by?}/{filter_id?}', [AttendanceController::class,'index'])->name('attendances.index');
+    Route::get('attendances/{filter_by?}/{filter_id?}', [AttendanceController::class, 'index'])->name('attendances.index');
 
     // Attendance History
     Route::get('/attendances-history', [AttendanceController::class, 'history'])->name('attendances-history.index');
@@ -193,6 +197,14 @@ Route::middleware(['auth'])->group(function () {
 
     // employee
     Route::get('/employees/{filter_by?}/{filter_id?}', [EmployeeController::class, 'index'])->name('employees.index');
+
+    // Salary Grade Steps
+    Route::prefix('salary-grade/steps')->name('salary.grade.')->controller(SalaryGradeStepController::class)->group(function () {
+        Route::get('/{salary_grade_id}', 'show')->name('show');
+        Route::post('/store/{salary_grade_id}', 'store')->name('store');
+        Route::put('/update/{salary_grade_id}', 'update')->name('update');
+        Route::delete('/destroy/{salary_grade_id}', 'destroy')->name('destroy');
+    });
 });
 
 Route::prefix('employee/attendance')->name('employee.attendance.')->controller(EmployeeAttendanceController::class)->group(function () {
@@ -200,6 +212,12 @@ Route::prefix('employee/attendance')->name('employee.attendance.')->controller(E
     Route::post('/store',  'store')->name('store');
 });
 
+Route::get('/getAllowances', function (Request $request) {
+    $category_id = $request->input('category_id');
+    $allowances = Allowance::where('category_id', $category_id)->get();
+
+    return response()->json($allowances);
+});
 
 
 Route::middleware('auth')->group(function () {
