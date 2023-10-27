@@ -44,24 +44,30 @@
         .page-break {
             page-break-after: always;
         }
-        .title{
+
+        .title {
             font-size: 18px;
             font-weight: 900;
         }
-        .sub-title{
+
+        .sub-title {
             font-size: 15px;
             font-weight: 900;
         }
-        .body{
+
+        .body {
             font-size: 13px;
         }
-        .fw-400{
+
+        .fw-400 {
             font-weight: 400;
         }
-        .fw-700{
+
+        .fw-700 {
             font-weight: 700;
         }
-        body{
+
+        body {
             font-family: sans-serif !important;
         }
     </style>
@@ -71,7 +77,7 @@
     @foreach ($employees as $employee)
         @php
             $mandatoryDeductions = $employee->getDeductionsBy('Mandatory');
-            $nonmandatoryDeductions = $employee->getDeductionsBy('Non Mandatory');
+            $nonmandatoryDeductions = $employee->getDeductionsBy('Non-Mandatory');
             $allowances = $employee->allowances;
             $salary_grade = $employee->sgrade->sg_amount / 2;
             $totalDeduction = $employee->computeDeduction();
@@ -80,7 +86,7 @@
             $netpay = $totalAmountEarned - $totalDeduction;
             // dd($mandatoryDeductions,$nonmandatoryDeductions,$totalDeduction);
         @endphp
-        {{-- page break every 2 --}}
+        {{-- page break every 2 payslip per page --}}
         <div class="{{ $loop->iteration % 2 ? '' : 'page-break' }}" id="canvas">
             <table class="table  border-2">
                 <tr class="border p-4 m-2">
@@ -97,7 +103,7 @@
                                         <span class="fw-400">{{ $employee->name }}</span>
                                     </span>
                                 </td>
-                                <td >
+                                <td>
                                     <span class="text-right">
                                         <span class="sub-title font-semibold">Period:</span>
                                         <span class="fw-400">{{ $filter['from'] }}-{{ $filter['to'] }}</span>
@@ -109,42 +115,46 @@
                             <tr>
                                 <td colspan="4" class="border-dashed-right">
                                     <h6 class="text-center  mb-2 sub-title">EARNINGS</h6>
-                                        <span>
-                                            <span class="sub-title font-semibold">Monthly Salary:</span>
-                                            <span class="fw-400">{{ number_format($salary_grade) }}</span>
-                                        </span>
-                                        <br>
-                                        <span>
-                                            <span class="sub-title font-semibold">Amount Earned:</span>
-                                            <span class="fw-400">{{ number_format($salary_grade /2) }}</span>
-                                        </span>
-                                        <br>
+                                    <span>
+                                        <span class="sub-title font-semibold">Monthly Salary:</span>
+                                        <span class="fw-400">{{ number_format($salary_grade) }}</span>
+                                    </span>
+                                    <br>
+                                    <span>
+                                        <span class="sub-title font-semibold">Amount Earned:</span>
+                                        <span class="fw-400">{{ number_format($salary_grade / 2) }}</span>
+                                    </span>
+                                    <br>
                                     <h6 class="text-center  mb-2 mt-3">ALLOWANCES</h6>
                                     @foreach ($allowances as $itemallowance)
-                                            <span class="mb-1">
-                                                <span class="fw-400">{{ $itemallowance->allowance->allowance_name }} -
-                                                    {{ number_format($itemallowance->allowance->allowance_amount) }}</span>
-                                            </span>
-                                            <br>
+                                        <span class="mb-1">
+                                            <span class="fw-400">{{ $itemallowance->allowance->allowance_code }} -
+                                                {{ number_format($itemallowance->allowance->allowance_amount) }}</span>
+                                        </span>
+                                        <br>
                                     @endforeach
                                 </td>
                                 <td colspan="4 px-2">
                                     <h6 class="text-center  mb-2 sub-title">DEDUCTION</h6>
                                     <span class="sub-title">MANDATORY</span>
-                                    @foreach ($mandatoryDeductions as $mandatoryDeduction)
-                                    <span class="mb-1">
-                                        <span class="fw-400">{{ $mandatoryDeduction->deduction->deduction_name }} -
-                                            {{ number_format($mandatoryDeduction->deduction->deduction_amount) }}</span>
-                                    </span>
                                     <br>
+                                    @foreach ($mandatoryDeductions as $mandatoryDeduction)
+                                        <span class="mb-1">
+                                            <span class="fw-400">{{ $mandatoryDeduction->deduction->deduction_code }} -
+                                                {{ number_format($mandatoryDeduction->deduction->deduction_amount) }}</span>
+                                        </span>
+                                        <br>
                                     @endforeach
                                     <span class="mt-3 sub-title">NON-MANDATORY</span>
-                                    @foreach ($nonmandatoryDeductions as $nonmandatoryDeduction)
-                                    <span class="mb-1">
-                                        <span class="fw-400">{{ $nonmandatoryDeduction->deduction->deduction_name }} -
-                                            {{ number_format($nonmandatoryDeduction->deduction->deduction_amount) }}</span>
-                                    </span>
                                     <br>
+                                    @foreach ($nonmandatoryDeductions as $nonmandatoryDeduction)
+                                        <span class="mb-1">
+                                            <span
+                                                class="fw-400">{{ $nonmandatoryDeduction->deduction->deduction_code }}
+                                                -
+                                                {{ number_format($nonmandatoryDeduction->deduction->deduction_amount) }}</span>
+                                        </span>
+                                        <br>
                                     @endforeach
                                 </td>
                             </tr>

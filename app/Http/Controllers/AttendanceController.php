@@ -88,7 +88,7 @@ class AttendanceController extends Controller
     {
         // get all dates in attendance and there shuld be no duplicate date
         $attendances = Attendance::with('employee')->whereDate('created_at', $date)->get();
-        
+
         return view('attendances.show', compact('attendances', 'date'));
     }
 }

@@ -15,29 +15,37 @@
                             <div class="grid grid-cols-6 gap-6">
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="deduction_code" class="block font-medium text-gray-700">Code</label>
-                                    <input type="text" name="deduction_code" id="deduction_code" class="form-input mt-1 block w-full" required>
+                                    <input type="text" name="deduction_code" id="deduction_code"
+                                        class="form-input mt-1 block w-full" required>
                                 </div>
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="deduction_name" class="block font-medium text-gray-700">Name</label>
-                                    <input type="text" name="deduction_name" id="deduction_name" class="form-input mt-1 block w-full" required>
+                                    <input type="text" name="deduction_name" id="deduction_name"
+                                        class="form-input mt-1 block w-full" required>
                                 </div>
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="deduction_amount" class="block font-medium text-gray-700">Amount</label>
-                                    <input type="text" name="deduction_amount" id="deduction_amount" class="form-input mt-1 block w-full" required>
+                                    <input type="number" name="deduction_amount" id="deduction_amount"
+                                        class="form-input mt-1 block w-full" required>
                                 </div>
                             </div>
                             <div class="grid grid-cols-6 gap-6">
-                                  <div class="col-span-3 sm:col-span-3">
+                                <div class="col-span-3 sm:col-span-3">
                                     <label for="deduction_range" class="block font-medium text-gray-700">Range</label>
-                                    <input type="text" name="deduction_range" id="deduction_range" class="form-input mt-1 block w-full" required placeholder="Ex: 1-15 or 16-31">
+                                    <select name="deduction_range" id="deduction_range"
+                                        class="block w-full mt-1 form-select" required>
+                                        <option value="" disabled selected>--Please select here--</option>
+                                        <option value="1-15">1-15</option>
+                                        <option value="16-30">16-30</option>
+                                    </select>
                                 </div>
                                 <div class="col-span-3 sm:col-span-3">
                                     <label for="deduction_type" class="block font-medium text-gray-700">Type</label>
-                                    <select name="deduction_type" id="deduction_type" class="block w-full mt-1 form-select"
-                                        required>
+                                    <select name="deduction_type" id="deduction_type"
+                                        class="block w-full mt-1 form-select" required>
                                         <option value="" disabled selected>--Please select here--</option>
                                         <option value="Mandatory">Mandatory</option>
-                                        <option value="Non-Madatory">Non-Madatory</option>
+                                        <option value="Non-Mandatory">Non-Mandatory</option>
                                     </select>
                                 </div>
                             </div>
@@ -46,9 +54,9 @@
                             <x-primary-button class="ml-3">
                                 {{ __('Create') }}
                             </x-primary-button>
-                                <a href="{{ route('employees.index') }}"
-                                    class="text-gray-500 hover:text-gray-700 font-bold py-2 px-4 rounded">Back</a>
-                           </div>
+                            <a href="{{ route('employees.index') }}"
+                                class="text-gray-500 hover:text-gray-700 font-bold py-2 px-4 rounded">Back</a>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -81,11 +89,12 @@
                             <td class="border-b px-4 py-2">
                                 <a href="{{ route('deductions.edit', $deduction) }}"
                                     class="text-blue-500 hover:text-blue-700">Edit</a>
-                                    <form class="inline-block" action="{{ route('deductions.destroy', $deduction) }}" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-500 hover:text-red-700">Delete</button>
-                                    </form>
+                                <form class="inline-block" action="{{ route('deductions.destroy', $deduction) }}"
+                                    method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-500 hover:text-red-700">Delete</button>
+                                </form>
                             </td>
                         </tr>
                     @endforeach

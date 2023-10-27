@@ -122,7 +122,7 @@
                                         <h2 class="text-lg font-semibold">Non Mandatory Deductions</h2>
                                     </div>
                                     @foreach ($deductions as $deduction)
-                                        @if ($deduction->deduction_type === 'Non Mandatory')
+                                        @if ($deduction->deduction_type === 'Non-Mandatory')
                                             <div class="flex items-center mt-1">
                                                 <input type="checkbox" name="deduction[]"
                                                     id="deduction_{{ $deduction->id }}" value="{{ $deduction->id }}"

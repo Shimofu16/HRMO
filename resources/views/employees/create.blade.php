@@ -143,25 +143,22 @@
                                 </div> --}}
 
                                 <div class="col-span-6 sm:col-span-2">
-                                    <label class="block font-medium text-gray-700">Deduction</label>
+                                    <label class="block font-medium text-gray-700">Deductions</label>
                                     <div class="flex flex-wrap -mx-2">
                                         <div class="w-full">
-                                            <h2 class="text-xm">Mandatory Deductions</h2>
+                                            <h4 class="text-xm">Mandatory</h4>
                                         </div>
-                                        @forelse ($deductions as $deduction)
-                                            @if ($deduction->deduction_type === 'Mandatory')
-                                                <div class="w-1/2 px-2">
-                                                    <input type="checkbox" name="deduction[]"
-                                                        value="{{ $deduction->id }}" class="mr-2 form-checkbox hidden"
-                                                        checked>
-                                                    <input type="checkbox" 
-                                                        id="deduction_{{ $deduction->id }}"
-                                                        value="{{ $deduction->id }}" class="mr-2 form-checkbox"
-                                                        checked disabled>
-                                                    <label for="deduction_{{ $deduction->id }}"
-                                                        class="text-gray-900">{{ $deduction->deduction_code }}</label>
-                                                </div>
-                                            @endif
+                                        @forelse ($mandatory_deductions as $mandatory_deduction)
+                                            <div class="w-1/2 px-2">
+                                                <input type="checkbox" name="deduction[]"
+                                                    value="{{ $mandatory_deduction->id }}"
+                                                    class="mr-2 form-checkbox hidden" checked>
+                                                <input type="checkbox" id="deduction_{{ $mandatory_deduction->id }}"
+                                                    value="{{ $mandatory_deduction->id }}" class="mr-2 form-checkbox"
+                                                    checked disabled>
+                                                <label for="deduction_{{ $mandatory_deduction->id }}"
+                                                    class="text-gray-900">{{ $mandatory_deduction->deduction_code }}</label>
+                                            </div>
                                         @empty
                                             <p>No deduction found.</p>
                                         @endforelse
@@ -169,18 +166,17 @@
 
                                     <div class="flex flex-wrap -mx-2 mt-4">
                                         <div class="w-full">
-                                            <h2 class="text-xm">Non Mandatory Deductions</h2>
+                                            <h4 class="text-xm">Non Mandatory </h4>
                                         </div>
-                                        @forelse ($deductions as $deduction)
-                                            @if ($deduction->deduction_type === 'Non Mandatory')
-                                                <div class="w-1/2 px-2">
-                                                    <input type="checkbox" name="deduction[]"
-                                                        id="deduction_{{ $deduction->id }}"
-                                                        value="{{ $deduction->id }}" class="mr-2 form-checkbox">
-                                                    <label for="deduction_{{ $deduction->id }}"
-                                                        class="text-gray-900">{{ $deduction->deduction_code }}</label>
-                                                </div>z
-                                            @endif
+                                        @forelse ($non_mandatory_deductios as $non_mandatory_deductio)
+                                            <div class="w-1/2 px-2">
+                                                <input type="checkbox" name="deduction[]"
+                                                    id="deduction_{{ $non_mandatory_deductio->id }}"
+                                                    value="{{ $non_mandatory_deductio->id }}"
+                                                    class="mr-2 form-checkbox">
+                                                <label for="deduction_{{ $non_mandatory_deductio->id }}"
+                                                    class="text-gray-900">{{ $non_mandatory_deductio->deduction_code }}</label>
+                                            </div>
                                         @empty
                                             <p>No deduction found.</p>
                                         @endforelse

@@ -19,11 +19,16 @@
                                 </div>
                                 <div class="col-span-6 sm:col-span-6">
                                     <label for="deduction_amount" class="block font-medium text-gray-700">Amount</label>
-                                    <input type="text" name="deduction_amount" id="deduction_amount" class="form-input mt-1 block w-full" required>
+                                    <input type="number" name="deduction_amount" id="deduction_amount" class="form-input mt-1 block w-full" required>
                                 </div>
                                 <div class="col-span-6 sm:col-span-6">
                                     <label for="deduction_range" class="block font-medium text-gray-700">Range</label>
-                                    <input type="text" name="deduction_range" id="deduction_range" class="form-input mt-1 block w-full" required placeholder="Ex: 1-15 or 16-31">
+                                    <select name="deduction_range" id="deduction_range" class="block w-full mt-1 form-select"
+                                        required>
+                                        <option value="" disabled selected>--Please select here--</option>
+                                        <option value="1-15">1-15</option>
+                                        <option value="16-30">16-30</option>
+                                    </select>
                                 </div>
                                 <div class="col-span-6 sm:col-span-6">
                                     <label for="dediction_type" class="block font-medium text-gray-700">Type</label>
@@ -33,7 +38,6 @@
                                         <option value="Mandatory">Mandatory</option>
                                         <option value="Non-Madatory">Non-Madatory</option>
                                     </select>
-                                </div>
                                 </div>
                             </div>
                         </div>

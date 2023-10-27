@@ -49,6 +49,7 @@
                             $to = $dates[1];
                             $totalSalary = $employee->getTotalSalaryBy($payroll['month'], $payroll['year'], $from, $to); // Get the total salary of the employee
                             $netPay = $totalSalary + $employee->computeAllowance() - $employee->computeDeduction();
+                            $netPay = $netPay < 0 ? 0 : $netPay;
                             $totalNetPay += $netPay; // Accumulate the net pay value
 
                         @endphp
@@ -82,10 +83,10 @@
                             <td class=" p-3 ">{{ number_format($netPay, 2) }}</td>
                             <td class="px-4 py-2 text-center border-b">
                                 @php
-                                $encoded = urlencode(json_encode($payroll));
+                                    $encoded = urlencode(json_encode($payroll));
 
-                            @endphp
-                                <a href="{{ route('payrolls.dtr',['id' =>  $employee->id, 'payroll' => $encoded]) }}"
+                                @endphp
+                                <a href="{{ route('payrolls.dtr', ['id' => $employee->id, 'payroll' => $encoded]) }}"
                                     class="text-green-500 hover:text-green-700">View</a>
                             </td>
                         </tr>

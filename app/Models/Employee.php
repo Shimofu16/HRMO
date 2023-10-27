@@ -185,7 +185,7 @@ class Employee extends Model
             $count = $this->attendances()
                 ->whereBetween('created_at', [$from, $to])
                 ->where(function ($query) {
-                    $query->where('status', 'LIKE', '%late%');
+                    $query->where('time_in_status', 'LIKE', '%late%');
                 })
                 ->where('isPresent', 1)
                 ->count();
@@ -194,10 +194,16 @@ class Employee extends Model
             $count = $this->attendances()
                 ->whereBetween('created_at', [$from, $to])
                 ->where(function ($query) {
-                    $query->where('status', 'LIKE', '%undertime%');
+                    $query->where('time_out_status', 'LIKE', '%undertime%');
                 })
                 ->where('isPresent', 1)
                 ->count();
+        }
+        if ($type == "manhours") {
+            $count = $this->attendances()
+                ->whereBetween('created_at', [$from, $to])
+                ->where('isPresent', 1)
+                ->sum('hours');
         }
 
 

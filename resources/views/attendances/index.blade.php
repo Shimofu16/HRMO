@@ -86,7 +86,9 @@
                         <th class="px-4 py-2 text-left border-b">#</th>
                         <th class="px-4 py-2 text-left border-b">Employee</th>
                         <th class="px-4 py-2 text-left border-b">Time In</th>
-                        <th class="px-4 py-2 border-b">Time Out</th>
+                        <th class="px-4 py-2 text-left border-b">Late</th>
+                        <th class="px-4 py-2 text-left border-b">Status</th>
+                        <th class="px-4 py-2 ext-left border-b">Time Out</th>
                         <th class="px-4 py-2 text-left border-b">Status</th>
                         {{-- <th class="px-4 py-2 text-left border-b">Action</th> --}}
                     </tr>
@@ -96,31 +98,62 @@
                         <tr>
                             <td class="px-4 py-2 border-b">{{ $loop->iteration }}</td>
                             <td class="px-4 py-2 border-b">{{ $attendance->employee->name }}</td>
-                            <td class="px-4 py-2 border-b">{{ date('h:i:s A', strtotime($attendance->time_in)) }}</td>
+                            <td class="px-4 py-2 border-b">
+                                {{-- 
+                                    intervals
+                                    7:00am - 7:10am = 7:00am,
+
+                                    7:11am - 7:40 = 7:30am,
+
+                                    7:41am - 8:10am = 8:00am,
+                                    --}}
+                                @php
+                                    
+                                    $now = \Carbon\Carbon::now('Asia/Manila')->parse('7:00');
+                                    $timeIn = \Carbon\Carbon::parse($attendance->time_in);
+                                @endphp
+                                {{-- check if $now is 7:00am - 7:10am  --}}
+                                @if ($now->between($timeIn->copy()->subMinutes(10), $timeIn->copy()->addMinutes(10)))
+                                    7:00 AM
+                                @endif
+                                {{-- check if $now is 7:11am - 7:40am  --}}
+                                @if ($now->between($timeIn->copy()->addMinutes(11), $timeIn->copy()->addMinutes(40)))
+                                    7:30 AM
+                                @endif
+                                {{-- check if $now is 7:41am - 8:10am  --}}
+                                @if ($now->between($timeIn->copy()->addMinutes(41), $timeIn->copy()->addMinutes(70)))
+                                    8:00 AM
+                                @endif
+                            </td>
+                            <td class="px-4 py-2 border-b">
+                                {{-- check if late --}}
+                                @if ($attendance->time_in_status == 'Late')
+                                    @php
+                                        $timeIn = \Carbon\Carbon::parse($attendance->time_in);
+                                        $now = \Carbon\Carbon::now('Asia/Manila');
+                                        $late = $now->diffInMinutes($timeIn);
+                                    @endphp
+                                    @if ($late >= 60)
+                                        {{ floor($late / 60) }} hr {{ $late % 60 }} mins
+                                    @else
+                                        {{ $late }} mins
+                                    @endif
+                                @endif
+                            </td>
+                            <td class="px-4 py-2 border-b">{{ $attendance->time_in_status }}</td>
+
                             <td class="px-4 py-2 border-b">
                                 {{ $attendance->time_out ? date('h:i:s A', strtotime($attendance->time_out)) : '' }}
                             </td>
-                            <td class="px-4 py-2 border-b">{{ $attendance->status }}</td>
-                            {{-- <td class="px-4 py-2 border-b">
-                                <form class="inline-block" action="{{ route('attendances.update', $attendance->id) }}"
-                                    method="POST" id="timeOut{{ $attendance->id }}">
-                                    @csrf
-                                    @method('PUT')
-                                    <input type="hidden" name="image" class="image-tag">
-                                    <button type="button" class="text-red-500 hover:text-red-700 "
-                                        {{ $attendance->time_out ? 'disabled' : '' }}
-                                        onClick="take_snapshot(false, {{ $attendance->id }})">Time Out</button>
-                                </form>
-                            </td> --}}
-                        </tr>
+                            <td class="px-4 py-2 border-b">{{ $attendance->time_out_status }}</td>
                     @endforeach
                 </tbody>
             </table>
         </div>
     </div>
-    <script src="{{ asset('assets/webcam/webcam.min.js') }}"></script>
+    {{-- <script src="{{ asset('assets/webcam/webcam.min.js') }}"></script> --}}
 
-   
+
     {{-- <script language="JavaScript">
         Webcam.set({
             width: 300,

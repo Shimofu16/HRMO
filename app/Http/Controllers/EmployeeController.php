@@ -32,7 +32,6 @@ class EmployeeController extends Controller
         $categories = Category::all();
         if ($filter_by == "department") {
             $employees->where('department_id', $filter_id);
-
         }
         if ($filter_by == "category") {
             $employees->where('category_id', $filter_id);
@@ -61,9 +60,11 @@ class EmployeeController extends Controller
 
         $allowances = Allowance::pluck('allowance_code', 'id');
 
-        $deductions = Deduction::all();
+        $mandatory_deductions = Deduction::where('deduction_type', 'Mandatory')->get();
 
-        return view('employees.create', compact('departments', 'categories', 'designations', 'schedules', 'sgrades', 'allowances', 'deductions'));
+        $non_mandatory_deductios = Deduction::where('deduction_type', 'Non-Mandatory')->get();
+
+        return view('employees.create', compact('departments', 'categories', 'designations', 'schedules', 'sgrades', 'allowances', 'mandatory_deductions', 'non_mandatory_deductios'));
     }
 
     /**
@@ -71,7 +72,7 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         // try {
         // // Validate the input and store the employee
         // $validator = Validator::make($request->all(), [
@@ -90,11 +91,11 @@ class EmployeeController extends Controller
         // if ($validator->fails()) {
         //     return redirect()->back()->withErrors($validator)->withInput();
         // }
-            // dd($request->all());
+        // dd($request->all());
         $department = Department::find($request->input('department_id'));
         $employee_department_count = $department->employees()->count() + 1;
         $employee_count = Employee::count() + 1;
-        $employee_code = $department->dep_code.'-'.$employee_department_count.''.$employee_count;
+        $employee_code = $department->dep_code . '-' . $employee_department_count . '' . $employee_count;
         // Create a new employee instance
         $employeeId = Employee::create([
             'emp_no' => $employee_code,
@@ -105,7 +106,6 @@ class EmployeeController extends Controller
             'designation_id' => $request->input('designation_id'),
             'category_id' => $request->input('category_id'),
             'schedule_id' => $request->input('schedule_id'),
-
         ])->id;
         $allowances = $request->input('allowance');
         $deductions = $request->input('deduction');

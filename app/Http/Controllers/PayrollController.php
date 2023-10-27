@@ -114,12 +114,14 @@ class PayrollController extends Controller
         $absents = $employee->countAttendance('absent', $payroll['month'], $payroll['year'], $from, $to);
         $lates = $employee->countAttendance('late', $payroll['month'], $payroll['year'], $from, $to);
         $undertimes = $employee->countAttendance('undertime', $payroll['month'], $payroll['year'], $from, $to);
+        $hours = $employee->countAttendance('manhours', $payroll['month'], $payroll['year'], $from, $to);
+
         $attendances = $employee->attendances;
 
 
 
         // Pass the payroll record to the view
-        return view('payrolls.dtr', compact('employee', 'attendances', 'presents', 'absents', 'lates', 'undertimes','payroll'));
+        return view('payrolls.dtr', compact('employee', 'attendances', 'presents', 'absents', 'lates', 'undertimes','payroll','hours'));
     }
 
     /**
