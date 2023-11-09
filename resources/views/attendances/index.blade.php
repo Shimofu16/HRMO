@@ -30,7 +30,7 @@
                     <div class="relative">
                         {{-- reset button --}}
                         <a href="{{ route('attendances.index') }}"
-                            class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                            class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-800 border border-transparent rounded-md hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                             Reset
                         </a>
 
@@ -39,7 +39,7 @@
                         <x-dropdown align="left" width="w-full">
                             <x-slot name="trigger">
                                 <button
-                                    class="w-full bg-white border border-gray-300 px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300 text-left">
+                                    class="w-full px-4 py-2 text-left bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300">
                                     Select a Department
                                 </button>
                             </x-slot>
@@ -61,7 +61,7 @@
                         <x-dropdown align="left" width="w-full">
                             <x-slot name="trigger">
                                 <button
-                                    class="w-full bg-white border border-gray-300 px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300 text-left">
+                                    class="w-full px-4 py-2 text-left bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300">
                                     Select a Category
                                 </button>
                             </x-slot>
@@ -88,7 +88,7 @@
                         <th class="px-4 py-2 text-left border-b">Time In</th>
                         <th class="px-4 py-2 text-left border-b">Late</th>
                         <th class="px-4 py-2 text-left border-b">Status</th>
-                        <th class="px-4 py-2 ext-left border-b">Time Out</th>
+                        <th class="px-4 py-2 border-b ext-left">Time Out</th>
                         <th class="px-4 py-2 text-left border-b">Status</th>
                         {{-- <th class="px-4 py-2 text-left border-b">Action</th> --}}
                     </tr>
@@ -99,7 +99,7 @@
                             <td class="px-4 py-2 border-b">{{ $loop->iteration }}</td>
                             <td class="px-4 py-2 border-b">{{ $attendance->employee->name }}</td>
                             <td class="px-4 py-2 border-b">
-                                {{-- 
+                                {{--
                                     intervals
                                     7:00am - 7:10am = 7:00am,
 
@@ -107,22 +107,19 @@
 
                                     7:41am - 8:10am = 8:00am,
                                     --}}
-                                @php
-                                    
-                                    $now = \Carbon\Carbon::now('Asia/Manila')->parse('7:00');
+                                    @php
                                     $timeIn = \Carbon\Carbon::parse($attendance->time_in);
                                 @endphp
-                                {{-- check if $now is 7:00am - 7:10am  --}}
-                                @if ($now->between($timeIn->copy()->subMinutes(10), $timeIn->copy()->addMinutes(10)))
+
+                                {{-- Check if $timeIn is 7:00am - 7:10am --}}
+                                @if ($timeIn->between(\Carbon\Carbon::parse('7:00'), \Carbon\Carbon::parse('7:10')))
                                     7:00 AM
-                                @endif
-                                {{-- check if $now is 7:11am - 7:40am  --}}
-                                @if ($now->between($timeIn->copy()->addMinutes(11), $timeIn->copy()->addMinutes(40)))
+                                @elseif ($timeIn->between(\Carbon\Carbon::parse('7:11'), \Carbon\Carbon::parse('7:40')))
                                     7:30 AM
-                                @endif
-                                {{-- check if $now is 7:41am - 8:10am  --}}
-                                @if ($now->between($timeIn->copy()->addMinutes(41), $timeIn->copy()->addMinutes(70)))
+                                @elseif ($timeIn->between(\Carbon\Carbon::parse('7:41'), \Carbon\Carbon::parse('8:10')))
                                     8:00 AM
+                                @else
+                                    {{ $timeIn->format('h:i A') }}
                                 @endif
                             </td>
                             <td class="px-4 py-2 border-b">

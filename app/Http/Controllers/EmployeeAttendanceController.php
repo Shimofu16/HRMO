@@ -158,7 +158,7 @@ class EmployeeAttendanceController extends Controller
         $current_time = $now->format('H:i:s');
         $timeIn = '08:01:00'; // 8am
         $tenAMThreshold = '10:00:00'; // 10:00am
-        $timeOut = '17:59:00'; // 5pm
+        $timeOut = '17:00:00'; // 5pm
 
         if ($isTimeIn) {
             // Check if employee is on time, half-day or late
@@ -249,7 +249,7 @@ class EmployeeAttendanceController extends Controller
         $attendanceTimeIn = Carbon::parse($attendance->time_in);
 
         // Calculate the hours worked
-        $hour_worked = $attendanceTimeIn->diffInHours($defaultTimeOut);
+        $hour_worked = $attendanceTimeIn->diffInHours($defaultTimeOut) -1;
 
         // Calculate the minutes late
         $minute_late = $defaultTimeIn->diffInMinutes($attendance->time_in);
