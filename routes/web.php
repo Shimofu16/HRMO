@@ -10,6 +10,7 @@ use App\Http\Controllers\DesignationController;
 use App\Http\Controllers\SgradeController;
 use App\Http\Controllers\AllowanceController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\BackupController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeductionController;
 use App\Http\Controllers\EmployeeAttendanceController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\PayslipController;
 use App\Http\Controllers\SalaryGradeStepController;
 use App\Http\Controllers\ScheduleController;
 use App\Models\Allowance;
+use App\Models\SalaryGradeStep;
 use Illuminate\Http\Request;
 
 /*
@@ -161,6 +163,12 @@ Route::middleware(['auth'])->group(function () {
 
 
     Route::get('/payrolls/{payroll}/slip', 'PayrollController@slip')->name('payrolls.slip');
+    Route::prefix('backups')->name('backup.')->controller(BackupController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/create', 'create')->name('create');
+        Route::get('/download/{file_name}', 'download')->name('download');
+        Route::delete('/delete/{file_name}', 'delete')->name('delete');
+    });
 
     // Department List Routes
     Route::get('/departments-index/employees', [DepartmentController::class, 'index'])->name('departments-index.employees');
@@ -185,7 +193,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Payslip List Routes
     Route::get('/payslips', [PayslipController::class, 'index'])->name('payslips-index.index');
-    Route::get('/payslips/{department_id}/{filter}', [PayslipController::class, 'show'])->name('payslips.show');
+    Route::get('/payslips/{department_id}/{payroll}', [PayslipController::class, 'show'])->name('payslips.show');
 
     // Attendance
     Route::get('attendances/{filter_by?}/{filter_id?}', [AttendanceController::class, 'index'])->name('attendances.index');
@@ -206,11 +214,11 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/destroy/{salary_grade_id}', 'destroy')->name('destroy');
     });
 });
-
 Route::prefix('employee/attendance')->name('employee.attendance.')->controller(EmployeeAttendanceController::class)->group(function () {
     Route::get('',  'index')->name('index');
     Route::post('/store',  'store')->name('store');
 });
+
 
 Route::get('/getAllowances', function (Request $request) {
     $category_id = $request->input('category_id');
@@ -218,6 +226,13 @@ Route::get('/getAllowances', function (Request $request) {
 
     return response()->json($allowances);
 });
+Route::get('/getSteps', function (Request $request) {
+    $sgrade_id = $request->input('sgrade_id');
+    $steps = SalaryGradeStep::where('salary_grade_id', $sgrade_id)->get();
+
+    return response()->json($steps);
+});
+
 
 
 Route::middleware('auth')->group(function () {

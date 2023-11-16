@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('allowance_code');
             $table->string('allowance_name');
             $table->string('allowance_range');
-            $table->decimal('allowance_amount', 8,2);
+            $table->double('allowance_amount');
             $table->foreignId('category_id')->constrained('categories');
             $table->timestamps();
         });

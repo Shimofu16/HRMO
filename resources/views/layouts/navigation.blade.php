@@ -28,9 +28,9 @@
                         {{ __('Payroll') }}
                     </x-nav-link>
 
-                    {{-- <x-nav-link :href="route('payslips-index.index')" :active="request()->routeIs('payslips-index.index')">
-                        {{ __('Payslip') }}
-                    </x-nav-link> --}}
+                    <x-nav-link :href="route('backup.index')" :active="request()->routeIs('backup.index')">
+                        {{ __('Backups') }}
+                    </x-nav-link>
 
                     {{-- <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Reports') }}

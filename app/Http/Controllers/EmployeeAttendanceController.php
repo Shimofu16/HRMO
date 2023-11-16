@@ -181,7 +181,7 @@ class EmployeeAttendanceController extends Controller
 
             $attendance = $employee->attendances()->whereDate('created_at', Carbon::today())->first();
 
-            $salary_grade = $employee->sgrade->sg_amount;
+            $salary_grade = $employee->salaryGradeStep->amount;
             $results = $this->calculateSalary($salary_grade, $employee, $attendance, $timeIn, $timeOut, $current_time);
 
             $status = $results[0]['status'];
@@ -210,25 +210,11 @@ class EmployeeAttendanceController extends Controller
     {
         $sick_leave_left = 0;
 
-        // Create a Carbon instance for the current date
-        $currentDate = Carbon::now();
-
-        // Create a Carbon instance for a date one month ago
-        $oneMonthAgo = Carbon::now()->subMonth();
-
         // Set the sick leave deduction per minute
         $slpDeductionPerMinute =  0.002;
 
         // Compute the sick leave deduction per minute
         $sick_leave_left = $sick_leave - ($minute_late * $slpDeductionPerMinute);
-
-        // Compare the month and year of the two Carbon instances
-        if ($currentDate->format('Ym') != $oneMonthAgo->format('Ym')) {
-            // If the month and year are not the same, add 1.25 to the sick leave
-            $sick_leave = 1.25 + $sick_leave;
-            // Compute the sick leave deduction per minute
-            $sick_leave_left = $sick_leave - ($minute_late * $slpDeductionPerMinute);
-        }
 
         // check if sick_leave_left is less than 0
         if ($sick_leave_left < 0) {
@@ -246,20 +232,15 @@ class EmployeeAttendanceController extends Controller
         // Create Carbon instances for the default time in and time out
         $defaultTimeIn = Carbon::parse($timeIn);
         $defaultTimeOut = Carbon::parse($timeOut);
+
         $attendanceTimeIn = Carbon::parse($attendance->time_in);
+        $attendanceTimeOut = Carbon::parse($attendance->time_out);
 
         // Calculate the hours worked
-        $hour_worked = $attendanceTimeIn->diffInHours($defaultTimeOut) -1;
+        $hour_worked = $attendanceTimeIn->diffInHours($attendanceTimeOut) -1;
 
         // Calculate the minutes late
         $minute_late = $defaultTimeIn->diffInMinutes($attendance->time_in);
-
-        $currentMonth = Carbon::now()->format('m');
-
-        // Check if the employee's sick leave was updated this month
-        if ($employee->sickLeave->updated_at->format('m') != $currentMonth) {
-            $employee->sickLeave->update(['sick_leave_balance' => $employee->sickLeave->sick_leave_balance + 1.25]);
-        }
 
         // Get the employee's sick leave balance
         $sick_leave = $employee->sickLeave->sick_leave_balance;

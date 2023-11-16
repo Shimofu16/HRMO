@@ -16,17 +16,17 @@
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="deduction_code" class="block font-medium text-gray-700">Code</label>
                                     <input type="text" name="deduction_code" id="deduction_code"
-                                        class="form-input mt-1 block w-full" required>
+                                        class="form-input mt-1 block w-full rounded-md" required>
                                 </div>
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="deduction_name" class="block font-medium text-gray-700">Name</label>
                                     <input type="text" name="deduction_name" id="deduction_name"
-                                        class="form-input mt-1 block w-full" required>
+                                        class="form-input mt-1 block w-full rounded-md" required>
                                 </div>
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="deduction_amount" class="block font-medium text-gray-700">Amount</label>
                                     <input type="number" name="deduction_amount" id="deduction_amount"
-                                        class="form-input mt-1 block w-full" required>
+                                        class="form-input mt-1 block w-full rounded-md" required>
                                 </div>
                             </div>
                             <div class="grid grid-cols-6 gap-6">
@@ -64,8 +64,8 @@
     </div>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <table class="min-w-full border bg-white">
+        <div class="max-w-7xl bg-white mx-auto sm:p-6 lg:p-8">
+            <table class="min-w-full border data-table">
                 <thead>
                     <tr>
                         <th class="border-b px-4 py-2 text-left">#</th>

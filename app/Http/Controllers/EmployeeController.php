@@ -106,6 +106,7 @@ class EmployeeController extends Controller
             'designation_id' => $request->input('designation_id'),
             'category_id' => $request->input('category_id'),
             'schedule_id' => $request->input('schedule_id'),
+            'salary_grade_step_id' => $request->input('salary_grade_step_id'),
         ])->id;
         $allowances = $request->input('allowance');
         $deductions = $request->input('deduction');
@@ -126,7 +127,7 @@ class EmployeeController extends Controller
         }
         EmployeeSickLeave::create([
             'employee_id' => $employeeId,
-            'sick_leave' => ($sick_leave) ? $sick_leave : 1.25,
+            'points' => ($sick_leave) ? $sick_leave : 1.25,
         ]);
 
         // Redirect to the index page with a success message

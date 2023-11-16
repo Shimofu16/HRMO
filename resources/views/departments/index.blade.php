@@ -14,12 +14,6 @@
                         <div class="px-4 py-5 bg-white sm:p-6">
                             <div class="grid grid-cols-6 gap-6">
                                 <div class="col-span-6 sm:col-span-3">
-                                    <label for="dep_code" class="block font-medium text-gray-700">Department
-                                        Code</label>
-                                    <input type="text" name="dep_code" id="dep_code"
-                                        class="form-input mt-1 block w-full text-xl" required>
-                                </div>
-                                <div class="col-span-6 sm:col-span-3">
                                     <label for="dep_name" class="block font-medium text-gray-700">Department
                                         Name</label>
                                     <input type="text" name="dep_name" id="dep_name"
@@ -41,8 +35,8 @@
     </div>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <table class="min-w-full border bg-white">
+        <div class="max-w-7xl bg-white mx-auto sm:p-6 lg:p-8">
+            <table class="min-w-full border data-table">
                 <thead>
                     <tr>
                         <th class="border-b px-4 py-2 text-left">#</th>
@@ -71,10 +65,6 @@
                     @endforeach
                 </tbody>
             </table>
-            <!-- Pagination links -->
-            <div class="mt-0">
-                {{ $departments->links() }}
-            </div>
         </div>
     </div>
     </div>

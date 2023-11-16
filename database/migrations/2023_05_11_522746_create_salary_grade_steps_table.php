@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('salary_grade_id')->constrained('sgrades')->cascadeOnDelete();
             $table->string('step');
-            $table->decimal('amount',);
+            $table->double('amount',);
             $table->timestamps();
         });
     }

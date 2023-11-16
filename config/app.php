@@ -160,7 +160,7 @@ return [
          * Package Service Providers...
          */
         RealRashid\SweetAlert\SweetAlertServiceProvider::class,
-
+        Spatie\Backup\BackupServiceProvider::class,
 
         /*
          * Application Service Providers...

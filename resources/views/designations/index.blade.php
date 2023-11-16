@@ -17,13 +17,13 @@
                                     <label for="designation_code" class="block font-medium text-gray-700">Designation
                                         Code</label>
                                     <input type="text" name="designation_code" id="designation_code"
-                                        class="form-input mt-1 block w-full" required>
+                                        class="form-input mt-1 block w-full rounded-md" required>
                                 </div>
                                 <div class="col-span-6 sm:col-span-3">
                                     <label for="designation_name" class="block font-medium text-gray-700">Designation
                                         Name</label>
                                     <input type="text" name="designation_name" id="designation_name"
-                                        class="form-input mt-1 block w-full" required>
+                                        class="form-input mt-1 block w-full rounded-md" required>
                                 </div>
                             </div>
                         </div>
@@ -41,8 +41,8 @@
     </div>
 
     <div class="py-12">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <table class="min-w-full bg-white border data-table">
+        <div class="mx-auto bg-white max-w-7xl sm:p-6 lg:p-8">
+            <table class="min-w-full border data-table">
                 <thead>
                     <tr>
                         <th class="px-4 py-2 text-left border-b">#</th>
@@ -71,10 +71,6 @@
                     @endforeach
                 </tbody>
             </table>
-            <!-- Pagination links -->
-            <div class="mt-0">
-                {{ $designations->links() }}
-            </div>
         </div>
     </div>
     </div>

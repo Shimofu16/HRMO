@@ -110,6 +110,15 @@ class Employee extends Model
         return $this->hasMany(SickLeaveRequest::class);
     }
 
+    /**
+     *  Get the salary grade step associated with the employee.
+     *
+     */
+    public function salaryGradeStep()
+    {
+        return $this->belongsTo(SalaryGradeStep::class, 'salary_grade_step_id');
+    }
+
 
     public function computeAllowance()
     {

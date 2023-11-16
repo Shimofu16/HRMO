@@ -40,7 +40,43 @@
                                         @endforeach
                                     </select>
                                 </div>
+                                <div class="col-span-6 sm:col-span-2">
+                                    <label for="salary_grade_step_id" class="block font-medium text-gray-700">Salary Grade Step</label>
+                                    <select name="salary_grade_step_id" id="salary_grade_step_id" class="block w-full mt-1 form-select"
+                                        required>
 
+                                    </select>
+                                </div>
+                                <script>
+                                    document.getElementById('sgrade_id').addEventListener('change', function() {
+                                        var sgrade_id = this.value;
+                                        var select = document.getElementById('salary_grade_step_id');
+
+
+                                        if (sgrade_id) {
+                                            // Send an AJAX request to fetch allowances based on the selected category
+                                            var xhr = new XMLHttpRequest();
+                                            xhr.open('GET', '/getSteps?sgrade_id=' + sgrade_id, true);
+
+                                            xhr.onload = function() {
+                                                if (xhr.status >= 200 && xhr.status < 400) {
+                                                    // Parse the JSON response
+                                                    var steps = JSON.parse(xhr.responseText);
+
+                                                    // Populate the allowance container with select
+                                                    select.innerHTML = '';
+                                                    select.innerHTML += '<option value="" selected>--Please select here--</option>';
+                                                    steps.forEach(function(step) {
+                                                        select.innerHTML += '<option value="' + step.id + '">' + step.step + '</option>';
+                                                        // console.log(step.id);
+                                                    });
+                                                }
+                                            };
+
+                                            xhr.send();
+                                        }
+                                    });
+                                </script>
 
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="department_id"

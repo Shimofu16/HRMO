@@ -15,11 +15,11 @@
                             <div class="grid grid-cols-6 gap-6">
                                 <div class="col-span-6 sm:col-span-6">
                                     <label for="allowance_name" class="block font-medium text-gray-700">Allowance Name</label>
-                                    <input type="text" name="allowance_name" id="allowance_name" class="form-input mt-1 block w-full" required>
+                                    <input type="text" name="allowance_name" id="allowance_name" class="form-input mt-1 block w-full rounded-md" required>
                                 </div>
                                 <div class="col-span-6 sm:col-span-6">
                                     <label for="allowance_amount" class="block font-medium text-gray-700">Amount</label>
-                                    <input type="text" name="allowance_amount" id="allowance_amount" class="form-input mt-1 block w-full" required>
+                                    <input type="text" name="allowance_amount" id="allowance_amount" class="form-input mt-1 block w-full rounded-md" required>
                                 </div>
                             </div>
                         </div>

@@ -68,7 +68,7 @@
         }
 
         body {
-            font-family: sans-serif !important;
+            /* font-family: sans-serif !important; */
         }
     </style>
 </head>
@@ -77,13 +77,18 @@
     @foreach ($employees as $employee)
         @php
             $mandatoryDeductions = $employee->getDeductionsBy('Mandatory');
-            $nonmandatoryDeductions = $employee->getDeductionsBy('Non-Mandatory');
+            $nonmandatoryDeductions = $employee->getDeductionsBy('Non Mandatory');
             $allowances = $employee->allowances;
-            $salary_grade = $employee->sgrade->sg_amount / 2;
-            $totalDeduction = $employee->computeDeduction();
             $totalAllowance = $employee->computeAllowance();
-            $totalAmountEarned = $salary_grade + $totalAllowance;
-            $netpay = $totalAmountEarned - $totalDeduction;
+            $totalDeduction = $employee->computeDeduction();
+            $salaryGrade = $employee->salaryGradeStep->amount;
+            
+            $dates = explode('-', $payroll['date_from_to']);
+            $from = $dates[0];
+            $to = $dates[1];
+            $amountEarned = $employee->getTotalSalaryBy($payroll['month'], $payroll['year'], $from, $to); // Get the total salary of the employee
+            $totalAmountEarned = $amountEarned + $totalAllowance;
+            $netPay = $totalAmountEarned - $totalDeduction;
             // dd($mandatoryDeductions,$nonmandatoryDeductions,$totalDeduction);
         @endphp
         {{-- page break every 2 payslip per page --}}
@@ -122,7 +127,7 @@
                                     <br>
                                     <span>
                                         <span class="sub-title font-semibold">Amount Earned:</span>
-                                        <span class="fw-400">{{ number_format($salary_grade / 2) }}</span>
+                                        <span class="fw-400">{{ number_format($amountEarned) }}</span>
                                     </span>
                                     <br>
                                     <h6 class="text-center  mb-2 mt-3">ALLOWANCES</h6>
@@ -172,9 +177,12 @@
                                         {{ number_format($totalDeduction) }}
                                     </h6>
                                 </td>
+                            </tr>
+                            <tr>
                                 <td>
                                     <h6 class="mt-3 sub-title">NET PAY: {{ number_format($netpay) }}</h6>
                                 </td>
+
                             </tr>
                         </table>
 

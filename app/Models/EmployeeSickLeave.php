@@ -10,10 +10,11 @@ class EmployeeSickLeave extends Model
     use HasFactory;
     protected $fillable = [
         'employee_id',
-        'sick_leave',
-        'sick_leave_balance',
-        'sick_leave_total',
-        'sick_leave_used',
+        'points',
+    ];
+
+    public $cast = [
+        'points' => 'double',   
     ];
 
     public function employee()

@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Laravel</title>
+    <title>{{ config('app.name') }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -956,10 +956,6 @@
                     <a href="{{ route('login') }}"
                         class="p-6 text-white bg-purple-600 rounded-lg shadow-md hover:bg-purple-800 mt-7 btn-txt">LOGIN</a>
 
-                    @if (Route::has('register'))
-                        <a href="{{ route('register') }}"
-                            class="p-6 ml-4 bg-purple-600 rounded-lg shadow-md ml-4text-white hover:bg-purple-800 mt-7 btn-txt">REGISTER<a>
-                    @endif
                     <a href="{{ route('employee.attendance.index') }}"
                         class="p-6 ml-4 text-white bg-purple-600 rounded-lg shadow-md hover:bg-purple-800 mt-7 btn-txt">Attendance</a>
                 @endauth

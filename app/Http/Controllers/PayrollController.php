@@ -8,6 +8,7 @@ use App\Models\Payroll;
 use App\Models\Department;
 use App\Models\Employee;
 use App\Models\Sgrade;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PayrollController extends Controller
@@ -26,8 +27,13 @@ class PayrollController extends Controller
             }
             $employee_departments = $employee_departments->get();
 
-            // get all the months in attendance
-            $months = Attendance::distinct('month')->get();
+            // get all the months in attendance and sort it
+            // Get all unique months from the created_at column and sort them
+            $months = Attendance::orderBy('created_at')
+                ->distinct('month')
+                ->get();
+
+
             $payrolls = $this->getPayroll($employee_departments, $months);
             // dd($payrolls, $employee_departments, $months);
             $departments = Department::all();
@@ -47,27 +53,47 @@ class PayrollController extends Controller
     {
         $payrolls = [];
         $fromTo = ['1-15', '16-31'];
-        foreach ($departments as $key => $department) {
-            foreach ($months as $key => $month) {
-                foreach ($fromTo as $key => $itemDay) {
-                    $uniqueKey = "{$department->id}_{$month->month}_{$itemDay}";
 
+        foreach ($departments as $department) {
+            foreach ($months as $month) {
+                foreach ($fromTo as $itemDay) {
+                    $day = $month->created_at->day;
 
+                    // Check if the day falls within the specified range
+                    $isInRange = ($itemDay == '1-15' && $day >= 1 && $day <= 15) ||
+                        ($itemDay == '16-31' && $day >= 16 && $day <= 31);
 
-                    if (!isset($payrolls[$uniqueKey])) {
-                        $payrolls[$uniqueKey] = [
-                            'department_id' => $department->id,
-                            'department' => $department->dep_name,
-                            'month' => date('F', strtotime($month->created_at)),
-                            'year' => date('Y'),
-                            'date_from_to' => $itemDay,
-                        ];
+                    if ($isInRange) {
+                        // Create a unique key for the payroll record
+                        $uniqueKey = "{$department->id}_{$month->month}_{$itemDay}";
+
+                        // Only create a new payroll record if it doesn't exist
+                        if (!isset($payrolls[$uniqueKey])) {
+                            $payrolls[$uniqueKey] = [
+                                'department_id' => $department->id,
+                                'department' => $department->dep_name,
+                                'month' => date('F', strtotime($month->created_at)),
+                                'year' => date('Y',strtotime($month->created_at)),
+                                'date_from_to' => $itemDay,
+                            ];
+                        }
                     }
                 }
             }
         }
         return $payrolls;
     }
+
+    // $uniqueKey = "{$department->id}_{$month->month}_{$itemDay}";
+    // if (!isset($payrolls[$uniqueKey])) {
+    //     $payrolls[$uniqueKey] = [
+    //         'department_id' => $department->id,
+    //         'department' => $department->dep_name,
+    //         'month' => date('F', strtotime($month->created_at)),
+    //         'year' => date('Y'),
+    //         'date_from_to' => $itemDay,
+    //     ];
+    // }
 
     public function create()
     {
@@ -116,12 +142,53 @@ class PayrollController extends Controller
         $undertimes = $employee->countAttendance('undertime', $payroll['month'], $payroll['year'], $from, $to);
         $hours = $employee->countAttendance('manhours', $payroll['month'], $payroll['year'], $from, $to);
 
-        $attendances = $employee->attendances;
+        // initialize array of attendance records base on from and to, fill the array if the day of emplyoee atttendance is equal to day in array
+        $attendances = [];
+        $totalManHour = 0;
+        $day = ($from < 10) ? '0' . $from : $from;
+        $loopEnd = ($to == 31) ? $from : $to;
+        for ($i = 1; $i <= $loopEnd; $i++) {
 
+            // get attendance for that day from created_at
+            $attendance = $employee->attendances()->whereDay('created_at', $day)->first();
+            if ($attendance) {
+                $timeIn = Carbon::parse($attendance->time_in);
+                $manhours = $attendance->hours;
+                $timeInInterval = '';
+                $timeOutInterval = Carbon::parse('17:00');
+                if ($timeIn->between(Carbon::parse('6:59'), Carbon::parse('7:11'))) {
+                    $timeInInterval = Carbon::parse('7:00');
+                } elseif ($timeIn->between(Carbon::parse('7:11'), Carbon::parse('7:40'))) {
+                    $timeInInterval = Carbon::parse('7:30');
+                } elseif ($timeIn->between(Carbon::parse('7:41'), Carbon::parse('8:11'))) {
+                    $timeInInterval = Carbon::parse('8:00');
+                }
+
+                $attendances[$i] = [
+                    'day' => $day,
+                    'time_in' => $attendance->time_in,
+                    'time_in_interval' => $timeInInterval,
+                    'time_out' => $attendance->time_out,
+                    'time_out_interval' => $timeOutInterval,
+                    'manhours' => $manhours,
+                ];
+                $totalManHour += $manhours;
+            }else{
+                $attendances[$i] = [
+                    'day' => $day,
+                    'time_in' => '',
+                    'time_in_interval' => '',
+                    'time_out' => '',
+                    'time_out_interval' => '',
+                   'manhours' => '',
+                ];
+            }
+            $day = ($day++ < 10) ? '0' . $day : $day;
+        }
 
 
         // Pass the payroll record to the view
-        return view('payrolls.dtr', compact('employee', 'attendances', 'presents', 'absents', 'lates', 'undertimes','payroll','hours'));
+        return view('payrolls.dtr', compact('employee', 'attendances', 'presents', 'absents', 'lates', 'undertimes', 'payroll', 'totalManHour'));
     }
 
     /**

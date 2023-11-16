@@ -19,8 +19,8 @@
             </div>
 
         </div>
-        <div class="mx-auto max-w-9xl sm:px-6 lg:px-8">
-            <table class="min-w-full bg-white border data-table">
+        <div class="mx-auto bg-white max-w-9xl sm:px-6 lg:p-8">
+            <table class="min-w-full border data-table">
                 <thead>
                     <tr>
                         <th class="px-4 py-2 text-left border-b">#</th>
@@ -48,7 +48,7 @@
                             $from = $dates[0];
                             $to = $dates[1];
                             $totalSalary = $employee->getTotalSalaryBy($payroll['month'], $payroll['year'], $from, $to); // Get the total salary of the employee
-                            $netPay = $totalSalary + $employee->computeAllowance() - $employee->computeDeduction();
+                            $netPay = ($totalSalary + $employee->computeAllowance()) - $employee->computeDeduction();
                             $netPay = $netPay < 0 ? 0 : $netPay;
                             $totalNetPay += $netPay; // Accumulate the net pay value
 
@@ -58,7 +58,7 @@
                             <td class=" p-3">{{ $employee->emp_no }}</td>
                             <td class=" p-3">{{ $employee->name }}</td>
 
-                            <td class=" p-3 ">{{ $employee->sgrade->sg_amount }}</td>
+                            <td class=" p-3 ">{{  number_format($employee->salaryGradeStep->amount, 2) }}</td>
                             <td class=" p-3 ">{{ number_format($totalSalary, 2) }}</td>
                             <td class=" p-3 border-b">
                                 <div class="flex flex-col">
@@ -95,7 +95,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan="11" class="px-4 py-2 font-bold text-right border-t-4 border-black border-double">
+                        <td colspan="11" class="px-4 py-2 font-bold text-end border-t-4 border-black border-double">
                             Total Net Pay: {{ number_format($totalNetPay, 2) }}</td>
                     </tr>
                 </tfoot>

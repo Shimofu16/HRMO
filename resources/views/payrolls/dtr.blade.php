@@ -45,15 +45,6 @@
                 </div>
             </div>
         </a>
-        <a href="#">
-            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    <h2 class="mb-2 text-lg font-semibold text-center">Man hours</h2>
-                    <!-- Card content here -->
-                    <h5 class="text-3xl font-bold text-center">{{ $hours }}</h5>
-                </div>
-            </div>
-        </a>
 
 
     </div>
@@ -72,31 +63,35 @@
             </div>
             <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
-                    <table class="min-w-full bg-white border data-table">
+                    <table class="min-w-full bg-white border">
                         <thead>
                             <tr>
-                                <th class="px-4 py-2 text-left border-b">#</th>
-                                <th class="px-4 py-2 text-left border-b">Date</th>
-                                <th class="px-4 py-2 text-left border-b">Time In</th>
-                                <th class="px-4 py-2 text-left border-b">Status</th>
-                                <th class="px-4 py-2 border-b">Time Out</th>
-                                <th class="px-4 py-2 text-left border-b">Status</th>
+                                <th class="px-4 py-2 text-start border-b">Day</th>
+                                <th class="px-4 py-2 text-start border-b">Time In</th>
+                                <th class="px-4 py-2 text-start border-b">Interval</th>
+                                <th class="px-4 py-2 text-start border-b">Time Out</th>
+                                <th class="px-4 py-2 text-start border-b">Interval</th>
+                                <th class="px-4 py-2 text-start border-b">Man hours</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($attendances as $attendance)
                                 <tr>
-                                    <td class="px-4 py-2 border-b">{{ $loop->iteration }}</td>
-                                    <td class="px-4 py-2 border-b">{{ date('F d,Y', strtotime($attendance->created_at)) }}</td>
-                                    <td class="px-4 py-2 border-b">
-                                        {{ date('h:i:s A', strtotime($attendance->time_in)) }}</td>
-                                        <td class="px-4 py-2 border-b">{{ $attendance->time_in_status }}</td>
-                                    <td class="px-4 py-2 border-b">
-                                        {{ $attendance->time_out ? date('h:i:s A', strtotime($attendance->time_out)) : '' }}
-                                    </td>
-                                    <td class="px-4 py-2 border-b">{{ $attendance->time_out_status }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $attendance['day'] }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $attendance['time_in'] ? date('h:i A',strtotime($attendance['time_in'])) :'' }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $attendance['time_in_interval'] ? date('h:i A',strtotime($attendance['time_in_interval']))  :'' }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $attendance['time_out'] ? date('h:i A',strtotime($attendance['time_out']))  :'' }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $attendance['time_out_interval'] ? date('h:i A',strtotime($attendance['time_out_interval'])) :'' }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $attendance['manhours']  ?? '' }}</td>
                                 </tr>
                             @endforeach
+                            <tr>
+                                <td class="px-4 py-2 border-b text-end" colspan="6">
+                                    <span class="font-bold">
+                                        Total Man Hours:
+                                    </span>
+                                     {{ $totalManHour }}</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
