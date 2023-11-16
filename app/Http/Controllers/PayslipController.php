@@ -14,27 +14,37 @@ class PayslipController extends Controller
         $departments = Department::all();
         return view('payslips.index', compact('departments'));
     }
-    public function show($department_id, $filter)
+    public function show($department_id, $payroll)
     {
         $department = Department::find($department_id);
         $employees = $department->employees;
         // seperate the filter 1-15
-        $filter = explode('-', $filter);
+        $filter = explode('-', $payroll['date_from_to']);
         $from = Carbon::create(date('Y'), date('m'), $filter[0]);
-        $to = Carbon::create(date('Y'), date('m'), $filter[1]);
+        $day = $filter[1];
+        $month =$payroll['month'];
+        $year = $payroll['year'];
+        
+        if (!checkdate($month, $day, $year)) {
+            $day = date('t', mktime(0, 0, 0, $month, 1, $year)); // get last day of the month
+        }
+        
+        $to = Carbon::create($year, $month, $day);
+
         $filter = [
             'from' => date('m/d/Y', strtotime($from)),
             'to' => date('m/d/Y', strtotime($to)),
         ];
 
-
+        $file_name = $department->dep_code.'-Payslip-'.$from->format('m-d-Y').'-'.$to->format('m-d-Y').'.pdf';
         // return view('downloads.payslips', compact('department', 'employees', 'filter'));
         $pdf = PDF::loadView('downloads.payslips', [
             'department'  => $department,
             'employees' => $employees,
             'filter' => $filter,
+            'payroll' => $payroll,
         ]);
 
-        return $pdf->download('payslips.pdf');
+        return $pdf->download($file_name);
     }
 }

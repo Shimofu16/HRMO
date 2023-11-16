@@ -12,8 +12,7 @@ class SgradeController extends Controller
 {
     public function index()
     {
-        $sgrades = Sgrade::orderBy('sg_name', 'asc')
-        ->paginate(10);
+        $sgrades = Sgrade::all();
 
         return view('sgrades.index', compact('sgrades'));
     }
@@ -28,7 +27,6 @@ class SgradeController extends Controller
         $request->validate([
             'sg_code' => 'required',
             'sg_name' => 'required',
-            'sg_amount' => 'required',
         ]);
 
         Sgrade::create($request->all());
@@ -46,7 +44,6 @@ class SgradeController extends Controller
         $request->validate([
             'sg_code' => 'required',
             'sg_name' => 'required',
-            'sg_amount' => 'required',
         ]);
 
         $sgrade->update($request->all());

@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Department;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 
 class DepartmentController extends Controller
 {
     public function index()
     {
-        $departments = Department::orderBy('dep_name', 'asc')
-            ->paginate(10);
+        $departments = Department::orderBy('id', 'asc')->get();
 
 
         return view('departments.index', compact('departments'));
@@ -24,9 +24,15 @@ class DepartmentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'dep_code' => 'required',
             'dep_name' => 'required',
         ]);
+        // get the initials of dep name and make it uppercase, EX name to code: Municipal Agriculture Office - MAO
+        $words = explode(" ", $request->dep_name);
+        $code = "";
+        foreach ($words as $w) {
+            $code .= Str::upper($w[0]);
+        }
+        $request->merge(['dep_code' => $code]);
 
         Department::create($request->all());
 

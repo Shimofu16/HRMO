@@ -80,8 +80,8 @@
 
 
     <div class="py-6">
-        <div class="mx-auto max-w-9xl sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between">
+        <div class="mx-auto bg-white max-w-9xl sm:p-6 lg:p-8">
+            <div class="flex items-center justify-between mb-3">
                 <div class="buttons">
                     <a href="{{ route('employees.create') }}"
                         class="'inline-flex items-center px-4 py-2 bg-purple-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-purple-700 focus:bg-gray-700 active:bg-purple-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">Add
@@ -142,11 +142,9 @@
                 </div>
             </div>
 
-            <div class="mb-4">
 
-            </div>
 
-            <table class="min-w-full bg-white border data-table">
+            <table class="min-w-full border data-table">
                 <thead>
                     <tr>
                         <th class="px-4 py-4 text-left border-b">#</th>
@@ -156,7 +154,7 @@
                         <th class="px-4 py-4 text-left border-b">Department</th>
                         <th class="px-4 py-4 text-left border-b">Designation</th>
                         <th class="px-4 py-4 text-left border-b">Category</th>
-                        <th class="px-4 py-4 text-left border-b">Salary<br>Grade</th>
+                        <th class="px-4 py-4 text-left border-b">Salary Grade</th>
                         <th class="px-4 py-4 text-left border-b">Allowance</th>
                         <th class="px-4 py-4 text-left border-b">Deduction</th>
                         <th class="px-4 py-4 text-left border-b">Sick Leave</th>
@@ -195,7 +193,7 @@
 
                             </td>
                             <td class="px-4 py-3 border-b">
-                                {{ number_format($employee->sickLeave->sick_leave) }} pts
+                                {{ number_format($employee->sickLeave->points) }} pts
                             </td>
                             <td class="px-4 py-3 border-b">
 

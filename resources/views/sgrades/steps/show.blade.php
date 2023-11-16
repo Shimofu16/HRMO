@@ -31,7 +31,7 @@
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="amount" class="block font-medium text-gray-700">Amount</label>
                                     <input type="number" name="amount[1]" id="amount"
-                                        class="form-input mt-1 block w-full" required>
+                                        class="form-input mt-1 block w-full rounded-md" required>
                                 </div>
                             </div>
                         </div>
@@ -47,7 +47,7 @@
     </div>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-white py-3 shadow overflow-hidden sm:rounded-md">
+        <div class="max-w-7xl bg-white mx-auto sm:p-6 lg:p-8  ">
             <table class="min-w-full  border data-table">
                 <thead>
                     <tr>
@@ -86,7 +86,7 @@
             var row = `   <div class="grid grid-cols-6 gap-6 mb-3 row" id="row${rowCount}">
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="step" class="block font-medium text-gray-700">Step</label>
-                                    <input type="text" 
+                                    <input type="text"
                                         class="form-input mt-1 block w-full " value="Step ${rowCount}" disabled>
                                     <input type="text" name="step[${rowCount}]" id="step"
                                         class="form-input mt-1 block w-full hidden" value="Step ${rowCount}">
@@ -94,7 +94,7 @@
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="amount" class="block font-medium text-gray-700">Amount</label>
                                     <input type="number" name="amount[${rowCount}]" id="amount"
-                                        class="form-input mt-1 block w-full" required>
+                                        class="form-input mt-1 block w-full rounded-md" required>
                                 </div>
                                 <div class="col-span">
                                     <button class="ml-3 inline-flex items-center px-4 py-2 bg-purple-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-purple-700 focus:bg-gray-700 active:bg-purple-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150" type="button" onclick="removeRow(${rowCount})">
@@ -119,11 +119,11 @@
             var amount = $('#edit' + id).text();
             console.log(amount);
 
-            var form = `<form action="/salary-grade/steps/update/${id}" method="POST"> 
-            @csrf 
-            @method('PUT') 
-            <input type="number" name="amount" value="${amount}" class="form-input mt-1 block w-full"> 
-            <button type="submit" class="text-blue-500 hover:text-blue-700">Save</button> 
+            var form = `<form action="/salary-grade/steps/update/${id}" method="POST">
+            @csrf
+            @method('PUT')
+            <input type="number" name="amount" value="${amount}" class="form-input mt-1 block w-full rounded-md">
+            <button type="submit" class="text-blue-500 hover:text-blue-700">Save</button>
         </form>`;
 
             $('#edit' + id).html(form);

@@ -15,11 +15,11 @@
                             <div class="grid grid-cols-6 gap-6">
                                 <div class="col-span-6 sm:col-span-6">
                                     <label for="deduction_name" class="block font-medium text-gray-700">Deduction Name</label>
-                                    <input type="text" name="deduction_name" id="deduction_name" class="form-input mt-1 block w-full" required>
+                                    <input type="text" name="deduction_name" id="deduction_name" class="form-input mt-1 block w-full rounded-md" required>
                                 </div>
                                 <div class="col-span-6 sm:col-span-6">
                                     <label for="deduction_amount" class="block font-medium text-gray-700">Amount</label>
-                                    <input type="number" name="deduction_amount" id="deduction_amount" class="form-input mt-1 block w-full" required>
+                                    <input type="number" name="deduction_amount" id="deduction_amount" class="form-input mt-1 block w-full rounded-md" required>
                                 </div>
                                 <div class="col-span-6 sm:col-span-6">
                                     <label for="deduction_range" class="block font-medium text-gray-700">Range</label>

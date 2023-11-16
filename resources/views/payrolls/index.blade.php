@@ -41,9 +41,8 @@
             </div>
         </div>
 
-
-        <div class="mx-auto max-w-9xl sm:px-6 lg:px-8">
-            <table class="min-w-full bg-white border data-table">
+        <div class="mx-auto bg-white max-w-9xl sm:px-6 lg:p-8">
+            <table class="min-w-full border data-table">
                 <thead>
                     <tr>
                         <th class="px-4 py-2 text-left border-b">#</th>
@@ -70,7 +69,7 @@
                                     class="text-green-500 hover:text-green-700 mr-3">View</a>
                                 <a href="{{ route('payslips.show', [
                                     'department_id' => $payroll['department_id'],
-                                    'filter' => $payroll['date_from_to'],
+                                    'payroll' => $payroll,
                                 ]) }}"
                                     class="text-blue-500 hover:text-blue-700">Generate Payslip</a>
 

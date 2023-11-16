@@ -16,17 +16,12 @@
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="sg_code" class="block font-medium text-gray-700">Code</label>
                                     <input type="text" name="sg_code" id="sg_code"
-                                        class="form-input mt-1 block w-full" required>
+                                        class="form-input mt-1 block w-full rounded-md" required>
                                 </div>
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="sg_name" class="block font-medium text-gray-700">Name</label>
                                     <input type="text" name="sg_name" id="sg_name"
-                                        class="form-input mt-1 block w-full" required>
-                                </div>
-                                <div class="col-span-6 sm:col-span-2">
-                                    <label for="sg_amount" class="block font-medium text-gray-700">Amount</label>
-                                    <input type="text" name="sg_amount" id="sg_amount"
-                                        class="form-input mt-1 block w-full" required>
+                                        class="form-input mt-1 block w-full rounded-md" required>
                                 </div>
                             </div>
                         </div>
@@ -44,14 +39,13 @@
     </div>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-white py-3 shadow overflow-hidden sm:rounded-md">
+        <div class="max-w-7xl bg-white mx-auto sm:p-6 lg:p-8 ">
             <table class="min-w-full  border data-table">
                 <thead>
                     <tr>
                         <th class="border-b px-4 py-2 text-left">#</th>
                         <th class="border-b px-4 py-2 text-left">Code</th>
                         <th class="border-b px-4 py-2 text-left">Name</th>
-                        <th class="border-b px-4 py-2 text-left">Amount</th>
                         <th class="border-b px-4 py-2">Actions</th>
                     </tr>
                 </thead>
@@ -61,12 +55,11 @@
                             <td class="border-b px-4 py-2">{{ $loop->iteration }}</td>
                             <td class="border-b px-4 py-2">{{ $sgrade->sg_code }}</td>
                             <td class="border-b px-4 py-2">{{ $sgrade->sg_name }}</td>
-                            <td class="border-b px-4 py-2">{{ $sgrade->sg_amount }}</td>
                             <td class="border-b px-4 py-2">
                                 <a href="{{ route('sgrades.edit', $sgrade) }}"
                                     class="text-blue-500 hover:text-blue-700">Edit</a>
                                 <a href="{{ route('salary.grade.show', $sgrade->id) }}"
-                                    class="text-blue-500 hover:text-blue-700">View</a>
+                                    class="text-teal-500 hover:text-teal-700">View</a>
                                 <form class="inline-block" action="{{ route('sgrades.destroy', $sgrade) }}"
                                     method="POST">
                                     @csrf

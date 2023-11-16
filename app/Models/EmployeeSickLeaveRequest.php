@@ -10,9 +10,10 @@ class EmployeeSickLeaveRequest extends Model
     use HasFactory;
     protected $fillable = [
         'employee_id',
-        'sick_leave_date',
-        'sick_leave_reason',
-        'sick_leave_status',
+        'date',
+        'type',
+        'reason',
+        'status',
     ];
 
     public function employee()

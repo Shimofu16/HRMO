@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('sg_code');
             $table->string('sg_name');
-            $table->decimal('sg_amount', 8, 2);
             $table->timestamps();
         });
     }

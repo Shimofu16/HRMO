@@ -14,7 +14,7 @@ class CheckAttendance extends Command
      *
      * @var string
      */
-    protected $signature = 'app:attendance';
+    protected $signature = 'attendance:check';
 
     /**
      * The console command description.

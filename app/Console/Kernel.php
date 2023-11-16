@@ -2,8 +2,11 @@
 
 namespace App\Console;
 
+use App\Models\Backup;
+use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Storage;
 
 class Kernel extends ConsoleKernel
 {
@@ -14,8 +17,15 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         // run schedule every day at 7pm
-        $schedule->command('app:attendance')->dailyAt('19:00');
+        $schedule->command('attendance:check')->dailyAt('19:00');
+        // run schedule every day at 1am
+        $schedule->command('backup:clean')->daily()->at('01:00');
+        // $schedule->command('backup:run --only-db --filename=HRMO-DB-BACKUP-' . Carbon::now()->format('Y-m-d') . '.zip')->everyMinute();
+        // you can comment the command bellow and uncomment the one above to run the backup every minute
+        $schedule->command('backup:run --only-db --filename=HRMO-DB-BACKUP-' . Carbon::now()->format('Y-m-d') . '.zip')->daily()->at('01:00');
 
+        // run schedule every month
+        $schedule->command('employee:slp')->monthly();
     }
 
     /**
@@ -23,7 +33,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands(): void
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

@@ -107,7 +107,7 @@
 
                                     7:41am - 8:10am = 8:00am,
                                     --}}
-                                    @php
+                                @php
                                     $timeIn = \Carbon\Carbon::parse($attendance->time_in);
                                 @endphp
 
@@ -127,7 +127,7 @@
                                 @if ($attendance->time_in_status == 'Late')
                                     @php
                                         $timeIn = \Carbon\Carbon::parse($attendance->time_in);
-                                        $now = \Carbon\Carbon::now('Asia/Manila');
+                                        $now = \Carbon\Carbon::parse('08:00:00');
                                         $late = $now->diffInMinutes($timeIn);
                                     @endphp
                                     @if ($late >= 60)

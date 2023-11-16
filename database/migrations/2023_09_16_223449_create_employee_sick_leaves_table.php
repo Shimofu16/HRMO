@@ -14,10 +14,7 @@ return new class extends Migration
         Schema::create('employee_sick_leaves', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('employee_id');
-            $table->double('sick_leave');
-            $table->double('sick_leave_balance')->default(1.25);
-            $table->double('sick_leave_total')->default(1.25);
-            $table->double('sick_leave_used')->default(0);
+            $table->double('points');
             $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
             $table->timestamps();
             

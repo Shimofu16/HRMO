@@ -15,11 +15,11 @@
                             <div class="grid grid-cols-6 gap-6">
                                 <div class="col-span-6 sm:col-span-3">
                                     <label for="category_code" class="block font-medium text-gray-700">Category Code</label>
-                                    <input type="text" name="category_code" id="category_code" class="form-input mt-1 block w-full" required>
+                                    <input type="text" name="category_code" id="category_code" class="form-input mt-1 block w-full rounded-md" required>
                                 </div>
                                 <div class="col-span-6 sm:col-span-3">
                                     <label for="category_name" class="block font-medium text-gray-700">Category Name</label>
-                                    <input type="text" name="category_name" id="category_name" class="form-input mt-1 block w-full" required>
+                                    <input type="text" name="category_name" id="category_name" class="form-input mt-1 block w-full rounded-md" required>
                                 </div>
                             </div>
                         </div>
@@ -37,8 +37,8 @@
     </div>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-           <table class="min-w-full border bg-white">
+        <div class="max-w-7xl bg-white mx-auto sm:p-6 lg:p-8">
+            <table class="min-w-full  border data-table">
                 <thead>
                     <tr>
                         <th class="border-b px-4 py-2 text-left">#</th>
