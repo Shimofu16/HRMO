@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmployeeController;
@@ -213,6 +214,9 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/update/{salary_grade_id}', 'update')->name('update');
         Route::delete('/destroy/{salary_grade_id}', 'destroy')->name('destroy');
     });
+
+    // Activity Log
+    Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
 });
 Route::prefix('employee/attendance')->name('employee.attendance.')->controller(EmployeeAttendanceController::class)->group(function () {
     Route::get('',  'index')->name('index');

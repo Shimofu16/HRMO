@@ -10,7 +10,7 @@ class DesignationController extends Controller
     public function index()
     {
         $designations = Designation::orderBy('designation_name', 'asc')
-            ->paginate(10);
+            ->get();
 
         return view('designations.index', compact('designations'));
     }
@@ -29,6 +29,8 @@ class DesignationController extends Controller
 
         Designation::create($request->all());
 
+        createActivity('Create Designation', 'Designation '.$request->designation_name.' created successfully.', request()->getClientIp(true));
+
         return redirect()->route('designations.index')->with('success', 'Designation created successfully.');
     }
 
@@ -45,6 +47,8 @@ class DesignationController extends Controller
         ]);
 
         $designation->update($request->all());
+
+        createActivity('Update Designation', 'Designation '.$request->designation_name.' updated successfully.', request()->getClientIp(true), $designation, $request);;
 
         return redirect()->route('designations.index')->with('success', 'Designation updated successfully.');
     }

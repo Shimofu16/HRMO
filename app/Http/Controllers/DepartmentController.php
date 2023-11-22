@@ -26,15 +26,12 @@ class DepartmentController extends Controller
         $request->validate([
             'dep_name' => 'required',
         ]);
-        // get the initials of dep name and make it uppercase, EX name to code: Municipal Agriculture Office - MAO
-        $words = explode(" ", $request->dep_name);
-        $code = "";
-        foreach ($words as $w) {
-            $code .= Str::upper($w[0]);
-        }
-        $request->merge(['dep_code' => $code]);
+
+        $request->merge(['dep_code' => toCode($request->dep_name)]);
 
         Department::create($request->all());
+
+        createActivity('Create Department', 'Department '.$request->dep_name.' created successfully.', request()->getClientIp(true));
 
         return redirect()->route('departments.index')->with('success', 'Department created successfully.');
     }
@@ -53,11 +50,15 @@ class DepartmentController extends Controller
 
         $department->update($request->all());
 
+        createActivity('Update Department', 'Department '.$department->dep_name.' updated successfully.', request()->getClientIp(true), $department, $request);
+
         return redirect()->route('departments.index')->with('success', 'Department updated successfully.');
     }
 
     public function destroy(Department $department)
     {
+        createActivity('Delete Department', 'Department '.$department->dep_name.' deleted successfully.', request()->getClientIp(true));
+
         $department->delete();
 
         return redirect()->route('departments.index')->with('success', 'Department deleted successfully.');

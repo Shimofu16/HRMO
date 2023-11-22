@@ -42,6 +42,12 @@
                                 </select>
                             </div>
                             <div class="col-span-6 sm:col-span-2">
+                                <label for="sick_leave" class="block font-medium text-gray-700">Sick Leave</label>
+                                <input type="number" step="0.01" name="sick_leave" id="sick_leave"
+                                    class="block w-full mt-1 form-input" required
+                                    value="{{ $employee->sickLeave->points }}">
+                            </div>
+                            <div class="col-span-6 sm:col-span-2">
                                 <label for="designation_id"
                                     class="block mb-2 font-bold text-gray-700">Designation</label>
                                 <select name="designation_id" id="designation_id" class="form-select mt-1 block w-full"
@@ -93,7 +99,7 @@
                                 document.getElementById('sgrade_id').addEventListener('change', function() {
                                     var sgrade_id = this.value;
                                     var select = document.getElementById('salary_grade_step_id');
-                                     var employeeSalaryGradeStepId = {!! json_encode($employee->salary_grade_step_id)!!};
+                                    var employeeSalaryGradeStepId = {!! json_encode($employee->salary_grade_step_id) !!};
                                     console.log(employeeSalaryGradeStepId);
                                     if (sgrade_id) {
                                         // Send an AJAX request to fetch steps based on the selected salary grade

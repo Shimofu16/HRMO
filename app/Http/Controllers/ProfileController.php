@@ -34,6 +34,8 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
+        createActivity('Update Profile', 'Profile updated successfully.', request()->getClientIp(true));
+
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 

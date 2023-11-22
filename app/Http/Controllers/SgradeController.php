@@ -31,6 +31,8 @@ class SgradeController extends Controller
 
         Sgrade::create($request->all());
 
+        createActivity('Create Salary Grade', 'Salary grade '. $request->sg_name. ' created successfully');
+
         return redirect()->route('sgrades.index')->with('success', 'Salary Grade created successfully.');
     }
 

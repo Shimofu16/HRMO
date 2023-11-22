@@ -25,7 +25,7 @@
                                 </div>
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="allowance_amount" class="block font-medium text-gray-700">Amount</label>
-                                    <input type="text" name="allowance_amount" id="allowance_amount"
+                                    <input type="number" name="allowance_amount" id="allowance_amount"
                                         class="form-input mt-1 block w-full rounded-md" required>
                                 </div>
                             </div>

@@ -12,7 +12,7 @@ class AllowanceController extends Controller
     {
         $allowances = Allowance::all();
         $categories = Category::all();
-        return view('allowances.index', compact('allowances','categories'));
+        return view('allowances.index', compact('allowances', 'categories'));
     }
 
     public function create()
@@ -32,12 +32,14 @@ class AllowanceController extends Controller
 
         Allowance::create($request->all());
 
+        createActivity('Create Allowance', 'Allowance ' . $request->allowance_name . ' created successfully.', request()->getClientIp(true));
         return redirect()->route('allowances.index')->with('success', 'Allowance created successfully.');
     }
 
     public function edit(Allowance $allowance)
     {
-        return view('allowances.edit', compact('allowance'));
+        $categories = Category::all();
+        return view('allowances.edit', compact('allowance', 'categories'));
     }
 
     public function update(Request $request, Allowance $allowance)
@@ -46,15 +48,20 @@ class AllowanceController extends Controller
             'allowance_code' => 'required',
             'allowance_name' => 'required',
             'allowance_amount' => 'required',
+            'allowance_range' => 'required',
+            'category_id' => 'required',
         ]);
 
         $allowance->update($request->all());
+
+        createActivity('Update Allowance', 'Allowance ' . $allowance->allowance_name . ' updated successfully.', request()->getClientIp(true), $allowance, $request);
 
         return redirect()->route('allowances.index')->with('success', 'Allowance updated successfully.');
     }
 
     public function destroy(Allowance $allowance)
     {
+        createActivity('Delete Allowance', 'Allowance' . $allowance->allowance_code . ' deleted successfully.', request()->ip());
         $allowance->delete();
 
         return redirect()->route('allowances.index')->with('success', 'Allowance deleted successfully.');

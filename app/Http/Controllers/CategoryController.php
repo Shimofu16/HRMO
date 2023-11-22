@@ -28,6 +28,8 @@ class CategoryController extends Controller
 
         Category::create($request->all());
 
+        createActivity('Create Category', 'Category '.$request->category_name.' created successfully.', request()->getClientIp(true));
+
         return redirect()->route('categories.index')->with('success', 'Category created successfully.');
     }
 
@@ -45,13 +47,16 @@ class CategoryController extends Controller
 
         $category->update($request->all());
 
+        createActivity('Update Category', 'Category '.$category->category_name.' updated successfully.', request()->getClientIp(true), $category, $request);
+
         return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
     }
 
     public function destroy(Category $category)
     {
-        $category->delete();
 
+        createActivity('Delete Category', 'Category '.$category->category_name.' deleted successfully.', request()->getClientIp(true));
+        $category->delete();
         return redirect()->route('categories.index')->with('success', 'Category deleted successfully.');
     }
 }

@@ -31,6 +31,8 @@ class DeductionController extends Controller
 
         Deduction::create($request->all());
 
+        createActivity('Create Deduction', 'Deduction ' . $request->deduction_name . 'created successfully.', request()->getClientIp(true));
+
         return redirect()->route('deductions.index')->with('success', 'Deduction created successfully.');
     }
 
@@ -49,11 +51,15 @@ class DeductionController extends Controller
 
         $deduction->update($request->all());
 
+        createActivity('Update Deduction', 'Deduction '. $request->deduction_name.'updated successfully.', request()->getClientIp(true), $deduction, $request);
+
         return redirect()->route('deductions.index')->with('success', 'Deduction updated successfully.');
     }
 
     public function destroy(Deduction $deduction)
     {
+
+        createActivity('Delete Deduction', 'Deduction '. $deduction->deduction_name.'deleted successfully.', request()->getClientIp(true));
         $deduction->delete();
 
         return redirect()->route('deductions.index')->with('success', 'Deduction deleted successfully.');

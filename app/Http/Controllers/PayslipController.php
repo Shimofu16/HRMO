@@ -36,6 +36,8 @@ class PayslipController extends Controller
             'to' => date('m/d/Y', strtotime($to)),
         ];
 
+        createActivity('Create Payslip', 'Generate Payslip for '. $department->dep_code, request()->getClientIp(true));
+
         $file_name = $department->dep_code.'-Payslip-'.$from->format('m-d-Y').'-'.$to->format('m-d-Y').'.pdf';
         // return view('downloads.payslips', compact('department', 'employees', 'filter'));
         $pdf = PDF::loadView('downloads.payslips', [

@@ -130,6 +130,7 @@ class EmployeeController extends Controller
             'points' => ($sick_leave) ? $sick_leave : 1.25,
         ]);
 
+        createActivity('Create Employee', 'Employee '. $request->name.' was created.', request()->getClientIp(true));
         // Redirect to the index page with a success message
         return redirect()->route('employees.index')->with('success', 'Employee created successfully.');
         // } catch (\Throwable $th) {
@@ -201,6 +202,9 @@ class EmployeeController extends Controller
             ]);
         }
 
+        $employee->sickLeave()->update(['points' => $request->sick_leave]);
+
+        createActivity('Update Employee', 'Employee '. $request->name.' was updated.', request()->getClientIp(true)); 
 
         return redirect()->route('employees.index')
             ->with('success', 'Employee updated successfully.');
