@@ -15,7 +15,7 @@
                             <div class="grid grid-cols-6 gap-6">
                                 <div class="col-span-6 sm:col-span-6">
                                     <label for="dep_name" class="block font-medium text-gray-700">Department Name</label>
-                                    <input type="text" name="dep_name" id="dep_name" class="form-input mt-1 block w-full rounded-md" required>
+                                    <input type="text" name="dep_name" id="dep_name" class="block w-full mt-1 rounded" required>
                                 </div>
                             </div>
                         </div>

@@ -17,7 +17,7 @@
                                     <label for="dep_name" class="block font-medium text-gray-700">Department
                                         Name</label>
                                     <input type="text" name="dep_name" id="dep_name"
-                                        class="form-input mt-1 block w-full text-xl" required>
+                                        class="block w-full mt-1 rounded" required>
                                 </div>
                             </div>
                         </div>

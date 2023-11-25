@@ -9,15 +9,15 @@
                             <div class="grid grid-cols-6 gap-6">
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="sched_name" class="block font-medium text-gray-700">Schedule Name</label>
-                                    <input type="text" name="sched_name" id="sched_name" class="block w-full mt-1 form-input" required>
+                                    <input type="text" name="sched_name" id="sched_name" class="block w-full mt-1 rounded form-input" required>
                                 </div>
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="start_time" class="block font-medium text-gray-700">Start Time</label>
-                                    <input type="time" name="start_time" id="start_time" class="block w-full mt-1 form-input" required>
+                                    <input type="time" name="start_time" id="start_time" class="block w-full mt-1 rounded form-input" required>
                                 </div>
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="end_time" class="block font-medium text-gray-700">End Time</label>
-                                    <input type="time" name="end_time" id="end_time" class="block w-full mt-1 form-input" required>
+                                    <input type="time" name="end_time" id="end_time" class="block w-full mt-1 rounded form-input" required>
                                 </div>
                             </div>
                         </div>

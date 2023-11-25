@@ -31,7 +31,7 @@
                 <div class="mb-4 text-sm text-gray-600">
                     {{ __('*This is to confirm your identification.') }}
                 </div>
-            <input type="password" name="adminCode" id="adminCode" class="form-input mt-1 block w-full rounded-md">
+            <input type="password" name="adminCode" id="adminCode" class="block w-full mt-1 rounded">
         </div>
 
         <script>

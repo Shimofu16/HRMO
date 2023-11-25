@@ -27,7 +27,7 @@
                                 <label for="employee_no" class="block font-medium text-gray-700">Employee
                                     Name/Number</label>
                                 <input list="employees" type="text" name="employee_no" id="employee_no"
-                                    class="block w-full mt-1 rounded-md shadow-sm form-input" autofocus required>
+                                    class="block w-full mt-1 rounded shadow-sm form-input" autofocus required>
                                 <datalist id="employees">
                                     @foreach ($employees as $employee)
                                         <option value="{{ $employee->emp_no }}">
@@ -41,7 +41,7 @@
                             <div class="col-span-6 sm:col-span-6">
                                {{-- generate a select for time in and time out --}}
                                 <label for="type" class="block font-medium text-gray-700">Type</label>
-                                <select name="type" id="type" class="block w-full mt-1 rounded-md shadow-sm form-input"
+                                <select name="type" id="type" class="block w-full mt-1 rounded shadow-sm form-input"
                                     required>
                                     <option value="1">Time In</option>
                                     <option value="0">Time Out</option>

@@ -16,12 +16,12 @@
                             <div class="col-span-6 sm:col-span-4">
                                 <label for="dep_code" class="block mb-2 font-bold text-gray-700">Department Code</label>
                                 <input type="text" name="dep_code" id="dep_code" value="{{ $department->dep_code }}"
-                                    class="block w-full p-2 border rounded" required>
+                                    class="block w-full mt-1 rounded" required>
                             </div>
                             <div class="col-span-6 sm:col-span-4">
                                 <label for="dep_name" class="block mb-2 font-bold text-gray-700">Department Name</label>
                                 <input type="text" name="dep_name" id="dep_name" value="{{ $department->dep_name }}"
-                                    class="block w-full p-2 border rounded" required>
+                                    class="block w-full mt-1 rounded" required>
                             </div>
                         </div>
                         <div class="flex items-center justify-end mt-6">

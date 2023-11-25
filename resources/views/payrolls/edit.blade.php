@@ -16,22 +16,22 @@
                             <div class="grid grid-cols-6 gap-6">
                                 <div class="col-span-6 sm:col-span-6">
                                     <label for="ref_number" class="block font-medium text-gray-700">Reference Number</label>
-                                    <input type="text" name="ref_number" id="ref_number" class="form-input mt-1 block w-full rounded-md" value="{{ $payroll->ref_number }}" required>
+                                    <input type="text" name="ref_number" id="ref_number" class="block w-full mt-1 rounded" value="{{ $payroll->ref_number }}" required>
                                 </div>
 
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="date_from" class="block font-medium text-gray-700">Date From</label>
-                                    <input type="date" name="date_from" id="date_from" class="form-input mt-1 block w-full rounded-md" value="{{ $payroll->date_from }}" required>
+                                    <input type="date" name="date_from" id="date_from" class="block w-full mt-1 rounded" value="{{ $payroll->date_from }}" required>
                                 </div>
 
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="date_to" class="block font-medium text-gray-700">Date To</label>
-                                    <input type="date" name="date_to" id="date_to" class="form-input mt-1 block w-full rounded-md" value="{{ $payroll->date_to }}" required>
+                                    <input type="date" name="date_to" id="date_to" class="block w-full mt-1 rounded" value="{{ $payroll->date_to }}" required>
                                 </div>
 
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="status" class="block font-medium text-gray-700">Status</label>
-                                    <input type="text" name="status" id="status" class="form-input mt-1 block w-full rounded-md" value="{{ $payroll->status }}" required>
+                                    <input type="text" name="status" id="status" class="block w-full mt-1 rounded" value="{{ $payroll->status }}" required>
                                 </div>
                             </div>
                         </div>

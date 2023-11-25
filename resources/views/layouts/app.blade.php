@@ -14,9 +14,11 @@
     <link rel="stylesheet" href="{{ asset('assets/apexcharts/apexcharts.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/datatables/dataTables.tailwindcss.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/jquery/jquery.dataTables.min.css') }}">
+    
+    @stack('styles')
+    @livewireStyles
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @livewireStyles
 </head>
 
 <body class="font-sans antialiased">
@@ -43,6 +45,8 @@
 <script src="{{ asset('assets/apexcharts/apexcharts.min.js') }}"></script>
 <script src="{{ asset('assets/jquery/jquery.min.js') }}"></script>
 <script src="{{ asset('assets/datatables/jquery.datatables.min.js') }}"></script>
+@livewireScripts
+@stack('scripts')
 <script>
     $(document).ready(function() {
         const dataTableOptions = {
@@ -56,9 +60,5 @@
         $('.data-table').DataTable(dataTableOptions);
     });
 </script>
-
-
-@livewireScripts
-@yield('scripts')
 
 </html>

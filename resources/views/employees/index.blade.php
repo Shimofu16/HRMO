@@ -67,15 +67,15 @@
             </div>
         </a>
 
-        {{-- <!-- Schedule List Card -->
-        <a href="{{ route('schedules-index.employees') }}">
+        <!-- Loans List Card -->
+        <a href="{{ route('loans.index') }}">
             <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
-                    <h2 class="mb-2 text-lg font-semibold text-center">Schedule List</h2>
+                    <h2 class="mb-2 text-lg font-semibold text-center">Loan List</h2>
                     <!-- Card content here -->
                 </div>
             </div>
-        </a> --}}
+        </a>
     </div>
 
 

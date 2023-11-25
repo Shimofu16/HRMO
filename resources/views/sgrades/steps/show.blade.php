@@ -31,7 +31,7 @@
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="amount" class="block font-medium text-gray-700">Amount</label>
                                     <input type="number" name="amount[1]" id="amount"
-                                        class="form-input mt-1 block w-full rounded-md" required>
+                                        class="block w-full mt-1 rounded" required>
                                 </div>
                             </div>
                         </div>
@@ -94,7 +94,7 @@
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="amount" class="block font-medium text-gray-700">Amount</label>
                                     <input type="number" name="amount[${rowCount}]" id="amount"
-                                        class="form-input mt-1 block w-full rounded-md" required>
+                                        class="block w-full mt-1 rounded" required>
                                 </div>
                                 <div class="col-span">
                                     <button class="ml-3 inline-flex items-center px-4 py-2 bg-purple-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-purple-700 focus:bg-gray-700 active:bg-purple-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150" type="button" onclick="removeRow(${rowCount})">
@@ -122,7 +122,7 @@
             var form = `<form action="/salary-grade/steps/update/${id}" method="POST">
             @csrf
             @method('PUT')
-            <input type="number" name="amount" value="${amount}" class="form-input mt-1 block w-full rounded-md">
+            <input type="number" name="amount" value="${amount}" class="block w-full mt-1 rounded">
             <button type="submit" class="text-blue-500 hover:text-blue-700">Save</button>
         </form>`;
 

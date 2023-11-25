@@ -16,24 +16,24 @@
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="deduction_code" class="block font-medium text-gray-700">Code</label>
                                     <input type="text" name="deduction_code" id="deduction_code"
-                                        class="form-input mt-1 block w-full rounded-md" required>
+                                        class="block w-full mt-1 rounded" required>
                                 </div>
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="deduction_name" class="block font-medium text-gray-700">Name</label>
                                     <input type="text" name="deduction_name" id="deduction_name"
-                                        class="form-input mt-1 block w-full rounded-md" required>
+                                        class="block w-full mt-1 rounded" required>
                                 </div>
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="deduction_amount" class="block font-medium text-gray-700">Amount</label>
                                     <input type="number" name="deduction_amount" id="deduction_amount"
-                                        class="form-input mt-1 block w-full rounded-md" required>
+                                        class="block w-full mt-1 rounded" required>
                                 </div>
                             </div>
                             <div class="grid grid-cols-6 gap-6">
                                 <div class="col-span-3 sm:col-span-3">
                                     <label for="deduction_range" class="block font-medium text-gray-700">Range</label>
                                     <select name="deduction_range" id="deduction_range"
-                                        class="block w-full mt-1 form-select" required>
+                                        class="block w-full mt-1 rounded form-select" required>
                                         <option value="" disabled selected>--Please select here--</option>
                                         <option value="1-15">1-15</option>
                                         <option value="16-30">16-30</option>
@@ -42,7 +42,7 @@
                                 <div class="col-span-3 sm:col-span-3">
                                     <label for="deduction_type" class="block font-medium text-gray-700">Type</label>
                                     <select name="deduction_type" id="deduction_type"
-                                        class="block w-full mt-1 form-select" required>
+                                        class="block w-full mt-1 rounded form-select" required>
                                         <option value="" disabled selected>--Please select here--</option>
                                         <option value="Mandatory">Mandatory</option>
                                         <option value="Non-Mandatory">Non-Mandatory</option>

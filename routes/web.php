@@ -15,10 +15,12 @@ use App\Http\Controllers\BackupController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeductionController;
 use App\Http\Controllers\EmployeeAttendanceController;
+use App\Http\Controllers\EmployeeLoansController;
 use App\Http\Controllers\PayslipController;
 use App\Http\Controllers\SalaryGradeStepController;
 use App\Http\Controllers\ScheduleController;
 use App\Models\Allowance;
+use App\Models\Loan;
 use App\Models\SalaryGradeStep;
 use Illuminate\Http\Request;
 
@@ -143,7 +145,6 @@ Route::middleware(['auth'])->group(function () {
         'index' => 'payslips.index',
         'create' => 'payslips.create',
         'store' => 'payslips.store',
-        'show' => 'payslips.show',
         'edit' => 'payslips.edit',
         'update' => 'payslips.update',
         'destroy' => 'payslips.destroy',
@@ -162,6 +163,15 @@ Route::middleware(['auth'])->group(function () {
 
 
 
+    Route::resource('loans', EmployeeLoansController::class)->names([
+        'index' => 'loans.index',
+        'create' => 'loans.create',
+        'store' => 'loans.store',
+        'show' => 'loans.show',
+        'edit' => 'loans.edit',
+        'update' => 'loans.update',
+        'destroy' => 'loans.destroy',
+    ]);
 
     Route::get('/payrolls/{payroll}/slip', 'PayrollController@slip')->name('payrolls.slip');
     Route::prefix('backups')->name('backup.')->controller(BackupController::class)->group(function () {
@@ -235,6 +245,12 @@ Route::get('/getSteps', function (Request $request) {
     $steps = SalaryGradeStep::where('salary_grade_id', $sgrade_id)->get();
 
     return response()->json($steps);
+});
+Route::get('/getLoan', function (Request $request) {
+    $loan_ids = $request->input('loan_id');
+    $loans = Loan::whereIn('id', $loan_ids)->get();
+
+    return response()->json($loans);
 });
 
 

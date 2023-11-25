@@ -15,15 +15,15 @@
                             <div class="grid grid-cols-6 gap-6">
                                 <div class="col-span-6 sm:col-span-6">
                                     <label for="deduction_name" class="block font-medium text-gray-700">Deduction Name</label>
-                                    <input type="text" name="deduction_name" id="deduction_name" class="form-input mt-1 block w-full rounded-md" required>
+                                    <input type="text" name="deduction_name" id="deduction_name" class="block w-full mt-1 rounded" required>
                                 </div>
                                 <div class="col-span-6 sm:col-span-6">
                                     <label for="deduction_amount" class="block font-medium text-gray-700">Amount</label>
-                                    <input type="number" name="deduction_amount" id="deduction_amount" class="form-input mt-1 block w-full rounded-md" required>
+                                    <input type="number" name="deduction_amount" id="deduction_amount" class="block w-full mt-1 rounded" required>
                                 </div>
                                 <div class="col-span-6 sm:col-span-6">
                                     <label for="deduction_range" class="block font-medium text-gray-700">Range</label>
-                                    <select name="deduction_range" id="deduction_range" class="block w-full mt-1 form-select"
+                                    <select name="deduction_range" id="deduction_range" class="block w-full mt-1 rounded form-select"
                                         required>
                                         <option value="" disabled selected>--Please select here--</option>
                                         <option value="1-15">1-15</option>
@@ -32,7 +32,7 @@
                                 </div>
                                 <div class="col-span-6 sm:col-span-6">
                                     <label for="dediction_type" class="block font-medium text-gray-700">Type</label>
-                                    <select name="dediction_type" id="dediction_type" class="block w-full mt-1 form-select"
+                                    <select name="dediction_type" id="dediction_type" class="block w-full mt-1 rounded form-select"
                                         required>
                                         <option value="" disabled selected>--Please select here--</option>
                                         <option value="Mandatory">Mandatory</option>

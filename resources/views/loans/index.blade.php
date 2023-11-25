@@ -1,27 +1,32 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Salary Grade
+            Loans
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="mt-5 md:mt-0 md:col-span-2">
-                <form action="{{ route('sgrades.store') }}" method="POST">
+                <form action="{{ route('loans.store') }}" method="POST">
                     @csrf
                     <div class="shadow overflow-hidden sm:rounded-md">
                         <div class="px-4 py-5 bg-white sm:p-6">
-                            <div class="grid grid-cols-6 gap-6">
-                                <div class="col-span-6 sm:col-span-2">
-                                    <label for="sg_code" class="block font-medium text-gray-700">Code</label>
-                                    <input type="text" name="sg_code" id="sg_code"
-                                        class="block w-full mt-1 rounded" required>
+                            <div class="grid grid-cols-12 gap-6">
+                                <div class="col-span-3 sm:col-span-3">
+                                    <label for="name" class="block font-medium text-gray-700">Name</label>
+                                    <input type="text" name="name" id="name"
+                                        class="form-input mt-1 block w-full text-xl" required>
                                 </div>
-                                <div class="col-span-6 sm:col-span-2">
-                                    <label for="sg_name" class="block font-medium text-gray-700">Name</label>
-                                    <input type="text" name="sg_name" id="sg_name"
-                                        class="block w-full mt-1 rounded" required>
+                                <div class="col-span-3 sm:col-span-3">
+                                    <label for="description" class="block font-medium text-gray-700">Description</label>
+                                    <input type="text" name="description" id="description"
+                                        class="form-input mt-1 block w-full text-xl" required>
+                                </div>
+                                <div class="col-span-3 sm:col-span-3">
+                                    <label for="amount" class="block font-medium text-gray-700">Amount</label>
+                                    <input type="number" step="0.01" name="amount" id="amount"
+                                        class="form-input mt-1 block w-full text-xl" required>
                                 </div>
                             </div>
                         </div>
@@ -39,29 +44,28 @@
     </div>
 
     <div class="py-12">
-        <div class="max-w-7xl bg-white mx-auto sm:p-6 lg:p-8 ">
-            <table class="min-w-full  border data-table">
+        <div class="max-w-7xl bg-white mx-auto sm:p-6 lg:p-8">
+            <table class="min-w-full border data-table">
                 <thead>
                     <tr>
                         <th class="border-b px-4 py-2 text-left">#</th>
-                        <th class="border-b px-4 py-2 text-left">Code</th>
                         <th class="border-b px-4 py-2 text-left">Name</th>
+                        <th class="border-b px-4 py-2 text-left">Description</th>
+                        <th class="border-b px-4 py-2 text-left">Amount</th>
                         <th class="border-b px-4 py-2">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($sgrades as $sgrade)
+                    @foreach ($loans as $loan)
                         <tr>
                             <td class="border-b px-4 py-2">{{ $loop->iteration }}</td>
-                            <td class="border-b px-4 py-2">{{ $sgrade->sg_code }}</td>
-                            <td class="border-b px-4 py-2">{{ $sgrade->sg_name }}</td>
+                            <td class="border-b px-4 py-2">{{ $loan->name }}</td>
+                            <td class="border-b px-4 py-2">{{ $loan->description }}</td>
+                            <td class="border-b px-4 py-2">{{ number_format($loan->amount, 2) }}</td>
                             <td class="border-b px-4 py-2">
-                                <a href="{{ route('sgrades.edit', $sgrade) }}"
+                                <a href="{{ route('loans.edit', $loan) }}"
                                     class="text-blue-500 hover:text-blue-700">Edit</a>
-                                <a href="{{ route('salary.grade.show', $sgrade->id) }}"
-                                    class="text-teal-500 hover:text-teal-700">View</a>
-                                <form class="inline-block" action="{{ route('sgrades.destroy', $sgrade) }}"
-                                    method="POST">
+                                <form class="inline-block" action="{{ route('loans.destroy', $loan) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-500 hover:text-red-700">Delete</button>
@@ -71,7 +75,6 @@
                     @endforeach
                 </tbody>
             </table>
-
         </div>
     </div>
 

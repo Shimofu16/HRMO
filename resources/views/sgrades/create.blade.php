@@ -15,11 +15,11 @@
                             <div class="grid grid-cols-6 gap-6">
                                 <div class="col-span-6 sm:col-span-3">
                                     <label for="sg_name" class="block font-medium text-gray-700">Salary Grade Name</label>
-                                    <input type="text" name="sg_name" id="sg_name" class="form-input mt-1 block w-full rounded-md" required>
+                                    <input type="text" name="sg_name" id="sg_name" class="block w-full mt-1 rounded" required>
                                 </div>
                                 <div class="col-span-6 sm:col-span-3">
                                     <label for="sg_amount" class="block font-medium text-gray-700">Amount</label>
-                                    <input type="text" name="sg_amount" id="sg_amount" class="form-input mt-1 block w-full rounded-md" required>
+                                    <input type="text" name="sg_amount" id="sg_amount" class="block w-full mt-1 rounded" required>
                                 </div>
                             </div>
                         </div>

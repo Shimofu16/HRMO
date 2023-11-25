@@ -12,6 +12,7 @@ use App\Models\Deduction;
 use App\Models\EmployeeAllowance;
 use App\Models\EmployeeDeduction;
 use App\Models\EmployeeSickLeave;
+use App\Models\Loan;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -48,23 +49,7 @@ class EmployeeController extends Controller
      */
     public function create()
     {
-        $departments = Department::all();
-
-        $categories = Category::all();
-
-        $designations = Designation::all();
-
-        $schedules = Schedule::all();
-
-        $sgrades = Sgrade::all();
-
-        $allowances = Allowance::pluck('allowance_code', 'id');
-
-        $mandatory_deductions = Deduction::where('deduction_type', 'Mandatory')->get();
-
-        $non_mandatory_deductios = Deduction::where('deduction_type', 'Non-Mandatory')->get();
-
-        return view('employees.create', compact('departments', 'categories', 'designations', 'schedules', 'sgrades', 'allowances', 'mandatory_deductions', 'non_mandatory_deductios'));
+        return view('employees.create');
     }
 
     /**
@@ -72,32 +57,19 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-
-        // try {
-        // // Validate the input and store the employee
-        // $validator = Validator::make($request->all(), [
-        //     'emp_no' => 'required|string|max:255',
-        //     'oinumber' => 'required|string|max:255',
-        //     'sgrade' => 'required|string|max:255',
-        //     'name' => 'required|string|max:255',
-        //     'department' => 'required|string|max:255',
-        //     'designation' => 'required|string|max:255',
-        //     'category' => 'required|string|max:255',
-        //     'allowance' => 'required|array',
-        //     'deduction' => 'required|array',
-
-        // ]);
-
-        // if ($validator->fails()) {
-        //     return redirect()->back()->withErrors($validator)->withInput();
-        // }
-        // dd($request->all());
+        // dd(empty($request->input('amounts')) ? $request->input('selected_loan_amounts') : $request->input('amounts'),$request->input('amounts'));
+        // Find the department
         $department = Department::find($request->input('department_id'));
+
+        // Calculate employee department count and employee count
         $employee_department_count = $department->employees()->count() + 1;
         $employee_count = Employee::count() + 1;
+
+        // Generate employee code
         $employee_code = $department->dep_code . '-' . $employee_department_count . '' . $employee_count;
+
         // Create a new employee instance
-        $employeeId = Employee::create([
+        $employee = Employee::create([
             'emp_no' => $employee_code,
             'oinumber' => $request->input('oinumber'),
             'sgrade_id' => $request->input('sgrade_id'),
@@ -107,37 +79,49 @@ class EmployeeController extends Controller
             'category_id' => $request->input('category_id'),
             'schedule_id' => $request->input('schedule_id'),
             'salary_grade_step_id' => $request->input('salary_grade_step_id'),
-        ])->id;
-        $allowances = $request->input('allowance');
-        $deductions = $request->input('deduction');
-        $sick_leave = $request->input('sick_leave');
-        if ($allowances) {
-            foreach ($allowances as $key => $value) {
-                EmployeeAllowance::create([
-                    'employee_id' => $employeeId,
-                    'allowance_id' => $value,
-                ]);
-            }
-        }
-        foreach ($deductions as $key => $value) {
-            EmployeeDeduction::create([
-                'employee_id' => $employeeId,
-                'deduction_id' => $value,
-            ]);
-        }
-        EmployeeSickLeave::create([
-            'employee_id' => $employeeId,
-            'points' => ($sick_leave) ? $sick_leave : 1.25,
         ]);
 
-        createActivity('Create Employee', 'Employee '. $request->name.' was created.', request()->getClientIp(true));
+        // Handle allowances
+        $allowances = $request->input('allowance');
+        if ($allowances) {
+            foreach ($allowances as $value) {
+                $employee->allowances()->create(['allowance_id' => $value]);
+            }
+        }
+
+        // Handle deductions
+        $deductions = $request->input('deduction');
+        foreach ($deductions as $value) {
+            $employee->deductions()->create(['deduction_id' => $value]);
+        }
+
+        // Handle sick leave
+        $sick_leave = $request->input('sick_leave');
+        $employee->sickLeave()->create([
+            'points' => ($sick_leave) ? $sick_leave : 1.25
+        ]);
+        $selected_loan_ids = $request->input('selected_loan_ids');
+        $selected_loan_amounts = empty($request->input('amounts')) ? $request->input('selected_loan_amounts') : $request->input('amounts');
+        // combine this two to one array
+        if ($selected_loan_ids && $selected_loan_amounts) {
+            $loans_and_amounts = array_combine($selected_loan_ids, $selected_loan_amounts);
+            foreach ($loans_and_amounts as $key => $value) {
+                // Handle loans
+                $employee->loans()->create([
+                    'loan_id' => $key,
+                    'amount' => $value,
+                ]);
+            }
+
+        }
+
+        // Create activity
+        createActivity('Create Employee', 'Employee ' . $request->name . ' was created.', request()->getClientIp(true));
+
         // Redirect to the index page with a success message
         return redirect()->route('employees.index')->with('success', 'Employee created successfully.');
-        // } catch (\Throwable $th) {
-        //     // Handle the exception
-        //     return redirect()->back()->with('error', 'An error occurred while saving the employee: ' . $th->getMessage());
-        // }
     }
+
 
 
     /**
@@ -155,6 +139,8 @@ class EmployeeController extends Controller
      */
     public function edit(Employee $employee)
     {
+        $loans = Loan::all();
+
         $departments = Department::all();
 
         $categories = Category::all();
@@ -167,7 +153,7 @@ class EmployeeController extends Controller
 
         $deductions = Deduction::all();
 
-        return view('employees.edit', ['employee' => $employee, 'departments' => $departments, 'categories' => $categories, 'designations' => $designations, 'sgrades' => $sgrades, 'allowances' => $allowances, 'deductions' => $deductions]);
+        return view('employees.edit', ['employee' => $employee, 'loans' => $loans, 'departments' => $departments, 'categories' => $categories, 'designations' => $designations, 'sgrades' => $sgrades, 'allowances' => $allowances, 'deductions' => $deductions]);
     }
 
     /**
@@ -189,22 +175,22 @@ class EmployeeController extends Controller
         $allowances = $request->input('allowance');
         $deductions = $request->input('deduction');
 
-        foreach ($allowances as $key => $value) {
-            EmployeeAllowance::create([
-                'employee_id' => $employee->id,
-                'allowance_id' => $value,
-            ]);
-        }
-        foreach ($deductions as $key => $value) {
-            EmployeeDeduction::create([
-                'employee_id' => $employee->id,
-                'deduction_id' => $value,
-            ]);
+        // Handle deductions
+        $deductions = $request->input('deduction');
+        foreach ($deductions as $value) {
+            $employee->deductions()->create(['deduction_id' => $value]);
         }
 
-        $employee->sickLeave()->update(['points' => $request->sick_leave]);
+        // Handle sick leave
+        $sick_leave = $request->input('sick_leave');
+        $employee->sickLeave()->update(['points' => $sick_leave]);
 
-        createActivity('Update Employee', 'Employee '. $request->name.' was updated.', request()->getClientIp(true)); 
+        // Handle loans
+        $employee->loans()->create(['loan_id' => $request->input('loan_id'), 'amount' => $request->input('loan_amount'),]);
+
+
+
+        createActivity('Update Employee', 'Employee ' . $request->name . ' was updated.', request()->getClientIp(true));
 
         return redirect()->route('employees.index')
             ->with('success', 'Employee updated successfully.');

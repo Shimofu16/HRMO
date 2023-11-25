@@ -119,6 +119,14 @@ class Employee extends Model
         return $this->belongsTo(SalaryGradeStep::class, 'salary_grade_step_id');
     }
 
+    /**
+     *  Get the loans associated with the employee.
+     *
+     */
+    public function loans()
+    {
+        return $this->hasMany(EmployeeLoan::class, 'employee_id');
+    }
 
     public function computeAllowance()
     {
