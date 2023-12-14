@@ -17,7 +17,7 @@
                         Total Employees
                     </dt>
                     <dd class="mt-1 text-3xl font-semibold text-gray-900">
-                        {{ $totalEmployees }}
+                        {{ number_format($totalEmployees) }}
                     </dd>
                 </dl>
             </div>
@@ -30,7 +30,7 @@
                         Total Salary
                     </dt>
                     <dd class="mt-1 text-3xl font-semibold text-gray-900">
-                        {{ $totalSalary }}
+                        {{ number_format($totalSalary) }}
                     </dd>
                 </dl>
             </div>
@@ -43,7 +43,7 @@
                         Total Deduction
                     </dt>
                     <dd class="mt-1 text-3xl font-semibold text-gray-900">
-                        {{ $totalDeduction }}
+                        {{ number_format($totalDeduction) }}
                     </dd>
                 </dl>
             </div>
@@ -56,7 +56,7 @@
                         Total Net Pay
                     </dt>
                     <dd class="mt-1 text-3xl font-semibold text-gray-900">
-                        {{ $totalNetPay }}
+                        {{ number_format($totalNetPay) }}
                     </dd>
                 </dl>
             </div>
