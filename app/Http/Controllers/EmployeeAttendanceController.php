@@ -239,6 +239,14 @@ class EmployeeAttendanceController extends Controller
         // Calculate the hours worked
         $hour_worked = $attendanceTimeIn->diffInHours($attendanceTimeOut) -1;
 
+        if($hour_worked < 0){
+            $hour_worked = 0;
+        }
+
+        if ($hour_worked > 8) {
+            $hour_worked = 8;
+        }
+
         // Calculate the minutes late
         $minute_late = $defaultTimeIn->diffInMinutes($attendance->time_in);
 

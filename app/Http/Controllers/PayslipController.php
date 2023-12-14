@@ -17,18 +17,20 @@ class PayslipController extends Controller
     public function show($department_id, $payroll)
     {
         $department = Department::find($department_id);
+        $payroll = json_decode(urldecode($payroll), true);
         $employees = $department->employees;
         // seperate the filter 1-15
         $filter = explode('-', $payroll['date_from_to']);
         $from = Carbon::create(date('Y'), date('m'), $filter[0]);
         $day = $filter[1];
-        $month =$payroll['month'];
+        // convert month to number
+        $month = Carbon::parse($payroll['month'])->month;
         $year = $payroll['year'];
-        
+
         if (!checkdate($month, $day, $year)) {
             $day = date('t', mktime(0, 0, 0, $month, 1, $year)); // get last day of the month
         }
-        
+
         $to = Carbon::create($year, $month, $day);
 
         $filter = [

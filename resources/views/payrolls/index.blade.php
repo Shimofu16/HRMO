@@ -69,7 +69,7 @@
                                     class="text-green-500 hover:text-green-700 mr-3">View</a>
                                 <a href="{{ route('payslips.show', [
                                     'department_id' => $payroll['department_id'],
-                                    'payroll' => $payroll,
+                                    'payroll' => $encoded,
                                 ]) }}"
                                     class="text-blue-500 hover:text-blue-700">Generate Payslip</a>
 

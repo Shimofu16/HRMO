@@ -40,6 +40,7 @@ class PayrollController extends Controller
             // Other code to retrieve the payrolls
 
             // Pass the payroll records to the view
+            // dd($payrolls);
             return view('payrolls.index', compact('departments', 'payrolls'));
         } catch (\Throwable $th) {
             dd($th->getMessage());

@@ -122,7 +122,7 @@
                                     <h6 class="text-center  mb-2 sub-title">EARNINGS</h6>
                                     <span>
                                         <span class="sub-title font-semibold">Monthly Salary:</span>
-                                        <span class="fw-400">{{ number_format($salary_grade) }}</span>
+                                        <span class="fw-400">{{ number_format($salaryGrade) }}</span>
                                     </span>
                                     <br>
                                     <span>
@@ -180,7 +180,7 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <h6 class="mt-3 sub-title">NET PAY: {{ number_format($netpay) }}</h6>
+                                    <h6 class="mt-3 sub-title">NET PAY: {{ number_format($netPay) }}</h6>
                                 </td>
 
                             </tr>
@@ -195,7 +195,7 @@
                         </div>
                         <div class="contents">
                             <h6 class="sub-title">Received: </h6>
-                            <h6 class="mb-3 text-center sub-title">NET PAY ₱ {{ number_format($netpay) }}</h6>
+                            <h6 class="mb-3 text-center sub-title">NET PAY ₱ {{ number_format($netPay) }}</h6>
                             <h6 class="sub-title">For Period:</h6>
                             <h6 class="mb-4 text-center sub-title">{{ $filter['from'] }}-{{ $filter['to'] }}</h6>
                             <h6 class="mb-5 sub-title">Received By: </h6>
