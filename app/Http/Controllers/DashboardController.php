@@ -33,11 +33,17 @@ class DashboardController extends Controller
         $totalNetPay = $this->getTotalNetPayPer($totalSalary, $totalAllowance, $totalDeduction);
 
 
-
-
-
-        // dd($totalEmployeesPerCategories,$totalSalaryPerMonth, $totalAllowancePerMonth, $totalDeductionPerMonth,$totalSalaryPerYear);
-        return view('dashboard', compact('totalEmployeesPerCategories', 'totalEmployees', 'totalSalary', 'totalAllowance', 'totalDeduction', 'totalNetPay'));
+        return view(
+            'dashboard',
+            compact(
+                'totalEmployeesPerCategories',
+                'totalEmployees',
+                'totalSalary',
+                'totalAllowance',
+                'totalDeduction',
+                'totalNetPay'
+            )
+        );
     }
     private function getTotalSalaryPer($isPerMonth)
     {
@@ -94,7 +100,6 @@ class DashboardController extends Controller
     }
     private function getTotalAllowancePer($isPerMonth)
     {
-        $totalSalaries = 0;
         $employeeAllowances = EmployeeAllowance::with('employee')->get();
         $totalAllowance = [];
         if ($isPerMonth) {
@@ -115,7 +120,6 @@ class DashboardController extends Controller
                         ];
                     }
                 }
-                $totalSalaries += $total;
             }
         } else {
             // get all year in attendance
@@ -139,15 +143,13 @@ class DashboardController extends Controller
                         ];
                     }
                 }
-                $totalSalaries += $total;
             }
         }
         $totalAllowance = collect($totalAllowance);
-        return $totalSalaries;
+        return $totalAllowance->sum('total');
     }
     private function getTotalDeductionPer($isPerMonth)
     {
-        $totalSalaries = 0;
         $employeeDeductions = EmployeeDeduction::with('employee')->get();
         $totalDeduction = [];
         if ($isPerMonth) {
@@ -194,7 +196,7 @@ class DashboardController extends Controller
             }
         }
         $totalDeduction = collect($totalDeduction);
-        return $totalSalaries;
+        return $totalDeduction->sum('total');
     }
     private function getTotalNetPayPer($totalSalary, $totalAllowance, $totalDeduction)
     {
