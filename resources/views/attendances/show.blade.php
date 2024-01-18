@@ -94,14 +94,14 @@
                                 @if ($attendance->time_in_status == 'Late')
                                     @php
                                         $timeIn = \Carbon\Carbon::parse($attendance->time_in);
-                                        $now = \Carbon\Carbon::now('Asia/Manila');
+                                        $now = \Carbon\Carbon::parse('08:00:00');
                                         $late = $now->diffInMinutes($timeIn);
                                     @endphp
-                                    @if ($late >= 60)
+                                    {{-- @if ($late >= 60)
                                         {{ floor($late / 60) }} hr {{ $late % 60 }} mins
                                     @else
-                                        {{ $late }} mins
-                                    @endif
+                                    @endif --}}
+                                    {{ $late }} mins
                                 @endif
                             </td>
                             <td class="px-4 py-2 border-b">{{ $attendance->time_in_status }}</td>

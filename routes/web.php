@@ -19,6 +19,7 @@ use App\Http\Controllers\EmployeeLoansController;
 use App\Http\Controllers\PayslipController;
 use App\Http\Controllers\SalaryGradeStepController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\SeminarController;
 use App\Models\Allowance;
 use App\Models\Loan;
 use App\Models\SalaryGradeStep;
@@ -223,6 +224,13 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/store/{salary_grade_id}', 'store')->name('store');
         Route::put('/update/{salary_grade_id}', 'update')->name('update');
         Route::delete('/destroy/{salary_grade_id}', 'destroy')->name('destroy');
+    });
+    // Seminar
+    Route::prefix('seminars')->name('seminars.')->controller(SeminarController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/{seminar_id}', 'show')->name('show');
+        Route::post('/store', 'store')->name('store');
+        Route::post('/{seminar_id}/attendance', 'attendance')->name('attendance');
     });
 
     // Activity Log

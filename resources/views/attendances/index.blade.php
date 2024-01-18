@@ -17,6 +17,14 @@
                 </div>
             </div>
         </a>
+        <a href="{{ route('seminars.index') }}">
+            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+                <div class="p-6 bg-white border-b border-gray-200">
+                    <h2 class="mb-2 text-lg font-semibold text-center">Seminars</h2>
+                    <!-- Card content here -->
+                </div>
+            </div>
+        </a>
     </div>
 
 
@@ -130,11 +138,11 @@
                                         $now = \Carbon\Carbon::parse('08:00:00');
                                         $late = $now->diffInMinutes($timeIn);
                                     @endphp
-                                    @if ($late >= 60)
+                                    {{-- @if ($late >= 60)
                                         {{ floor($late / 60) }} hr {{ $late % 60 }} mins
                                     @else
-                                        {{ $late }} mins
-                                    @endif
+                                    @endif --}}
+                                    {{ $late }} mins
                                 @endif
                             </td>
                             <td class="px-4 py-2 border-b">{{ $attendance->time_in_status }}</td>

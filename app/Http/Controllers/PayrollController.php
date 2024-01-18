@@ -74,7 +74,7 @@ class PayrollController extends Controller
                                 'department_id' => $department->id,
                                 'department' => $department->dep_name,
                                 'month' => date('F', strtotime($month->created_at)),
-                                'year' => date('Y',strtotime($month->created_at)),
+                                'year' => date('Y', strtotime($month->created_at)),
                                 'date_from_to' => $itemDay,
                             ];
                         }
@@ -147,11 +147,15 @@ class PayrollController extends Controller
         $attendances = [];
         $totalManHour = 0;
         $day = ($from < 10) ? '0' . $from : $from;
+        $month = date('m', strtotime($payroll['month']));
         $loopEnd = ($to == 31) ? $from : $to;
         for ($i = 1; $i <= $loopEnd; $i++) {
 
             // get attendance for that day from created_at
-            $attendance = $employee->attendances()->whereDay('created_at', $day)->first();
+            $attendance = $employee->attendances()
+                ->whereMonth('created_at', $month)
+                ->whereDay('created_at', $day)
+                ->first();
             if ($attendance) {
                 $timeIn = Carbon::parse($attendance->time_in);
                 $manhours = $attendance->hours;
@@ -161,7 +165,7 @@ class PayrollController extends Controller
                     $timeInInterval = Carbon::parse('7:00');
                 } elseif ($timeIn->between(Carbon::parse('7:11'), Carbon::parse('7:40'))) {
                     $timeInInterval = Carbon::parse('7:30');
-                } elseif ($timeIn->between(Carbon::parse('7:41'), Carbon::parse('8:11'))) {
+                } else {
                     $timeInInterval = Carbon::parse('8:00');
                 }
 
@@ -171,20 +175,21 @@ class PayrollController extends Controller
                     'time_in_interval' => $timeInInterval,
                     'time_out' => $attendance->time_out,
                     'time_out_interval' => $timeOutInterval,
+                    'deduction' => $attendance->deduction,
                     'manhours' => $manhours,
                 ];
                 $totalManHour += $manhours;
-            }else{
+            } else {
                 $attendances[$i] = [
                     'day' => $day,
                     'time_in' => '',
                     'time_in_interval' => '',
                     'time_out' => '',
                     'time_out_interval' => '',
-                   'manhours' => '',
+                    'manhours' => '',
                 ];
             }
-            $day = ($day++ < 10) ? '0' . $day : $day;
+            $day = ($day++ < 9) ? '0' . $day : $day;
         }
 
 

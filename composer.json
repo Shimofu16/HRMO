@@ -42,6 +42,7 @@
         }
     },
     "scripts": {
+        "dev": "vite --host --port=8001",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"

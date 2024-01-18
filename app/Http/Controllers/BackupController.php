@@ -90,7 +90,7 @@ class BackupController extends Controller
     }
 
     /**
-     * Download File 
+     * Download File
      */
     public function download(string $file_name)
     {

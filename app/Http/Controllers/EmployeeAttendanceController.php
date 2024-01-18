@@ -52,7 +52,7 @@ class EmployeeAttendanceController extends Controller
         $employee = Employee::with('attendances')->where('emp_no', $request->input('employee_no'))->first();
 
         // Generate file name and path
-        $fileName = uniqid() . 'Time ' . ($isTimeIn ? 'in' : 'ut') . '.png';
+        $fileName = uniqid() . ' Time ' . ($isTimeIn ? 'in' : 'out') . '.png';
         $path = 'uploads/attendance/' . $employee->name . '/';
         $filePath = $path . $fileName;
 
@@ -156,9 +156,13 @@ class EmployeeAttendanceController extends Controller
 
         $now = Carbon::now($timezone);
         $current_time = $now->format('H:i:s');
-        $timeIn = '08:01:00'; // 8am
+        $timeIn = '08:00:00'; // 8am
+        $defaultTimeIn = Carbon::parse($timeIn);
         $tenAMThreshold = '10:00:00'; // 10:00am
         $timeOut = '17:00:00'; // 5pm
+
+        $deductionPerMinute =  0.02;
+        $deduction =  0;
 
         if ($isTimeIn) {
             // Check if employee is on time, half-day or late
@@ -167,7 +171,10 @@ class EmployeeAttendanceController extends Controller
             } elseif ($current_time > $tenAMThreshold) {
                 $status = 'Half-Day';
             } elseif ($current_time > $timeIn) {
+
                 $status = 'Late';
+                $minute_late = $defaultTimeIn->diffInMinutes($current_time);
+                $deduction = $minute_late * $deductionPerMinute;
             }
 
             // Create attendance record for time in
@@ -176,6 +183,7 @@ class EmployeeAttendanceController extends Controller
                 'time_in_status' => $status,
                 'time_in' => $now,
                 'time_in_image' => $filePath,
+                'deduction' => $deduction,
             ]);
         } else {
 
@@ -184,11 +192,11 @@ class EmployeeAttendanceController extends Controller
             $salary_grade = $employee->salaryGradeStep->amount;
             $results = $this->calculateSalary($salary_grade, $employee, $attendance, $timeIn, $timeOut, $current_time);
 
-            $status = $results[0]['status'];
+            $status = $results['status'];
 
-            $total_salary_for_today = $results[0]['salary'];
+            $total_salary_for_today = $results['salary'];
 
-            $hours = $results[0]['hour_worked'];
+            $hours = $results['hour_worked'];
 
             // Update the attendance record
             $attendance->update([
@@ -211,7 +219,7 @@ class EmployeeAttendanceController extends Controller
         $sick_leave_left = 0;
 
         // Set the sick leave deduction per minute
-        $slpDeductionPerMinute =  0.002;
+        $slpDeductionPerMinute =  0.02;
 
         // Compute the sick leave deduction per minute
         $sick_leave_left = $sick_leave - ($minute_late * $slpDeductionPerMinute);
@@ -226,6 +234,7 @@ class EmployeeAttendanceController extends Controller
     private function calculateSalary($salary_grade, $employee, $attendance, $timeIn, $timeOut, $current_time)
     {
         $working_days = 15;
+
         $required_hours_work = 8;
         $subTotal = (($salary_grade / 2) / $working_days) / $required_hours_work;
 
@@ -237,9 +246,9 @@ class EmployeeAttendanceController extends Controller
         $attendanceTimeOut = Carbon::parse($attendance->time_out);
 
         // Calculate the hours worked
-        $hour_worked = $attendanceTimeIn->diffInHours($attendanceTimeOut) -1;
+        $hour_worked = $attendanceTimeIn->diffInHours($attendanceTimeOut) - 1;
 
-        if($hour_worked < 0){
+        if ($hour_worked < 0) {
             $hour_worked = 0;
         }
 
@@ -267,11 +276,14 @@ class EmployeeAttendanceController extends Controller
             $salary_per_hour = $subTotal - $not_worked_hour;
         } elseif ($current_time > $timeOut) {
             $salary_per_hour = $subTotal;
-            $status = 'Time Out';
+            $status = 'Time-out';
         }
 
         // Calculate the total salary for the day
-        $total_salary_for_today = ($salary_per_hour * $hour_worked) - (($sick_leave == 0) ? $minute_late : 0);
+        $total_salary_for_today = ($salary_per_hour * $hour_worked);
+        if ($attendance->time_in_status === 'Late') {
+            $total_salary_for_today  = $total_salary_for_today - (($sick_leave == 0) ? $attendance->deduction : 0);
+        }
 
         // Ensure that the total salary is not negative
         if ($total_salary_for_today < 0) {
@@ -282,11 +294,9 @@ class EmployeeAttendanceController extends Controller
 
 
         return [
-            [
-                'salary' => $total_salary_for_today,
-                'status' => $status,
-                'hour_worked' => $hour_worked
-            ]
+            'salary' => $total_salary_for_today,
+            'status' => $status,
+            'hour_worked' => $hour_worked,
         ];
     }
 }

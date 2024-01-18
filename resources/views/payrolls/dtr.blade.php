@@ -71,6 +71,7 @@
                                 <th class="px-4 py-2 text-start border-b">Interval</th>
                                 <th class="px-4 py-2 text-start border-b">Time Out</th>
                                 <th class="px-4 py-2 text-start border-b">Interval</th>
+                                <th class="px-4 py-2 text-start border-b">Deduction</th>
                                 <th class="px-4 py-2 text-start border-b">Man hours</th>
                             </tr>
                         </thead>
@@ -82,11 +83,12 @@
                                     <td class="px-4 py-2 border-b">{{ $attendance['time_in_interval'] ? date('h:i A',strtotime($attendance['time_in_interval']))  :'' }}</td>
                                     <td class="px-4 py-2 border-b">{{ $attendance['time_out'] ? date('h:i A',strtotime($attendance['time_out']))  :'' }}</td>
                                     <td class="px-4 py-2 border-b">{{ $attendance['time_out_interval'] ? date('h:i A',strtotime($attendance['time_out_interval'])) :'' }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $attendance['deduction']  ?? '' }}</td>
                                     <td class="px-4 py-2 border-b">{{ $attendance['manhours']  ?? '' }}</td>
                                 </tr>
                             @endforeach
                             <tr>
-                                <td class="px-4 py-2 border-b text-end" colspan="6">
+                                <td class="px-4 py-2 border-b text-end" colspan="7">
                                     <span class="font-bold">
                                         Total Man Hours:
                                     </span>
