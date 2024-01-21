@@ -28,6 +28,15 @@
                                 <input type="text" name="deduction_amount" id="deduction_amount" value="{{ $deduction->deduction_amount }}"
                                     class="block w-full p-2 border rounded" required>
                             </div>
+                            <div class="col-span-6 sm:col-span-4">
+                                <label for="deduction_amount_type" class="block font-medium text-gray-700">Amount Type</label>
+                                <select name="deduction_amount_type" id="deduction_amount_type"
+                                    class="block w-full mt-1 rounded form-select" required>
+                                    <option value="" disabled selected>--Please select here--</option>
+                                    <option value="percentage" {{ $deduction->deduction_amount_type == 'percentage' ? 'selected' : '' }}>Percentage (%)</option>
+                                    <option value="fixed_amount" {{ $deduction->deduction_amount_type == 'fixed_amount' ? 'selected' : '' }}>Fixed Amount (000)</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="flex items-center justify-end mt-6">
                             <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4">

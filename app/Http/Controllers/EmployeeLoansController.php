@@ -32,7 +32,6 @@ class EmployeeLoansController extends Controller
         Loan::create([
             'name' => $request->name,
             'description' => $request->description,
-            'amount' => $request->amount,
         ]);
 
         createActivity('Create Loan', 'Loan '. $request->name . ' created successfully.', request()->getClientIp(true));
@@ -63,7 +62,6 @@ class EmployeeLoansController extends Controller
         $loan->update([
             'name' => $request->name,
             'description' => $request->description,
-            'amount' => $request->amount,
         ]);
 
         createActivity('Update Loan', 'Loan '. $request->name .'updated successfully.', request()->getClientIp(true));

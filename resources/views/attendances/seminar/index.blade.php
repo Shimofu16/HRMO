@@ -43,21 +43,15 @@
                                 <div class="col-span-3 sm:col-span-3">
                                     <label for="date" class="block font-medium text-gray-700">
                                         Date</label>
-                                    <input type="date" name="date" id="date"
+                                        <input type="date" name="date" id="date"
                                         class="block w-full mt-1 rounded" required>
-                                </div>
-                                <div class="col-span-3 sm:col-span-3">
-                                    <label for="time_start" class="block font-medium text-gray-700">
-                                        Start Time</label>
-                                    <input type="time" name="time_start" id="time_start"
-                                        class="block w-full mt-1 rounded" required>
-                                </div>
-                                <div class="col-span-3 sm:col-span-3">
-                                    <label for="time_end" class="block font-medium text-gray-700">
-                                        End Time</label>
-                                    <input type="time" name="time_end" id="time_end"
-                                        class="block w-full mt-1 rounded" required>
-                                </div>
+                                    </div>
+                                    <div class="col-span-3 sm:col-span-3">
+                                        <label for="amount" class="block font-medium text-gray-700">
+                                            Amount</label>
+                                        <input type="text" name="amount" id="amount"
+                                            class="block w-full mt-1 rounded" required>
+                                    </div>
                             </div>
                         </div>
                         <div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
@@ -79,7 +73,8 @@
                         <th class="px-4 py-2 text-left border-b">#</th>
                         <th class="px-4 py-2 text-left border-b">Name</th>
                         <th class="px-4 py-2 text-left border-b">Date</th>
-                        <th class="px-4 py-2 text-left border-b">Start & End Time</th>
+                        <th class="px-4 py-2 text-left border-b">Amount</th>
+                        {{-- <th class="px-4 py-2 text-left border-b">Start & End Time</th> --}}
                         <th class="px-4 py-2 border-b ext-left">Attendaces</th>
                     </tr>
                 </thead>
@@ -88,9 +83,10 @@
                         <tr>
                             <td class="px-4 py-2 border-b">{{ $loop->iteration }}</td>
                             <td class="px-4 py-2 border-b">{{ $seminar->name }}</td>
-                            <td class="px-4 py-2 border-b">{{ date('F d, y', strtotime($seminar->date)) }}</td>
-                            <td class="px-4 py-2 border-b">{{ date('h:i A', strtotime($seminar->time_start)) }} -
-                                {{ date('h:i A', strtotime($seminar->time_end)) }}</td>
+                            <td class="px-4 py-2 border-b">{{ date('F d, Y', strtotime($seminar->date)) }}</td>
+                            <td class="px-4 py-2 border-b">{{ money($seminar->amount) }}</td>
+                            {{-- <td class="px-4 py-2 border-b">{{ date('h:i A', strtotime($seminar->time_start)) }} -
+                                {{ date('h:i A', strtotime($seminar->time_end)) }}</td> --}}
                             <td class="px-4 py-2 border-b">
                                 <a href="{{ route('seminars.show', ['seminar_id' => $seminar->id]) }}"
                                     class="text-blue-500 hover:text-blue-700">View</a>

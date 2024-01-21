@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->date('date');
-            $table->time('time_start');
-            $table->time('time_end');
+            $table->double('amount');
             $table->timestamps();
         });
     }

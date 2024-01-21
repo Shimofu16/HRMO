@@ -77,7 +77,7 @@
     @foreach ($employees as $employee)
         @php
             $mandatoryDeductions = $employee->getDeductionsBy('Mandatory');
-            $nonmandatoryDeductions = $employee->getDeductionsBy('Non Mandatory');
+            $nonmandatoryDeductions = $employee->getDeductionsBy('Non-Mandatory');
             $allowances = $employee->allowances;
             $totalAllowance = $employee->computeAllowance();
             $totalDeduction = $employee->computeDeduction();
@@ -146,7 +146,8 @@
                                     @foreach ($mandatoryDeductions as $mandatoryDeduction)
                                         <span class="mb-1">
                                             <span class="fw-400">{{ $mandatoryDeduction->deduction->deduction_code }} -
-                                                {{ number_format($mandatoryDeduction->deduction->deduction_amount) }}</span>
+                                                {{ $mandatoryDeduction->deduction->deduction_amount_type == 'percentage' ? percentage($mandatoryDeduction->deduction->deduction_amount) : number_format($mandatoryDeduction->deduction->deduction_amount) }}
+                                            </span>
                                         </span>
                                         <br>
                                     @endforeach
@@ -157,7 +158,8 @@
                                             <span
                                                 class="fw-400">{{ $nonmandatoryDeduction->deduction->deduction_code }}
                                                 -
-                                                {{ number_format($nonmandatoryDeduction->deduction->deduction_amount) }}</span>
+                                                {{ $nonmandatoryDeduction->deduction->deduction_amount_type == 'percentage' ? percentage($nonmandatoryDeduction->deduction->deduction_amount) : number_format($nonmandatoryDeduction->deduction->deduction_amount) }}
+                                            </span>
                                         </span>
                                         <br>
                                     @endforeach

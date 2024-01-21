@@ -57,6 +57,7 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->input('allowance'));
         // dd(empty($request->input('amounts')) ? $request->input('selected_loan_amounts') : $request->input('amounts'),$request->input('amounts'));
         // Find the department
         $department = Department::find($request->input('department_id'));
@@ -101,7 +102,7 @@ class EmployeeController extends Controller
             'points' => ($sick_leave) ? $sick_leave : 1.25
         ]);
         $selected_loan_ids = $request->input('selected_loan_ids');
-        $selected_loan_amounts = empty($request->input('amounts')) ? $request->input('selected_loan_amounts') : $request->input('amounts');
+        $selected_loan_amounts =  $request->input('amounts');
         // combine this two to one array
         if ($selected_loan_ids && $selected_loan_amounts) {
             $loans_and_amounts = array_combine($selected_loan_ids, $selected_loan_amounts);

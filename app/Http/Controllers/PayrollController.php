@@ -138,7 +138,7 @@ class PayrollController extends Controller
 
         $employee = Employee::find($id);
         $presents = $employee->countAttendance('present', $payroll['month'], $payroll['year'], $from, $to);
-        $absents = $employee->countAttendance('absent', $payroll['month'], $payroll['year'], $from, $to);
+        $absents = 0;
         $lates = $employee->countAttendance('late', $payroll['month'], $payroll['year'], $from, $to);
         $undertimes = $employee->countAttendance('undertime', $payroll['month'], $payroll['year'], $from, $to);
         $hours = $employee->countAttendance('manhours', $payroll['month'], $payroll['year'], $from, $to);
@@ -147,8 +147,10 @@ class PayrollController extends Controller
         $attendances = [];
         $totalManHour = 0;
         $day = ($from < 10) ? '0' . $from : $from;
+        $currentDay = now()->format('d');
         $month = date('m', strtotime($payroll['month']));
         $loopEnd = ($to == 31) ? $from : $to;
+        $daysCount = 0;
         for ($i = 1; $i <= $loopEnd; $i++) {
 
             // get attendance for that day from created_at
@@ -180,6 +182,7 @@ class PayrollController extends Controller
                 ];
                 $totalManHour += $manhours;
             } else {
+
                 $attendances[$i] = [
                     'day' => $day,
                     'time_in' => '',

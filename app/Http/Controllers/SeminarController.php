@@ -35,8 +35,9 @@ class SeminarController extends Controller
         Seminar::create([
             'name' => $request->name,
             'date' => $request->date,
-            'time_start' => $request->time_start,
-            'time_end' => $request->time_end,
+            'amount' => $request->amount,
+            /* 'time_start' => $request->time_start,
+            'time_end' => $request->time_end, */
         ]);
         return back()->with('success', 'Successfully Created Seminar ' . $request->name);
     }
@@ -48,8 +49,8 @@ class SeminarController extends Controller
     {
         $seminar = Seminar::find($seminar_id);
         $attendances = $seminar->attendances()->get();
-        $employees = Employee::with('attendances')
-            ->whereDoesntHave('attendances', function ($query) use ($seminar) {
+        $employees = Employee::with('seminarAttendances')
+            ->whereDoesntHave('seminarAttendances', function ($query) use ($seminar) {
                 $query
                     ->whereDate('created_at', $seminar->date);
             })
@@ -85,7 +86,13 @@ class SeminarController extends Controller
     {
         $seminar = Seminar::find($seminar_id);
         $employees = Employee::find($request->employees);
-        $this->takeAttendance($seminar->time_start, $seminar->time_end, $employees, $seminar);
+        foreach ($employees as $key => $employee) {
+            $employee->seminarAttendances()->create([
+                'seminar_id' => $seminar->id,
+                'salary' => $seminar->amount
+            ]);
+        }
+        // $this->takeAttendance($seminar->time_start, $seminar->time_end, $employees, $seminar);
         return back()->with('success', 'Successfully Created Attendance');
     }
 

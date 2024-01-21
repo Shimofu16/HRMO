@@ -31,7 +31,7 @@ class DatabaseSeeder extends Seeder
             SalaryGradesSeeder::class,
             AllowancesSeeder::class,
             DeductionsSeeder::class,
+            LoanSeeder::class
         ]);
-
     }
 }

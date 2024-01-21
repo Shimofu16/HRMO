@@ -17,7 +17,7 @@
                 </div>
             </div>
         </a>
-        <a href="{{ route('attendances-history.index') }}">
+        <a href="{{ route('seminars.index') }}">
             <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <h2 class="mb-2 text-lg font-semibold text-center">Seminars</h2>
@@ -73,7 +73,8 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="2" class="px-4 py-2 border-b text-center">No Attendance</td>
+                            <td class="px-4 py-2 border-b"></td>
+                            <td class="px-4 py-2 border-b text-start">No Attendance</td>
                         </tr>
                     @endforelse
                 </tbody>

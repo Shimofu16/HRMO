@@ -7,11 +7,10 @@
     <div class="py-12">
         <div class="mx-auto bg-white max-w-7xl sm:p-6 lg:p-8">
             <div class="flex items-center justify-end mb-3">
-                {{-- <a href="{{ route('backup.create') }}"
+                <a href="{{ route('backup.create') }}"
                     class="'inline-flex items-center px-4 py-2 bg-purple-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-purple-700 focus:bg-gray-700 active:bg-purple-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
                     Create Backup
-                </a> --}}
-
+                </a>
             </div>
             <table class="min-w-full border data-table">
                 <thead>
@@ -30,7 +29,7 @@
                             <td class="border-b px-4 py-2">{{ $backup['name'] }}</td>
                             <td class="border-b px-4 py-2">{{ $backup['size'] }}</td>
                             <td class="border-b px-4 py-2">
-                                {{ \Carbon\Carbon::parse($backup['created_at'])->diffForHumans() }}</td>
+                                {{ \Carbon\Carbon::parse($backup['created_at'])->format('F d, Y') }}</td>
                             <td class="border-b px-4 py-2">
                                 <a href="{{ route('backup.download', $backup['name']) }}"
                                     class="text-blue-500 hover:text-blue-700">Download</a>

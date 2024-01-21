@@ -23,11 +23,7 @@
                                     <input type="text" name="description" id="description"
                                         class="form-input mt-1 block w-full text-xl" required>
                                 </div>
-                                <div class="col-span-3 sm:col-span-3">
-                                    <label for="amount" class="block font-medium text-gray-700">Amount</label>
-                                    <input type="number" step="0.01" name="amount" id="amount"
-                                        class="form-input mt-1 block w-full text-xl" required>
-                                </div>
+
                             </div>
                         </div>
                         <div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
@@ -51,7 +47,6 @@
                         <th class="border-b px-4 py-2 text-left">#</th>
                         <th class="border-b px-4 py-2 text-left">Name</th>
                         <th class="border-b px-4 py-2 text-left">Description</th>
-                        <th class="border-b px-4 py-2 text-left">Amount</th>
                         <th class="border-b px-4 py-2">Actions</th>
                     </tr>
                 </thead>
@@ -61,7 +56,6 @@
                             <td class="border-b px-4 py-2">{{ $loop->iteration }}</td>
                             <td class="border-b px-4 py-2">{{ $loan->name }}</td>
                             <td class="border-b px-4 py-2">{{ $loan->description }}</td>
-                            <td class="border-b px-4 py-2">{{ number_format($loan->amount, 2) }}</td>
                             <td class="border-b px-4 py-2">
                                 <a href="{{ route('loans.edit', $loan) }}"
                                     class="text-blue-500 hover:text-blue-700">Edit</a>

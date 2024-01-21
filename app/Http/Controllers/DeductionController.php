@@ -25,6 +25,7 @@ class DeductionController extends Controller
             'deduction_code' => 'required',
             'deduction_name' => 'required',
             'deduction_amount' => 'required',
+            'deduction_amount_type' => 'required',
             'deduction_type' => 'required',
             'deduction_range' => 'required',
         ]);
@@ -47,6 +48,7 @@ class DeductionController extends Controller
             'deduction_code' => 'required',
             'deduction_name' => 'required',
             'deduction_amount' => 'required',
+            'deduction_amount_type' => 'required',
         ]);
 
         $deduction->update($request->all());

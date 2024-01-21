@@ -12,7 +12,6 @@ class Loan extends Model
     protected $fillable = [
         'name',
         'description',
-        'amount',
     ];
 
     public function employee_loans()

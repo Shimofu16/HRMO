@@ -30,7 +30,16 @@
                                 </div>
                             </div>
                             <div class="grid grid-cols-6 gap-6">
-                                <div class="col-span-3 sm:col-span-3">
+                                <div class="col-span-6 sm:col-span-2">
+                                    <label for="deduction_amount_type" class="block font-medium text-gray-700">Amount Type</label>
+                                    <select name="deduction_amount_type" id="deduction_amount_type"
+                                        class="block w-full mt-1 rounded form-select" required>
+                                        <option value="" disabled selected>--Please select here--</option>
+                                        <option value="percentage">Percentage (%)</option>
+                                        <option value="fixed_amount">Fixed Amount (000)</option>
+                                    </select>
+                                </div>
+                                <div class="col-span-6 sm:col-span-2">
                                     <label for="deduction_range" class="block font-medium text-gray-700">Range</label>
                                     <select name="deduction_range" id="deduction_range"
                                         class="block w-full mt-1 rounded form-select" required>
@@ -39,7 +48,7 @@
                                         <option value="16-30">16-30</option>
                                     </select>
                                 </div>
-                                <div class="col-span-3 sm:col-span-3">
+                                <div class="col-span-6 sm:col-span-2">
                                     <label for="deduction_type" class="block font-medium text-gray-700">Type</label>
                                     <select name="deduction_type" id="deduction_type"
                                         class="block w-full mt-1 rounded form-select" required>
@@ -83,7 +92,9 @@
                             <td class="border-b px-4 py-2">{{ $loop->iteration }}</td>
                             <td class="border-b px-4 py-2">{{ $deduction->deduction_code }}</td>
                             <td class="border-b px-4 py-2">{{ $deduction->deduction_name }}</td>
-                            <td class="border-b px-4 py-2">{{ $deduction->deduction_amount }}</td>
+                            <td class="border-b px-4 py-2">
+                                {{ $deduction->deduction_amount_type == 'percentage' ? percentage($deduction->deduction_amount) : number_format($deduction->deduction_amount) }}
+                            </td>
                             <td class="border-b px-4 py-2">{{ $deduction->deduction_range }}</td>
                             <td class="border-b px-4 py-2">{{ $deduction->deduction_type }}</td>
                             <td class="border-b px-4 py-2">

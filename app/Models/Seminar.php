@@ -13,6 +13,6 @@ class Seminar extends Model
 
     public function attendances()
     {
-        return $this->hasMany(Attendance::class);
+        return $this->hasMany(SeminarAttendance::class);
     }
 }

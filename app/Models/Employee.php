@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Employee extends Model
 {
@@ -57,18 +58,6 @@ class Employee extends Model
         return $this->belongsTo(Schedule::class, 'schedule_id');
     }
 
-    public function allowance()
-    {
-        return $this->belongsTo(Allowance::class, 'allowance_id');
-    }
-
-    /**
-     * Get the category associated with the employee.
-     */
-    public function deduction()
-    {
-        return $this->belongsTo(Deduction::class, 'deduction_id');
-    }
 
     /**
      * Get the category associated with the employee.
@@ -118,6 +107,10 @@ class Employee extends Model
     {
         return $this->belongsTo(SalaryGradeStep::class, 'salary_grade_step_id');
     }
+    public function seminarAttendances()
+    {
+        return $this->hasMany(SeminarAttendance::class, 'employee_id');
+    }
 
     /**
      *  Get the loans associated with the employee.
@@ -147,7 +140,16 @@ class Employee extends Model
 
         // Sum up the allowance amounts
         foreach ($this->deductions as $deduction) {
-            $totalDeduction += $deduction->deduction->deduction_amount;
+            $amount = $deduction->deduction->deduction_amount;
+            if ($deduction->deduction->deduction_amount_type == 'percentage') {
+                // convert fixed amount to percentage
+                // example: the value of amount is 10 so convert it to .10
+                $amount = $amount / 100;
+                if ($deduction->deduction->deduction_name == 'Phil Health') {
+                    $amount = ($this->salaryGradeStep->amount / 2) * .02;
+                }
+            }
+            $totalDeduction += $amount;
         }
 
         return $totalDeduction;

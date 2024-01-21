@@ -22,10 +22,12 @@
                 </div>
                 <div class="col-span-6 sm:col-span-2">
                     <label for="sgrade_id" class="block font-medium text-gray-700">Salary Grade</label>
-                    <select name="sgrade_id" id="sgrade_id" wire:model.live='salary_grade_id' class="block w-full mt-1 rounded form-select" required>
-                        <option value=""  selected>--Please select here--</option>
+                    <select name="sgrade_id" id="sgrade_id" wire:model.live='salary_grade_id'
+                        class="block w-full mt-1 rounded form-select" required>
+                        <option value="" selected>--Please select here--</option>
                         @foreach ($sgrades as $sgrade)
-                            <option value="{{ $sgrade->id }}" wire:key='{{ $sgrade->id }}'>{{ $sgrade->sg_code }}</option>
+                            <option value="{{ $sgrade->id }}" wire:key='{{ $sgrade->id }}'>{{ $sgrade->sg_code }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -49,9 +51,9 @@
                     <label for="department_id" class="block font-medium text-gray-700">Department</label>
                     <select name="department_id" id="department_id" class="block w-full mt-1 rounded form-select"
                         required>
-                        <option value=""  selected>--Please select here--</option>
+                        <option value="" selected>--Please select here--</option>
                         @foreach ($departments as $department)
-                            <option value="{{ $department->id }}" >{{ $department->dep_code }}</option>
+                            <option value="{{ $department->id }}">{{ $department->dep_code }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -60,7 +62,7 @@
                     <label for="designation_id" class="block font-medium text-gray-700">Designation</label>
                     <select name="designation_id" id="designation_id" class="block w-full mt-1 rounded form-select"
                         required>
-                        <option value=""  selected>--Please select here--</option>
+                        <option value="" selected>--Please select here--</option>
                         @foreach ($designations as $designation)
                             <option value="{{ $designation->id }}">{{ $designation->designation_code }}
                             </option>
@@ -73,7 +75,8 @@
                         class="block w-full mt-1 rounded form-select" required>
                         <option value="" selected>--Please select here--</option>
                         @foreach ($categories as $category)
-                            <option value="{{ $category->id }}" wire:key='{{ $category->id }}'>{{ $category->category_code }}
+                            <option value="{{ $category->id }}" wire:key='{{ $category->id }}'>
+                                {{ $category->category_code }}
                             </option>
                         @endforeach
                     </select>
@@ -91,7 +94,7 @@
                             @foreach ($selected_allowances as $selected_allowance)
                                 <div class="flex items-center mt-1" wire:key='{{ $selected_allowance->id }}'>
                                     <input type="checkbox" name="allowance[]"
-                                        id="allowance_{{ $selected_allowance->id }}" value="1"
+                                        id="allowance_{{ $selected_allowance->id }}" value="{{ $selected_allowance->id }}"
                                         class="mr-2 form-checkbox">
                                     <label for="allowance_{{ $selected_allowance->id }}"
                                         class="text-gray-900">{{ $selected_allowance->allowance_code }}</label>
@@ -146,9 +149,10 @@
                         <label for="loan_id" class="block font-medium text-gray-700">Loan </label>
                         <select name="loan_id" id="loan_id" wire:model.live='loan_id'
                             class="block w-full mt-1 rounded form-select">
-                            <option value=""  selected>--Please select here--</option>
+                            <option value="" selected>--Please select here--</option>
                             @foreach ($loans as $loan)
-                                <option value="{{ $loan->id }}" wire:key='{{ $loan->id }}'>{{ $loan->name }}</option>
+                                <option value="{{ $loan->id }}" wire:key='{{ $loan->id }}'>
+                                    {{ $loan->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -158,13 +162,18 @@
 
                 @if ($selected_loans)
                     @foreach ($selected_loans as $selected_loan)
-                    <input type="text" name="selected_loan_ids[]" value="{{ $selected_loan->id }}" hidden>
-                    <input type="text" name="selected_loan_amounts[]" value="{{ $selected_loan->amount }}" hidden>
-                        <div wire:key="{{ $selected_loan->id }}">
-                            <label for="amount"
-                                class="block font-medium text-gray-700">{{ $selected_loan->name }}</label>
-                            <input type="number" name="amounts[]" id="amount" step="0.01"
-                                class="block w-full mt-1 rounded form-input" placeholder="{{ $selected_loan->amount }}">
+                        <div class="col-span-3 sm:col-span-2" wire:key="{{ $selected_loan->id }}">
+                            <input type="text" name="selected_loan_ids[]" value="{{ $selected_loan->id }}"
+                                hidden>
+                            <div>
+                                <label for="amount"
+                                    class="block font-medium text-gray-700">{{ $selected_loan->name }}</label>
+                                    <div class="flex">
+                                        <input type="number" name="amounts[]" id="amount" step="0.01"
+                                            class="block w-full mt-1 rounded form-input">
+                                            {{-- <button type="button" wire:click='removeSelectedLoan({{ $selected_loan->id }})' class="px-4 py-2 font-bold text-gray-500 rounded hover:text-gray-700">-</button> --}}
+                                    </div>
+                            </div>
                         </div>
                     @endforeach
                 @endif

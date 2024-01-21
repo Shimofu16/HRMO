@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('deduction_range');
             $table->string('deduction_type');
             $table->double('deduction_amount');
+            $table->enum('deduction_amount_type',['percentage', 'fixed_amount']);
             $table->timestamps();
         });
     }

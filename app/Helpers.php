@@ -49,3 +49,22 @@ if (!function_exists('toCode')) {
         return $code;
     }
 }
+if (!function_exists('percentage')) {
+    function percentage($number)
+    {
+        return $number . '%';
+    }
+}
+if (!function_exists('money')) {
+    function money($number, $currency = 'PHP')
+    {
+        $currency = Str::upper($currency);
+        return $currency .' '.$number;
+    }
+}
+if (!function_exists('computePercentage')) {
+    function computePercentage($number)
+    {
+        return $number . '%';
+    }
+}
