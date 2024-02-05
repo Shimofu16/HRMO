@@ -197,8 +197,10 @@
                             </td>
                             <td class="px-4 py-3 border-b">
 
-                                <a href="{{ route('employees.edit', $employee) }}"
-                                    class="text-blue-500 hover:text-blue-700">Edit</a>
+                                {{-- <a href="{{ route('employees.edit', $employee) }}"
+                                    class="text-blue-500 hover:text-blue-700">Edit</a> --}}
+                                    <a href="{{ route('seminars.payslip', ['employee_id' => $employee->id]) }}"
+                                        class="text-blue-500 hover:text-blue-700">Generate Payslip (Seminars)</a>
                                 <form class="inline-block" action="{{ route('employees.destroy', $employee) }}"
                                     method="POST">
                                     @csrf

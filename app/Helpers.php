@@ -68,3 +68,10 @@ if (!function_exists('computePercentage')) {
         return $number . '%';
     }
 }
+if (!function_exists('getLoan')) {
+    function getLoan($loan, $duration)
+    {
+        return $loan / ($duration * 2);
+    }
+}
+

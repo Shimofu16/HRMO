@@ -49,7 +49,7 @@
                                     <div class="col-span-3 sm:col-span-3">
                                         <label for="amount" class="block font-medium text-gray-700">
                                             Amount</label>
-                                        <input type="text" name="amount" id="amount"
+                                        <input type="number" name="amount" id="amount"
                                             class="block w-full mt-1 rounded" required>
                                     </div>
                             </div>
@@ -89,7 +89,9 @@
                                 {{ date('h:i A', strtotime($seminar->time_end)) }}</td> --}}
                             <td class="px-4 py-2 border-b">
                                 <a href="{{ route('seminars.show', ['seminar_id' => $seminar->id]) }}"
-                                    class="text-blue-500 hover:text-blue-700">View</a>
+                                    class="text-green-500 hover:text-green-700 mr-3">View</a>
+                                {{-- <a href="{{ route('seminars.payslip', ['seminar_id' => $seminar->id]) }}"
+                                    class="text-blue-500 hover:text-blue-700">Generate Payslip</a> --}}
                             </td>
                         </tr>
                     @endforeach

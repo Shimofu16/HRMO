@@ -94,8 +94,8 @@
                             @foreach ($selected_allowances as $selected_allowance)
                                 <div class="flex items-center mt-1" wire:key='{{ $selected_allowance->id }}'>
                                     <input type="checkbox" name="allowance[]"
-                                        id="allowance_{{ $selected_allowance->id }}" value="{{ $selected_allowance->id }}"
-                                        class="mr-2 form-checkbox">
+                                        id="allowance_{{ $selected_allowance->id }}"
+                                        value="{{ $selected_allowance->id }}" class="mr-2 form-checkbox">
                                     <label for="allowance_{{ $selected_allowance->id }}"
                                         class="text-gray-900">{{ $selected_allowance->allowance_code }}</label>
                                 </div>
@@ -168,11 +168,23 @@
                             <div>
                                 <label for="amount"
                                     class="block font-medium text-gray-700">{{ $selected_loan->name }}</label>
-                                    <div class="flex">
-                                        <input type="number" name="amounts[]" id="amount" step="0.01"
-                                            class="block w-full mt-1 rounded form-input">
-                                            {{-- <button type="button" wire:click='removeSelectedLoan({{ $selected_loan->id }})' class="px-4 py-2 font-bold text-gray-500 rounded hover:text-gray-700">-</button> --}}
-                                    </div>
+                                <div class="flex">
+                                    <input type="number" name="amounts[]" id="amount" step="0.01"
+                                        class="block w-full mt-1 rounded form-input">
+                                    {{-- <button type="button" wire:click='removeSelectedLoan({{ $selected_loan->id }})' class="px-4 py-2 font-bold text-gray-500 rounded hover:text-gray-700">-</button> --}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-span-3 sm:col-span-2" wire:key="{{ $selected_loan->id }}">
+                            <div>
+                                <label for="duration" class="block font-medium text-gray-700">
+                                    Duration (Months)
+                                </label>
+                                <div class="flex">
+                                    <input type="number" name="durations[]" id="duration" step="0.01"
+                                        class="block w-full mt-1 rounded form-input">
+                                    {{-- <button type="button" wire:click='removeSelectedLoan({{ $selected_loan->id }})' class="px-4 py-2 font-bold text-gray-500 rounded hover:text-gray-700">-</button> --}}
+                                </div>
                             </div>
                         </div>
                     @endforeach

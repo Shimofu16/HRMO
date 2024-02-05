@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('employee_id');
             $table->unsignedBigInteger('loan_id');
-            $table->double('amount')->nullable();
+            $table->double('amount');
+            $table->double('deduction')->nullable();
+            $table->double('duration')->nullable();
             $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
             $table->foreign('loan_id')->references('id')->on('loans')->onDelete('cascade');
             $table->timestamps();

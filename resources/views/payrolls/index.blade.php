@@ -64,15 +64,24 @@
                             <td class="px-4 py-2 border-b">
                                 @php
                                     $encoded = urlencode(json_encode($payroll));
+                                    $today = date('j'); // Get today's date without leading zeros
+$lastDayOfMonth = date('t'); // Get the last day of the current month
                                 @endphp
                                 <a href="{{ route('payrolls.show', $encoded) }}"
                                     class="text-green-500 hover:text-green-700 mr-3">View</a>
-                                <a href="{{ route('payslips.show', [
-                                    'department_id' => $payroll['department_id'],
-                                    'payroll' => $encoded,
-                                ]) }}"
-                                    class="text-blue-500 hover:text-blue-700">Generate Payslip</a>
-
+                                @php
+                                @endphp
+                                @if (!($today == 15 || $today == 30 || ($today == 29 && $lastDayOfMonth != 30)))
+                                    <button class="text-blue-500 hover:text-blue-700 disabled">
+                                        Generate Payslip
+                                    </button>
+                                @else
+                                    <a href="{{ route('payslips.show', [
+                                        'department_id' => $payroll['department_id'],
+                                        'payroll' => $encoded,
+                                    ]) }}"
+                                        class="text-blue-500 hover:text-blue-700 ">Generate Payslip</a>
+                                @endif
                             </td>
                         </tr>
                     @endforeach

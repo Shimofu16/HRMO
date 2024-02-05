@@ -103,17 +103,21 @@ class EmployeeController extends Controller
         ]);
         $selected_loan_ids = $request->input('selected_loan_ids');
         $selected_loan_amounts =  $request->input('amounts');
-        // combine this two to one array
-        if ($selected_loan_ids && $selected_loan_amounts) {
-            $loans_and_amounts = array_combine($selected_loan_ids, $selected_loan_amounts);
-            foreach ($loans_and_amounts as $key => $value) {
-                // Handle loans
-                $employee->loans()->create([
-                    'loan_id' => $key,
-                    'amount' => $value,
-                ]);
-            }
+        $selected_loan_durations =  $request->input('durations');
 
+
+        // combine this two to one array
+        if ($selected_loan_ids && $selected_loan_amounts && $selected_loan_durations) {
+            for ($i = 0; $i < count($selected_loan_ids); $i++) {
+                $employee->loans()->create(
+                    [
+                        'loan_id' => $selected_loan_ids[$i],
+                        'amount' => $selected_loan_amounts[$i],
+                        'duration' => $selected_loan_durations[$i]
+
+                    ]
+                );
+            }
         }
 
         // Create activity
@@ -173,13 +177,16 @@ class EmployeeController extends Controller
         $employee->allowances()->delete();
         $employee->deductions()->delete();
 
-        $allowances = $request->input('allowance');
-        $deductions = $request->input('deduction');
 
         // Handle deductions
         $deductions = $request->input('deduction');
         foreach ($deductions as $value) {
             $employee->deductions()->create(['deduction_id' => $value]);
+        }
+        // Handle allowances
+        $allowances = $request->input('allowance');
+        foreach ($allowances as $value) {
+            $employee->allowances()->create(['allowance_id' => $value]);
         }
 
         // Handle sick leave
@@ -187,7 +194,7 @@ class EmployeeController extends Controller
         $employee->sickLeave()->update(['points' => $sick_leave]);
 
         // Handle loans
-        $employee->loans()->create(['loan_id' => $request->input('loan_id'), 'amount' => $request->input('loan_amount'),]);
+        
 
 
 

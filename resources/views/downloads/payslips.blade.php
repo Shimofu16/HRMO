@@ -78,17 +78,19 @@
         @php
             $mandatoryDeductions = $employee->getDeductionsBy('Mandatory');
             $nonmandatoryDeductions = $employee->getDeductionsBy('Non-Mandatory');
-            $allowances = $employee->allowances;
+            $allowances = $employee->allowances ?? '';
+            $loans = $employee->loans ?? '';
             $totalAllowance = $employee->computeAllowance();
             $totalDeduction = $employee->computeDeduction();
+            $totaAmountlLoan = 0;
             $salaryGrade = $employee->salaryGradeStep->amount;
-            
+
             $dates = explode('-', $payroll['date_from_to']);
             $from = $dates[0];
             $to = $dates[1];
             $amountEarned = $employee->getTotalSalaryBy($payroll['month'], $payroll['year'], $from, $to); // Get the total salary of the employee
             $totalAmountEarned = $amountEarned + $totalAllowance;
-            $netPay = $totalAmountEarned - $totalDeduction;
+
             // dd($mandatoryDeductions,$nonmandatoryDeductions,$totalDeduction);
         @endphp
         {{-- page break every 2 payslip per page --}}
@@ -141,33 +143,62 @@
                                 </td>
                                 <td colspan="4 px-2">
                                     <h6 class="text-center  mb-2 sub-title">DEDUCTION</h6>
-                                    <span class="sub-title">MANDATORY</span>
-                                    <br>
-                                    @foreach ($mandatoryDeductions as $mandatoryDeduction)
-                                        <span class="mb-1">
-                                            <span class="fw-400">{{ $mandatoryDeduction->deduction->deduction_code }} -
-                                                {{ $mandatoryDeduction->deduction->deduction_amount_type == 'percentage' ? percentage($mandatoryDeduction->deduction->deduction_amount) : number_format($mandatoryDeduction->deduction->deduction_amount) }}
-                                            </span>
-                                        </span>
+                                    @if ($mandatoryDeductions)
+                                        <span class="sub-title">MANDATORY</span>
                                         <br>
-                                    @endforeach
-                                    <span class="mt-3 sub-title">NON-MANDATORY</span>
-                                    <br>
-                                    @foreach ($nonmandatoryDeductions as $nonmandatoryDeduction)
-                                        <span class="mb-1">
-                                            <span
-                                                class="fw-400">{{ $nonmandatoryDeduction->deduction->deduction_code }}
-                                                -
-                                                {{ $nonmandatoryDeduction->deduction->deduction_amount_type == 'percentage' ? percentage($nonmandatoryDeduction->deduction->deduction_amount) : number_format($nonmandatoryDeduction->deduction->deduction_amount) }}
+                                        @foreach ($mandatoryDeductions as $mandatoryDeduction)
+                                            <span class="mb-1">
+                                                <span
+                                                    class="fw-400">{{ $mandatoryDeduction->deduction->deduction_code }}
+                                                    -
+                                                    {{ $mandatoryDeduction->deduction->deduction_amount_type == 'percentage' ? percentage($mandatoryDeduction->deduction->deduction_amount) : number_format($mandatoryDeduction->deduction->deduction_amount) }}
+                                                </span>
                                             </span>
-                                        </span>
+                                            <br>
+                                        @endforeach
+                                    @endif
+                                    @if  (count($nonmandatoryDeductions) > 0)
+                                        <span class="mt-3 sub-title">NON-MANDATORY</span>
                                         <br>
-                                    @endforeach
+                                        @foreach ($nonmandatoryDeductions as $nonmandatoryDeduction)
+                                            <span class="mb-1">
+                                                <span
+                                                    class="fw-400">{{ $nonmandatoryDeduction->deduction->deduction_code }}
+                                                    -
+                                                    {{ $nonmandatoryDeduction->deduction->deduction_amount_type == 'percentage' ? percentage($nonmandatoryDeduction->deduction->deduction_amount) : number_format($nonmandatoryDeduction->deduction->deduction_amount) }}
+                                                </span>
+                                            </span>
+                                            <br>
+                                        @endforeach
+                                    @endif
+                                    @if (count($loans) > 0)
+                                        <span class="mt-3 sub-title">LOANS</span>
+                                        <br>
+                                        @foreach ($loans as $loan)
+                                            <span class="mb-1">
+                                                @php
+                                                    $totaAmountlLoan = $totaAmountlLoan + $loan->amountToPay();
+                                                @endphp
+                                                <span class="fw-400">{{ $loan->loan->name }}
+                                                    -
+                                                    {{ $loan->amountToPay() }}
+                                                </span>
+                                            </span>
+                                            <br>
+                                        @endforeach
+                                    @endif
                                 </td>
                             </tr>
                         </table>
 
                         <table class="no-padding">
+                            @php
+                                $totalDeduction = $totalDeduction + $totaAmountlLoan;
+                                $totalAmountEarned =$totalAmountEarned - $totaAmountlLoan;
+                                $totalAmountEarned = ($totalAmountEarned < 0) ? 0 : $totalAmountEarned;
+                                $netPay = $totalAmountEarned - $totalDeduction;
+                                $netPay = ($netPay < 0) ? 0 : $netPay;
+                            @endphp
                             <tr>
                                 <td>
                                     <h6 class="mt-3 sub-title">Total Amount Earned:

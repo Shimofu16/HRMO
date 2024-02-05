@@ -228,6 +228,7 @@ Route::middleware(['auth'])->group(function () {
     // Seminar
     Route::prefix('seminars')->name('seminars.')->controller(SeminarController::class)->group(function () {
         Route::get('/', 'index')->name('index');
+        Route::get('/payslip/{employee_id}', 'payslip')->name('payslip');
         Route::get('/{seminar_id}', 'show')->name('show');
         Route::post('/store', 'store')->name('store');
         Route::post('/{seminar_id}/attendance', 'attendance')->name('attendance');

@@ -13,13 +13,22 @@ class EmployeeLoan extends Model
         'employee_id',
         'loan_id',
         'amount',
+        'deduction',
+        'duration',
     ];
 
-    public function employee(){
+    public function employee()
+    {
         return $this->belongsTo(Employee::class);
     }
 
-    public function loan(){
+    public function loan()
+    {
         return $this->belongsTo(Loan::class);
+    }
+
+    public function amountToPay()
+    {
+        return $this->amount / ($this->duration * 2);
     }
 }

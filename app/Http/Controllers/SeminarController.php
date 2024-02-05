@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Attendance;
 use App\Models\Employee;
 use App\Models\Seminar;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -94,6 +95,24 @@ class SeminarController extends Controller
         }
         // $this->takeAttendance($seminar->time_start, $seminar->time_end, $employees, $seminar);
         return back()->with('success', 'Successfully Created Attendance');
+    }
+
+    public function payslip($employee_id)
+    {
+        $employee = Employee::with('seminarAttendances')->find($employee_id);
+        $attendances = $employee->seminarAttendances;
+        // return view('downloads.seminar', [
+        //     'employee'  => $employee,
+        //     'attendances' => $attendances,
+        // ]);
+        $file_name = "{$employee->name} - Seminar Payslip.pdf";
+        $pdf = PDF::loadView('downloads.seminar', [
+            'employee'  => $employee,
+            'attendances' => $attendances,
+        ]);
+
+        return $pdf->download($file_name);
+
     }
 
     private function takeAttendance($time_in, $time_out, $employees, $seminar)
