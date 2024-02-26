@@ -12,12 +12,12 @@ class AllowanceController extends Controller
     {
         $allowances = Allowance::all();
         $categories = Category::all();
-        return view('allowances.index', compact('allowances', 'categories'));
+        return view('settings.allowances.index', compact('allowances', 'categories'));
     }
 
     public function create()
     {
-        return view('allowances.create');
+        return view('settings.allowances.create');
     }
 
     public function store(Request $request)
@@ -33,13 +33,13 @@ class AllowanceController extends Controller
         Allowance::create($request->all());
 
         createActivity('Create Allowance', 'Allowance ' . $request->allowance_name . ' created successfully.', request()->getClientIp(true));
-        return redirect()->route('allowances.index')->with('success', 'Allowance created successfully.');
+        return redirect()->back()->with('success', 'Allowance created successfully.');
     }
 
     public function edit(Allowance $allowance)
     {
         $categories = Category::all();
-        return view('allowances.edit', compact('allowance', 'categories'));
+        return view('settings.allowances.edit', compact('allowance', 'categories'));
     }
 
     public function update(Request $request, Allowance $allowance)
@@ -56,7 +56,7 @@ class AllowanceController extends Controller
 
         createActivity('Update Allowance', 'Allowance ' . $allowance->allowance_name . ' updated successfully.', request()->getClientIp(true), $allowance, $request);
 
-        return redirect()->route('allowances.index')->with('success', 'Allowance updated successfully.');
+        return redirect()->back()->with('success', 'Allowance updated successfully.');
     }
 
     public function destroy(Allowance $allowance)
@@ -64,6 +64,6 @@ class AllowanceController extends Controller
         createActivity('Delete Allowance', 'Allowance' . $allowance->allowance_code . ' deleted successfully.', request()->ip());
         $allowance->delete();
 
-        return redirect()->route('allowances.index')->with('success', 'Allowance deleted successfully.');
+        return redirect()->back()->with('success', 'Allowance deleted successfully.');
     }
 }

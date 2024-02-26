@@ -55,7 +55,7 @@ class SalaryGradeStepController extends Controller
      */
     public function show($id)
     {
-        return view('sgrades.steps.show', [
+        return view('settings.salary_grades.steps.show', [
             'salary_grade' => Sgrade::findOrFail($id),
         ]);
     }

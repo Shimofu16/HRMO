@@ -11,12 +11,12 @@ class CategoryController extends Controller
     {
         $categories = Category::orderBy('category_name', 'asc')->get();
 
-        return view('categories.index', compact('categories'));
+        return view('settings.categories.index', compact('categories'));
     }
 
     public function create()
     {
-        return view('categories.create');
+        return view('settings.categories.create');
     }
 
     public function store(Request $request)
@@ -30,12 +30,12 @@ class CategoryController extends Controller
 
         createActivity('Create Category', 'Category '.$request->category_name.' created successfully.', request()->getClientIp(true));
 
-        return redirect()->route('categories.index')->with('success', 'Category created successfully.');
+        return redirect()->back()->with('success', 'Category created successfully.');
     }
 
     public function edit(Category $category)
     {
-        return view('categories.edit', compact('category'));
+        return view('settings.categories.edit', compact('category'));
     }
 
     public function update(Request $request, Category $category)
@@ -49,7 +49,7 @@ class CategoryController extends Controller
 
         createActivity('Update Category', 'Category '.$category->category_name.' updated successfully.', request()->getClientIp(true), $category, $request);
 
-        return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
+        return redirect()->back()->with('success', 'Category updated successfully.');
     }
 
     public function destroy(Category $category)
@@ -57,6 +57,6 @@ class CategoryController extends Controller
 
         createActivity('Delete Category', 'Category '.$category->category_name.' deleted successfully.', request()->getClientIp(true));
         $category->delete();
-        return redirect()->route('categories.index')->with('success', 'Category deleted successfully.');
+        return redirect()->back()->with('success', 'Category deleted successfully.');
     }
 }

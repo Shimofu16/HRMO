@@ -27,7 +27,7 @@ class BackupController extends Controller
             ];
         })->sortByDesc('created_at');
 
-        return view('backups.index', compact('backups'));
+        return view('settings.backups.index', compact('backups'));
     }
 
     /**

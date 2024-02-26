@@ -6,7 +6,7 @@
     </x-slot>
 
 
-    <div class="grid grid-cols-1 gap-3 mt-4 md:grid-cols-2 xl:grid-cols-6">
+    {{-- <div class="grid grid-cols-1 gap-3 mt-4 md:grid-cols-2 xl:grid-cols-6">
 
         <!-- Position List Card -->
         <a href="{{ route('attendances-history.index') }}">
@@ -25,7 +25,7 @@
                 </div>
             </div>
         </a>
-    </div>
+    </div> --}}
 
 
     <div class="py-12 ">

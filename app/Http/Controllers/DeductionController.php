@@ -11,12 +11,12 @@ class DeductionController extends Controller
     {
         $deductions = Deduction::all();
 
-        return view('deductions.index', compact('deductions'));
+        return view('settings.deductions.index', compact('deductions'));
     }
 
     public function create()
     {
-        return view('deductions.create');
+        return view('settings.deductions.create');
     }
 
     public function store(Request $request)
@@ -34,7 +34,7 @@ class DeductionController extends Controller
 
         createActivity('Create Deduction', 'Deduction ' . $request->deduction_name . 'created successfully.', request()->getClientIp(true));
 
-        return redirect()->route('deductions.index')->with('success', 'Deduction created successfully.');
+        return redirect()->back()->with('success', 'Deduction created successfully.');
     }
 
     public function edit(Deduction $deduction)
@@ -55,7 +55,7 @@ class DeductionController extends Controller
 
         createActivity('Update Deduction', 'Deduction '. $request->deduction_name.'updated successfully.', request()->getClientIp(true), $deduction, $request);
 
-        return redirect()->route('deductions.index')->with('success', 'Deduction updated successfully.');
+        return redirect()->back()->with('success', 'Deduction updated successfully.');
     }
 
     public function destroy(Deduction $deduction)
@@ -64,7 +64,7 @@ class DeductionController extends Controller
         createActivity('Delete Deduction', 'Deduction '. $deduction->deduction_name.'deleted successfully.', request()->getClientIp(true));
         $deduction->delete();
 
-        return redirect()->route('deductions.index')->with('success', 'Deduction deleted successfully.');
+        return redirect()->back()->with('success', 'Deduction deleted successfully.');
     }
 }
 

@@ -21,9 +21,6 @@
                         </a>
 
                     </div>
-
-
-
                 </div>
             </div>
             <table class="min-w-full border data-table">

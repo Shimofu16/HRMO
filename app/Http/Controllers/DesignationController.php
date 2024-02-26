@@ -12,12 +12,12 @@ class DesignationController extends Controller
         $designations = Designation::orderBy('designation_name', 'asc')
             ->get();
 
-        return view('designations.index', compact('designations'));
+        return view('settings.designations.index', compact('designations'));
     }
 
     public function create()
     {
-        return view('designations.create');
+        return view('settings.designations.create');
     }
 
     public function store(Request $request)
@@ -29,14 +29,14 @@ class DesignationController extends Controller
 
         Designation::create($request->all());
 
-        createActivity('Create Designation', 'Designation '.$request->designation_name.' created successfully.', request()->getClientIp(true));
+        createActivity('Create Designation', 'Designation ' . $request->designation_name . ' created successfully.', request()->getClientIp(true));
 
-        return redirect()->route('designations.index')->with('success', 'Designation created successfully.');
+        return redirect()->back()->with('success', 'Designation created successfully.');
     }
 
     public function edit(Designation $designation)
     {
-        return view('designations.edit', compact('designation'));
+        return view('settings.designations.edit', compact('designation'));
     }
 
     public function update(Request $request, Designation $designation)
@@ -48,15 +48,15 @@ class DesignationController extends Controller
 
         $designation->update($request->all());
 
-        createActivity('Update Designation', 'Designation '.$request->designation_name.' updated successfully.', request()->getClientIp(true), $designation, $request);;
+        createActivity('Update Designation', 'Designation ' . $request->designation_name . ' updated successfully.', request()->getClientIp(true), $designation, $request);;
 
-        return redirect()->route('designations.index')->with('success', 'Designation updated successfully.');
+        return redirect()->back()->with('success', 'Designation updated successfully.');
     }
 
     public function destroy(Designation $designation)
     {
         $designation->delete();
 
-        return redirect()->route('designations.index')->with('success', 'Designation deleted successfully.');
+        return redirect()->back()->with('success', 'Designation deleted successfully.');
     }
 }

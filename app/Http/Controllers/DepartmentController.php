@@ -13,7 +13,7 @@ class DepartmentController extends Controller
         $departments = Department::orderBy('id', 'asc')->get();
 
 
-        return view('departments.index', compact('departments'));
+        return view('settings.departments.index', compact('departments'));
     }
 
     public function create()
@@ -33,12 +33,12 @@ class DepartmentController extends Controller
 
         createActivity('Create Department', 'Department '.$request->dep_name.' created successfully.', request()->getClientIp(true));
 
-        return redirect()->route('departments.index')->with('success', 'Department created successfully.');
+        return redirect()->back()->with('success', 'Department created successfully.');
     }
 
     public function edit(Department $department)
     {
-        return view('departments.edit', compact('department'));
+        return view('settings.departments.edit', compact('department'));
     }
 
     public function update(Request $request, Department $department)
@@ -48,11 +48,13 @@ class DepartmentController extends Controller
             'dep_name' => 'required',
         ]);
 
+        $request->merge(['dep_code' => toCode($request->dep_name)]);
+
         $department->update($request->all());
 
         createActivity('Update Department', 'Department '.$department->dep_name.' updated successfully.', request()->getClientIp(true), $department, $request);
 
-        return redirect()->route('departments.index')->with('success', 'Department updated successfully.');
+        return redirect()->back()->with('success', 'Department updated successfully.');
     }
 
     public function destroy(Department $department)
@@ -61,6 +63,6 @@ class DepartmentController extends Controller
 
         $department->delete();
 
-        return redirect()->route('departments.index')->with('success', 'Department deleted successfully.');
+        return redirect()->back()->with('success', 'Department deleted successfully.');
     }
 }

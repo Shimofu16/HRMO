@@ -14,12 +14,12 @@ class SgradeController extends Controller
     {
         $sgrades = Sgrade::all();
 
-        return view('sgrades.index', compact('sgrades'));
+        return view('settings.salary_grades.index', compact('sgrades'));
     }
 
     public function create()
     {
-        return view('sgrades.create');
+        return view('settings.salary_grades.create');
     }
 
     public function store(Request $request)
@@ -33,12 +33,12 @@ class SgradeController extends Controller
 
         createActivity('Create Salary Grade', 'Salary grade '. $request->sg_name. ' created successfully');
 
-        return redirect()->route('sgrades.index')->with('success', 'Salary Grade created successfully.');
+        return redirect()->back()->with('success', 'Salary Grade created successfully.');
     }
 
     public function edit(Sgrade $sgrade)
     {
-        return view('sgrades.edit', compact('sgrade'));
+        return view('settings.salary_grades.edit', compact('sgrade'));
     }
 
     public function update(Request $request, Sgrade $sgrade)
@@ -50,13 +50,13 @@ class SgradeController extends Controller
 
         $sgrade->update($request->all());
 
-        return redirect()->route('sgrades.index')->with('success', 'Salary Grade updated successfully.');
+        return redirect()->back()->with('success', 'Salary Grade updated successfully.');
     }
 
     public function destroy(Sgrade $sgrade)
     {
         $sgrade->delete();
 
-        return redirect()->route('sgrades.index')->with('success', 'Salary Grade deleted successfully.');
+        return redirect()->back()->with('success', 'Salary Grade deleted successfully.');
     }
 }

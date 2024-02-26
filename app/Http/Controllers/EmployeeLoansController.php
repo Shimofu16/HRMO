@@ -13,7 +13,7 @@ class EmployeeLoansController extends Controller
     public function index()
     {
         $loans = Loan::all();
-        return view('loans.index', compact('loans'));
+        return view('settings.loans.index', compact('loans'));
     }
 
     /**
@@ -51,7 +51,7 @@ class EmployeeLoansController extends Controller
      */
     public function edit(Loan $loan)
     {
-        return view('loans.edit', compact('loan'));
+        return view('settings.loans.edit', compact('loan'));
     }
 
     /**
@@ -65,7 +65,7 @@ class EmployeeLoansController extends Controller
         ]);
 
         createActivity('Update Loan', 'Loan '. $request->name .'updated successfully.', request()->getClientIp(true));
-        return redirect()->route('loans.index')->with('success', 'Loan updated successfully');
+        return redirect()->back()->with('success', 'Loan updated successfully');
     }
 
     /**
@@ -75,6 +75,6 @@ class EmployeeLoansController extends Controller
     {
         createActivity('Delete Loan', 'Loan '. $loan->name .'deleted successfully.', request()->getClientIp(true));
         $loan->delete();
-        return redirect()->route('loans.index')->with('success', 'Loan deleted successfully');
+        return redirect()->back()->with('success', 'Loan deleted successfully');
     }
 }
