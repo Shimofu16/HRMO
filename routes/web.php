@@ -217,6 +217,7 @@ Route::middleware(['auth'])->group(function () {
 
     // employee
     Route::get('/employees/{filter_by?}/{filter_id?}', [EmployeeController::class, 'index'])->name('employees.index');
+    Route::get('/employees/{id}', [EmployeeController::class, 'show'])->name('employees.show');
 
     // Salary Grade Steps
     Route::prefix('salary-grade/steps')->name('salary.grade.')->controller(SalaryGradeStepController::class)->group(function () {

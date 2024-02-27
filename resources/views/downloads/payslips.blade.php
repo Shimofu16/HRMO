@@ -95,10 +95,10 @@
         @endphp
         {{-- page break every 2 payslip per page --}}
         <div class="{{ $loop->iteration % 2 ? '' : 'page-break' }}" id="canvas">
-            <table class="table  border-2">
-                <tr class="border p-4 m-2">
+            <table class="table border-2">
+                <tr class="p-4 m-2 border">
                     <td colspan="9" class="border-dashed-right">
-                        <div class="title mb-2 text-center">
+                        <div class="mb-2 text-center title">
                             <h6 class="title">MUNICIPALITY OF CALAUAN</h6>
                             <span class="block sub-title">{{ $department->dep_name }}</span>
                         </div>
@@ -106,33 +106,33 @@
                             <tr>
                                 <td>
                                     <span class="text-right">
-                                        <span class="sub-title font-semibold">Name:</span>
+                                        <span class="font-semibold sub-title">Name:</span>
                                         <span class="fw-400">{{ $employee->name }}</span>
                                     </span>
                                 </td>
                                 <td>
                                     <span class="text-right">
-                                        <span class="sub-title font-semibold">Period:</span>
+                                        <span class="font-semibold sub-title">Period:</span>
                                         <span class="fw-400">{{ $filter['from'] }}-{{ $filter['to'] }}</span>
                                     </span>
                                 </td>
                             </tr>
                         </table>
-                        <table class=" mt-4 ">
+                        <table class="mt-4 ">
                             <tr>
                                 <td colspan="4" class="border-dashed-right">
-                                    <h6 class="text-center  mb-2 sub-title">EARNINGS</h6>
+                                    <h6 class="mb-2 text-center sub-title">EARNINGS</h6>
                                     <span>
-                                        <span class="sub-title font-semibold">Monthly Salary:</span>
+                                        <span class="font-semibold sub-title">Monthly Salary:</span>
                                         <span class="fw-400">{{ number_format($salaryGrade) }}</span>
                                     </span>
                                     <br>
                                     <span>
-                                        <span class="sub-title font-semibold">Amount Earned:</span>
+                                        <span class="font-semibold sub-title">Amount Earned:</span>
                                         <span class="fw-400">{{ number_format($amountEarned) }}</span>
                                     </span>
                                     <br>
-                                    <h6 class="text-center  mb-2 mt-3">ALLOWANCES</h6>
+                                    <h6 class="mt-3 mb-2 text-center">ALLOWANCES</h6>
                                     @foreach ($allowances as $itemallowance)
                                         <span class="mb-1">
                                             <span class="fw-400">{{ $itemallowance->allowance->allowance_code }} -
@@ -142,7 +142,7 @@
                                     @endforeach
                                 </td>
                                 <td colspan="4 px-2">
-                                    <h6 class="text-center  mb-2 sub-title">DEDUCTION</h6>
+                                    <h6 class="mb-2 text-center sub-title">DEDUCTION</h6>
                                     @if ($mandatoryDeductions)
                                         <span class="sub-title">MANDATORY</span>
                                         <br>
@@ -221,7 +221,7 @@
 
                     </td>
                     <td>
-                        <div class="text-center mb-2">
+                        <div class="mb-2 text-center">
                             <h6 class="title">MUNICIPALITY OF CALAUAN</h6>
                             <h6 class="sub-title">RECEIPT {{ $employee->emp_no }}</h6>
                             <span> &nbsp;</span>

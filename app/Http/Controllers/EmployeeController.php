@@ -132,9 +132,9 @@ class EmployeeController extends Controller
     /**
      * Display the specified employee.
      */
-    public function show(Request $request)
+    public function show($id)
     {
-        $employees = Employee::with('Sgrade');
+        $employee = Employee::find($id);
         return view('employees.show', compact('employee'));
     }
 

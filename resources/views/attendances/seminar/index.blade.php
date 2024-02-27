@@ -1,72 +1,44 @@
 <x-app-layout>
+
     <x-slot name="header">
-        <h1 class="text-xl font-semibold leading-tight text-gray-800">
-            Attendance List
-        </h1>
+        <h2 class="text-xl font-semibold leading-tight text-gray-800">
+            Seminar
+        </h2>
     </x-slot>
-
-
-    {{-- <div class="grid grid-cols-1 gap-3 mt-4 md:grid-cols-2 xl:grid-cols-6">
-
-        <!-- Position List Card -->
-        <a href="{{ route('attendances-history.index') }}">
-            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    <h2 class="mb-2 text-lg font-semibold text-center">Attendance History</h2>
-                    <!-- Card content here -->
-                </div>
-            </div>
-        </a>
-        <a href="{{ route('seminars.index') }}">
-            <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    <h2 class="mb-2 text-lg font-semibold text-center">Seminars</h2>
-                    <!-- Card content here -->
-                </div>
-            </div>
-        </a>
-    </div> --}}
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="mt-5 md:mt-0 md:col-span-2">
-                <form action="{{ route('seminars.store') }}" method="POST">
-                    @csrf
-                    <div class="shadow overflow-hidden sm:rounded-md">
-                        <div class="px-4 py-5 bg-white sm:p-6">
-                            <div class="grid grid-cols-6 gap-6">
-                                <div class="col-span-3 sm:col-span-3">
-                                    <label for="name" class="block font-medium text-gray-700">
-                                        Name</label>
-                                    <input type="text" name="name" id="name"
-                                        class="block w-full mt-1 rounded" required>
-                                </div>
-                                <div class="col-span-3 sm:col-span-3">
-                                    <label for="date" class="block font-medium text-gray-700">
-                                        Date</label>
-                                        <input type="date" name="date" id="date"
-                                        class="block w-full mt-1 rounded" required>
-                                    </div>
-                                    <div class="col-span-3 sm:col-span-3">
-                                        <label for="amount" class="block font-medium text-gray-700">
-                                            Amount</label>
-                                        <input type="number" name="amount" id="amount"
-                                            class="block w-full mt-1 rounded" required>
-                                    </div>
-                            </div>
-                        </div>
-                        <div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
-                            <x-primary-button class="ml-3">
-                                {{ __('Create') }}
-                            </x-primary-button>
-                        </div>
+    <div class="mx-auto max-w-7xl">
+        <div class="p-5 mx-8 mt-8 bg-white rounded-md shadow">
+            <form action="{{ route('seminars.store') }}" method="POST">
+                @csrf
+                <div class="grid grid-cols-6 gap-6">
+                    <div class="col-span-3 sm:col-span-3">
+                        <label for="name" class="block font-medium text-gray-700">
+                            Name</label>
+                        <input type="text" name="name" id="name"
+                            class="block w-full mt-1 rounded" required>
                     </div>
-                </form>
-            </div>
+                    <div class="col-span-3 sm:col-span-3">
+                        <label for="date" class="block font-medium text-gray-700">
+                            Date</label>
+                            <input type="date" name="date" id="date"
+                            class="block w-full mt-1 rounded" required>
+                        </div>
+                        <div class="col-span-3 sm:col-span-3">
+                            <label for="amount" class="block font-medium text-gray-700">
+                                Amount</label>
+                            <input type="number" name="amount" id="amount"
+                                class="block w-full mt-1 rounded" required>
+                        </div>
+                </div>
+                <div class="py-3 text-right sm:px-6">
+                    <x-primary-button class="mr-1">
+                        {{ __('Create') }}
+                    </x-primary-button>
+                </div>
+            </form>
         </div>
-    </div>
-
-    <div class="py-12 ">
-        <div class="mx-auto bg-white max-w-7xl sm:p-6 lg:p-8">
+    
+        <div class="p-5 mt-5 bg-white rounded-md shadow">
+    
             <table class="min-w-full border data-table">
                 <thead>
                     <tr>
@@ -89,7 +61,7 @@
                                 {{ date('h:i A', strtotime($seminar->time_end)) }}</td> --}}
                             <td class="px-4 py-2 border-b">
                                 <a href="{{ route('seminars.show', ['seminar_id' => $seminar->id]) }}"
-                                    class="text-green-500 hover:text-green-700 mr-3">View</a>
+                                    class="mr-3 text-green-500 hover:text-green-700">View</a>
                                 {{-- <a href="{{ route('seminars.payslip', ['seminar_id' => $seminar->id]) }}"
                                     class="text-blue-500 hover:text-blue-700">Generate Payslip</a> --}}
                             </td>
