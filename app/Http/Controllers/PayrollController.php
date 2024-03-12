@@ -7,7 +7,7 @@ use App\Models\Attendance;
 use App\Models\Payroll;
 use App\Models\Department;
 use App\Models\Employee;
-use App\Models\Sgrade;
+use App\Models\SalaryGrade;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 

@@ -81,7 +81,7 @@
                                         Grade</label>
                                     <select name="sgrade_id" id="sgrade_id"
                                         class="form-select block w-full mt-1 rounded" required>
-                                        @foreach ($sgrades as $sgrade)
+                                        @foreach ($salary_grades as $sgrade)
                                             <option value="{{ $sgrade->id }}"
                                                 {{ $sgrade->id === $employee->sgrade_id ? 'selected' : '' }}>
                                                 {{ $sgrade->sg_name }}
@@ -253,7 +253,7 @@
                             checkbox.value = allowance.id;
                             checkbox.id = 'allowance_' + allowance.id;
                             checkbox.classList.add('mr-2');
-                            
+
                             if (employee.allowances.find(function(employeeAllowance) {
                                     return employeeAllowance.id === allowance.id;
                                 })) {
@@ -296,8 +296,8 @@
         //     }
         // });
         // Trigger the change event if a default value is present
-        var defaultSgradeId = document.getElementById('sgrade_id').value;
-        if (defaultSgradeId) {
+        var defaultSalaryGradeId = document.getElementById('sgrade_id').value;
+        if (defaultSalaryGradeId) {
             document.getElementById('sgrade_id').dispatchEvent(new Event('change'));
         }
     </script>

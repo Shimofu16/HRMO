@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\SalaryGrade;
 use Illuminate\Support\Str;
 
 
@@ -59,7 +60,7 @@ if (!function_exists('money')) {
     function money($number, $currency = 'PHP')
     {
         $currency = Str::upper($currency);
-        return $currency .' '.$number;
+        return $currency . ' ' . $number;
     }
 }
 if (!function_exists('computePercentage')) {
@@ -75,3 +76,20 @@ if (!function_exists('getLoan')) {
     }
 }
 
+if (!function_exists('getSalaryGradesTotalSteps')) {
+
+    function getSalaryGradesTotalSteps()
+    {
+        $total_steps = 0;
+        $temp = 0;
+        foreach (SalaryGrade::all() as $key => $salary_grade) {
+            $temp =  count($salary_grade->steps);
+            if ($temp > $total_steps) {
+                $total_steps = $temp;
+            }
+            $temp =  $total_steps;
+        }
+
+        return $total_steps;
+    }
+}

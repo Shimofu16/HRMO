@@ -39,7 +39,7 @@ class DeductionController extends Controller
 
     public function edit(Deduction $deduction)
     {
-        return view('deductions.edit', compact('deduction'));
+        return view('settings.deductions.edit', compact('deduction'));
     }
 
     public function update(Request $request, Deduction $deduction)

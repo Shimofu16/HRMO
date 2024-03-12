@@ -1,21 +1,20 @@
 
 @extends('settings.index')
+@section('header')
+    Loans
+@endsection
 @section('contents')
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Loan
-        </h2>
-    </x-slot>
+
     <div class="bg-white mt-8 p-5 mx-8 shadow rounded-md">
         <form action="{{ route('departments.store') }}" method="POST">
             @csrf
             <div class="grid grid-cols-12 gap-6">
-                <div class="col-span-3 sm:col-span-3">
+                <div class="col-span-6 sm:col-span-3">
                     <label for="name" class="block font-medium text-gray-700">Name</label>
                     <input type="text" name="name" id="name"
                         class="form-input mt-1 block w-full text-xl" required>
                 </div>
-                <div class="col-span-3 sm:col-span-3">
+                <div class="col-span-6 sm:col-span-3">
                     <label for="description" class="block font-medium text-gray-700">Description</label>
                     <input type="text" name="description" id="description"
                         class="form-input mt-1 block w-full text-xl" required>

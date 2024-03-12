@@ -18,46 +18,16 @@ class Employee extends Model
      */
     protected $guarded = [];
 
-    /**
-     * Get the department associated with the employee.
-     */
-    public function department()
-    {
-        return $this->belongsTo(Department::class, 'department_id');
-    }
+    protected $appends = ['full_name'];
 
     /**
-     * Get the category associated with the employee.
+     * The attributes the full name of employee.
+     *
+     * @var array
      */
-    public function category()
-    {
-        return $this->belongsTo(Category::class, 'category_id');
+    public function getFullNameAttribute(){
+        return "{$this->first_name} {$this->middle_name} {$this->last_name}";
     }
-
-    /**
-     * Get the category associated with the employee.
-     */
-    public function designation()
-    {
-        return $this->belongsTo(Designation::class, 'designation_id');
-    }
-
-    /**
-     * Get the category associated with the employee.
-     */
-    public function sgrade()
-    {
-        return $this->belongsTo(Sgrade::class);
-    }
-
-    /**
-     * Get the category associated with the employee.
-     */
-    public function schedule()
-    {
-        return $this->belongsTo(Schedule::class, 'schedule_id');
-    }
-
 
     /**
      * Get the category associated with the employee.
@@ -83,13 +53,14 @@ class Employee extends Model
         return $this->hasMany(EmployeeDeduction::class);
     }
 
-    /**
-     * Get the sick leave associated with the employee.
+      /**
+     * Get the seminar attendances request associated with the employee.
      */
-    public function sickLeave()
+    public function seminarAttendances()
     {
-        return $this->hasOne(EmployeeSickLeave::class, 'employee_id');
+        return $this->hasMany(SeminarAttendance::class, 'employee_id');
     }
+
 
     /**
      * Get the sick leave request associated with the employee.
@@ -100,25 +71,20 @@ class Employee extends Model
     }
 
     /**
-     *  Get the salary grade step associated with the employee.
-     *
-     */
-    public function salaryGradeStep()
-    {
-        return $this->belongsTo(SalaryGradeStep::class, 'salary_grade_step_id');
-    }
-    public function seminarAttendances()
-    {
-        return $this->hasMany(SeminarAttendance::class, 'employee_id');
-    }
-
-    /**
      *  Get the loans associated with the employee.
      *
      */
     public function loans()
     {
         return $this->hasMany(EmployeeLoan::class, 'employee_id');
+    }
+    /**
+     *  Get the loans associated with the employee.
+     *
+     */
+    public function data()
+    {
+        return $this->hasOne(EmployeeData::class, 'employee_id');
     }
 
     public function computeAllowance()

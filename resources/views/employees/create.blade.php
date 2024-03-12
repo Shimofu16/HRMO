@@ -14,7 +14,7 @@
         </div>
     </div>
     @push('scripts')
-       
+
         {{-- <script src="{{ asset('assets/select2/css/select2.min.css') }}"></script>
     <script>
 
@@ -108,8 +108,8 @@
             }
         });
          // Trigger the change event if a default value is present
-         var defaultSgradeId = document.getElementById('sgrade_id').value;
-        if (defaultSgradeId) {
+         var defaultSalaryGradeId = document.getElementById('sgrade_id').value;
+        if (defaultSalaryGradeId) {
             document.getElementById('sgrade_id').dispatchEvent(new Event('change'));
         }
     </script> --}}

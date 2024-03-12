@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="{{ asset('assets/apexcharts/apexcharts.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/datatables/dataTables.tailwindcss.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/jquery/jquery.dataTables.min.css') }}">
-    
+
     @stack('styles')
     @livewireStyles
     <!-- Scripts -->
@@ -51,6 +51,7 @@
     $(document).ready(function() {
         const dataTableOptions = {
             info: false,
+            scrollX: true,
             ordering: false,
             lengthMenu: {!! json_encode(
                 Route::is('attendances.index') ? [[50, 75, 100, -1], [50, 75, 100, 'All']] : [5, 10, 25, 50, 75, 100],

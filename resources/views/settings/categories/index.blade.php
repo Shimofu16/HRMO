@@ -1,10 +1,8 @@
 @extends('settings.index')
+@section('header')
+    Categories
+@endsection
 @section('contents')
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Category
-        </h2>
-    </x-slot>
     <div class="bg-white mt-8 p-5 mx-8 shadow rounded-md">
         <form action="{{ route('categories.store') }}" method="POST">
             @csrf

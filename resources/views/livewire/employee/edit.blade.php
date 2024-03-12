@@ -67,7 +67,7 @@
                     <label for="sgrade_id" class="block font-bold text-gray-700">Salary
                         Grade</label>
                     <select name="sgrade_id" id="sgrade_id" class="form-select block w-full mt-1 rounded" required>
-                        @foreach ($sgrades as $sgrade)
+                        @foreach ($salary_grades as $sgrade)
                             <option value="{{ $sgrade->id }}"
                                 {{ $sgrade->id === $employee->sgrade_id ? 'selected' : '' }}>
                                 {{ $sgrade->sg_name }}

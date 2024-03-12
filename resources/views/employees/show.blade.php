@@ -49,8 +49,8 @@
             <h3><strong>Department: </strong>{{ $employee->department->dep_name }}</h3>
             <h3><strong>Designation: </strong>{{ $employee->designation->designation_name }}</h3>
             <h3><strong>Category: </strong>{{ $employee->category->category_name }}</h3>
-            <h3><strong>Salary Grade: </strong>{{ $employee->sgrade->sg_name }}</h3>
-            <h3><strong>Salary Grade Step: </strong>{{ $employee->salaryGradeStep->step }} - {{ number_format($employee->salaryGradeStep->amount) }}</h3>
+            <h3><strong>Salary Grade: </strong> Salary Grade {{ $employee->data->salary_grade_id }}</h3>
+            <h3><strong>Salary Grade Step: </strong> {{ $employee->data->salary_grade_step }} - {{ number_format($employee->data->salary_grade_step_amount) }}</h3>
             <h3><strong>Sick Leave Points: </strong>{{ $employee->sickLeave->points }}</h3>
             <div class="my-3 border-b border-gray-100">
                 <h1 class="text-2xl font-bold">Deductions & Allowances</h1>

@@ -8,7 +8,7 @@ use App\Http\Controllers\PayrollController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DesignationController;
-use App\Http\Controllers\SgradeController;
+use App\Http\Controllers\SalaryGradeController;
 use App\Http\Controllers\AllowanceController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\BackupController;
@@ -22,6 +22,7 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SeminarController;
 use App\Models\Allowance;
 use App\Models\Loan;
+use App\Models\SalaryGrade;
 use App\Models\SalaryGradeStep;
 use Illuminate\Http\Request;
 
@@ -101,14 +102,8 @@ Route::middleware(['auth'])->group(function () {
         'destroy' => 'designations.destroy',
     ]);
 
-    Route::resource('sgrades', SgradeController::class)->names([
-        'index' => 'sgrades.index',
-        'create' => 'sgrades.create',
-        'store' => 'sgrades.store',
-        'show' => 'sgrades.show',
-        'edit' => 'sgrades.edit',
-        'update' => 'sgrades.update',
-        'destroy' => 'sgrades.destroy',
+    Route::resource('salary-grades', SalaryGradeController::class)->only([
+        'index', 'create', 'store', 'edit', 'update',
     ]);
 
     Route::resource('allowances', AllowanceController::class)->names([
@@ -192,7 +187,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/designations-index/employees', [DesignationController::class, 'index'])->name('designations-index.employees');
 
     // Salary Grade List Routes
-    Route::get('/sgrades-index/employees', [SgradeController::class, 'index'])->name('sgrades-index.employees');
+    Route::get('/sgrades-index/employees', [SalaryGradeController::class, 'index'])->name('sgrades-index.employees');
 
     // Allowance List Routes
     Route::get('/allowances-index/employees', [AllowanceController::class, 'index'])->name('allowances-index.employees');
@@ -219,13 +214,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/employees/{filter_by?}/{filter_id?}', [EmployeeController::class, 'index'])->name('employees.index');
     Route::get('/employees/{id}', [EmployeeController::class, 'show'])->name('employees.show');
 
-    // Salary Grade Steps
-    Route::prefix('salary-grade/steps')->name('salary.grade.')->controller(SalaryGradeStepController::class)->group(function () {
-        Route::get('/{salary_grade_id}', 'show')->name('show');
-        Route::post('/store/{salary_grade_id}', 'store')->name('store');
-        Route::put('/update/{salary_grade_id}', 'update')->name('update');
-        Route::delete('/destroy/{salary_grade_id}', 'destroy')->name('destroy');
-    });
+
     // Seminar
     Route::prefix('seminars')->name('seminars.')->controller(SeminarController::class)->group(function () {
         Route::get('/', 'index')->name('index');
@@ -244,25 +233,16 @@ Route::prefix('employee/attendance')->name('employee.attendance.')->controller(E
 });
 
 
-Route::get('/getAllowances', function (Request $request) {
-    $category_id = $request->input('category_id');
-    $allowances = Allowance::where('category_id', $category_id)->get();
 
-    return response()->json($allowances);
+Route::get('/getAllowances', function (Request $request) {
+    return response()->json(Allowance::where('category_id', $request->input('category_id'))->get());
 });
 Route::get('/getSteps', function (Request $request) {
-    $sgrade_id = $request->input('sgrade_id');
-    $steps = SalaryGradeStep::where('salary_grade_id', $sgrade_id)->get();
-
-    return response()->json($steps);
+    return response()->json(SalaryGrade::find($request->input('salary_grade_id'))->steps);
 });
 Route::get('/getLoan', function (Request $request) {
-    $loan_ids = $request->input('loan_id');
-    $loans = Loan::whereIn('id', $loan_ids)->get();
-
-    return response()->json($loans);
+    return response()->json(Loan::whereIn('id', $request->input('loan_id'))->get());
 });
-
 
 
 Route::middleware('auth')->group(function () {

@@ -6,7 +6,7 @@ use App\Models\Employee;
 use App\Models\Department;
 use App\Models\Category;
 use App\Models\Designation;
-use App\Models\Sgrade;
+use App\Models\SalaryGrade;
 use App\Models\Allowance;
 use App\Models\Deduction;
 use App\Models\EmployeeAllowance;
@@ -15,8 +15,7 @@ use App\Models\EmployeeSickLeave;
 use App\Models\Loan;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use PhpParser\Node\Stmt\TryCatch;
+
 
 class EmployeeController extends Controller
 {
@@ -26,16 +25,22 @@ class EmployeeController extends Controller
     public function index($filter_by = null, $filter_id = null)
     {
         // Retrieve all employees from the database with their associated sgrade
-        $employees = Employee::query()->orderBy('name', 'asc');
+        $employees = Employee::query()
+            ->with('data')
+            ->orderBy('last_name', 'asc');
         $department = null;
         $category = null;
         $departments = Department::all();
         $categories = Category::all();
         if ($filter_by == "department") {
-            $employees->where('department_id', $filter_id);
+            $employees->whereHas('data', function ($query) use ($filter_id) {
+                $query->where('department_id', $filter_id);
+            });
         }
         if ($filter_by == "category") {
-            $employees->where('category_id', $filter_id);
+            $employees->whereHas('data', function ($query) use ($filter_id) {
+                $query->where('category_id', $filter_id);
+            });
         }
 
         // get all the employees
@@ -152,13 +157,13 @@ class EmployeeController extends Controller
 
         $designations = Designation::all();
 
-        $sgrades = Sgrade::all();
+        $salary_grades = SalaryGrade::all();
 
         $allowances = Allowance::all();
 
         $deductions = Deduction::all();
 
-        return view('employees.edit', ['employee' => $employee, 'loans' => $loans, 'departments' => $departments, 'categories' => $categories, 'designations' => $designations, 'sgrades' => $sgrades, 'allowances' => $allowances, 'deductions' => $deductions]);
+        return view('employees.edit', ['employee' => $employee, 'loans' => $loans, 'departments' => $departments, 'categories' => $categories, 'designations' => $designations, 'sgrades' => $salary_grades, 'allowances' => $allowances, 'deductions' => $deductions]);
     }
 
     /**
@@ -194,7 +199,7 @@ class EmployeeController extends Controller
         $employee->sickLeave()->update(['points' => $sick_leave]);
 
         // Handle loans
-        
+
 
 
 

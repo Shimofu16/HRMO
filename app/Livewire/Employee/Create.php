@@ -3,7 +3,7 @@
 namespace App\Livewire\Employee;
 
 use App\Models\Loan;
-use App\Models\Sgrade;
+use App\Models\SalaryGrade;
 use Livewire\Component;
 use App\Models\Category;
 use App\Models\Allowance;
@@ -23,10 +23,19 @@ class Create extends Component
     public $selected_loans;
     public $selected_allowances;
 
+    public $loans;
+    public $departments;
+    public $categories;
+    public $designations;
+    public $salary_grades;
+    public $allowances;
+    public $mandatory_deductions;
+    public $non_mandatory_deductions;
+
     public function updatedSalaryGradeId($value)
     {
         if ($value) {
-            $this->salary_grade_steps = SalaryGradeStep::where('salary_grade_id', $value)->get();
+            $this->salary_grade_steps = SalaryGrade::find($this->salary_grade_id)->steps;
             // dd(   $this->salary_grade_steps);
         }
     }
@@ -42,25 +51,26 @@ class Create extends Component
             if (!array_key_exists($value, $this->selected_loans)) {
                 $this->selected_loans[$value] = Loan::where('id', $value)->first();
             }
-        }else{
+        } else {
             $this->selected_loans[$value] = Loan::where('id', $value)->first();
         }
         // dd( $this->selected_loans);
     }
 
-
+    public function mount()
+    {
+        $this->loans = Loan::all();
+        $this->departments = Department::all();
+        $this->categories = Category::all();
+        $this->designations = Designation::all();
+        $this->salary_grades = SalaryGrade::all();
+        $this->allowances = Allowance::pluck('allowance_code', 'id');
+        $this->mandatory_deductions = Deduction::where('deduction_type', 'Mandatory')->get();
+        $this->non_mandatory_deductions = Deduction::where('deduction_type', 'Non-Mandatory')->get();
+    }
 
     public function render()
     {
-        return view('livewire.employee.create', [
-            'loans' => Loan::all(),
-            'departments' => Department::all(),
-            'categories' => Category::all(),
-            'designations' => Designation::all(),
-            'sgrades' => Sgrade::all(),
-            'allowances' => Allowance::pluck('allowance_code', 'id'),
-            'mandatory_deductions' => Deduction::where('deduction_type', 'Mandatory')->get(),
-            'non_mandatory_deductions' => Deduction::where('deduction_type', 'Non-Mandatory')->get(),
-        ]);
+        return view('livewire.employee.create');
     }
 }

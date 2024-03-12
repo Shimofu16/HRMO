@@ -1,10 +1,9 @@
 @extends('settings.index')
+@section('header')
+    Backups
+@endsection
 @section('contents')
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Backups
-        </h2>
-    </x-slot>
+ 
     <div class="bg-white p-5 mt-5">
         <div class="flex items-center justify-end mb-3">
             <a href="{{ route('backup.create') }}"

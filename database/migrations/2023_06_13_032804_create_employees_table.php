@@ -13,18 +13,12 @@ return new class extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
-            $table->string('emp_no');
-            $table->string('oinumber');
-            $table->string('name');
+            $table->string('employee_number')->unique();
+            $table->string('ordinance_number')->unique();
+            $table->string('first_name');
+            $table->string('middle_name');
+            $table->string('last_name');
             $table->timestamps();
-
-            $table->foreignId('sgrade_id')->nullable()->constrained('sgrades')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('salary_grade_step_id')->nullable()->constrained('salary_grade_steps')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('designation_id')->nullable()->constrained('designations')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('schedule_id')->nullable()->constrained('schedules')->onDelete('cascade')->onUpdate('cascade');
-
         });
     }
 

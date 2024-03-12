@@ -6,27 +6,30 @@
             <hr class="mb-3">
             <div class="grid grid-cols-6 gap-6">
                 <div class="col-span-6 sm:col-span-2">
-                    <label for="name" class="block font-medium text-gray-700">Name</label>
-                    <input type="text" name="name" id="name" class="block w-full mt-1 rounded" required>
+                    <label for="first_name" class="block font-medium text-gray-700">First Name</label>
+                    <input type="text" name="first_name" id="first_name" class="block w-full mt-1 rounded" required>
+                </div>
+                <div class="col-span-6 sm:col-span-2">
+                    <label for="middle_name" class="block font-medium text-gray-700">Middle Name</label>
+                    <input type="text" name="middle_name" id="middle_name" class="block w-full mt-1 rounded" required>
+                </div>
+                <div class="col-span-6 sm:col-span-2">
+                    <label for="last_name" class="block font-medium text-gray-700">Last Name</label>
+                    <input type="text" name="last_name" id="last_name" class="block w-full mt-1 rounded" required>
                 </div>
 
-                <div class="col-span-6 sm:col-span-2">
-                    <label for="oinumber" class="block font-medium text-gray-700">Ordinance Item
-                        Number</label>
-                    <input type="text" name="oinumber" id="oinumber" class="block w-full mt-1 rounded" required>
-                </div>
                 <div class="col-span-6 sm:col-span-2">
                     <label for="sick_leave" class="block font-medium text-gray-700">Sick Leave</label>
                     <input type="number" step="0.01" name="sick_leave" id="sick_leave"
                         class="block w-full mt-1 rounded" required>
                 </div>
                 <div class="col-span-6 sm:col-span-2">
-                    <label for="sgrade_id" class="block font-medium text-gray-700">Salary Grade</label>
-                    <select name="sgrade_id" id="sgrade_id" wire:model.live='salary_grade_id'
+                    <label for="salary_grade_id" class="block font-medium text-gray-700">Salary Grade</label>
+                    <select name="salary_grade_id" id="salary_grade_id" wire:model.live='salary_grade_id'
                         class="block w-full mt-1 rounded form-select" required>
                         <option value="" selected>--Please select here--</option>
-                        @foreach ($sgrades as $sgrade)
-                            <option value="{{ $sgrade->id }}" wire:key='{{ $sgrade->id }}'>{{ $sgrade->sg_code }}
+                        @foreach ($salary_grades as $salary_grade)
+                            <option value="{{ $salary_grade->id }}" wire:key='{{ $salary_grade->id }}'>Salary Grade {{ $salary_grade->id }}
                             </option>
                         @endforeach
                     </select>
@@ -38,8 +41,8 @@
                         class="block w-full mt-1 rounded form-select" required>
                         @if ($salary_grade_steps)
                             <option value="" selected>--Please select here--</option>
-                            @foreach ($salary_grade_steps as $salary_grade_step)
-                                <option value="{{ $salary_grade_step->id }}">{{ $salary_grade_step->step }}</option>
+                            @foreach ($salary_grade_steps as $key => $salary_grade_step)
+                                <option value="{{ $salary_grade_step['step'] }}">{{ $salary_grade_step['step'] }}</option>
                             @endforeach
                         @else
                             <option value="" selected>--Please select salary grade first--</option>

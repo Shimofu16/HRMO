@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\SalaryGradeStep;
-use App\Models\Sgrade;
+use App\Models\SalaryGrade;
 use Illuminate\Http\Request;
 
 class SalaryGradeStepController extends Controller
@@ -29,8 +29,8 @@ class SalaryGradeStepController extends Controller
      */
     public function store(Request $request, $salary_grade_id)
     {
-        $salary_grade = Sgrade::findOrFail($salary_grade_id);
-       
+        $salary_grade = SalaryGrade::findOrFail($salary_grade_id);
+
         if ($salary_grade->steps()->count() > 0) {
             foreach ($request->step as $key => $value) {
                 $salary_grade->steps()->create([
@@ -56,7 +56,7 @@ class SalaryGradeStepController extends Controller
     public function show($id)
     {
         return view('settings.salary_grades.steps.show', [
-            'salary_grade' => Sgrade::findOrFail($id),
+            'salary_grade' => SalaryGrade::findOrFail($id),
         ]);
     }
 

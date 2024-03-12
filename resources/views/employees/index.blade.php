@@ -78,8 +78,8 @@
                 <tr>
                     <th class="px-4 py-4 text-left border-b">#</th>
                     <th class="px-4 py-4 text-left border-b">Employee<br>ID</th>
-                    <th class="px-4 py-4 text-left border-b">Name</th>
                     <th class="px-4 py-4 text-left border-b">Ordinance<br>Item No.</th>
+                    <th class="px-4 py-4 text-left border-b">Name</th>
                     <th class="px-4 py-4 text-left border-b">Department</th>
                     <th class="px-4 py-4 text-left border-b">Designation</th>
                     <th class="px-4 py-4 text-left border-b">Category</th>
@@ -91,13 +91,13 @@
                     <tr>
                         <td class="px-4 py-3 border-b">
                             {{ $loop->iteration }}</td>
-                        <td class="px-4 py-3 border-b">{{ $employee->emp_no }}</td>
-                        <td class="px-4 py-3 border-b">{{ $employee->name }}</td>
-                        <td class="px-4 py-3 border-b">{{ $employee->oinumber }}</td>
-                        <td class="px-4 py-3 border-b">{{ $employee->department->dep_code }}</td>
+                        <td class="px-4 py-3 border-b">{{ $employee->employee_number }}</td>
+                        <td class="px-4 py-3 border-b">{{ $employee->ordinance_number }}</td>
+                        <td class="px-4 py-3 border-b">{{ $employee->full_name }}</td>
+                        <td class="px-4 py-3 border-b">{{ $employee->data->department->dep_code }}</td>
                         <td class="px-4 py-3 border-b">
-                            {{ Str::limit($employee->designation->designation_code, 20, '...') }}</td>
-                        <td class="px-4 py-3 border-b">{{ $employee->category->category_code }}</td>
+                            {{ Str::limit($employee->data->designation->designation_code, 20, '...') }}</td>
+                        <td class="px-4 py-3 border-b">{{ $employee->data->category->category_code }}</td>
                         <td class="px-4 py-3 border-b">
                             <a href="{{ route('employees.show', $employee) }}"
                                 class="text-blue-500 hover:text-blue-700">View Info.</a>
