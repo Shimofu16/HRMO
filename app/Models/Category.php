@@ -17,7 +17,7 @@ class Category extends Model
 
     public function employees()
     {
-        return $this->hasMany(Employee::class, 'category_id');
+        return $this->hasMany(EmployeeData::class, 'category_id');
     }
 
     public function allowances()

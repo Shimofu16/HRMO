@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\DB;
 
 class Employee extends Model
 {
@@ -25,7 +26,8 @@ class Employee extends Model
      *
      * @var array
      */
-    public function getFullNameAttribute(){
+    public function getFullNameAttribute()
+    {
         return "{$this->first_name} {$this->middle_name} {$this->last_name}";
     }
 
@@ -53,7 +55,7 @@ class Employee extends Model
         return $this->hasMany(EmployeeDeduction::class);
     }
 
-      /**
+    /**
      * Get the seminar attendances request associated with the employee.
      */
     public function seminarAttendances()
@@ -112,7 +114,7 @@ class Employee extends Model
                 // example: the value of amount is 10 so convert it to .10
                 $amount = $amount / 100;
                 if ($deduction->deduction->deduction_name == 'Phil Health') {
-                    $amount = ($this->salaryGradeStep->amount / 2) * .02;
+                    $amount = ($this->data->salary_grade_step_amount / 2) * .02;
                 }
             }
             $totalDeduction += $amount;
@@ -148,50 +150,90 @@ class Employee extends Model
 
     public function countAttendance($type, $month, $year, $from, $to)
     {
-        $count = 0;
+        // Parse month and year
         $month = Carbon::parse($month)->format('m');
         $year = Carbon::parse($year)->format('Y');
-        $from = Carbon::create($year, $month, $from)->subDay();
-        $to = Carbon::create($year, $month, $to)->addDay();
 
-        if ($type === "present") {
-            $count = $this->attendances()
-                ->whereBetween('created_at', [$from, $to])
-                ->where('isPresent', 1)
-                ->count();
+        // Define date range
+        $fromDate = Carbon::create($year, $month, $from)->subDay();
+        $toDate = Carbon::create($year, $month, $to)->addDay();
+
+        // Initialize count variable
+        $count = 0;
+        $days = [];
+        for ($i = $to; $i <= $from; $i++) {
+            $days[] = $i;
         }
-        if ($type === "absent") {
-            $count = $this->attendances()
-                ->whereBetween('created_at', [$from, $to])
-                ->where('isPresent', 0)
-                ->count();
-        }
-        if ($type === "late") {
-            $count = $this->attendances()
-                ->whereBetween('created_at', [$from, $to])
-                ->where(function ($query) {
-                    $query->where('time_in_status', 'LIKE', '%late%');
-                })
-                ->where('isPresent', 1)
-                ->count();
-        }
-        if ($type === "undertime") {
-            $count = $this->attendances()
-                ->whereBetween('created_at', [$from, $to])
-                ->where(function ($query) {
-                    $query->where('time_out_status', 'LIKE', '%undertime%');
-                })
-                ->where('isPresent', 1)
-                ->count();
-        }
-        if ($type == "manhours") {
-            $count = $this->attendances()
-                ->whereBetween('created_at', [$from, $to])
-                ->where('isPresent', 1)
-                ->sum('hours');
+        $query = $this->attendances()
+            ->query()
+            ->whereBetween('created_at', [$from, $to]);
+        // Query attendances based on the type
+        switch ($type) {
+            case 'present':
+                return $query
+                    ->where('isPresent', 1)
+                    ->count();
+            case 'absent':
+                // Generate series of dates within the specified range
+                $dateSeries = DB::table('attendances')
+                    ->selectRaw("DATE_ADD('{$fromDate}', INTERVAL (a.a + (10 * b.a) + (100 * c.a)) DAY) AS date")
+                    ->from(
+                        DB::raw('(SELECT 0 AS a UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) AS a'),
+                        DB::raw('(SELECT 0 AS a UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) AS b'),
+                        DB::raw('(SELECT 0 AS a UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) AS c')
+                    )
+                    ->whereRaw("DATE_ADD('{$fromDate}', INTERVAL (a.a + (10 * b.a) + (100 * c.a)) DAY) BETWEEN '{$fromDate}' AND '{$toDate}'");
+
+                // Left join with attendances table and count the null records (absent events)
+                return $this->attendances()
+                    ->leftJoinSub($dateSeries, 'date_series', function ($join) {
+                        $join->onDate('attendances.created_at', '=', 'date_series.date');
+                    })
+                    ->whereNull('date_series.date')
+                    ->orWhere('isPresent', 0)
+                    ->count();
+                break;
+            case 'late':
+                // Your existing late counting logic here
+                break;
+            case 'undertime':
+                // Your existing undertime counting logic here
+                break;
+            case 'manhours':
+                // Your existing manhours counting logic here
+                break;
         }
 
+        // if ($type === "present") {
+        //     $count = $query
+        //         ->where('isPresent', 1)
+        //         ->count();
+        // }
+        // if ($type === "absent") {
+        //     $presents = $this->attendances()
+        //         ->whereBetween('created_at', [$from, $to])
+        //         ->where('isPresent', 1)
+        //         ->get();
+        //     foreach ($days as $key => $day) {
+        //     }
+        // }
 
-        return $count;
+        // if ($type === "undertime") {
+        //     $count = $this->attendances()
+        //         ->whereBetween('created_at', [$from, $to])
+        //         ->where(function ($query) {
+        //             $query->where('time_out_status', 'LIKE', '%undertime%');
+        //         })
+        //         ->where('isPresent', 1)
+        //         ->count();
+        // }
+        // if ($type == "manhours") {
+        //     $count = $this->attendances()
+        //         ->whereBetween('created_at', [$from, $to])
+        //         ->where('isPresent', 1)
+        //         ->sum('hours');
+        // }
+
+
     }
 }

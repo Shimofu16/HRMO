@@ -35,7 +35,7 @@ class EmployeeAttendanceController extends Controller
     {
         // dd($request->all());
         $request->validate([
-            'employee_no' => 'required|exists:employees,emp_no',
+            'employee_number' => 'required|exists:employees,employee_number',
             'image' => 'required',
             'type' => 'required',
         ]);
@@ -49,11 +49,13 @@ class EmployeeAttendanceController extends Controller
         $image_base64 = base64_decode(end($image_parts));
 
         // Get employee details
-        $employee = Employee::with('attendances')->where('emp_no', $request->input('employee_no'))->first();
+        $employee = Employee::with('attendances')
+            ->where('employee_number', $request->employee_number)
+            ->first();
 
         // Generate file name and path
         $fileName = uniqid() . ' Time ' . ($isTimeIn ? 'in' : 'out') . '.png';
-        $path = 'uploads/attendance/' . $employee->name . '/';
+        $path = 'uploads/attendance/' . $employee->full_name . '/';
         $filePath = $path . $fileName;
 
 
@@ -89,18 +91,18 @@ class EmployeeAttendanceController extends Controller
                 ->whereNotNull('time_in') // Check if the employee has already timed in
                 ->whereNotNull('time_out') // Check if the employee has already timed out
                 ->first();
-
-            if ($existingTimeOut) {
-                // Employee already timed out, show error message
-                return redirect()->back()->with('error', 'You have already timed out for today!');
-            }
-
             // Check if the employee has timed in for the day
             $existingTimeIn = $employee->attendances()
                 ->whereDate('created_at', now())
                 ->whereNotNull('time_in')
                 ->whereNull('time_out')
                 ->first();
+
+            if ($existingTimeOut) {
+                // Employee already timed out, show error message
+                return redirect()->back()->with('error', 'You have already timed out for today!');
+            }
+
 
             if (!$existingTimeIn) {
                 // Employee has not timed in, show error message
@@ -260,7 +262,7 @@ class EmployeeAttendanceController extends Controller
         $minute_late = $defaultTimeIn->diffInMinutes($attendance->time_in);
 
         // Get the employee's sick leave balance
-        $sick_leave = $employee->sickLeave->sick_leave_balance;
+        $sick_leave = $employee->data->sick_leave_points;
 
         // check if the employee has sick leave left
         if ($sick_leave > 0) {
@@ -290,7 +292,7 @@ class EmployeeAttendanceController extends Controller
             $total_salary_for_today = 0;
         }
         // Update the employee's sick leave
-        $employee->sickLeave->update(['sick_leave_balance' => $sick_leave]);
+        $employee->data->update(['sick_leave_points' => $sick_leave]);
 
 
         return [

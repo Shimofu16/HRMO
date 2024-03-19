@@ -20,7 +20,7 @@ class SalaryGrade extends Model
 
     public function employees()
     {
-        return $this->hasMany(Employee::class, 'salary_grade_id');
+        return $this->hasMany(EmployeeData::class, 'salary_grade_id');
     }
 
     public function payroll()

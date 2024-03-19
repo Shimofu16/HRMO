@@ -19,8 +19,8 @@
                 </div>
 
                 <div class="col-span-6 sm:col-span-2">
-                    <label for="sick_leave" class="block font-medium text-gray-700">Sick Leave</label>
-                    <input type="number" step="0.01" name="sick_leave" id="sick_leave"
+                    <label for="sick_leave_points" class="block font-medium text-gray-700">Sick Leave Points</label>
+                    <input type="number" step="0.01" name="sick_leave_points" id="sick_leave_points"
                         class="block w-full mt-1 rounded" required>
                 </div>
                 <div class="col-span-6 sm:col-span-2">
@@ -35,9 +35,9 @@
                     </select>
                 </div>
                 <div class="col-span-6 sm:col-span-2">
-                    <label for="salary_grade_step_id" class="block font-medium text-gray-700">Salary
+                    <label for="salary_grade_step" class="block font-medium text-gray-700">Salary
                         Grade Step</label>
-                    <select name="salary_grade_step_id" id="salary_grade_step_id"
+                    <select name="salary_grade_step" id="salary_grade_step"
                         class="block w-full mt-1 rounded form-select" required>
                         @if ($salary_grade_steps)
                             <option value="" selected>--Please select here--</option>
@@ -96,7 +96,7 @@
                         @if ($selected_allowances)
                             @foreach ($selected_allowances as $selected_allowance)
                                 <div class="flex items-center mt-1" wire:key='{{ $selected_allowance->id }}'>
-                                    <input type="checkbox" name="allowance[]"
+                                    <input type="checkbox" name="allowances[]"
                                         id="allowance_{{ $selected_allowance->id }}"
                                         value="{{ $selected_allowance->id }}" class="mr-2 form-checkbox">
                                     <label for="allowance_{{ $selected_allowance->id }}"
@@ -117,7 +117,7 @@
                         </div>
                         @forelse ($mandatory_deductions as $mandatory_deduction)
                             <div class="w-1/2 px-2">
-                                <input type="checkbox" name="deduction[]" value="{{ $mandatory_deduction->id }}"
+                                <input type="checkbox" name="deductions[]" value="{{ $mandatory_deduction->id }}"
                                     class="mr-2 form-checkbox hidden" checked>
                                 <input type="checkbox" id="deduction_{{ $mandatory_deduction->id }}"
                                     value="{{ $mandatory_deduction->id }}" class="mr-2 form-checkbox" checked

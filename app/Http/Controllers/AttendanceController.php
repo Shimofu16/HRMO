@@ -16,9 +16,10 @@ class AttendanceController extends Controller
     {
         $attendances = Attendance::query()->with('employee')->whereDate('created_at', now());
         if ($filter_by =="department") {
-            $attendances->whereHas('employee', function ($query) use ($filter_id) {
+            $attendances->whereHas('employee.data', function ($query) use ($filter_id) {
                 $query->where('department_id', $filter_id);
             });
+            
             // $attendances = $attendances->get();
             // dd($attendances);
         }
@@ -29,14 +30,6 @@ class AttendanceController extends Controller
 
         return view('attendances.index', compact('attendances', 'employees', 'departments'));
     }
-
-
-
-
-
-
-
-
 
     public function store(Request $request)
     {

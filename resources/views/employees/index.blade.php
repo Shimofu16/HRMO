@@ -90,7 +90,8 @@
                 @foreach ($employees as $employee)
                     <tr>
                         <td class="px-4 py-3 border-b">
-                            {{ $loop->iteration }}</td>
+                            {{ $loop->iteration }}
+                        </td>
                         <td class="px-4 py-3 border-b">{{ $employee->employee_number }}</td>
                         <td class="px-4 py-3 border-b">{{ $employee->ordinance_number }}</td>
                         <td class="px-4 py-3 border-b">{{ $employee->full_name }}</td>

@@ -27,7 +27,7 @@
                             @foreach ($attendanceHistory as $attendance)
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        {{ $attendance->employee->emp_no }}
+                                        {{ $attendance->employee->employee_number }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         @if ($attendance->time_out)

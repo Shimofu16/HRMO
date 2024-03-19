@@ -125,7 +125,12 @@ class PayrollController extends Controller
     public function show($payroll)
     {
         $payroll = json_decode(urldecode($payroll), true);
-        $employees = Department::find($payroll['department_id'])->employees;
+        $employees = Employee::with('data')
+            ->whereHas('data', function ($query) use ($payroll) {
+                $query->where('department_id', $payroll['department_id']);
+            })
+            ->get();
+
         // Pass the payroll record to the view
         return view('payrolls.show', compact('payroll', 'employees'));
     }

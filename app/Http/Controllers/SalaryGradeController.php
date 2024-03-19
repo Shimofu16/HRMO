@@ -52,11 +52,20 @@ class SalaryGradeController extends Controller
     public function update(Request $request, SalaryGrade $salary_grade)
     {
         $request->validate([
-            'sg_code' => 'required',
-            'sg_name' => 'required',
+            'step' => 'required',
+            'amount' => 'required',
         ]);
 
-        $salary_grade->update($request->all());
+        foreach ($request->step as $key => $value) {
+            $steps[] =
+                [
+                    'step' => 'Step ' . ($key + 1),
+                    'amount' => $request->amount[$key],
+                ];
+        }
+        $salary_grade->update([
+            'steps' => $steps
+        ]);
 
         return redirect()->back()->with('success', 'Salary Grade updated successfully.');
     }

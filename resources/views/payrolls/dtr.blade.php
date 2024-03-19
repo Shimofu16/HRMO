@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                {{ $employee->name }} - Attendance from {{ date('F', strtotime($payroll['month'])) }} {{ $payroll['date_from_to'] }}, {{ $payroll['year'] }}
+                {{ $employee->full_name }} - Attendance from {{ date('F', strtotime($payroll['month'])) }} {{ $payroll['date_from_to'] }}, {{ $payroll['year'] }}
             </h2>
     </x-slot>
 

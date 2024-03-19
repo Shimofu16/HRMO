@@ -51,7 +51,7 @@
     $(document).ready(function() {
         const dataTableOptions = {
             info: false,
-            scrollX: true,
+            scrollX: {!! json_encode(Route::is('salary-grades.index')) !!},
             ordering: false,
             lengthMenu: {!! json_encode(
                 Route::is('attendances.index') ? [[50, 75, 100, -1], [50, 75, 100, 'All']] : [5, 10, 25, 50, 75, 100],

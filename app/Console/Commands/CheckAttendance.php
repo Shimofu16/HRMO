@@ -39,7 +39,7 @@ class CheckAttendance extends Command
                 ->first();
             if (!$attendance) {
                 // Employee has not timed in, show error message
-                $this->info('Employee ' . $employee->name . ' has not timed in for today!');
+                $this->info('Employee ' . $employee->full_name . ' has not timed in for today!');
                 // create attendance for employee
                 Attendance::create([
                     'employee_id' => $employee->id,

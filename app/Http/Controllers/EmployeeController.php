@@ -24,7 +24,7 @@ class EmployeeController extends Controller
      */
     public function index($filter_by = null, $filter_id = null)
     {
-        // Retrieve all employees from the database with their associated sgrade
+
         $employees = Employee::query()
             ->with('data')
             ->orderBy('last_name', 'asc');
@@ -62,33 +62,57 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->input('allowance'));
+        // dd(
+        //     $request->all(),
+
+        //     getSalaryStepAmount(SalaryGrade::find($request->salary_grade_id)->steps, $request->salary_grade_step)
+        // );
         // dd(empty($request->input('amounts')) ? $request->input('selected_loan_amounts') : $request->input('amounts'),$request->input('amounts'));
         // Find the department
-        $department = Department::find($request->input('department_id'));
+        $department = Department::find($request->department_id);
 
         // Calculate employee department count and employee count
         $employee_department_count = $department->employees()->count() + 1;
         $employee_count = Employee::count() + 1;
+        $latest_employee_ordinance_number = Employee::latest()->first();
 
         // Generate employee code
-        $employee_code = $department->dep_code . '-' . $employee_department_count . '' . $employee_count;
+        $employee_number = "{$department->dep_code}-{$employee_department_count}{$employee_count}";
+        $ordinance_number = ($latest_employee_ordinance_number) ? $latest_employee_ordinance_number->ordinance_number + 1 : $employee_count;
+        $first_name = $request->first_name;
+        $middle_name = $request->middle_name;
+        $last_name = $request->last_name;
+        $sick_leave_points = ($request->sick_leave_points) ? $request->sick_leave_points : 1.25;
+        $department_id = $request->department_id;
+        $designation_id = $request->designation_id;
+        $category_id = $request->category_id;
+        $salary_grade_id = $request->salary_grade_id;
+        $salary_grade_step = $request->salary_grade_step;
+        $allowances = $request->allowances;
+        $deductions = $request->deductions;
+        // dd($ordinance_number);
 
         // Create a new employee instance
         $employee = Employee::create([
-            'emp_no' => $employee_code,
-            'oinumber' => $request->input('oinumber'),
-            'sgrade_id' => $request->input('sgrade_id'),
-            'name' => $request->input('name'),
-            'department_id' => $request->input('department_id'),
-            'designation_id' => $request->input('designation_id'),
-            'category_id' => $request->input('category_id'),
-            'schedule_id' => $request->input('schedule_id'),
-            'salary_grade_step_id' => $request->input('salary_grade_step_id'),
+            'employee_number' => $employee_number,
+            'ordinance_number' => $ordinance_number,
+            'first_name' => $first_name,
+            'middle_name' => $middle_name,
+            'last_name' => $last_name,
+        ]);
+
+        // Handle employee data
+        $employee->data()->create([
+            'department_id' => $department_id,
+            'designation_id' => $designation_id,
+            'category_id' => $category_id,
+            'salary_grade_id' => $salary_grade_id,
+            'salary_grade_step' => $salary_grade_step,
+            'sick_leave_points' => $sick_leave_points,
         ]);
 
         // Handle allowances
-        $allowances = $request->input('allowance');
+
         if ($allowances) {
             foreach ($allowances as $value) {
                 $employee->allowances()->create(['allowance_id' => $value]);
@@ -96,37 +120,29 @@ class EmployeeController extends Controller
         }
 
         // Handle deductions
-        $deductions = $request->input('deduction');
         foreach ($deductions as $value) {
             $employee->deductions()->create(['deduction_id' => $value]);
         }
 
-        // Handle sick leave
-        $sick_leave = $request->input('sick_leave');
-        $employee->sickLeave()->create([
-            'points' => ($sick_leave) ? $sick_leave : 1.25
-        ]);
-        $selected_loan_ids = $request->input('selected_loan_ids');
-        $selected_loan_amounts =  $request->input('amounts');
-        $selected_loan_durations =  $request->input('durations');
+        $selected_loans = $request->only(['selected_loan_ids', 'amounts', 'durations']);
 
+        // Ensure all arrays have the same length
+        if ($selected_loans) {
+            $loansData = array_map(function ($loanId, $amount, $duration) use ($employee) {
+                return [
+                    'loan_id' => $loanId,
+                    'amount' => $amount,
+                    'duration' => $duration,
+                ];
+            }, $selected_loans['selected_loan_ids'], $selected_loans['amounts'], $selected_loans['durations']);
 
-        // combine this two to one array
-        if ($selected_loan_ids && $selected_loan_amounts && $selected_loan_durations) {
-            for ($i = 0; $i < count($selected_loan_ids); $i++) {
-                $employee->loans()->create(
-                    [
-                        'loan_id' => $selected_loan_ids[$i],
-                        'amount' => $selected_loan_amounts[$i],
-                        'duration' => $selected_loan_durations[$i]
-
-                    ]
-                );
-            }
+            // Create loans for the employee
+            $employee->loans()->createMany($loansData);
         }
 
+
         // Create activity
-        createActivity('Create Employee', 'Employee ' . $request->name . ' was created.', request()->getClientIp(true));
+        createActivity('Create Employee', 'Employee ' . $employee->full_name . ' was created.', request()->getClientIp(true));
 
         // Redirect to the index page with a success message
         return redirect()->route('employees.index')->with('success', 'Employee created successfully.');

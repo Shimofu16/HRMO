@@ -39,7 +39,7 @@
                 @foreach ($attendances as $attendance)
                     <tr>
                         <td class="px-4 py-2 border-b">{{ $loop->iteration }}</td>
-                        <td class="px-4 py-2 border-b">{{ $attendance->employee->name }}</td>
+                        <td class="px-4 py-2 border-b">{{ $attendance->employee->full_name }}</td>
                         <td class="px-4 py-2 border-b">
                             {{--
                             intervals

@@ -49,8 +49,10 @@
                     <th class="px-4 py-2 text-left border-b">Employee</th>
                     <th class="px-4 py-2 text-left border-b">Time In</th>
                     <th class="px-4 py-2 text-left border-b">Late</th>
+                    <th class="px-4 py-2 text-left border-b">Time In Picture</th>
                     <th class="px-4 py-2 text-left border-b">Status</th>
                     <th class="px-4 py-2 border-b ext-left">Time Out</th>
+                    <th class="px-4 py-2 text-left border-b">Time Out Picture</th>
                     <th class="px-4 py-2 text-left border-b">Status</th>
                     {{-- <th class="px-4 py-2 text-left border-b">Action</th> --}}
                 </tr>
@@ -59,7 +61,7 @@
                 @foreach ($attendances as $attendance)
                     <tr>
                         <td class="px-4 py-2 border-b">{{ $loop->iteration }}</td>
-                        <td class="px-4 py-2 border-b">{{ $attendance->employee->name }}</td>
+                        <td class="px-4 py-2 border-b">{{ $attendance->employee->full_name }}</td>
                         <td class="px-4 py-2 border-b">
                             {{--
                                 intervals
@@ -99,10 +101,20 @@
                                 {{ $late }} mins
                             @endif
                         </td>
+                        <td class="px-4 py-2 border-b">
+                            <img src="storage/{{ $attendance->time_in_image }}" alt="" loading="lazy"
+                                style="height:70px; width:70px">
+                        </td>
                         <td class="px-4 py-2 border-b">{{ $attendance->time_in_status }}</td>
 
                         <td class="px-4 py-2 border-b">
                             {{ $attendance->time_out ? date('h:i:s A', strtotime($attendance->time_out)) : '' }}
+                        </td>
+                        <td class="px-4 py-2 border-b">
+                            @if ($attendance->time_out)
+                                <img src="storage/{{ $attendance->time_out_image }}" alt="" loading="lazy"
+                                    style="height:70px; width:70px">
+                            @endif
                         </td>
                         <td class="px-4 py-2 border-b">{{ $attendance->time_out_status }}</td>
                 @endforeach

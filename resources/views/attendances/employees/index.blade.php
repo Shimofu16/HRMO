@@ -16,22 +16,20 @@
             {{-- second column --}}
             <div class="">
                 <div class="flex flex-col items-center justify-center h-full p-4">
-                    <form action="{{ route('employee.attendance.store') }}" method="post"
-                        id="attendance">
+                    <form action="{{ route('employee.attendance.store') }}" method="post" id="attendance">
                         @csrf
                         <div id="my_camera"></div>
                         <div id="results"></div>
                         <input type="hidden" name="image" class="image-tag">
                         <div class="grid grid-cols-6 gap-6">
                             <div class="col-span-6 sm:col-span-6">
-                                <label for="employee_no" class="block font-medium text-gray-700">Employee
-                                    Name/Number</label>
-                                <input list="employees" type="text" name="employee_no" id="employee_no"
+                                <label for="employee_number" class="block font-medium text-gray-700">Employee Number</label>
+                                <input list="employees" type="text" name="employee_number" id="employee_number"
                                     class="block w-full mt-1 rounded shadow-sm form-input" autofocus required>
                                 <datalist id="employees">
                                     @foreach ($employees as $employee)
-                                        <option value="{{ $employee->emp_no }}">
-                                            {{ $employee->name }}
+                                        <option value="{{ $employee->employee_number }}">
+                                            {{ $employee->employee_number  }}
                                         </option>
                                     @endforeach
                                 </datalist>
@@ -39,10 +37,10 @@
                         </div>
                         <div class="grid grid-cols-6 gap-6">
                             <div class="col-span-6 sm:col-span-6">
-                               {{-- generate a select for time in and time out --}}
+                                {{-- generate a select for time in and time out --}}
                                 <label for="type" class="block font-medium text-gray-700">Type</label>
-                                <select name="type" id="type" class="block w-full mt-1 rounded shadow-sm form-input"
-                                    required>
+                                <select name="type" id="type"
+                                    class="block w-full mt-1 rounded shadow-sm form-input" required>
                                     <option value="1">Time In</option>
                                     <option value="0">Time Out</option>
                                 </select>

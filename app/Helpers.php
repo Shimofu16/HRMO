@@ -93,3 +93,16 @@ if (!function_exists('getSalaryGradesTotalSteps')) {
         return $total_steps;
     }
 }
+
+if (!function_exists('getSalaryStepAmount')) {
+
+    function getSalaryStepAmount($salary_grade_steps, $step)
+    {
+        foreach ($salary_grade_steps as $key => $salary_grade_step) {
+            if (Str::lower($salary_grade_step['step']) == Str::lower($step)) {
+                return $salary_grade_step['amount'];
+            }
+        }
+        return 0;
+    }
+}

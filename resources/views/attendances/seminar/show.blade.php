@@ -3,7 +3,7 @@
 
     <x-slot name="header">
         <h2 class="text-xl font-semibold leading-tight text-gray-800">
-            Seminar
+            Seminar Attendance List
         </h2>
     </x-slot>
     @push('styles')
@@ -27,7 +27,7 @@
                         <select name="employees[]" id="employees" class="block w-full mt-1 rounded" required
                             multiple>
                             @foreach ($employees as $key => $employee)
-                                <option value="{{ $key }}">{{ $employee }}</option>
+                                <option value="{{ $employee->id }}">{{ $employee->full_name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -47,13 +47,15 @@
                     <tr>
                         <th class="px-4 py-2 text-left border-b">#</th>
                         <th class="px-4 py-2 text-left border-b">Name</th>
+                        <th class="px-4 py-2 text-left border-b">Department</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($attendances as $attendance)
                         <tr>
                             <td class="px-4 py-2 border-b">{{ $loop->iteration }}</td>
-                            <td class="px-4 py-2 border-b">{{ $attendance->employee->name }}</td>
+                            <td class="px-4 py-2 border-b">{{ $attendance->employee->full_name }}</td>
+                            <td class="px-4 py-2 border-b">{{ $attendance->employee->data->department->dep_name }}</td>
                         </tr>
                     @empty
                         <tr>

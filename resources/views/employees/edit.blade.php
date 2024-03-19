@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Edit Employee: {{ $employee->name }}
+            Edit Employee: {{ $employee->full_name }}
         </h2>
     </x-slot>
 
@@ -18,7 +18,7 @@
                             <div class="grid grid-cols-6 gap-6">
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="emp_no" class="block font-bold text-gray-700">Employee ID</label>
-                                    <h1 class="text-2xl text-gray-600">{{ $employee->emp_no }}</h1>
+                                    <h1 class="text-2xl text-gray-600">{{ $employee->employee_number }}</h1>
                                 </div>
 
                                 <div class="col-span-6 sm:col-span-2">
@@ -29,7 +29,7 @@
 
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="name" class="block font-bold text-gray-700">Name</label>
-                                    <h1 class="text-2xl text-gray-600">{{ $employee->name }}</h1>
+                                    <h1 class="text-2xl text-gray-600">{{ $employee->full_name }}</h1>
                                 </div>
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="department_id" class="block font-bold text-gray-700">Department</label>

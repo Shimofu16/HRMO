@@ -23,11 +23,7 @@
                                 <input type="text" name="description" id="description"
                                     class="form-input mt-1 block w-full text-xl" required value="{{ $loan->description }}">
                             </div>
-                            <div class="col-span-3 sm:col-span-3">
-                                <label for="amount" class="block font-medium text-gray-700">Amount</label>
-                                <input type="number" step="0.01" name="amount" id="amount"
-                                    class="form-input mt-1 block w-full text-xl" required value="{{ $loan->amount }}">
-                            </div>
+                        
                         </div>
                         <div class="flex items-center justify-end mt-6">
                             <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4">

@@ -55,7 +55,7 @@ class SeminarController extends Controller
                 $query
                     ->whereDate('created_at', $seminar->date);
             })
-            ->pluck('name', 'id');
+            ->get();
 
         return view('attendances.seminar.show', compact('seminar', 'attendances', 'employees'));
     }
@@ -105,7 +105,7 @@ class SeminarController extends Controller
         //     'employee'  => $employee,
         //     'attendances' => $attendances,
         // ]);
-        $file_name = "{$employee->name} - Seminar Payslip.pdf";
+        $file_name = "{$employee->full_name} - Seminar Payslip.pdf";
         $pdf = PDF::loadView('downloads.seminar', [
             'employee'  => $employee,
             'attendances' => $attendances,

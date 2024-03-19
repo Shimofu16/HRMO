@@ -97,7 +97,7 @@
                             <td>
                                 <span class="text-right">
                                     <span class="sub-title font-semibold">Name:</span>
-                                    <span class="fw-400">{{ $employee->name }}</span>
+                                    <span class="fw-400">{{ $employee->full_name }}</span>
                                 </span>
                             </td>
                         </tr>
@@ -156,7 +156,7 @@
                 <td>
                     <div class="text-center mb-2">
                         <h6 class="title">MUNICIPALITY OF CALAUAN</h6>
-                        <h6 class="sub-title">RECEIPT {{ $employee->emp_no }}</h6>
+                        <h6 class="sub-title">RECEIPT {{ $employee->employee_number }}</h6>
                         <span> &nbsp;</span>
                     </div>
                     <div class="contents">
@@ -164,7 +164,7 @@
                         <h6 class="mb-5 text-center sub-title">NET PAY ₱ {{ number_format($totalAmountEarned) }}</h6>
                         <h6 class="mb-5 sub-title">Received By: </h6>
                         <h6 class="px-3 border-bottom-2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h6>
-                        <h6 class="mb-3 text-center title">{{ $employee->name }}</h6>
+                        <h6 class="mb-3 text-center title">{{ $employee->full_name }}</h6>
                         <h6 class="px-3 border-bottom-2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h6>
                         <h6 class="text-center title">DATE </h6>
                     </div>

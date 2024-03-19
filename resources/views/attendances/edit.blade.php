@@ -17,7 +17,7 @@
                             <label for="employee_id">Employee</label>
                             <select name="employee_id" id="employee_id" class="form-control">
                                 @foreach($employees as $employee)
-                                    <option value="{{ $employee->id }}" {{ $employee->id === $attendance->employee_id ? 'selected' : '' }}>{{ $employee->name }}</option>
+                                    <option value="{{ $employee->id }}" {{ $employee->id === $attendance->employee_id ? 'selected' : '' }}>{{ $employee->full_name }}</option>
                                 @endforeach
                             </select>
                         </div>

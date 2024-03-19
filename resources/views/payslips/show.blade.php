@@ -57,7 +57,7 @@
                         </div>
                         <div class="grid grid-cols-6 gap-4 mb-3">
                             <div class="col-span-3">
-                                <span class="font-semibold">Name: {{ $employee->name }}</span>
+                                <span class="font-semibold">Name: {{ $employee->full_name }}</span>
                             </div>
                             <div class="col-span-3">
                                 <div class="text-right">
@@ -113,7 +113,7 @@
                     <div class="col-span-3">
                         <div class="text-center mb-2">
                             <h6 class="text-xl font-semibold">MUNICIPALITY OF CALAUAN</h6>
-                            <h6 class="font-semibold">RECEIPT {{ $employee->emp_no }}</h6>
+                            <h6 class="font-semibold">RECEIPT {{ $employee->employee_number }}</h6>
                             <span> &nbsp;</span>
                         </div>
                         <div class="contents">
