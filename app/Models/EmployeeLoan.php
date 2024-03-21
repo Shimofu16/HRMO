@@ -15,6 +15,7 @@ class EmployeeLoan extends Model
         'amount',
         'deduction',
         'duration',
+        'range',
     ];
 
     public function employee()
@@ -29,6 +30,6 @@ class EmployeeLoan extends Model
 
     public function amountToPay()
     {
-        return $this->amount / ($this->duration * 2);
+        return $this->amount / 15;
     }
 }

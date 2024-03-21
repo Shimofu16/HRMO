@@ -1,24 +1,13 @@
-
 <x-app-layout>
-
     <x-slot name="header">
-        <h2 class="text-xl font-semibold leading-tight text-gray-800">
+        <h1 class="text-xl font-semibold leading-tight text-gray-800">
             Seminar Attendance List
-        </h2>
+        </h1>
     </x-slot>
-    @push('styles')
-        <link href="{{ asset('assets/select2-4.1.0-rc.0/css/select2.min.css') }}" rel="stylesheet" />
-    @endpush
-    @push('scripts')
-        <script src="{{ asset('assets/select2-4.1.0-rc.0/js/select2.min.js') }}"></script>
-        <script>
-            $(document).ready(function() {
-                $('#employees').select2();
-            });
-        </script>
-    @endpush
-    <div class="mx-auto max-w-7xl">
-        <div class="p-5 mx-8 mt-8 bg-white rounded-md shadow">
+
+    
+    <div class=" mx-auto mt-8  max-w-7xl">
+        <div class="bg-white  p-5 mx-8 shadow rounded-md">
             <form action="{{ route('seminars.attendance', ['seminar_id' => $seminar->id]) }}" method="POST">
                 @csrf
                 <div class="grid grid-cols-6 gap-6">
@@ -39,9 +28,10 @@
                 </div>
             </form>
         </div>
-
-        <div class="p-5 mt-5 bg-white rounded-md shadow">
-
+        <div class="bg-white rounded-md shadow mt-8 p-5">
+            <div class="flex items-center justify-between mb-3">
+    
+            </div>
             <table class="min-w-full border data-table">
                 <thead>
                     <tr>
@@ -60,11 +50,24 @@
                     @empty
                         <tr>
                             <td class="px-4 py-2 border-b"></td>
-                            <td class="px-4 py-2 border-b text-start">No Attendance</td>
+                            <td class="px-4 py-2 border-b text-center">No Attendance</td>
+                            <td class="px-4 py-2 border-b"></td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
+
         </div>
     </div>
-</x-app-layout>
+    @push('styles')
+        <link href="{{ asset('assets/select2-4.1.0-rc.0/css/select2.min.css') }}" rel="stylesheet" />
+    @endpush
+    @push('scripts')
+        <script src="{{ asset('assets/select2-4.1.0-rc.0/js/select2.min.js') }}"></script>
+        <script>
+            $(document).ready(function() {
+                $('#employees').select2();
+            });
+        </script>
+    @endpush
+</x-app-layout>  

@@ -85,17 +85,6 @@ class PayrollController extends Controller
         return $payrolls;
     }
 
-    // $uniqueKey = "{$department->id}_{$month->month}_{$itemDay}";
-    // if (!isset($payrolls[$uniqueKey])) {
-    //     $payrolls[$uniqueKey] = [
-    //         'department_id' => $department->id,
-    //         'department' => $department->dep_name,
-    //         'month' => date('F', strtotime($month->created_at)),
-    //         'year' => date('Y'),
-    //         'date_from_to' => $itemDay,
-    //     ];
-    // }
-
     public function create()
     {
         $departments = Department::all();
@@ -142,67 +131,24 @@ class PayrollController extends Controller
         $to = $dates[1];
 
         $employee = Employee::find($id);
-        $presents = $employee->countAttendance('present', $payroll['month'], $payroll['year'], $from, $to);
-        $absents = 0;
-        $lates = $employee->countAttendance('late', $payroll['month'], $payroll['year'], $from, $to);
-        $undertimes = $employee->countAttendance('undertime', $payroll['month'], $payroll['year'], $from, $to);
-        $hours = $employee->countAttendance('manhours', $payroll['month'], $payroll['year'], $from, $to);
 
-        // initialize array of attendance records base on from and to, fill the array if the day of emplyoee atttendance is equal to day in array
-        $attendances = [];
-        $totalManHour = 0;
-        $day = ($from < 10) ? '0' . $from : $from;
-        $currentDay = now()->format('d');
-        $month = date('m', strtotime($payroll['month']));
-        $loopEnd = ($to == 31) ? $from : $to;
-        $daysCount = 0;
-        for ($i = 1; $i <= $loopEnd; $i++) {
+        $data = attendanceCount($employee, $payroll, $from, $to);
 
-            // get attendance for that day from created_at
-            $attendance = $employee->attendances()
-                ->whereMonth('created_at', $month)
-                ->whereDay('created_at', $day)
-                ->first();
-            if ($attendance) {
-                $timeIn = Carbon::parse($attendance->time_in);
-                $manhours = $attendance->hours;
-                $timeInInterval = '';
-                $timeOutInterval = Carbon::parse('17:00');
-                if ($timeIn->between(Carbon::parse('6:59'), Carbon::parse('7:11'))) {
-                    $timeInInterval = Carbon::parse('7:00');
-                } elseif ($timeIn->between(Carbon::parse('7:11'), Carbon::parse('7:40'))) {
-                    $timeInInterval = Carbon::parse('7:30');
-                } else {
-                    $timeInInterval = Carbon::parse('8:00');
-                }
-
-                $attendances[$i] = [
-                    'day' => $day,
-                    'time_in' => $attendance->time_in,
-                    'time_in_interval' => $timeInInterval,
-                    'time_out' => $attendance->time_out,
-                    'time_out_interval' => $timeOutInterval,
-                    'deduction' => $attendance->deduction,
-                    'manhours' => $manhours,
-                ];
-                $totalManHour += $manhours;
-            } else {
-
-                $attendances[$i] = [
-                    'day' => $day,
-                    'time_in' => '',
-                    'time_in_interval' => '',
-                    'time_out' => '',
-                    'time_out_interval' => '',
-                    'manhours' => '',
-                ];
-            }
-            $day = ($day++ < 9) ? '0' . $day : $day;
-        }
-
-
+        // dd($data, $payroll, $employee, $from,$to);
         // Pass the payroll record to the view
-        return view('payrolls.dtr', compact('employee', 'attendances', 'presents', 'absents', 'lates', 'undertimes', 'payroll', 'totalManHour'));
+        return view(
+            'payrolls.dtr',
+            [
+                'employee' => $employee,
+                'payroll' => $payroll,
+                'present' => $data['present'],
+                'absent' => $data['absent'],
+                'late' => $data['late'],
+                'under_time' => $data['under_time'],
+                'total_man_hour' => $data['total_man_hour'],
+                'attendances' => $data['attendances'],
+            ]
+        );
     }
 
     /**

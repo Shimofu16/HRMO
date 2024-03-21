@@ -191,7 +191,7 @@ class EmployeeAttendanceController extends Controller
 
             $attendance = $employee->attendances()->whereDate('created_at', Carbon::today())->first();
 
-            $salary_grade = $employee->salaryGradeStep->amount;
+            $salary_grade = $employee->data->salary_grade_step_amount;
             $results = $this->calculateSalary($salary_grade, $employee, $attendance, $timeIn, $timeOut, $current_time);
 
             $status = $results['status'];

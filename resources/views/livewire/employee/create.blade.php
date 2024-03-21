@@ -11,7 +11,8 @@
                 </div>
                 <div class="col-span-6 sm:col-span-2">
                     <label for="middle_name" class="block font-medium text-gray-700">Middle Name</label>
-                    <input type="text" name="middle_name" id="middle_name" class="block w-full mt-1 rounded" required>
+                    <input type="text" name="middle_name" id="middle_name" class="block w-full mt-1 rounded"
+                        required>
                 </div>
                 <div class="col-span-6 sm:col-span-2">
                     <label for="last_name" class="block font-medium text-gray-700">Last Name</label>
@@ -29,7 +30,8 @@
                         class="block w-full mt-1 rounded form-select" required>
                         <option value="" selected>--Please select here--</option>
                         @foreach ($salary_grades as $salary_grade)
-                            <option value="{{ $salary_grade->id }}" wire:key='{{ $salary_grade->id }}'>Salary Grade {{ $salary_grade->id }}
+                            <option value="{{ $salary_grade->id }}" wire:key='{{ $salary_grade->id }}'>Salary Grade
+                                {{ $salary_grade->id }}
                             </option>
                         @endforeach
                     </select>
@@ -42,7 +44,8 @@
                         @if ($salary_grade_steps)
                             <option value="" selected>--Please select here--</option>
                             @foreach ($salary_grade_steps as $key => $salary_grade_step)
-                                <option value="{{ $salary_grade_step['step'] }}">{{ $salary_grade_step['step'] }}</option>
+                                <option value="{{ $salary_grade_step['step'] }}">{{ $salary_grade_step['step'] }}
+                                </option>
                             @endforeach
                         @else
                             <option value="" selected>--Please select salary grade first--</option>
@@ -189,6 +192,14 @@
                                     {{-- <button type="button" wire:click='removeSelectedLoan({{ $selected_loan->id }})' class="px-4 py-2 font-bold text-gray-500 rounded hover:text-gray-700">-</button> --}}
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-span-3 sm:col-span-2" wire:key="{{ $selected_loan->id }}">
+                            <label for="ranges" class="block font-medium text-gray-700">Range </label>
+                            <select name="ranges[]" id="ranges" class="block w-full mt-1 rounded form-select">
+                                <option value="" selected>--Please select here--</option>
+                                <option value="1-15">1-15</option>
+                                <option value="16-31">16-31</option>
+                            </select>
                         </div>
                     @endforeach
                 @endif

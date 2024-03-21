@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('employee_id');
             $table->unsignedBigInteger('loan_id');
             $table->double('amount');
+            $table->enum('range', ['1-15', '16-31']);
             $table->double('deduction')->nullable();
             $table->double('duration')->nullable();
             $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Department;
+use App\Models\Employee;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
@@ -18,7 +19,10 @@ class PayslipController extends Controller
     {
         $department = Department::find($department_id);
         $payroll = json_decode(urldecode($payroll), true);
-        $employees = $department->employees;
+        $employees = Employee::with('data')->whereHas('data', function($query) use ($department_id){
+            $query->where('department_id', $department_id);
+        })
+        ->get();
         // seperate the filter 1-15
         $filter = explode('-', $payroll['date_from_to']);
         $from = Carbon::create(date('Y'), date('m'), $filter[0]);

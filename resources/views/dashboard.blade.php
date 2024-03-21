@@ -5,101 +5,66 @@
         </h2>
     </x-slot>
 
-    {{-- Summary of Payroll Information --}}
-    <h1 class="mt-5 ml-5 text-2xl font-bold"> <b>Summary of Payroll Information</b> </h1>
-
-    <hr>
-    <div class="grid grid-cols-5 gap-5 mt-5 mb-5 md:grid-cols-2 xl:grid-cols-3">
-        <div class="overflow-hidden bg-white rounded-lg shadow">
-            <div class="px-4 py-5 sm:p-6">
-                <dl>
-                    <dt class="text-sm font-medium text-gray-500 truncate">
-                        Total Employees
-                    </dt>
-                    <dd class="mt-1 text-3xl font-semibold text-gray-900">
-                        {{ number_format($totalEmployees) }}
-                    </dd>
-                </dl>
-            </div>
-        </div>
-
-        <div class="overflow-hidden bg-white rounded-lg shadow">
-            <div class="px-4 py-5 sm:p-6">
-                <dl>
-                    <dt class="text-sm font-medium text-gray-500 truncate">
-                        Total Salary
-                    </dt>
-                    <dd class="mt-1 text-3xl font-semibold text-gray-900">
-                        {{ number_format($totalSalary) }}
-                    </dd>
-                </dl>
-            </div>
-        </div>
-
-        <div class="overflow-hidden bg-white rounded-lg shadow">
-            <div class="px-4 py-5 sm:p-6">
-                <dl>
-                    <dt class="text-sm font-medium text-gray-500 truncate">
-                        Total Allowance
-                    </dt>
-                    <dd class="mt-1 text-3xl font-semibold text-gray-900">
-                        {{ number_format($totalDeduction) }}
-                    </dd>
-                </dl>
-            </div>
-        </div>
-        <div class="overflow-hidden bg-white rounded-lg shadow">
-            <div class="px-4 py-5 sm:p-6">
-                <dl>
-                    <dt class="text-sm font-medium text-gray-500 truncate">
-                        Total Deduction
-                    </dt>
-                    <dd class="mt-1 text-3xl font-semibold text-gray-900">
-                        {{ number_format($totalDeduction) }}
-                    </dd>
-                </dl>
-            </div>
-        </div>
-
-        <div class="overflow-hidden bg-white rounded-lg shadow">
-            <div class="px-4 py-5 sm:p-6">
-                <dl>
-                    <dt class="text-sm font-medium text-gray-500 truncate">
-                        Total Net Pay
-                    </dt>
-                    <dd class="mt-1 text-3xl font-semibold text-gray-900">
-                        {{ number_format($totalNetPay) }}
-                    </dd>
-                </dl>
-            </div>
-        </div>
-    </div>
-    <hr>
-    <h1 class="mt-10 text-2xl font-bold"> <b>Employee Statistics</b> </h1>
-    <hr>
-    <div class="grid grid-cols-1 gap-5 mt-5 mb-5 md:grid-cols-2 xl:grid-cols-3">
-
-        <div class="px-4 py-5 sm:p-4 bg-white rounded-lg shadow">
-            <div class="flex flex-col items-center justify-center">
-
-                <div class="w-full" style="height: 500px">
-                    @if (count($totalEmployeesPerCategories) > 0)
-                        <canvas id="employee"></canvas>
-                    @else
-                        {{-- Generate a badge --}}
-                        <span
-                            class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                            No Data
-                        </span>
-                    @endif
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 gap-6 mb-6 w-full xl:grid-cols-2 2xl:grid-cols-4">
+                <div class="bg-white shadow-lg shadow-gray-200 rounded-2xl p-4 ">
+                    <div class="flex flex-col items-center justify-center">
+                        <h1 class="text-lg">Employees Per Department</h1>
+                        <div class="h-1/6">
+                            @if (count($totalEmployeesPerCategories) > 0)
+                                <canvas id="employee"></canvas>
+                            @else
+                                {{-- Generate a badge --}}
+                                <span
+                                    class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                    No Data
+                                </span>
+                            @endif
+                        </div>
+                        <h3>Total Employees: {{ $totalEmployees }} </h3>
+                    </div>
+                </div>
+                <div class="bg-white shadow-lg shadow-gray-200 rounded-2xl p-4 ">
+                    <div class="flex flex-col items-center justify-center">
+                        <h1 class="text-lg">Attendance Count Per {{ Str::ucfirst($filter) }}</h1>
+                        <div class="h-1/6">
+                            @if (count($attendanceCount) > 0)
+                                <canvas id="attendanceCount"></canvas>
+                            @else
+                                {{-- Generate a badge --}}
+                                <span
+                                    class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                    No Data
+                                </span>
+                            @endif
+                        </div>
+                    </div>
                 </div>
             </div>
+            <div class="grid grid-cols-1 gap-6 mb-6 w-full xl:grid-cols-4 2xl:grid-cols-6">
+                <div class="bg-white shadow-lg shadow-gray-200 rounded-2xl p-4 ">
+                    <div class="flex flex-col items-center justify-center">
+                        <h1 class="text-lg">Salary Per {{ Str::ucfirst($filter) }}</h1>
+                        <div class="h-1/5 w-full">
+                            @if (count($totalSalary) > 0)
+                                <canvas id="totalSalary"></canvas>
+                            @else
+                                {{-- Generate a badge --}}
+                                <span
+                                    class="inline-flex self-center items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                    No Data
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
         </div>
     </div>
 
-    </div>
-
-    <hr>
     {{-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> --}}
     <script src="{{ asset('assets/chart/chart.js') }}"></script>
     <script>
@@ -107,7 +72,7 @@
             '#17becf', '#1b9e77', '#d95f02', '#7570b3', '#e7298a'
         ];
 
-        function generateCharts(selector, label, data) {
+        function generatePieChartForEmployee(selector, label, data) {
             const dataLength = data.length;
             const backgroundColors = colors.slice(0, dataLength);
             new Chart(document.querySelector(selector), {
@@ -123,14 +88,30 @@
                 }
             });
         }
+        function generatePieChart(selector, label, data) {
+            const dataLength = data.length;
+            const backgroundColors = colors.slice(0, dataLength);
+            new Chart(document.querySelector(selector), {
+                type: 'pie',
+                data: {
+                    labels: data.map(d => d.label),
+                    datasets: [{
+                        label: label,
+                        data: data.map(d => d.count),
+                        backgroundColor: backgroundColors,
+                        hoverOffset: 4
+                    }]
+                }
+            });
+        }
 
-        function generateBarChart(selector, label, data, isMonthly) {
+        function generateBarChart(selector, label, data, filter) {
             const dataLength = data.length;
             const backgroundColors = colors.slice(0, dataLength);
             new Chart(document.querySelector(selector), {
                 type: 'bar',
                 data: {
-                    labels: data.map(d => (isMonthly ? d.month : d.year)),
+                    labels: data.map(d => (filter == 'year' ? d.year : d.month)),
                     datasets: [{
                         label: label,
                         data: data.map(d => d.total),
@@ -142,7 +123,10 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            generateCharts('#employee', 'Employees', {!! $totalEmployeesPerCategories !!});
+            generatePieChartForEmployee('#employee', 'Employees', {!! $totalEmployeesPerCategories !!});
+            generatePieChart('#attendanceCount', 'Attendance Count', {!! $attendanceCount !!});
+
+            generateBarChart('#totalSalary', 'Salary Per Year', {!! $totalSalary !!}, "{!! $filter !!}");
         });
     </script>
 

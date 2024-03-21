@@ -21,6 +21,6 @@ class Deduction extends Model
 
     public function employees()
     {
-        return $this->hasMany(Employee::class, 'deduction');
+        return $this->hasMany(EmployeeDeduction::class, 'deduction_id');
     }
 }

@@ -4,21 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Support\Str;
 class EmployeeData extends Model
 {
     use HasFactory;
     protected $guarded = [];
 
-    protected $appends = [
-        'salary_grade_step_amount'
-    ];
 
-    public function getSalaryGradeStepAmount()
+    protected $appends = ['salary_grade_step_amount'];
+
+    public function getSalaryGradeStepAmountAttribute()
     {
         foreach ($this->salaryGrade->steps as $key => $step) {
-            if ($step['step'] == $this->salary_grade_step) {
-                return number_format($step['amount'], 2);
+            if (Str::lower($step['step']) == Str::lower($this->salary_grade_step)) {
+                return $step['amount'];
             }
         };
         return 0;

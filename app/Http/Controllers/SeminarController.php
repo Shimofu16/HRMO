@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use App\Models\Department;
 use App\Models\Employee;
 use App\Models\Seminar;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
@@ -16,8 +17,10 @@ class SeminarController extends Controller
      */
     public function index()
     {
-        $seminars = Seminar::all();
-        return view('attendances.seminar.index', compact('seminars'));
+        return view('attendances.seminar.index', [
+            'seminars' => Seminar::all(),
+            'departments' => Department::all(),
+        ]);
     }
 
     /**
@@ -37,8 +40,7 @@ class SeminarController extends Controller
             'name' => $request->name,
             'date' => $request->date,
             'amount' => $request->amount,
-            /* 'time_start' => $request->time_start,
-            'time_end' => $request->time_end, */
+            'departments' => $request->departments
         ]);
         return back()->with('success', 'Successfully Created Seminar ' . $request->name);
     }
@@ -54,6 +56,9 @@ class SeminarController extends Controller
             ->whereDoesntHave('seminarAttendances', function ($query) use ($seminar) {
                 $query
                     ->whereDate('created_at', $seminar->date);
+            })
+            ->whereHas('data', function ($query) use ($seminar) {
+                $query->whereIn('department_id', $seminar->departments);
             })
             ->get();
 
@@ -112,7 +117,6 @@ class SeminarController extends Controller
         ]);
 
         return $pdf->download($file_name);
-
     }
 
     private function takeAttendance($time_in, $time_out, $employees, $seminar)

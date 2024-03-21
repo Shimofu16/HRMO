@@ -33,10 +33,6 @@
             padding: 0 !important;
         }
 
-        body {
-            margin: 0 !important;
-        }
-
         @page {
             margin: 0px;
         }
@@ -46,29 +42,18 @@
         }
 
         .title {
-            font-size: 18px;
-            font-weight: 900;
+            font-size: 17px;
+            font-weight: 700;
         }
 
         .sub-title {
-            font-size: 15px;
-            font-weight: 900;
-        }
-
-        .body {
-            font-size: 13px;
-        }
-
-        .fw-400 {
-            font-weight: 400;
-        }
-
-        .fw-700 {
+            font-size: 16px;
             font-weight: 700;
         }
 
         body {
-            /* font-family: sans-serif !important; */
+            font-family: Calibri !important;
+            margin: 0 !important;
         }
     </style>
 </head>
@@ -78,12 +63,12 @@
         @php
             $mandatoryDeductions = $employee->getDeductionsBy('Mandatory');
             $nonmandatoryDeductions = $employee->getDeductionsBy('Non-Mandatory');
-            $allowances = $employee->allowances ?? '';
-            $loans = $employee->loans ?? '';
+            $allowances = $employee->allowances() ?? '';
+            $loans = $employee->loans() ?? '';
             $totalAllowance = $employee->computeAllowance();
             $totalDeduction = $employee->computeDeduction();
             $totaAmountlLoan = 0;
-            $salaryGrade = $employee->salaryGradeStep->amount;
+            $salaryGrade = $employee->data->salary_grade_step_amount;
 
             $dates = explode('-', $payroll['date_from_to']);
             $from = $dates[0];
@@ -92,6 +77,7 @@
             $totalAmountEarned = $amountEarned + $totalAllowance;
 
             // dd($mandatoryDeductions,$nonmandatoryDeductions,$totalDeduction);
+
         @endphp
         {{-- page break every 2 payslip per page --}}
         <div class="{{ $loop->iteration % 2 ? '' : 'page-break' }}" id="canvas">
@@ -143,7 +129,7 @@
                                 </td>
                                 <td colspan="4 px-2">
                                     <h6 class="mb-2 text-center sub-title">DEDUCTION</h6>
-                                    @if ($mandatoryDeductions)
+                                    @if (!empty($mandatoryDeductions))
                                         <span class="sub-title">MANDATORY</span>
                                         <br>
                                         @foreach ($mandatoryDeductions as $mandatoryDeduction)
@@ -157,7 +143,7 @@
                                             <br>
                                         @endforeach
                                     @endif
-                                    @if  (count($nonmandatoryDeductions) > 0)
+                                    @if (!empty($nonmandatoryDeductions))
                                         <span class="mt-3 sub-title">NON-MANDATORY</span>
                                         <br>
                                         @foreach ($nonmandatoryDeductions as $nonmandatoryDeduction)
@@ -171,20 +157,22 @@
                                             <br>
                                         @endforeach
                                     @endif
-                                    @if (count($loans) > 0)
+                                    @if (!empty($loans))
                                         <span class="mt-3 sub-title">LOANS</span>
                                         <br>
                                         @foreach ($loans as $loan)
-                                            <span class="mb-1">
-                                                @php
-                                                    $totaAmountlLoan = $totaAmountlLoan + $loan->amountToPay();
-                                                @endphp
-                                                <span class="fw-400">{{ $loan->loan->name }}
-                                                    -
-                                                    {{ $loan->amountToPay() }}
+                                            @if ($payroll['date_from_to'] != $loan->range)
+                                                <span class="mb-1">
+                                                    @php
+                                                        $totaAmountlLoan = $totaAmountlLoan + $loan->amountToPay();
+                                                    @endphp
+                                                    <span class="fw-400">{{ $loan->loan->name }}
+                                                        -
+                                                        {{ $loan->amountToPay() }}
+                                                    </span>
                                                 </span>
-                                            </span>
-                                            <br>
+                                                <br>
+                                            @endif
                                         @endforeach
                                     @endif
                                 </td>
@@ -194,14 +182,14 @@
                         <table class="no-padding">
                             @php
                                 $totalDeduction = $totalDeduction + $totaAmountlLoan;
-                                $totalAmountEarned =$totalAmountEarned - $totaAmountlLoan;
-                                $totalAmountEarned = ($totalAmountEarned < 0) ? 0 : $totalAmountEarned;
+                                $totalAmountEarned = $totalAmountEarned - $totaAmountlLoan;
+                                $totalAmountEarned = $totalAmountEarned < 0 ? 0 : $totalAmountEarned;
                                 $netPay = $totalAmountEarned - $totalDeduction;
-                                $netPay = ($netPay < 0) ? 0 : $netPay;
+                                $netPay = $netPay < 0 ? 0 : $netPay;
                             @endphp
                             <tr>
                                 <td>
-                                    <h6 class="mt-3 sub-title">Total Amount Earned:
+                                    <h6 class="mt-3 sub-title">Total Salary Earned:
                                         {{ number_format($totalAmountEarned) }}
                                     </h6>
                                 </td>

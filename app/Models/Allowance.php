@@ -20,7 +20,7 @@ class Allowance extends Model
 
     public function employees()
     {
-        return $this->hasMany(Employee::class,'allowance');
+        return $this->hasMany(EmployeeAllowance::class,'allowance_id');
     }
 
     public function category()

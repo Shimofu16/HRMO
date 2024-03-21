@@ -6,7 +6,7 @@
             </h2>
     </x-slot>
 
-    <div class="grid grid-cols-1 gap-3 mt-4 md:grid-cols-2 xl:grid-cols-6">
+    <div class="grid grid-cols-6 gap-3 mt-4 ">
 
         <!-- Department List Card -->
         <a href="#">
@@ -14,7 +14,7 @@
                 <div class="p-6 bg-white border-b border-gray-200">
                     <h2 class="mb-2 text-lg font-semibold text-center">No. of Times Presents</h2>
                     <!-- Card content here -->
-                    <h5 class="text-3xl font-bold text-center">{{ $presents }}</h5>
+                    <h5 class="text-3xl font-bold text-center">{{ $present }}</h5>
                 </div>
             </div>
         </a>
@@ -23,7 +23,7 @@
                 <div class="p-6 bg-white border-b border-gray-200">
                     <h2 class="mb-2 text-lg font-semibold text-center">No. of Times Absents</h2>
                     <!-- Card content here -->
-                    <h5 class="text-3xl font-bold text-center">{{ $absents }}</h5>
+                    <h5 class="text-3xl font-bold text-center">{{ $absent }}</h5>
                 </div>
             </div>
         </a>
@@ -32,7 +32,7 @@
                 <div class="p-6 bg-white border-b border-gray-200">
                     <h2 class="mb-2 text-lg font-semibold text-center">No. of Late</h2>
                     <!-- Card content here -->
-                    <h5 class="text-3xl font-bold text-center">{{ $lates }}</h5>
+                    <h5 class="text-3xl font-bold text-center">{{ $late }}</h5>
                 </div>
             </div>
         </a>
@@ -41,7 +41,7 @@
                 <div class="p-6 bg-white border-b border-gray-200">
                     <h2 class="mb-2 text-lg font-semibold text-center">No. of Under-time</h2>
                     <!-- Card content here -->
-                    <h5 class="text-3xl font-bold text-center">{{ $undertimes }}</h5>
+                    <h5 class="text-3xl font-bold text-center">{{ $under_time }}</h5>
                 </div>
             </div>
         </a>
@@ -92,7 +92,7 @@
                                     <span class="font-bold">
                                         Total Man Hours:
                                     </span>
-                                     {{ $totalManHour }}</td>
+                                     {{ $total_man_hour }}</td>
                             </tr>
                         </tbody>
                     </table>

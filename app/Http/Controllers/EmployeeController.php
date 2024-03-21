@@ -124,17 +124,18 @@ class EmployeeController extends Controller
             $employee->deductions()->create(['deduction_id' => $value]);
         }
 
-        $selected_loans = $request->only(['selected_loan_ids', 'amounts', 'durations']);
+        $selected_loans = $request->only(['selected_loan_ids', 'amounts', 'durations', 'ranges']);
 
         // Ensure all arrays have the same length
         if ($selected_loans) {
-            $loansData = array_map(function ($loanId, $amount, $duration) use ($employee) {
+            $loansData = array_map(function ($loanId, $amount, $duration, $range) use ($employee) {
                 return [
                     'loan_id' => $loanId,
                     'amount' => $amount,
                     'duration' => $duration,
+                    'range' => $range,
                 ];
-            }, $selected_loans['selected_loan_ids'], $selected_loans['amounts'], $selected_loans['durations']);
+            }, $selected_loans['selected_loan_ids'], $selected_loans['amounts'], $selected_loans['durations'], $selected_loans['ranges']);
 
             // Create loans for the employee
             $employee->loans()->createMany($loansData);

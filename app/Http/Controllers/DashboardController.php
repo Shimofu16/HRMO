@@ -15,8 +15,9 @@ class DashboardController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($filter = "month")
+    public function index(string $filter = "year", ?int $value = null)
     {
+        $value = now()->format('Y');
         $totalEmployeesPerCategories = Category::with('employees')->get()->map(function ($category) {
             return [
                 'category' => $category->category_name,
@@ -24,14 +25,13 @@ class DashboardController extends Controller
             ];
         });
         $totalEmployees = Employee::all()->count();
+        // $attendanceCount = countAttendanceBy($filter, $value);//uncomment this
+        // $totalSalary = getTotalSalaryBy($filter); //uncomment this 
+        
+        $attendanceCount = countAttendancesTest($filter, $value);// for test purposes
+        $totalSalary = getTotalSalaryTest($filter); // for test purposes
 
-        $isPerMonth = ($filter == "month") ? true : false;
-        // get total salary, allowance, deduction, net salary
-        $totalSalary = $this->getTotalSalaryPer($isPerMonth);
-        $totalAllowance = $this->getTotalAllowancePer($isPerMonth);
-        $totalDeduction = $this->getTotalDeductionPer($isPerMonth);
-        $totalNetPay = $this->getTotalNetPayPer($totalSalary, $totalAllowance, $totalDeduction);
-
+        // dd($attendanceCount , $totalSalary);
 
         return view(
             'dashboard',
@@ -39,65 +39,12 @@ class DashboardController extends Controller
                 'totalEmployeesPerCategories',
                 'totalEmployees',
                 'totalSalary',
-                'totalAllowance',
-                'totalDeduction',
-                'totalNetPay'
+                'attendanceCount',
+                'filter',
             )
         );
     }
-    private function getTotalSalaryPer($isPerMonth)
-    {
-        $totalSalaries = 0;
-        $attendances =  Attendance::with('employee')->get();
-        $totalSalary = [];
-        if ($isPerMonth) {
-            $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December',];
-            foreach ($months as $monthKey => $month) {
-                $total = 0;
-                foreach ($attendances as $key => $attendance) {
-                    if ($attendance->created_at->format('F') == $month) {
-                        $total += $attendance->salary;
-                    }
-                    // if there is same month in array, add the total
-                    if (isset($totalSalary[$monthKey])) {
-                        $totalSalary[$monthKey]['total'] += $total;
-                    } else {
-                        $totalSalary[$monthKey] = [
-                            'month' => $month,
-                            'total' => $total,
-                        ];
-                    }
-                }
-                $totalSalaries += $total;
-            }
-        } else {
-            // get all year in attendance
-            $years = Attendance::selectRaw('YEAR(created_at) year')->distinct()->get()->pluck('year');
-            // to array
-            $years = $years->toArray();
-            foreach ($years as $yearKey => $year) {
-                $total = 0;
-                foreach ($attendances as $key => $attendance) {
-                    if ($attendance->created_at->format('Y') == $year) {
-                        $total += $attendance->salary;
-                    }
-                    // if there is same month in array, add the total
-                    if (isset($totalSalary[$yearKey])) {
-                        $totalSalary[$yearKey]['total'] += $total;
-                    } else {
-                        $totalSalary[$yearKey] = [
-                            'year' => $year,
-                            'total' => $total,
-                        ];
-                    }
-                }
-                $totalSalaries += $total;
-            }
-        }
-        // to collection
-        $totalSalary = collect($totalSalary);
-        return $totalSalaries;
-    }
+
     private function getTotalAllowancePer($isPerMonth)
     {
         $employeeAllowances = EmployeeAllowance::with('employee')->get();
