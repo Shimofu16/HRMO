@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->date('date');
-            $table->double('amount');
             $table->json('departments');
             $table->timestamps();
         });

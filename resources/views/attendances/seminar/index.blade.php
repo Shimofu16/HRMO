@@ -21,20 +21,21 @@
                             Date</label>
                         <input type="date" name="date" id="date" class="block w-full mt-1 rounded" required>
                     </div>
-                    <div class="col-span-3 sm:col-span-3">
-                        <label for="amount" class="block font-medium text-gray-700">
-                            Amount</label>
-                        <input type="number" name="amount" id="amount" class="block w-full mt-1 rounded" required>
-                    </div>
-                    <div class="col-span-3 sm:col-span-3">
+                    <div class="col-span-3 sm:col-span-6">
                         <label for="name" class="block font-medium text-gray-700">Departments</label>
                         <select name="departments[]" id="departments" class="block w-full mt-1 rounded" required
                             multiple>
+                            <option value="All">All Departments</option>
                             @foreach ($departments as $key => $department)
                                 <option value="{{ $department->id }}">{{ $department->dep_name }}</option>
                             @endforeach
                         </select>
                     </div>
+                </div>
+                <div class="py-3 text-right sm:px-6">
+                    <x-primary-button class="mr-1">
+                        {{ __('Create') }}
+                    </x-primary-button>
                 </div>
             </form>
         </div>
@@ -48,8 +49,7 @@
                         <th class="px-4 py-2 text-left border-b">#</th>
                         <th class="px-4 py-2 text-left border-b">Name</th>
                         <th class="px-4 py-2 text-left border-b">Date</th>
-                        <th class="px-4 py-2 text-left border-b">Amount</th>
-                        {{-- <th class="px-4 py-2 text-left border-b">Start & End Time</th> --}}
+                        <th class="px-4 py-2 text-left border-b">Departments</th>
                         <th class="px-4 py-2 border-b ext-left">Attendaces</th>
                     </tr>
                 </thead>
@@ -59,7 +59,22 @@
                             <td class="px-4 py-2 border-b">{{ $loop->iteration }}</td>
                             <td class="px-4 py-2 border-b">{{ $seminar->name }}</td>
                             <td class="px-4 py-2 border-b">{{ date('F d, Y', strtotime($seminar->date)) }}</td>
-                            <td class="px-4 py-2 border-b">{{ money($seminar->amount) }}</td>
+                            <td class="px-4 py-2 border-b">
+                                @if ($seminar->departments[0] == 'All')
+                                    All Deparments
+                                @else
+                                @php
+                                    $departments = \App\Models\Department::find($seminar->departments);
+                                @endphp
+                                @foreach ($departments as $department)
+                                    {{ $department->dep_code }}
+                                    @if (!$loop->last)
+                                        ,
+                                    @endif
+                                @endforeach
+
+                                @endif
+                            </td>
                             <td class="px-4 py-2 border-b">
                                 <a href="{{ route('seminars.show', ['seminar_id' => $seminar->id]) }}"
                                     class="mr-3 text-green-500 hover:text-green-700">View</a>

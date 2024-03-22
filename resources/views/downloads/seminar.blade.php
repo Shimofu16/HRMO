@@ -25,25 +25,12 @@
 
         /* remove border from table*/
 
-        table tr th,
-        table tr td {
-            border: none !important;
-        }
-        table tr th,
         table tr td {
             border: none !important;
         }
 
-        table.no-padding>thead>tr>th{
-            padding: 0;
-            padding-bottom: 10px;
-        }
         table.no-padding>tbody>tr>td {
             padding: 0 !important;
-        }
-
-        body {
-            margin: 0 !important;
         }
 
         @page {
@@ -55,29 +42,18 @@
         }
 
         .title {
-            font-size: 18px;
-            font-weight: 900;
+            font-size: 17px;
+            font-weight: 700;
         }
 
         .sub-title {
-            font-size: 15px;
-            font-weight: 900;
-        }
-
-        .body {
-            font-size: 13px;
-        }
-
-        .fw-400 {
-            font-weight: 400;
-        }
-
-        .fw-700 {
+            font-size: 16px;
             font-weight: 700;
         }
 
         body {
-            /* font-family: sans-serif !important; */
+            font-family: Calibri !important;
+            margin: 0 !important;
         }
     </style>
 </head>
@@ -90,7 +66,7 @@
                 <td colspan="9" class="border-dashed-right">
                     <div class="title mb-2 text-center">
                         <h6 class="title">MUNICIPALITY OF CALAUAN</h6>
-                        <span class="block sub-title">{{ $employee->department->dep_name }}</span>
+                        <span class="block sub-title">{{ $employee->data->department->dep_name }}</span>
                     </div>
                     <table class="no-padding">
                         <tr>
@@ -131,9 +107,9 @@
                                             <tr>
                                                 <td>{{ $attendance->seminar->name }}</td>
                                                 <td>{{ date('M d, Y', strtotime($attendance->seminar->date)) }}</td>
-                                                <td>PHP {{ number_format($attendance->seminar->amount) }}</td>
+                                                <td>PHP {{ number_format($attendance->salary, 2) }}</td>
                                                 @php
-                                                    $totalAmountEarned = $totalAmountEarned + $attendance->seminar->amount;
+                                                    $totalAmountEarned = $totalAmountEarned + $attendance->salary;
                                                 @endphp
                                             </tr>
                                         @endforeach
@@ -147,7 +123,7 @@
                         <tr>
                             <td>
                                 <h6 class="mt-3 sub-title">Total Amount Earned:
-                                    {{ number_format($totalAmountEarned) }}
+                                    {{ number_format($totalAmountEarned, 2) }}
                                 </h6>
                             </td>
                         </tr>
@@ -161,7 +137,7 @@
                     </div>
                     <div class="contents">
                         <h6 class="sub-title">Received: </h6>
-                        <h6 class="mb-5 text-center sub-title">NET PAY ₱ {{ number_format($totalAmountEarned) }}</h6>
+                        <h6 class="mb-5 text-center sub-title">NET PAY ₱ {{ number_format($totalAmountEarned,2) }}</h6>
                         <h6 class="mb-5 sub-title">Received By: </h6>
                         <h6 class="px-3 border-bottom-2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h6>
                         <h6 class="mb-3 text-center title">{{ $employee->full_name }}</h6>

@@ -99,16 +99,16 @@
                         <td class="px-4 py-3 border-b">
                             {{ Str::limit($employee->data->designation->designation_code, 20, '...') }}</td>
                         <td class="px-4 py-3 border-b">{{ $employee->data->category->category_code }}</td>
-                        <td class="px-4 py-3 border-b">
+                        <td class="px-4 py-3 border-b flex flex-col">
                             <a href="{{ route('employees.show', $employee) }}"
-                                class="text-blue-500 hover:text-blue-700">View Info.</a>
-                                {{-- <a href="{{ route('seminars.payslip', ['employee_id' => $employee->id]) }}"
-                                    class="text-blue-500 hover:text-blue-700">Generate Payslip (Seminars)</a> --}}
+                                class="text-green-500 hover:text-green-700 p-2">View Info.</a>
+                                <a href="{{ route('seminars.payslip', ['employee_id' => $employee->id]) }}"
+                                    class="text-blue-500 hover:text-blue-700 p-2">Generate Payslip (Seminars)</a>
                             <form class="inline-block" action="{{ route('employees.destroy', $employee) }}"
                                 method="POST">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-red-500 hover:text-red-700">Delete</button>
+                                <button type="submit" class="text-red-500 hover:text-red-700 p-2">Delete</button>
                             </form>
                         </td>
                     </tr>

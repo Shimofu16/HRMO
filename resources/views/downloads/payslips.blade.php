@@ -164,11 +164,11 @@
                                             @if ($payroll['date_from_to'] != $loan->range)
                                                 <span class="mb-1">
                                                     @php
-                                                        $totaAmountlLoan = $totaAmountlLoan + $loan->amountToPay();
+                                                        $totaAmountlLoan = $totaAmountlLoan + $loan->amount
                                                     @endphp
                                                     <span class="fw-400">{{ $loan->loan->name }}
                                                         -
-                                                        {{ $loan->amountToPay() }}
+                                                        {{ $loan->amount }}
                                                     </span>
                                                 </span>
                                                 <br>
@@ -190,12 +190,12 @@
                             <tr>
                                 <td>
                                     <h6 class="mt-3 sub-title">Total Salary Earned:
-                                        {{ number_format($totalAmountEarned) }}
+                                        {{ number_format($totalAmountEarned, 2) }}
                                     </h6>
                                 </td>
                                 <td>
                                     <h6 class="mt-3 sub-title">Total Deduction:
-                                        {{ number_format($totalDeduction) }}
+                                        {{ number_format($totalDeduction,2 ) }}
                                     </h6>
                                 </td>
                             </tr>

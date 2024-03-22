@@ -39,7 +39,6 @@ class SeminarController extends Controller
         Seminar::create([
             'name' => $request->name,
             'date' => $request->date,
-            'amount' => $request->amount,
             'departments' => $request->departments
         ]);
         return back()->with('success', 'Successfully Created Seminar ' . $request->name);
@@ -52,16 +51,19 @@ class SeminarController extends Controller
     {
         $seminar = Seminar::find($seminar_id);
         $attendances = $seminar->attendances()->get();
-        $employees = Employee::with('seminarAttendances')
+        $employees = Employee::query()
+            ->with('seminarAttendances')
             ->whereDoesntHave('seminarAttendances', function ($query) use ($seminar) {
                 $query
                     ->whereDate('created_at', $seminar->date);
-            })
-            ->whereHas('data', function ($query) use ($seminar) {
+            });
+        if ($seminar->departments[0] != 'All') {
+            $employees->whereHas('data', function ($query) use ($seminar) {
                 $query->whereIn('department_id', $seminar->departments);
-            })
-            ->get();
+            });
+        }
 
+        $employees = $employees->get();
         return view('attendances.seminar.show', compact('seminar', 'attendances', 'employees'));
     }
 
@@ -95,7 +97,7 @@ class SeminarController extends Controller
         foreach ($employees as $key => $employee) {
             $employee->seminarAttendances()->create([
                 'seminar_id' => $seminar->id,
-                'salary' => $seminar->amount
+                'salary' => ((($employee->data->salary_grade_step_amount / 2) / 15) / 8)
             ]);
         }
         // $this->takeAttendance($seminar->time_start, $seminar->time_end, $employees, $seminar);
@@ -104,19 +106,21 @@ class SeminarController extends Controller
 
     public function payslip($employee_id)
     {
-        $employee = Employee::with('seminarAttendances')->find($employee_id);
-        $attendances = $employee->seminarAttendances;
-        // return view('downloads.seminar', [
-        //     'employee'  => $employee,
-        //     'attendances' => $attendances,
-        // ]);
-        $file_name = "{$employee->full_name} - Seminar Payslip.pdf";
-        $pdf = PDF::loadView('downloads.seminar', [
-            'employee'  => $employee,
-            'attendances' => $attendances,
-        ]);
+        $employee = Employee::withCount('seminarAttendances')->find($employee_id);
 
-        return $pdf->download($file_name);
+        $attendances = $employee->seminarAttendances();
+        // dd($employee,$attendances);
+
+        if ($employee->seminar_attendances_count > 0) {
+            $file_name = "{$employee->full_name} - Seminar Payslip.pdf";
+            $pdf = PDF::loadView('downloads.seminar', [
+                'employee'  => $employee,
+                'attendances' => $attendances->get(),
+            ]);
+
+            return $pdf->download($file_name);
+        }
+        return back()->with('error', 'The employee doesn`t have seminar attendance');
     }
 
     private function takeAttendance($time_in, $time_out, $employees, $seminar)

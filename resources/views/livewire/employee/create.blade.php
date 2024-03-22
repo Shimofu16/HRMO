@@ -173,10 +173,11 @@
                                 hidden>
                             <div>
                                 <label for="amount"
-                                    class="block font-medium text-gray-700">{{ $selected_loan->name }}</label>
-                                <div class="flex">
+                                    class="block font-medium text-gray-700">{{ $selected_loan->name }} </label>
+                                <div class="flex flex-col">
                                     <input type="number" name="amounts[]" id="amount" step="0.01"
                                         class="block w-full mt-1 rounded form-input">
+                                        <span class="text-sm">Amount Per Deduction</span>
                                     {{-- <button type="button" wire:click='removeSelectedLoan({{ $selected_loan->id }})' class="px-4 py-2 font-bold text-gray-500 rounded hover:text-gray-700">-</button> --}}
                                 </div>
                             </div>
