@@ -33,6 +33,13 @@ class EmployeeAttendanceController extends Controller
      */
     public function store(Request $request)
     {
+        $currentDay = Carbon::now();
+
+        // Check if it's Saturday (6) or Sunday (0)
+        if ($currentDay->dayOfWeek === Carbon::SATURDAY || $currentDay->dayOfWeek === Carbon::SUNDAY) {
+            // Redirect with error message
+            return redirect()->back()->with('error', 'You cannot time in on weekends!');
+        }
         // dd($request->all());
         $request->validate([
             'employee_number' => 'required|exists:employees,employee_number',

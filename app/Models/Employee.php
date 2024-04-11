@@ -89,39 +89,62 @@ class Employee extends Model
         return $this->hasOne(EmployeeData::class, 'employee_id');
     }
 
-    public function computeAllowance()
+    public function computeAllowance($dates = null)
     {
         $totalAllowance = 0;
 
-
-        // Sum up the allowance amounts
-        foreach ($this->allowances as $allowance) {
-            $totalAllowance += $allowance->allowance->allowance_amount;
+        // If no specific dates provided, compute allowance for all dates
+        if (!$dates) {
+            foreach ($this->allowances as $allowance) {
+                $totalAllowance += $allowance->allowance->allowance_amount;
+            }
+        } else {
+            // Compute allowance for specific dates
+            foreach ($this->allowances as $allowance) {
+                if ($dates == $allowance->allowance_range) {
+                    $totalAllowance += $allowance->allowance->allowance_amount;
+                }
+            }
         }
 
         return $totalAllowance;
     }
 
-    public function computeDeduction()
+    public function computeDeduction($dates = null)
     {
         $totalDeduction = 0;
 
-        // Sum up the allowance amounts
-        foreach ($this->deductions as $deduction) {
-            $amount = $deduction->deduction->deduction_amount;
-            if ($deduction->deduction->deduction_amount_type == 'percentage') {
-                // convert fixed amount to percentage
-                // example: the value of amount is 10 so convert it to .10
-                $amount = $amount / 100;
-                if ($deduction->deduction->deduction_name == 'Phil Health') {
-                    $amount = ($this->data->salary_grade_step_amount / 2) * .02;
+        // If no specific dates provided, compute deduction for all dates
+        if (!$dates) {
+            foreach ($this->deductions as $deduction) {
+                $amount = $deduction->deduction->deduction_amount;
+                if ($deduction->deduction->deduction_amount_type == 'percentage') {
+                    $amount = $amount / 100;
+                    if ($deduction->deduction->deduction_name == 'Phil Health') {
+                        $amount = ($this->data->salary_grade_step_amount / 2) * .02;
+                    }
+                }
+                $totalDeduction += $amount;
+            }
+        } else {
+            // Compute deduction for specific dates
+            foreach ($this->deductions as $deduction) {
+                if ($dates == $deduction->deduction_range) {
+                    $amount = $deduction->deduction->deduction_amount;
+                    if ($deduction->deduction->deduction_amount_type == 'percentage') {
+                        $amount = $amount / 100;
+                        if ($deduction->deduction->deduction_name == 'Phil Health') {
+                            $amount = ($this->data->salary_grade_step_amount / 2) * .02;
+                        }
+                    }
+                    $totalDeduction += $amount;
                 }
             }
-            $totalDeduction += $amount;
         }
 
         return $totalDeduction;
     }
+
     public function getTotalSalaryBy($month, $year, $from, $to)
     {
         $totalSalary = 0;
@@ -140,6 +163,7 @@ class Employee extends Model
 
         return $totalSalary;
     }
+    
 
     public function getDeductionsBy($type)
     {

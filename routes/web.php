@@ -16,6 +16,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeductionController;
 use App\Http\Controllers\EmployeeAttendanceController;
 use App\Http\Controllers\EmployeeLoansController;
+use App\Http\Controllers\LevelController;
 use App\Http\Controllers\PayslipController;
 use App\Http\Controllers\SalaryGradeStepController;
 use App\Http\Controllers\ScheduleController;
@@ -53,6 +54,13 @@ Route::middleware(['auth'])->group(function () {
         'destroy' => 'employees.destroy',
     ]);
 
+    Route::prefix('levels')->name('levels.')->controller(LevelController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/', 'store')->name('store');
+        Route::get('edit/{level}', 'edit')->name('edit');
+        Route::put('/{level}', 'update')->name('update');
+        Route::delete('/{level}', 'destroy')->name('destroy');
+    });
 
     // Payrolls
     Route::prefix('payrolls')->controller(PayrollController::class)->name('payrolls.')->group(function () {

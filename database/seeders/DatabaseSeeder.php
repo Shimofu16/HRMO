@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             DepartmentsSeeder::class,
             DesignationsSeeder::class,
             CategoriesSeeder::class,
+            LevelSeeder::class,
             SalaryGradesSeeder::class,
             AllowancesSeeder::class,
             DeductionsSeeder::class,

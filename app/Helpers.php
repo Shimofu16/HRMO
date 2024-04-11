@@ -345,3 +345,26 @@ if (!function_exists('countAttendancesTest')) {
         ]);
     }
 }
+if (!function_exists('getTotalSalaryByYearAndDepartment')) {
+
+    function getTotalSalaryByYearAndDepartment($employee, $year, $department_id)
+    {
+        $totalSalary = 0;
+        $year = date('Y', strtotime($year));
+        if ($employee->attendances) {
+            $attendances = $employee->attendances()
+                ->whereHas('employee.data', function ($query) use ($department_id) {
+                    $query->where('department_id', $department_id);
+                })
+                ->whereYear('created_at', $year)
+                ->get();
+    
+            // Sum up the allowance amounts
+            foreach ($attendances as $attendance) {
+                $totalSalary += $attendance->salary;
+            }
+        }
+
+        return $totalSalary;
+    }
+}

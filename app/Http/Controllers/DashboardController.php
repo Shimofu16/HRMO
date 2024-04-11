@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Allowance;
 use App\Models\Attendance;
 use App\Models\Category;
+use App\Models\Department;
 use App\Models\Employee;
 use App\Models\EmployeeAllowance;
 use App\Models\EmployeeDeduction;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -15,35 +17,180 @@ class DashboardController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // public function index(string $filter = "year", ?int $value = null)
+    // {
+    //     $value = now()->format('Y');
+    //     $totalEmployeesPerCategories = Category::with('employees')->get()->map(function ($category) {
+    //         return [
+    //             'category' => $category->category_name,
+    //             'total' => $category->employees->count(),
+    //         ];
+    //     });
+    //     $totalEmployees = Employee::all()->count();
+    //     // $attendanceCount = countAttendanceBy($filter, $value);//uncomment this
+    //     // $totalSalary = getTotalSalaryBy($filter); //uncomment this
+
+    //     $attendanceCount = countAttendancesTest($filter, $value); // for test purposes
+    //     $totalSalary = getTotalSalaryTest($filter); // for test purposes
+
+    //     // dd($attendanceCount , $totalSalary);
+
+    //     return view(
+    //         'dashboard',
+    //         compact(
+    //             'totalEmployeesPerCategories',
+    //             'totalEmployees',
+    //             'totalSalary',
+    //             'attendanceCount',
+    //             'filter',
+    //         )
+    //     );
+    // }
     public function index(string $filter = "year", ?int $value = null)
     {
-        $value = now()->format('Y');
-        $totalEmployeesPerCategories = Category::with('employees')->get()->map(function ($category) {
-            return [
-                'category' => $category->category_name,
-                'total' => $category->employees->count(),
-            ];
-        });
-        $totalEmployees = Employee::all()->count();
-        // $attendanceCount = countAttendanceBy($filter, $value);//uncomment this
-        // $totalSalary = getTotalSalaryBy($filter); //uncomment this 
-        
-        $attendanceCount = countAttendancesTest($filter, $value);// for test purposes
-        $totalSalary = getTotalSalaryTest($filter); // for test purposes
 
-        // dd($attendanceCount , $totalSalary);
 
+        $totalEmployeeCount = Employee::count();
+
+        $recentAttendances = $this->getAttendanceBy('recent');
+        $attendanceCountPerWeek = $this->getAttendanceBy('weekly');
+        $averageSalaryPerDepartment = $this->getAttendanceBy('averageSalaryPerDepartment');
+        $employeesPerDepartment = $this->getAttendanceBy('employeesPerDepartment');
+        $employeesPerCategory = $this->getAttendanceBy('employeesPerCategory');
+        $payrollHistory = $this->getAttendanceBy('payrollHistory');
+
+
+        // dd($this->getAttendanceBy('weekly'));
         return view(
             'dashboard',
             compact(
-                'totalEmployeesPerCategories',
-                'totalEmployees',
-                'totalSalary',
-                'attendanceCount',
-                'filter',
+                'recentAttendances',
+                'attendanceCountPerWeek',
+                'averageSalaryPerDepartment',
+                'employeesPerDepartment',
+                'employeesPerCategory',
+                'payrollHistory',
+                'totalEmployeeCount'
             )
         );
     }
+    private function getAttendanceBy($filter)
+    {
+        switch ($filter) {
+            case 'recent':
+                $currentTime = Carbon::now();
+                $thirtyMinutesAgo = $currentTime->subMinutes(30);
+                return Attendance::whereBetween('created_at', [$thirtyMinutesAgo, $currentTime])
+                    ->limit(5)
+                    ->get();
+            case 'weekly':
+                $startOfWeek = Carbon::now()->startOfWeek();
+                $endOfWeek = Carbon::now()->endOfWeek();
+
+                $attendanceByDayOfWeek = Attendance::whereBetween('created_at', [$startOfWeek, $endOfWeek])
+                    ->get()
+                    ->groupBy(function ($attendance) {
+                        return Carbon::parse($attendance->created_at)->format('l'); // 'l' returns the full name of the day (e.g., Monday)
+                    })
+                    ->map(function ($group, $dayOfWeek) {
+                        return [
+                            'label' => $dayOfWeek,
+                            'count' => $group->count(),
+                        ];
+                    });
+
+                return $attendanceByDayOfWeek;
+            case 'averageSalaryPerDepartment':
+                $averageSalaryPerDepartment = [];
+                // annually
+                $departments = Department::with('employees')->get();
+                foreach ($departments as $key => $department) {
+                    foreach ($department->employees as $key => $employee) {
+                        $averageSalaryPerDepartment[] =
+                            [
+                                'label' => $department->dep_name,
+                                'count' => getTotalSalaryByYearAndDepartment($employee, now()->format('Y'), $department->id)
+                            ];
+                    }
+                }
+                return $averageSalaryPerDepartment;
+            case 'payrollHistory':
+                $payrollHistory = [];
+                // // annually
+                // $departments = Department::with('employees')->get();
+                // foreach ($departments as $key => $department) {
+                //     foreach ($department->employees as $key => $employee) {
+                //         $averageSalaryPerDepartment[] =
+                //             [
+                //                 'label' => $department->dep_name,
+                //                 'count' => getTotalSalaryByYearAndDepartment($employee, now()->format('Y'), $department->id)
+                //             ];
+                //     }
+                // }
+                return $payrollHistory;
+            case 'employeesPerDepartment':
+                $employeesPerDepartment = [];
+                // annually
+                $departments = Department::withCount('employees')->get();
+                foreach ($departments as $key => $department) {
+                    $employeesPerDepartment[] =
+                        [
+                            'label' => $department->dep_name,
+                            'count' => $department->employees_count
+                        ];
+                }
+                return $employeesPerDepartment;
+            case 'employeesPerCategory':
+                $employeesPerCategory = [];
+                // annually
+                $categories = Category::withCount('employees')->get();
+                foreach ($categories as $key => $category) {
+                    $employeesPerCategory[] =
+                        [
+                            'label' => $category->category_name,
+                            'count' => $category->employees_count
+                        ];
+                }
+                return $employeesPerCategory;
+            default:
+                // Handle other cases or throw an exception if needed
+                break;
+        }
+    }
+    private function testGetAttendanceBy($filter)
+    {
+        switch ($filter) {
+            case 'weekly':
+                return [
+                    [
+                        'label' => 'Monday',
+                        'count' => 3
+                    ],
+                    [
+                        'label' => 'Tuesday',
+                        'count' => 10
+                    ],
+                    [
+                        'label' => 'Wednesday',
+                        'count' => 10
+                    ],
+                    [
+                        'label' => 'Thursday',
+                        'count' => 13
+                    ],
+                    [
+                        'label' => 'Friday',
+                        'count' => 11
+                    ],
+                ];
+
+            default:
+                // Handle other cases or throw an exception if needed
+                break;
+        }
+    }
+
+
 
     private function getTotalAllowancePer($isPerMonth)
     {

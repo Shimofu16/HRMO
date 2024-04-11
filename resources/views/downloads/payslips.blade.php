@@ -65,12 +65,12 @@
             $nonmandatoryDeductions = $employee->getDeductionsBy('Non-Mandatory');
             $allowances = $employee->allowances() ?? '';
             $loans = $employee->loans() ?? '';
-            $totalAllowance = $employee->computeAllowance();
-            $totalDeduction = $employee->computeDeduction();
+            $dates = explode('-', $payroll['date_from_to']);
+            $totalAllowance = $employee->computeAllowance($dates);
+            $totalDeduction = $employee->computeDeduction($dates);
             $totaAmountlLoan = 0;
             $salaryGrade = $employee->data->salary_grade_step_amount;
 
-            $dates = explode('-', $payroll['date_from_to']);
             $from = $dates[0];
             $to = $dates[1];
             $amountEarned = $employee->getTotalSalaryBy($payroll['month'], $payroll['year'], $from, $to); // Get the total salary of the employee
@@ -195,7 +195,7 @@
                                 </td>
                                 <td>
                                     <h6 class="mt-3 sub-title">Total Deduction:
-                                        {{ number_format($totalDeduction,2 ) }}
+                                        {{ number_format($totalDeduction, 2) }}
                                     </h6>
                                 </td>
                             </tr>

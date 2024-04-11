@@ -15,11 +15,13 @@ class EmployeeData extends Model
 
     public function getSalaryGradeStepAmountAttribute()
     {
-        foreach ($this->salaryGrade->steps as $key => $step) {
-            if (Str::lower($step['step']) == Str::lower($this->salary_grade_step)) {
-                return $step['amount'];
-            }
-        };
+        if ($this->salary_grade_id) {
+            foreach ($this->salaryGrade->steps as $key => $step) {
+                if (Str::lower($step['step']) == Str::lower($this->salary_grade_step)) {
+                    return $step['amount'];
+                }
+            };
+        }
         return 0;
     }
 
@@ -42,5 +44,9 @@ class EmployeeData extends Model
     public function salaryGrade()
     {
         return $this->belongsTo(SalaryGrade::class, 'salary_grade_id');
+    }
+    public function level()
+    {
+        return $this->belongsTo(Level::class, 'level_id');
     }
 }

@@ -10,18 +10,32 @@ use App\Models\Allowance;
 use App\Models\Deduction;
 use App\Models\Department;
 use App\Models\Designation;
+use App\Models\Level;
 use App\Models\SalaryGradeStep;
 
 class Create extends Component
 {
     public $employee;
+
+    public $employee_number;
+    public $ordinance_number;
+    public $sick_leave_points;
+    public $first_name;
+    public $middle_name;
+    public $last_name;
+
+    public $category_id;
+    public $department_id;
+    public $level_id;
     public $salary_grade_id;
+    public $salary_grade_step;
+    public $designation_id;
+
+    public $selected_allowances;
     public $loan_id;
     public $allowance_id;
-    public $category_id;
     public $salary_grade_steps;
     public $selected_loans;
-    public $selected_allowances;
 
     public $loans;
     public $departments;
@@ -29,20 +43,45 @@ class Create extends Component
     public $designations;
     public $salary_grades;
     public $allowances;
+    public $levels;
     public $mandatory_deductions;
     public $non_mandatory_deductions;
 
+    public $isJOSelected;
+
+    public function updatedEmployeeId($value)
+    {
+        if ($value) {
+            $this->validate([
+                'employee_id' => ['required', 'unique:employees,employee_id'],
+            ]);
+        }
+    }
+    public function updatedOrdinanceItemNumber($value)
+    {
+        if ($value) {
+            $this->validate([
+                'ordinance_number' => ['required', 'unique:employees,ordinance_number'],
+            ]);
+        }
+    }
     public function updatedSalaryGradeId($value)
     {
         if ($value) {
-            $this->salary_grade_steps = SalaryGrade::find($this->salary_grade_id)->steps;
+            $this->salary_grade_steps = SalaryGrade::find($value)->steps;
             // dd(   $this->salary_grade_steps);
         }
     }
     public function updatedCategoryId($value)
     {
+        $this->isJOSelected = false;
         if ($value) {
-            $this->selected_allowances = Allowance::where('category_id', $value)->get();
+            $category = Category::find($value);
+            if ($category->category_code == "JO") {
+                $this->isJOSelected = true;
+            }
+            // dd($category,$category->allowances, $this->isJOSelected);
+            $this->allowances = $category->allowances;
         }
     }
     public function updatedLoanId($value)
@@ -57,6 +96,14 @@ class Create extends Component
         // dd( $this->selected_loans);
     }
 
+    public function validateData()
+    {
+        $this->validate([
+            'employee_number' => ['required', 'unique:employees,employee_number'],
+            'ordinance_number' => ['required', 'unique:employees,ordinance_number'],
+        ]);
+    }
+
     public function mount()
     {
         $this->loans = Loan::all();
@@ -64,9 +111,10 @@ class Create extends Component
         $this->categories = Category::all();
         $this->designations = Designation::all();
         $this->salary_grades = SalaryGrade::all();
-        $this->allowances = Allowance::pluck('allowance_code', 'id');
+        $this->levels = Level::all();
         $this->mandatory_deductions = Deduction::where('deduction_type', 'Mandatory')->get();
         $this->non_mandatory_deductions = Deduction::where('deduction_type', 'Non-Mandatory')->get();
+        $this->isJOSelected = false;
     }
 
     public function render()

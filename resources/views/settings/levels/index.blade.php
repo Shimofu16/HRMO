@@ -1,23 +1,20 @@
-
 @extends('settings.index')
 @section('header')
-    Loans
+    Level
 @endsection
 @section('contents')
-
     <div class="bg-white mt-8 p-5 mx-8 shadow rounded-md">
-        <form action="{{ route('departments.store') }}" method="POST">
+        <form action="{{ route('levels.store') }}" method="POST">
             @csrf
             <div class="grid grid-cols-6 gap-6">
                 <div class="col-span-6 sm:col-span-3">
                     <label for="name" class="block font-medium text-gray-700">Name</label>
-                    <input type="text" name="name" id="name"
-                        class="form-input mt-1 block w-full text-xl" required>
+                    <input type="text" name="name" id="name" class="form-input mt-1 block w-full text-xl" required>
                 </div>
                 <div class="col-span-6 sm:col-span-3">
-                    <label for="description" class="block font-medium text-gray-700">Description</label>
-                    <input type="text" name="description" id="description"
-                        class="form-input mt-1 block w-full text-xl" required>
+                    <label for="amount" class="block font-medium text-gray-700">Amount</label>
+                    <input type="number" name="amount" id="amount" class="form-input mt-1 block w-full text-xl"
+                        required>
                 </div>
 
             </div>
@@ -36,20 +33,19 @@
                 <tr>
                     <th class="border-b px-4 py-2 text-left">#</th>
                     <th class="border-b px-4 py-2 text-left">Name</th>
-                    <th class="border-b px-4 py-2 text-left">Description</th>
+                    <th class="border-b px-4 py-2 text-left">Amount</th>
                     <th class="border-b px-4 py-2">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($loans as $loan)
+                @foreach ($levels as $level)
                     <tr>
                         <td class="border-b px-4 py-2">{{ $loop->iteration }}</td>
-                        <td class="border-b px-4 py-2">{{ $loan->name }}</td>
-                        <td class="border-b px-4 py-2">{{ $loan->description }}</td>
+                        <td class="border-b px-4 py-2">{{ $level->name }}</td>
+                        <td class="border-b px-4 py-2">{{ number_format($level->amount, 2) }}</td>
                         <td class="border-b px-4 py-2">
-                            <a href="{{ route('loans.edit', $loan) }}"
-                                class="text-blue-500 hover:text-blue-700">Edit</a>
-                            <form class="inline-block" action="{{ route('loans.destroy', $loan) }}" method="POST">
+                            <a href="{{ route('levels.edit', $level) }}" class="text-blue-500 hover:text-blue-700">Edit</a>
+                            <form class="inline-block" action="{{ route('levels.destroy', $level) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-red-500 hover:text-red-700">Delete</button>

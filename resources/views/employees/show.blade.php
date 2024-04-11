@@ -46,7 +46,7 @@
                 <h1 class="text-2xl font-bold">Personal Information</h1>
             </div>
             <h3><strong>Employee No.: </strong>{{ $employee->employee_number }}</h3>
-            <h3><strong>Ordinance Item No.: </strong>{{ $employee->oinumber }}</h3>
+            <h3><strong>Ordinance Item No.: </strong>{{ $employee->ordinance_number }}</h3>
             <h3><strong>Name: </strong>{{ $employee->full_name }}</h3>
             <div class="my-3 border-b border-gray-100">
                 <h1 class="text-2xl font-bold">Other Information</h1>
@@ -54,10 +54,15 @@
             <h3><strong>Department: </strong>{{ $employee->data->department->dep_name }}</h3>
             <h3><strong>Designation: </strong>{{ $employee->data->designation->designation_name }}</h3>
             <h3><strong>Category: </strong>{{ $employee->data->category->category_name }}</h3>
-            <h3><strong>Salary Grade: </strong> Salary Grade {{ $employee->data->salary_grade_id }}</h3>
-            <h3><strong>Salary Grade Step: </strong> {{ $employee->data->salary_grade_step }} -
-                {{ number_format($employee->data->salary_grade_step_amount) }}</h3>
-            <h3><strong>Sick Leave Points: </strong>{{ $employee->data->sick_leave_points }}</h3>
+            @if ($employee->data->salary_grade_id != null)
+                <h3><strong>Salary Grade: </strong> Salary Grade {{ $employee->data->salary_grade_id }}</h3>
+                <h3><strong>Salary Grade Step: </strong> {{ $employee->data->salary_grade_step }} -
+                    {{ number_format($employee->data->salary_grade_step_amount, 2) }}</h3>
+            @else
+                <h3><strong>Level: </strong> {{ $employee->data->level->name }} -
+                    {{ number_format($employee->data->level->amount, 2) }}</h3>
+            @endif
+            <h3><strong>Sick Leave Points: </strong>{{ number_format($employee->data->sick_leave_points, 2) }}</h3>
             <div class="my-3 border-b border-gray-100">
                 <h1 class="text-2xl font-bold">Deductions & Allowances</h1>
             </div>

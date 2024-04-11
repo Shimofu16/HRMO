@@ -64,21 +64,22 @@ class EmployeeController extends Controller
     {
         // dd(
         //     $request->all(),
-
-        //     getSalaryStepAmount(SalaryGrade::find($request->salary_grade_id)->steps, $request->salary_grade_step)
         // );
         // dd(empty($request->input('amounts')) ? $request->input('selected_loan_amounts') : $request->input('amounts'),$request->input('amounts'));
         // Find the department
         $department = Department::find($request->department_id);
+        $isJOSelected = $request->isJOSelected;
 
         // Calculate employee department count and employee count
-        $employee_department_count = $department->employees()->count() + 1;
-        $employee_count = Employee::count() + 1;
-        $latest_employee_ordinance_number = Employee::latest()->first();
+        // $employee_department_count = $department->employees()->count() + 1;
+        // $employee_count = Employee::count() + 1;
+        // $latest_employee_ordinance_number = Employee::latest()->first();
 
         // Generate employee code
-        $employee_number = "{$department->dep_code}-{$employee_department_count}{$employee_count}";
-        $ordinance_number = ($latest_employee_ordinance_number) ? $latest_employee_ordinance_number->ordinance_number + 1 : $employee_count;
+        // $employee_number = "{$department->dep_code}-{$employee_department_count}{$employee_count}";
+        // $ordinance_number = ($latest_employee_ordinance_number) ? $latest_employee_ordinance_number->ordinance_number + 1 : $employee_count;
+        $employee_number = $request->employee_number;
+        $ordinance_number =$request->ordinance_number;
         $first_name = $request->first_name;
         $middle_name = $request->middle_name;
         $last_name = $request->last_name;
@@ -86,8 +87,6 @@ class EmployeeController extends Controller
         $department_id = $request->department_id;
         $designation_id = $request->designation_id;
         $category_id = $request->category_id;
-        $salary_grade_id = $request->salary_grade_id;
-        $salary_grade_step = $request->salary_grade_step;
         $allowances = $request->allowances;
         $deductions = $request->deductions;
         // dd($ordinance_number);
@@ -102,14 +101,30 @@ class EmployeeController extends Controller
         ]);
 
         // Handle employee data
-        $employee->data()->create([
-            'department_id' => $department_id,
-            'designation_id' => $designation_id,
-            'category_id' => $category_id,
-            'salary_grade_id' => $salary_grade_id,
-            'salary_grade_step' => $salary_grade_step,
-            'sick_leave_points' => $sick_leave_points,
-        ]);
+        if($isJOSelected)
+        {
+            $level_id = $request->level_id;
+            $employee->data()->create([
+                'department_id' => $department_id,
+                'designation_id' => $designation_id,
+                'category_id' => $category_id,
+                'level_id' => $level_id,
+                'sick_leave_points' => $sick_leave_points,
+            ]);
+
+        }else{
+            
+            $salary_grade_id = $request->salary_grade_id;
+            $salary_grade_step = $request->salary_grade_step;
+            $employee->data()->create([
+                'department_id' => $department_id,
+                'designation_id' => $designation_id,
+                'category_id' => $category_id,
+                'salary_grade_id' => $salary_grade_id,
+                'salary_grade_step' => $salary_grade_step,
+                'sick_leave_points' => $sick_leave_points,
+            ]);
+        }
 
         // Handle allowances
 
@@ -156,7 +171,8 @@ class EmployeeController extends Controller
      */
     public function show($id)
     {
-        $employee = Employee::find($id);
+        $employee = Employee::with('data')->find($id);
+        // dd($employee->data->salary_grade_id);
         return view('employees.show', compact('employee'));
     }
 

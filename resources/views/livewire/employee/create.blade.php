@@ -6,75 +6,39 @@
             <hr class="mb-3">
             <div class="grid grid-cols-6 gap-6">
                 <div class="col-span-6 sm:col-span-2">
-                    <label for="first_name" class="block font-medium text-gray-700">First Name</label>
-                    <input type="text" name="first_name" id="first_name" class="block w-full mt-1 rounded" required>
-                </div>
-                <div class="col-span-6 sm:col-span-2">
-                    <label for="middle_name" class="block font-medium text-gray-700">Middle Name</label>
-                    <input type="text" name="middle_name" id="middle_name" class="block w-full mt-1 rounded"
-                        required>
-                </div>
-                <div class="col-span-6 sm:col-span-2">
-                    <label for="last_name" class="block font-medium text-gray-700">Last Name</label>
-                    <input type="text" name="last_name" id="last_name" class="block w-full mt-1 rounded" required>
-                </div>
-
-                <div class="col-span-6 sm:col-span-2">
-                    <label for="sick_leave_points" class="block font-medium text-gray-700">Sick Leave Points</label>
-                    <input type="number" step="0.01" name="sick_leave_points" id="sick_leave_points"
+                    <label for="employee_number" class="block font-medium text-gray-700">ID Number</label>
+                    <input type="text" name="employee_number" id="employee_number" wire:model='employee_number'
                         class="block w-full mt-1 rounded" required>
                 </div>
                 <div class="col-span-6 sm:col-span-2">
-                    <label for="salary_grade_id" class="block font-medium text-gray-700">Salary Grade</label>
-                    <select name="salary_grade_id" id="salary_grade_id" wire:model.live='salary_grade_id'
-                        class="block w-full mt-1 rounded form-select" required>
-                        <option value="" selected>--Please select here--</option>
-                        @foreach ($salary_grades as $salary_grade)
-                            <option value="{{ $salary_grade->id }}" wire:key='{{ $salary_grade->id }}'>Salary Grade
-                                {{ $salary_grade->id }}
-                            </option>
-                        @endforeach
-                    </select>
+                    <label for="ordinance_number" class="block font-medium text-gray-700">Ordinance Item
+                        Number</label>
+                    <input type="text" name="ordinance_number" id="ordinance_number"
+                        wire:model='ordinance_number' class="block w-full mt-1 rounded" required>
                 </div>
                 <div class="col-span-6 sm:col-span-2">
-                    <label for="salary_grade_step" class="block font-medium text-gray-700">Salary
-                        Grade Step</label>
-                    <select name="salary_grade_step" id="salary_grade_step"
-                        class="block w-full mt-1 rounded form-select" required>
-                        @if ($salary_grade_steps)
-                            <option value="" selected>--Please select here--</option>
-                            @foreach ($salary_grade_steps as $key => $salary_grade_step)
-                                <option value="{{ $salary_grade_step['step'] }}">{{ $salary_grade_step['step'] }}
-                                </option>
-                            @endforeach
-                        @else
-                            <option value="" selected>--Please select salary grade first--</option>
-                        @endif
-                    </select>
+                    <label for="sick_leave_points" class="block font-medium text-gray-700">Sick Leave Points</label>
+                    <input type="number" step="0.01" name="sick_leave_points" id="sick_leave_points"
+                        wire:model='sick_leave_points' class="block w-full mt-1 rounded" required>
                 </div>
 
-                <div class="col-span-6 sm:col-span-2">
-                    <label for="department_id" class="block font-medium text-gray-700">Department</label>
-                    <select name="department_id" id="department_id" class="block w-full mt-1 rounded form-select"
-                        required>
-                        <option value="" selected>--Please select here--</option>
-                        @foreach ($departments as $department)
-                            <option value="{{ $department->id }}">{{ $department->dep_code }}</option>
-                        @endforeach
-                    </select>
-                </div>
 
                 <div class="col-span-6 sm:col-span-2">
-                    <label for="designation_id" class="block font-medium text-gray-700">Designation</label>
-                    <select name="designation_id" id="designation_id" class="block w-full mt-1 rounded form-select"
-                        required>
-                        <option value="" selected>--Please select here--</option>
-                        @foreach ($designations as $designation)
-                            <option value="{{ $designation->id }}">{{ $designation->designation_code }}
-                            </option>
-                        @endforeach
-                    </select>
+                    <label for="first_name" class="block font-medium text-gray-700">First Name</label>
+                    <input type="text" name="first_name" id="first_name" wire:model='first_name'
+                        class="block w-full mt-1 rounded" required>
                 </div>
+                <div class="col-span-6 sm:col-span-2">
+                    <label for="middle_name" class="block font-medium text-gray-700">Middle Name</label>
+                    <input type="text" name="middle_name" id="middle_name" wire:model='middle_name'
+                        class="block w-full mt-1 rounded" required>
+                </div>
+                <div class="col-span-6 sm:col-span-2">
+                    <label for="last_name" class="block font-medium text-gray-700">Last Name</label>
+                    <input type="text" name="last_name" id="last_name" wire:model='last_name'
+                        class="block w-full mt-1 rounded" required>
+                </div>
+
                 <div class="col-span-6 sm:col-span-2">
                     <label for="category_id" class="block font-medium text-gray-700">Category</label>
                     <select name="category_id" id="category_id" wire:model.live='category_id'
@@ -87,6 +51,76 @@
                         @endforeach
                     </select>
                 </div>
+                <div class="col-span-6 sm:col-span-2">
+                    <label for="department_id" class="block font-medium text-gray-700">Departments</label>
+                    <select name="department_id" id="department_id" wire:model='department_id'
+                        class="block w-full mt-1 rounded form-select" required>
+                        <option value="" selected>--Please select here--</option>
+                        @foreach ($departments as $department)
+                            <option value="{{ $department->id }}">{{ $department->dep_code }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                @if ($category_id)
+                    <input type="hidden" name="isJOSelected" id="isJOSelected" value="{{ $isJOSelected }}">
+                    @if ($isJOSelected)
+                        <div class="col-span-6 sm:col-span-2">
+                            <label for="level_id" class="block font-medium text-gray-700">Level</label>
+                            <select name="level_id" id="level_id" wire:model='level_id'
+                                class="block w-full mt-1 rounded form-select" required>
+                                <option value="" selected>--Please select here--</option>
+                                @foreach ($levels as $level)
+                                    <option value="{{ $level->id }}">{{ $level->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    @else
+                        <div class="col-span-6 sm:col-span-2">
+                            <label for="salary_grade_id" class="block font-medium text-gray-700">Salary Grade</label>
+                            <select name="salary_grade_id" id="salary_grade_id" wire:model.live='salary_grade_id'
+                                class="block w-full mt-1 rounded form-select" required>
+                                <option value="" selected>--Please select here--</option>
+                                @foreach ($salary_grades as $salary_grade)
+                                    <option value="{{ $salary_grade->id }}" wire:key='{{ $salary_grade->id }}'>Salary
+                                        Grade
+                                        {{ $salary_grade->id }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-span-6 sm:col-span-2">
+                            <label for="salary_grade_step" class="block font-medium text-gray-700">Salary
+                                Grade Step</label>
+                            <select name="salary_grade_step" id="salary_grade_step" wire:model='salary_grade_step'
+                                class="block w-full mt-1 rounded form-select" required>
+                                @if ($salary_grade_steps)
+                                    <option value="" selected>--Please select here--</option>
+                                    @foreach ($salary_grade_steps as $key => $salary_grade_step)
+                                        <option value="{{ $salary_grade_step['step'] }}">
+                                            {{ $salary_grade_step['step'] }}
+                                        </option>
+                                    @endforeach
+                                @else
+                                    <option value="" selected>--Please select salary grade first--</option>
+                                @endif
+                            </select>
+                        </div>
+                    @endif
+                @endif
+
+
+                <div class="col-span-6 sm:col-span-2">
+                    <label for="designation_id" class="block font-medium text-gray-700">Designation</label>
+                    <select name="designation_id" id="designation_id" wire:model='designation_id'
+                        class="block w-full mt-1 rounded form-select" required>
+                        <option value="" selected>--Please select here--</option>
+                        @foreach ($designations as $designation)
+                            <option value="{{ $designation->id }}">{{ $designation->designation_code }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
             </div>
         </div>
         <div class="px-4 py-5 bg-white sm:p-6 shadow my-3">
@@ -96,21 +130,24 @@
                 <div class="col-span-6 sm:col-span-2">
                     <label class="block font-medium text-gray-700">Allowance</label>
                     <div class="flex flex-col">
-                        @if ($selected_allowances)
-                            @foreach ($selected_allowances as $selected_allowance)
-                                <div class="flex items-center mt-1" wire:key='{{ $selected_allowance->id }}'>
-                                    <input type="checkbox" name="allowances[]"
-                                        id="allowance_{{ $selected_allowance->id }}"
-                                        value="{{ $selected_allowance->id }}" class="mr-2 form-checkbox">
-                                    <label for="allowance_{{ $selected_allowance->id }}"
-                                        class="text-gray-900">{{ $selected_allowance->allowance_code }}</label>
+                        @if ($allowances)
+                            @forelse ($allowances as $allowance)
+                                <div class="flex items-center mt-1" wire:key="{{ $allowance->id }}">
+                                    <input type="checkbox" name="allowances[]" id="allowance_{{ $allowance->id }}"
+                                        wire:model="selected_allowances.{{ $allowance->id }}"
+                                        value="{{ $allowance->id }}" class="mr-2 form-checkbox">
+                                    <label for="allowance_{{ $allowance->id }}"
+                                        class="text-gray-900">{{ $allowance->allowance_code }}</label>
                                 </div>
-                            @endforeach
+                            @empty
+                                <span class="text-gray-600">The selected category doesnt have allowance.</span>
+                            @endforelse
                         @else
                             <span class="text-gray-600">Select Category First</span>
                         @endif
                     </div>
                 </div>
+
 
                 <div class="col-span-6 sm:col-span-2">
                     <label class="block font-medium text-gray-700">Deductions</label>
@@ -177,7 +214,7 @@
                                 <div class="flex flex-col">
                                     <input type="number" name="amounts[]" id="amount" step="0.01"
                                         class="block w-full mt-1 rounded form-input">
-                                        <span class="text-sm">Amount Per Deduction</span>
+                                    <span class="text-sm">Amount Per Deduction</span>
                                     {{-- <button type="button" wire:click='removeSelectedLoan({{ $selected_loan->id }})' class="px-4 py-2 font-bold text-gray-500 rounded hover:text-gray-700">-</button> --}}
                                 </div>
                             </div>
