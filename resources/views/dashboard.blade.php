@@ -101,10 +101,13 @@
                             @if (count($attendanceCountPerWeek) > 0)
                                 <canvas id="attendanceCountPerWeek"></canvas>
                             @else
-                                <span
-                                    class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                    No Data
-                                </span>
+                                <div class="flex justify-center items-center h-full">
+                                    <span
+                                        class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                        No Data
+                                    </span>
+
+                                </div>
                             @endif
                         </div>
                     </div>
@@ -120,46 +123,47 @@
                         <div class="flex-auto p-4 pb-1">
                             <ul class="flex flex-col pl-0 mb-0 rounded-lg">
                                 @forelse ($recentAttendances as $recentAttendance)
-                                <li class="relative flex justify-between py-2 pr-4 mb-2 border-0 rounded-t-lg rounded-xl text-inherit"
-                                    wire:key='{{ $recentAttendance->id }}'>
-                                    <div class="flex items-center">
+                                    <li class="relative flex justify-between py-2 pr-4 mb-2 border-0 rounded-t-lg rounded-xl text-inherit"
+                                        wire:key='{{ $recentAttendance->id }}'>
+                                        <div class="flex items-center">
 
-                                        <div class="flex flex-col">
-                                            <h6 class="mb-1 text-sm leading-normal text-slate-700 dark:text-white">
-                                                <strong>Name:</strong>
-                                                {{ $recentAttendance->employee->full_name }}
-                                            </h6>
-                                            <span class="text-xs leading-tight dark:text-white/80">
-                                                <strong>Department:</strong>
-                                                {{ $recentAttendance->employee->department->dep_name }}
-                                            </span>
+                                            <div class="flex flex-col">
+                                                <h6 class="mb-1 text-sm leading-normal text-slate-700 dark:text-white">
+                                                    <strong>Name:</strong>
+                                                    {{ $recentAttendance->employee->full_name }}
+                                                </h6>
+                                                <span class="text-xs leading-tight dark:text-white/80">
+                                                    <strong>Department:</strong>
+                                                    {{ $recentAttendance->employee->department->dep_name }}
+                                                </span>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="flex">
-                                        <span
-                                            class="text-xs leading-tight dark:text-white/80">{{ $recentEnrollee->created_at->diffForHumans() }}</span>
-                                    </div>
-                                </li>
-                                    
-                                @empty
-                                <li class="relative flex justify-between py-2 pr-4 mb-2 border-0 rounded-t-lg rounded-xl text-inherit">
-                                <div class="flex items-center">
+                                        <div class="flex">
+                                            <span
+                                                class="text-xs leading-tight dark:text-white/80">{{ $recentEnrollee->created_at->diffForHumans() }}</span>
+                                        </div>
+                                    </li>
 
-                                    <div class="flex flex-col">
-                                        <h6 class="mb-1 text-sm leading-normal text-slate-700 dark:text-white">
-                                            <strong>No Recent Attendance</strong>
-                                        </h6>
-                                        {{-- <span class="text-xs leading-tight dark:text-white/80">
+                                @empty
+                                    <li
+                                        class="relative flex justify-between py-2 pr-4 mb-2 border-0 rounded-t-lg rounded-xl text-inherit">
+                                        <div class="flex items-center justify-center">
+
+                                            <div class="flex flex-col">
+                                                <h6 class="mb-1 text-sm leading-normal text-slate-700 dark:text-white">
+                                                    <strong>No Recent Attendance</strong>
+                                                </h6>
+                                                {{-- <span class="text-xs leading-tight dark:text-white/80">
                                             <strong>Department:</strong>
                                             {{ $recentAttendance->employee->department->dep_name }}
                                         </span> --}}
-                                    </div>
-                                </div>
-                                {{-- <div class="flex">
+                                            </div>
+                                        </div>
+                                        {{-- <div class="flex">
                                     <span
                                         class="text-xs leading-tight dark:text-white/80">{{ $recentEnrollee->created_at->diffForHumans() }}</span>
                                 </div> --}}
-                            </li>
+                                    </li>
                                 @endforelse
 
                             </ul>
@@ -183,10 +187,13 @@
                             @if (count($averageSalaryPerDepartment) > 0)
                                 <canvas id="averageSalaryPerDepartment"></canvas>
                             @else
-                                <span
-                                    class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                    No Data
-                                </span>
+                                <div class="flex justify-center items-center h-full">
+                                    <span
+                                        class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                        No Data
+                                    </span>
+
+                                </div>
                             @endif
                         </div>
                     </div>
@@ -203,10 +210,13 @@
                             @if (count($employeesPerDepartment) > 0)
                                 <canvas id="employeesPerDepartment"></canvas>
                             @else
-                                <span
-                                    class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                    No Data
-                                </span>
+                                <div class="flex justify-center items-center h-full">
+                                    <span
+                                        class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                        No Data
+                                    </span>
+
+                                </div>
                             @endif
                         </div>
                     </div>
@@ -228,10 +238,12 @@
                             @if (count($payrollHistory) > 0)
                                 <canvas id="payrollHistory"></canvas>
                             @else
-                                <span
-                                    class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                    No Data
-                                </span>
+                                <div class="flex justify-center items-center h-full">
+                                    <span
+                                        class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                        No Data
+                                    </span>
+                                </div>
                             @endif
                         </div>
                     </div>
@@ -269,32 +281,32 @@
         ];
 
         function generatePieChart(selector, label, data) {
-    const dataLength = data.length;
-    const backgroundColors = colors.slice(0, dataLength);
-    new Chart(document.querySelector(selector), {
-        type: 'pie',
-        data: {
-            labels: data.map(d => d.label),
-            datasets: [{
-                label: label,
-                data: data.map(d => d.count),
-                backgroundColor: backgroundColors,
-                hoverOffset: 4
-            }]
-        },
-        options: {
-            plugins: {
-                legend: {
-                    position: 'right' // Position the legend to the right
+            const dataLength = data.length;
+            const backgroundColors = colors.slice(0, dataLength);
+            new Chart(document.querySelector(selector), {
+                type: 'pie',
+                data: {
+                    labels: data.map(d => d.label),
+                    datasets: [{
+                        label: label,
+                        data: data.map(d => d.count),
+                        backgroundColor: backgroundColors,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            position: 'right' // Position the legend to the right
+                        }
+                    },
+                    responsive: true, // Make the chart responsive
+                    maintainAspectRatio: false, // Don't maintain aspect ratio
+                    width: '100%', // Set width of the chart
+                    height: '100%' // Set height of the chart
                 }
-            },
-            responsive: true, // Make the chart responsive
-            maintainAspectRatio: false, // Don't maintain aspect ratio
-            width: '100%', // Set width of the chart
-            height: '100%' // Set height of the chart
+            });
         }
-    });
-}
 
 
 

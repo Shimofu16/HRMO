@@ -29,7 +29,7 @@ class UpdateSickLeavePoints extends Command
         // update sick leave points
         $employees = Employee::all();
         foreach ($employees as $employee) {
-            $employee->sickLeave()->update(['points' => $employee->sickLeave->points + 1.25]);
+            $employee->data->update(['sick_leave_points' => $employee->data->sick_leave_points + 1.25]);
         }
     }
 }

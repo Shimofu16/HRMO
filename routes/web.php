@@ -16,6 +16,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeductionController;
 use App\Http\Controllers\EmployeeAttendanceController;
 use App\Http\Controllers\EmployeeLoansController;
+use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\PayslipController;
 use App\Http\Controllers\SalaryGradeStepController;
@@ -60,6 +61,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('edit/{level}', 'edit')->name('edit');
         Route::put('/{level}', 'update')->name('update');
         Route::delete('/{level}', 'destroy')->name('destroy');
+    });
+    Route::prefix('holidays')->name('holidays.')->controller(HolidayController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/', 'store')->name('store');
+        Route::get('edit/{holiday}', 'edit')->name('edit');
+        Route::put('/{holiday}', 'update')->name('update');
+        Route::delete('/{holiday}', 'destroy')->name('destroy');
     });
 
     // Payrolls

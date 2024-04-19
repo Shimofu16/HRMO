@@ -15,8 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('allowance_code');
             $table->string('allowance_name');
-            $table->string('allowance_range');
+            $table->json('allowance_ranges');
             $table->double('allowance_amount');
+            $table->timestamps();
+        });
+        Schema::create('allowance_categories', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('allowance_id')->constrained('allowances');
             $table->foreignId('category_id')->constrained('categories');
             $table->timestamps();
         });

@@ -79,7 +79,7 @@ class EmployeeController extends Controller
         // $employee_number = "{$department->dep_code}-{$employee_department_count}{$employee_count}";
         // $ordinance_number = ($latest_employee_ordinance_number) ? $latest_employee_ordinance_number->ordinance_number + 1 : $employee_count;
         $employee_number = $request->employee_number;
-        $ordinance_number =$request->ordinance_number;
+        $ordinance_number = $request->ordinance_number;
         $first_name = $request->first_name;
         $middle_name = $request->middle_name;
         $last_name = $request->last_name;
@@ -101,19 +101,15 @@ class EmployeeController extends Controller
         ]);
 
         // Handle employee data
-        if($isJOSelected)
-        {
+        if ($isJOSelected) {
             $level_id = $request->level_id;
             $employee->data()->create([
                 'department_id' => $department_id,
                 'designation_id' => $designation_id,
                 'category_id' => $category_id,
                 'level_id' => $level_id,
-                'sick_leave_points' => $sick_leave_points,
             ]);
-
-        }else{
-            
+        } else {
             $salary_grade_id = $request->salary_grade_id;
             $salary_grade_step = $request->salary_grade_step;
             $employee->data()->create([
@@ -124,37 +120,38 @@ class EmployeeController extends Controller
                 'salary_grade_step' => $salary_grade_step,
                 'sick_leave_points' => $sick_leave_points,
             ]);
-        }
+            // Handle allowances
 
-        // Handle allowances
+            if ($allowances) {
+                foreach ($allowances as $value) {
+                    $employee->allowances()->create(['allowance_id' => $value]);
+                }
+            }
 
-        if ($allowances) {
-            foreach ($allowances as $value) {
-                $employee->allowances()->create(['allowance_id' => $value]);
+            // Handle deductions
+            foreach ($deductions as $value) {
+                $employee->deductions()->create(['deduction_id' => $value]);
+            }
+
+            $selected_loans = $request->only(['selected_loan_ids', 'amounts', 'durations', 'ranges']);
+
+            // Ensure all arrays have the same length
+            if ($selected_loans) {
+                $loansData = array_map(function ($loanId, $amount, $duration, $range) use ($employee) {
+                    return [
+                        'loan_id' => $loanId,
+                        'amount' => $amount,
+                        'duration' => $duration,
+                        'range' => $range,
+                    ];
+                }, $selected_loans['selected_loan_ids'], $selected_loans['amounts'], $selected_loans['durations'], $selected_loans['ranges']);
+
+                // Create loans for the employee
+                $employee->loans()->createMany($loansData);
             }
         }
 
-        // Handle deductions
-        foreach ($deductions as $value) {
-            $employee->deductions()->create(['deduction_id' => $value]);
-        }
 
-        $selected_loans = $request->only(['selected_loan_ids', 'amounts', 'durations', 'ranges']);
-
-        // Ensure all arrays have the same length
-        if ($selected_loans) {
-            $loansData = array_map(function ($loanId, $amount, $duration, $range) use ($employee) {
-                return [
-                    'loan_id' => $loanId,
-                    'amount' => $amount,
-                    'duration' => $duration,
-                    'range' => $range,
-                ];
-            }, $selected_loans['selected_loan_ids'], $selected_loans['amounts'], $selected_loans['durations'], $selected_loans['ranges']);
-
-            // Create loans for the employee
-            $employee->loans()->createMany($loansData);
-        }
 
 
         // Create activity

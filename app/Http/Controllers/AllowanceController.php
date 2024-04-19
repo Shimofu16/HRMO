@@ -26,11 +26,20 @@ class AllowanceController extends Controller
             'allowance_code' => 'required',
             'allowance_name' => 'required',
             'allowance_amount' => 'required',
-            'allowance_range' => 'required',
+            'allowance_ranges' => 'required',
             'category_id' => 'required',
         ]);
 
-        Allowance::create($request->all());
+        $allowance =  Allowance::create([
+            'allowance_code' => $request->allowance_code,
+            'allowance_name' => $request->allowance_name,
+            'allowance_amount' => $request->allowance_amount,
+            'allowance_ranges' => $request->allowance_ranges,
+        ]);
+        $categories = $request->category_id;
+        foreach ($categories as $key => $category) {
+            $allowance->categories()->create(['category_id' => $category]);
+        }
 
         createActivity('Create Allowance', 'Allowance ' . $request->allowance_name . ' created successfully.', request()->getClientIp(true));
         return redirect()->back()->with('success', 'Allowance created successfully.');

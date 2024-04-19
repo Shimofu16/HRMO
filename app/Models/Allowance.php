@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\Json;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,18 +14,26 @@ class Allowance extends Model
         'allowance_code',
         'allowance_name',
         'allowance_amount',
-        'allowance_range',
-        'category_id',
+        'allowance_ranges',
         // Other fillable attributes
+    ];
+
+   /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'allowance_ranges' => Json::class,
     ];
 
     public function employees()
     {
-        return $this->hasMany(EmployeeAllowance::class,'allowance_id');
+        return $this->hasMany(EmployeeAllowance::class, 'allowance_id');
     }
 
-    public function category()
+    public function categories()
     {
-        return $this->belongsTo(Category::class);
+        return $this->hasMany(AllowanceCategory::class, 'allowance_id');
     }
 }

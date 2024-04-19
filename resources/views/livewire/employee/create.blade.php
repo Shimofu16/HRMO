@@ -16,11 +16,13 @@
                     <input type="text" name="ordinance_number" id="ordinance_number"
                         wire:model='ordinance_number' class="block w-full mt-1 rounded" required>
                 </div>
+                @if (!$isJOSelected)
                 <div class="col-span-6 sm:col-span-2">
                     <label for="sick_leave_points" class="block font-medium text-gray-700">Sick Leave Points</label>
                     <input type="number" step="0.01" name="sick_leave_points" id="sick_leave_points"
                         wire:model='sick_leave_points' class="block w-full mt-1 rounded" required>
                 </div>
+                @endif
 
 
                 <div class="col-span-6 sm:col-span-2">
@@ -123,6 +125,7 @@
 
             </div>
         </div>
+        @if (!$isJOSelected)
         <div class="px-4 py-5 bg-white sm:p-6 shadow my-3">
             <h1 class="text-xl font-bold">Salary</h1>
             <hr class="mb-3">
@@ -232,8 +235,8 @@
                             </div>
                         </div>
                         <div class="col-span-3 sm:col-span-2" wire:key="{{ $selected_loan->id }}">
-                            <label for="ranges" class="block font-medium text-gray-700">Range </label>
-                            <select name="ranges[]" id="ranges" class="block w-full mt-1 rounded form-select">
+                            <label for="ranges" class="block font-medium text-gray-700 ">Range </label>
+                            <select name="ranges[]" id="ranges" class="block w-full mt-1 rounded form-select ranges">
                                 <option value="" selected>--Please select here--</option>
                                 <option value="1-15">1-15</option>
                                 <option value="16-31">16-31</option>
@@ -245,6 +248,7 @@
 
             </div>
         </div>
+        @endif
 
         <div class="px-4 py-3 text-right sm:px-6">
             <x-primary-button class="ml-3">

@@ -81,7 +81,10 @@ class Create extends Component
                 $this->isJOSelected = true;
             }
             // dd($category,$category->allowances, $this->isJOSelected);
-            $this->allowances = $category->allowances;
+            $this->allowances = Allowance::with('categories')->whereHas('categories', function ($query) use ($category) {
+                $query->where('category_id', $category->id);
+            })
+                ->get();
         }
     }
     public function updatedLoanId($value)
