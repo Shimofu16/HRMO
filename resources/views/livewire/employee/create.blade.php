@@ -1,4 +1,5 @@
-<form action="{{ route('employees.store') }}" method="POST" enctype="multipart/form-data">
+{{-- <form action="{{ route('employees.store') }}" method="POST" enctype="multipart/form-data"> --}}
+<form wire:submit.prevent="save" enctype="multipart/form-data">
     @csrf
     <div class="overflow-hidden  sm:rounded-md">
         <div class="px-4 py-5 bg-white sm:p-6 shadow">
@@ -13,15 +14,15 @@
                 <div class="col-span-6 sm:col-span-2">
                     <label for="ordinance_number" class="block font-medium text-gray-700">Ordinance Item
                         Number</label>
-                    <input type="text" name="ordinance_number" id="ordinance_number"
-                        wire:model='ordinance_number' class="block w-full mt-1 rounded" required>
+                    <input type="text" name="ordinance_number" id="ordinance_number" wire:model='ordinance_number'
+                        class="block w-full mt-1 rounded" required>
                 </div>
                 @if (!$isJOSelected)
-                <div class="col-span-6 sm:col-span-2">
-                    <label for="sick_leave_points" class="block font-medium text-gray-700">Sick Leave Points</label>
-                    <input type="number" step="0.01" name="sick_leave_points" id="sick_leave_points"
-                        wire:model='sick_leave_points' class="block w-full mt-1 rounded" required>
-                </div>
+                    <div class="col-span-6 sm:col-span-2">
+                        <label for="sick_leave_points" class="block font-medium text-gray-700">Sick Leave Points</label>
+                        <input type="number" step="0.01" name="sick_leave_points" id="sick_leave_points"
+                            wire:model='sick_leave_points' class="block w-full mt-1 rounded" required>
+                    </div>
                 @endif
 
 
@@ -126,128 +127,150 @@
             </div>
         </div>
         @if (!$isJOSelected)
-        <div class="px-4 py-5 bg-white sm:p-6 shadow my-3">
-            <h1 class="text-xl font-bold">Salary</h1>
-            <hr class="mb-3">
-            <div class="grid grid-cols-6 gap-6">
-                <div class="col-span-6 sm:col-span-2">
-                    <label class="block font-medium text-gray-700">Allowance</label>
-                    <div class="flex flex-col">
-                        @if ($allowances)
-                            @forelse ($allowances as $allowance)
-                                <div class="flex items-center mt-1" wire:key="{{ $allowance->id }}">
-                                    <input type="checkbox" name="allowances[]" id="allowance_{{ $allowance->id }}"
-                                        wire:model="selected_allowances.{{ $allowance->id }}"
-                                        value="{{ $allowance->id }}" class="mr-2 form-checkbox">
-                                    <label for="allowance_{{ $allowance->id }}"
-                                        class="text-gray-900">{{ $allowance->allowance_code }}</label>
+            <div class="px-4 py-5 bg-white sm:p-6 shadow my-3">
+                <h1 class="text-xl font-bold">Salary</h1>
+                <hr class="mb-3">
+                <div class="grid grid-cols-6 gap-6">
+                    <div class="col-span-6 sm:col-span-2">
+                        <label class="block font-medium text-gray-700">Allowance</label>
+                        <div class="flex flex-col">
+                            @if ($allowances)
+                                @forelse ($allowances as $allowance)
+                                    <div class="flex items-center mt-1" wire:key="{{ $allowance->id }}">
+                                        <input type="checkbox" name="allowance_{{ $allowance->id }}"
+                                            id="allowance_{{ $allowance->id }}"
+                                            wire:model="selectedAllowanceIds.{{ $allowance->id }}"
+                                            value="{{ $allowance->id }}" class="mr-2 form-checkbox">
+                                        <label for="allowance_{{ $allowance->id }}"
+                                            class="text-gray-900">{{ $allowance->allowance_code }}</label>
+                                    </div>
+                                @empty
+                                    <span class="text-gray-600">The selected category doesnt have allowance.</span>
+                                @endforelse
+                            @else
+                                <span class="text-gray-600">Select Category First</span>
+                            @endif
+                        </div>
+                    </div>
+
+
+                    <div class="col-span-6 sm:col-span-2">
+                        <label class="block font-medium text-gray-700">Deductions</label>
+                        <div class="flex flex-wrap">
+                            <div class="w-full">
+                                <h4 class="text-sm">Mandatory</h4>
+                            </div>
+                            @forelse ($mandatory_deductions as $mandatory_deduction)
+                                <div class="w-1/2 px-2" wire:key="{{ $mandatory_deduction->id }}">
+                                    <input type="checkbox" name="deductions[]"
+                                        value="{{ $mandatory_deduction->id }}" class="mr-2 form-checkbox hidden"
+                                        wire:model="selectedMandatoryDeductionIds.{{ $mandatory_deduction->id }}"
+                                        checked>
+                                    <input type="checkbox" id="deduction_{{ $mandatory_deduction->id }}"
+                                        value="{{ $mandatory_deduction->id }}" class="mr-2 form-checkbox" checked
+                                        disabled>
+                                    <label for="deduction_{{ $mandatory_deduction->id }}"
+                                        class="text-gray-900">{{ $mandatory_deduction->deduction_code }}</label>
                                 </div>
                             @empty
-                                <span class="text-gray-600">The selected category doesnt have allowance.</span>
+                                <p>No deduction found.</p>
                             @endforelse
-                        @else
-                            <span class="text-gray-600">Select Category First</span>
-                        @endif
-                    </div>
-                </div>
-
-
-                <div class="col-span-6 sm:col-span-2">
-                    <label class="block font-medium text-gray-700">Deductions</label>
-                    <div class="flex flex-wrap">
-                        <div class="w-full">
-                            <h4 class="text-sm">Mandatory</h4>
                         </div>
-                        @forelse ($mandatory_deductions as $mandatory_deduction)
-                            <div class="w-1/2 px-2">
-                                <input type="checkbox" name="deductions[]" value="{{ $mandatory_deduction->id }}"
-                                    class="mr-2 form-checkbox hidden" checked>
-                                <input type="checkbox" id="deduction_{{ $mandatory_deduction->id }}"
-                                    value="{{ $mandatory_deduction->id }}" class="mr-2 form-checkbox" checked
-                                    disabled>
-                                <label for="deduction_{{ $mandatory_deduction->id }}"
-                                    class="text-gray-900">{{ $mandatory_deduction->deduction_code }}</label>
-                            </div>
-                        @empty
-                            <p>No deduction found.</p>
-                        @endforelse
-                    </div>
 
-                    <div class="flex flex-wrap mt-4">
-                        <div class="w-full">
-                            <h4 class="text-sm">Non Mandatory </h4>
-                        </div>
-                        @forelse ($non_mandatory_deductions as $non_mandatory_deduction)
-                            <div class="w-1/2 px-2">
-                                <input type="checkbox" name="deduction[]"
-                                    id="deduction_{{ $non_mandatory_deduction->id }}"
-                                    value="{{ $non_mandatory_deduction->id }}" class="mr-2 form-checkbox">
-                                <label for="deduction_{{ $non_mandatory_deduction->id }}"
-                                    class="text-gray-900">{{ $non_mandatory_deduction->deduction_code }}</label>
+                        <div class="flex flex-wrap mt-4">
+                            <div class="w-full">
+                                <h4 class="text-sm">Non Mandatory </h4>
                             </div>
-                        @empty
-                            <p>No deduction found.</p>
-                        @endforelse
+                            @forelse ($non_mandatory_deductions as $non_mandatory_deduction)
+                                <div class="w-1/2 px-2" wire:key="{{ $non_mandatory_deduction->id }}">
+                                    <input type="checkbox" name="deduction[]"
+                                        id="deduction_{{ $non_mandatory_deduction->id }}"
+                                        value="{{ $non_mandatory_deduction->id }}" class="mr-2 form-checkbox"
+                                        wire:model="selectedNonMandatoryDeductionIds.{{ $non_mandatory_deduction->id }}">
+                                    <label for="deduction_{{ $non_mandatory_deduction->id }}"
+                                        class="text-gray-900">{{ $non_mandatory_deduction->deduction_code }}</label>
+                                </div>
+                            @empty
+                                <p>No deduction found.</p>
+                            @endforelse
+                        </div>
                     </div>
-                </div>
-                <div class="col-span-6 sm:col-span-2">
                     <div class="col-span-6 sm:col-span-2">
-                        <label for="loan_id" class="block font-medium text-gray-700">Loan </label>
-                        <select name="loan_id" id="loan_id" wire:model.live='loan_id'
-                            class="block w-full mt-1 rounded form-select">
-                            <option value="" selected>--Please select here--</option>
-                            @foreach ($loans as $loan)
-                                <option value="{{ $loan->id }}" wire:key='{{ $loan->id }}'>
-                                    {{ $loan->name }}</option>
-                            @endforeach
-                        </select>
+                        <div class="col-span-6 sm:col-span-2">
+                            <label for="loan_id" class="block font-medium text-gray-700">Loan </label>
+                            <select name="loan_id" id="loan_id" wire:model.live='loan_id'
+                                class="block w-full mt-1 rounded form-select">
+                                <option value="" selected>--Please select here--</option>
+                                @foreach ($loans as $loan)
+                                    <option value="{{ $loan->id }}" wire:key='{{ $loan->id }}'>
+                                        {{ $loan->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="grid grid-cols-6 gap-6 mt-3">
-
                 @if ($selected_loans)
                     @foreach ($selected_loans as $selected_loan)
-                        <div class="col-span-3 sm:col-span-2" wire:key="{{ $selected_loan->id }}">
-                            <input type="text" name="selected_loan_ids[]" value="{{ $selected_loan->id }}"
-                                hidden>
-                            <div>
-                                <label for="amount"
-                                    class="block font-medium text-gray-700">{{ $selected_loan->name }} </label>
-                                <div class="flex flex-col">
-                                    <input type="number" name="amounts[]" id="amount" step="0.01"
-                                        class="block w-full mt-1 rounded form-input">
-                                    <span class="text-sm">Amount Per Deduction</span>
-                                    {{-- <button type="button" wire:click='removeSelectedLoan({{ $selected_loan->id }})' class="px-4 py-2 font-bold text-gray-500 rounded hover:text-gray-700">-</button> --}}
+                        <div class="grid grid-cols-6 gap-6 mt-3" wire:key="{{ $selected_loan->id }}">
+
+                            <div class="col-span-3 sm:col-span-2">
+                                <input type="text" name="selected_loan_ids[]" value="{{ $selected_loan->id }}"
+                                    hidden>
+                                <div>
+                                    <label for="amount"
+                                        class="block font-medium text-gray-700">{{ $selected_loan->name }} </label>
+                                    <div class="flex flex-col">
+                                        <input type="number" name="amounts[]" id="amount" step="0.01"
+                                            class="block w-full mt-1 rounded form-input"
+                                            wire:model="arraySelectedLoans.{{ $selected_loan->id }}.amount">
+                                        <span class="text-sm">Amount Per Deduction</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-span-3 sm:col-span-2" wire:key="{{ $selected_loan->id }}">
-                            <div>
-                                <label for="duration" class="block font-medium text-gray-700">
-                                    Duration (Months)
-                                </label>
-                                <div class="flex">
-                                    <input type="number" name="durations[]" id="duration" step="0.01"
-                                        class="block w-full mt-1 rounded form-input">
-                                    {{-- <button type="button" wire:click='removeSelectedLoan({{ $selected_loan->id }})' class="px-4 py-2 font-bold text-gray-500 rounded hover:text-gray-700">-</button> --}}
+                            <div class="col-span-3 sm:col-span-2">
+                                <div>
+                                    <label for="duration" class="block font-medium text-gray-700">
+                                        Duration (Months)
+                                    </label>
+                                    <div class="flex">
+                                        <input type="number" name="durations[]" id="duration" step="0.01"
+                                            class="block w-full mt-1 rounded form-input"
+                                            wire:model="arraySelectedLoans.{{ $selected_loan->id }}.duration">
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-span-3 sm:col-span-2" wire:key="{{ $selected_loan->id }}">
-                            <label for="ranges" class="block font-medium text-gray-700 ">Range </label>
-                            <select name="ranges[]" id="ranges" class="block w-full mt-1 rounded form-select ranges">
-                                <option value="" selected>--Please select here--</option>
-                                <option value="1-15">1-15</option>
-                                <option value="16-31">16-31</option>
-                            </select>
+                            <div class="col-span-3 sm:col-span-2">
+                                <h4 class="text-sm">Range </h4>
+                                <div class="flex mt-1">
+                                    <div class="flex flex-col space-y-2  w-1/2">
+                                        <div class="w-1/2 px-2">
+                                            <input type="checkbox" name="1-15_{{ $selected_loan->id }}" id="1-15_{{ $selected_loan->id }}" value="1-15"
+                                                class="mr-2 form-checkbox"
+                                                wire:model="arraySelectedLoans.{{ $selected_loan->id }}.range.1">
+                                            <label for="1-15_{{ $selected_loan->id }}" class="text-gray-900">1-15</label>
+                                        </div>
+                                        <div class="w-1/2 px-2">
+                                            <input type="checkbox" name="16-31_{{ $selected_loan->id }}" id="16-31_{{ $selected_loan->id }}" value="16-31"
+                                                class="mr-2 form-checkbox"
+                                                wire:model="arraySelectedLoans.{{ $selected_loan->id }}.range.2">
+                                            <label for="16-31_{{ $selected_loan->id }}" class="text-gray-900">16-31</label>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button type="button" wire:click='removeLoan({{ $selected_loan->id }})'
+                                            class="bg-red-500 text-white font-bold py-2 px-4 rounded shadow hover:bg-red-700">
+                                            X
+                                        </button>
+
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     @endforeach
                 @endif
 
 
             </div>
-        </div>
         @endif
 
         <div class="px-4 py-3 text-right sm:px-6">

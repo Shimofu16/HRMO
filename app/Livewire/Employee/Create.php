@@ -10,6 +10,7 @@ use App\Models\Allowance;
 use App\Models\Deduction;
 use App\Models\Department;
 use App\Models\Designation;
+use App\Models\Employee;
 use App\Models\Level;
 use App\Models\SalaryGradeStep;
 
@@ -31,7 +32,10 @@ class Create extends Component
     public $salary_grade_step;
     public $designation_id;
 
-    public $selected_allowances;
+    public array $selectedAllowanceIds;
+    public array $selectedMandatoryDeductionIds;
+    public array $selectedNonMandatoryDeductionIds;
+    public array $arraySelectedLoans;
     public $loan_id;
     public $allowance_id;
     public $salary_grade_steps;
@@ -87,24 +91,132 @@ class Create extends Component
                 ->get();
         }
     }
+    public function updateLoans()
+    {
+        // Get selected loan IDs from the array keys
+        $selectedLoanIds = array_keys($this->selected_loans);
+
+        // Fetch loans based on selected IDs
+        $this->loans = Loan::whereNotIn('id', $selectedLoanIds)->get();
+    }
     public function updatedLoanId($value)
     {
         if ($value && $this->selected_loans) {
             if (!array_key_exists($value, $this->selected_loans)) {
                 $this->selected_loans[$value] = Loan::where('id', $value)->first();
+                $this->updateLoans();
             }
         } else {
             $this->selected_loans[$value] = Loan::where('id', $value)->first();
         }
-        // dd( $this->selected_loans);
+    }
+    public function removeLoan($loan_id)
+    {
+        if (array_key_exists($loan_id, $this->selected_loans)) {
+            unset($this->selected_loans[$loan_id]);
+            $this->updateLoans();
+        }
     }
 
-    public function validateData()
+
+    private function validateData()
     {
         $this->validate([
             'employee_number' => ['required', 'unique:employees,employee_number'],
             'ordinance_number' => ['required', 'unique:employees,ordinance_number'],
         ]);
+    }
+    private function getDeductions()
+    {
+        $mandatory_deductions = [];
+
+        foreach ($this->mandatory_deductions as $key => $mandatory_deduction) {
+            $mandatory_deductions[] = $mandatory_deduction->id;
+        }
+
+        $non_mandatory_deductions = array_keys(array_filter($this->selectedNonMandatoryDeductionIds, 'boolval'));
+
+        return array_merge($mandatory_deductions, $non_mandatory_deductions);
+    }
+
+    public function save()
+    {
+
+        // dd(
+        //     array_keys(array_filter($this->selectedAllowanceIds, 'boolval')),
+        //  $this->getDeductions(),
+        //  $this->arraySelectedLoans
+
+        // );
+
+        // Create a new employee instance   
+        $employee = Employee::create([
+            'employee_number' => $this->employee_number,
+            'ordinance_number' => $this->ordinance_number,
+            'first_name' => $this->first_name,
+            'middle_name' => $this->middle_name,
+            'last_name' => $this->last_name,
+        ]);
+
+        // Handle employee data
+        if ($this->isJOSelected) {
+            $employee->data()->create([
+                'department_id' => $this->department_id,
+                'designation_id' => $this->designation_id,
+                'category_id' => $this->category_id,
+                'level_id' => $this->level_id,
+            ]);
+        } else {
+            $employee->data()->create([
+                'department_id' => $this->department_id,
+                'designation_id' => $this->designation_id,
+                'category_id' => $this->category_id,
+                'salary_grade_id' => $this->salary_grade_id,
+                'salary_grade_step' => $this->salary_grade_step,
+                'sick_leave_points' => $this->sick_leave_points,
+            ]);
+
+            if ($this->selectedAllowanceIds) {
+                $selectedAllowanceIds = array_keys(array_filter($this->selectedAllowanceIds, 'boolval')); // Get selected IDs
+
+                // Attach selected allowances using their IDs
+                foreach ($selectedAllowanceIds as $selectedAllowanceId) {
+                    $employee->allowances()->create(['allowance_id' => $selectedAllowanceId]);
+                }
+            }
+
+
+            foreach ($this->getDeductions() as $value) {
+                $employee->deductions()->create(['deduction_id' => $value]);
+            }
+
+
+            if ($this->arraySelectedLoans) {
+                $loansData = [];
+            
+                foreach ($this->arraySelectedLoans as $loanId => $loanDetails) {
+                    $loanAmount = $loanDetails['amount'];
+                    $loanDuration = $loanDetails['duration'];
+                    $selectedRanges = array_keys(array_filter($loanDetails['range'], 'boolval'));
+            
+                    $loansData[] = [
+                        'loan_id' => $loanId,
+                        'amount' => $loanAmount,
+                        'duration' => $loanDuration,
+                        'ranges' => $selectedRanges,
+                    ];
+                }
+                // Create loans for the employee
+                $employee->loans()->createMany($loansData);
+            }
+            
+        }
+
+        // Create activity
+        createActivity('Create Employee', 'Employee ' . $employee->full_name . ' was created.', request()->getClientIp(true));
+
+        // Redirect to the index page with a success message
+        return redirect()->route('employees.index')->with('success', 'Employee created successfully.');
     }
 
     public function mount()

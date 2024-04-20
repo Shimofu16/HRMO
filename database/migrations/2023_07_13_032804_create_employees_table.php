@@ -38,7 +38,7 @@ return new class extends Migration
             $table->foreignId('loan_id')->constrained('loans', 'id');
 
             $table->double('amount');
-            $table->json('range');
+            $table->json('ranges');
             $table->double('deduction')->nullable();
             $table->double('duration')->nullable();
             $table->timestamps();

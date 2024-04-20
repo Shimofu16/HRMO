@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\Json;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,8 +16,10 @@ class EmployeeLoan extends Model
         'amount',
         'deduction',
         'duration',
-        'range',
+        'ranges',
     ];
+
+    protected $casts = ['ranges'=> Json::class];
 
     public function employee()
     {
