@@ -134,13 +134,13 @@
                                                 </h6>
                                                 <span class="text-xs leading-tight dark:text-white/80">
                                                     <strong>Department:</strong>
-                                                    {{ $recentAttendance->employee->department->dep_name }}
+                                                    {{ $recentAttendance->employee->data->department->dep_name }}
                                                 </span>
                                             </div>
                                         </div>
                                         <div class="flex">
                                             <span
-                                                class="text-xs leading-tight dark:text-white/80">{{ $recentEnrollee->created_at->diffForHumans() }}</span>
+                                                class="text-xs leading-tight dark:text-white/80">{{ $recentAttendance->created_at->diffForHumans() }}</span>
                                         </div>
                                     </li>
 
@@ -328,7 +328,9 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
+
             const attendanceCountPerWeek = {!! json_encode($attendanceCountPerWeek) !!};
+            console.log(attendanceCountPerWeek.map(d => d.label))
             const averageSalaryPerDepartment = {!! json_encode($averageSalaryPerDepartment) !!};
             generateBarChart('#attendanceCountPerWeek', 'Weekly Attendance', attendanceCountPerWeek);
             generateBarChart('#averageSalaryPerDepartment', 'Average Salary', averageSalaryPerDepartment);
@@ -339,7 +341,6 @@
 
             generatePieChart('#employeesPerDepartment', 'Employees per Department', employeesPerDepartment);
             generatePieChart('#employeesPerCategory', 'Employees per Department', employeesPerCategory);
-
         });
     </script>
 

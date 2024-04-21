@@ -147,15 +147,23 @@ class Employee extends Model
 
     public function getTotalSalaryBy($month, $year, $from, $to)
     {
-        $totalSalary = 0;
         $month = date('m', strtotime($month));
         $year = date('Y', strtotime($year));
+        if (!checkdate($month, $to, $year)) {
+            $to = date('t', mktime(0, 0, 0, $month, 1, $year)); // get last day of the month
+        }
+        $totalSalary = 0;
+
         $from = sprintf('%04d-%02d-%02d', $year, $month, $from);
         $to = sprintf('%04d-%02d-%02d', $year, $month, $to);
 
 
+        $from = Carbon::parse($from)->format('Y-m-d'); // Assuming 1st day of the month
+        $to = Carbon::parse($to)->format('Y-m-d'); // Use $to for the last day
+
+
         $attendances = $this->attendances()->whereBetween('created_at', [$from, $to])->get();
-        // dd($attendances, $month, $year, $from, $to);
+        // dd($attendances, $from, $to);
         // Sum up the allowance amounts
         foreach ($attendances as $attendance) {
             $totalSalary += $attendance->salary;
@@ -163,7 +171,35 @@ class Employee extends Model
 
         return $totalSalary;
     }
-    
+    public function getAllowance($allowance_id)
+    {
+        $allowance = $this->allowances()->where('allowance_id', $allowance_id)->first();
+        if ($allowance) {
+            return $allowance->allowance->allowance_amount;
+        }
+        return 0;
+    }
+    public function getDeduction($deduction_id)
+    {
+        $deduction = $this->deductions()->where('deduction_id', $deduction_id)->first();
+        if ($deduction) {
+            return $deduction->deduction->deduction_amount;
+        }
+        return 0;
+    }
+    public function getLoan($loan_id, $range)
+    {
+        $loan = $this->loans()->where('loan_id', $loan_id)->first();
+
+        if ($loan) {
+            foreach ($loan->ranges as $key => $ranges) {
+                if ($ranges == $range) {
+                    return $loan->amount;
+                }
+            }
+        }
+        return 0;
+    }
 
     public function getDeductionsBy($type)
     {

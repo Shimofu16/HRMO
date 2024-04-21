@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
-    <title>Generate Payslip</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     {{-- <link rel="stylesheet" href="{{ asset('assets/bootstrap/bootstrap.min.css') }}"> --}}
-    <link rel="stylesheet" href="./assets/bootstrap/bootstrap.min.css" type="text/css" />
-    <style>
+    {{-- <link rel="stylesheet" href="./assets/bootstrap/bootstrap.min.css" type="text/css" /> --}}
+    {{-- <style>
         .border-2 {
             border-bottom: 2px solid #1a1a1a !important;
         }
@@ -33,9 +34,7 @@
             padding: 0 !important;
         }
 
-        @page {
-            margin: 0px;
-        }
+    
 
         .page-break {
             page-break-after: always;
@@ -55,181 +54,280 @@
             font-family: Calibri !important;
             margin: 0 !important;
         }
+    </style>  --}}
+    <style>
+        td {
+            padding: 0;
+            margin: 0;
+        }
     </style>
+    <!-- Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body>
-    @foreach ($employees as $employee)
-        @php
-            $mandatoryDeductions = $employee->getDeductionsBy('Mandatory');
-            $nonmandatoryDeductions = $employee->getDeductionsBy('Non-Mandatory');
-            $allowances = $employee->allowances() ?? '';
-            $loans = $employee->loans() ?? '';
-            $dates = explode('-', $payroll['date_from_to']);
-            $totalAllowance = $employee->computeAllowance($dates);
-            $totalDeduction = $employee->computeDeduction($dates);
-            $totaAmountlLoan = 0;
-            $salaryGrade = $employee->data->salary_grade_step_amount;
+<body class="font-sans antialiased">
 
-            $from = $dates[0];
-            $to = $dates[1];
-            $amountEarned = $employee->getTotalSalaryBy($payroll['month'], $payroll['year'], $from, $to); // Get the total salary of the employee
-            $totalAmountEarned = $amountEarned + $totalAllowance;
-
-            // dd($mandatoryDeductions,$nonmandatoryDeductions,$totalDeduction);
-
-        @endphp
-        {{-- page break every 2 payslip per page --}}
-        <div class="{{ $loop->iteration % 2 ? '' : 'page-break' }}" id="canvas">
-            <table class="table border-2">
-                <tr class="p-4 m-2 border">
-                    <td colspan="9" class="border-dashed-right">
-                        <div class="mb-2 text-center title">
-                            <h6 class="title">MUNICIPALITY OF CALAUAN</h6>
-                            <span class="block sub-title">{{ $department->dep_name }}</span>
-                        </div>
-                        <table class="no-padding">
-                            <tr>
-                                <td>
-                                    <span class="text-right">
-                                        <span class="font-semibold sub-title">Name:</span>
-                                        <span class="fw-400">{{ $employee->full_name }}</span>
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="text-right">
-                                        <span class="font-semibold sub-title">Period:</span>
-                                        <span class="fw-400">{{ $filter['from'] }}-{{ $filter['to'] }}</span>
-                                    </span>
-                                </td>
-                            </tr>
-                        </table>
-                        <table class="mt-4 ">
-                            <tr>
-                                <td colspan="4" class="border-dashed-right">
-                                    <h6 class="mb-2 text-center sub-title">EARNINGS</h6>
-                                    <span>
-                                        <span class="font-semibold sub-title">Monthly Salary:</span>
-                                        <span class="fw-400">{{ number_format($salaryGrade) }}</span>
-                                    </span>
-                                    <br>
-                                    <span>
-                                        <span class="font-semibold sub-title">Amount Earned:</span>
-                                        <span class="fw-400">{{ number_format($amountEarned) }}</span>
-                                    </span>
-                                    <br>
-                                    <h6 class="mt-3 mb-2 text-center">ALLOWANCES</h6>
-                                    @foreach ($allowances as $itemallowance)
-                                        <span class="mb-1">
-                                            <span class="fw-400">{{ $itemallowance->allowance->allowance_code }} -
-                                                {{ number_format($itemallowance->allowance->allowance_amount) }}</span>
-                                        </span>
-                                        <br>
-                                    @endforeach
-                                </td>
-                                <td colspan="4 px-2">
-                                    <h6 class="mb-2 text-center sub-title">DEDUCTION</h6>
-                                    @if (!empty($mandatoryDeductions))
-                                        <span class="sub-title">MANDATORY</span>
-                                        <br>
-                                        @foreach ($mandatoryDeductions as $mandatoryDeduction)
-                                            <span class="mb-1">
-                                                <span
-                                                    class="fw-400">{{ $mandatoryDeduction->deduction->deduction_code }}
-                                                    -
-                                                    {{ $mandatoryDeduction->deduction->deduction_amount_type == 'percentage' ? percentage($mandatoryDeduction->deduction->deduction_amount) : number_format($mandatoryDeduction->deduction->deduction_amount) }}
-                                                </span>
-                                            </span>
-                                            <br>
-                                        @endforeach
-                                    @endif
-                                    @if (!empty($nonmandatoryDeductions))
-                                        <span class="mt-3 sub-title">NON-MANDATORY</span>
-                                        <br>
-                                        @foreach ($nonmandatoryDeductions as $nonmandatoryDeduction)
-                                            <span class="mb-1">
-                                                <span
-                                                    class="fw-400">{{ $nonmandatoryDeduction->deduction->deduction_code }}
-                                                    -
-                                                    {{ $nonmandatoryDeduction->deduction->deduction_amount_type == 'percentage' ? percentage($nonmandatoryDeduction->deduction->deduction_amount) : number_format($nonmandatoryDeduction->deduction->deduction_amount) }}
-                                                </span>
-                                            </span>
-                                            <br>
-                                        @endforeach
-                                    @endif
-                                    @if (!empty($loans))
-                                        <span class="mt-3 sub-title">LOANS</span>
-                                        <br>
-                                        @foreach ($loans as $loan)
-                                            @if ($payroll['date_from_to'] != $loan->range)
-                                                <span class="mb-1">
-                                                    @php
-                                                        $totaAmountlLoan = $totaAmountlLoan + $loan->amount
-                                                    @endphp
-                                                    <span class="fw-400">{{ $loan->loan->name }}
-                                                        -
-                                                        {{ $loan->amount }}
-                                                    </span>
-                                                </span>
-                                                <br>
-                                            @endif
-                                        @endforeach
-                                    @endif
-                                </td>
-                            </tr>
-                        </table>
-
-                        <table class="no-padding">
-                            @php
-                                $totalDeduction = $totalDeduction + $totaAmountlLoan;
-                                $totalAmountEarned = $totalAmountEarned - $totaAmountlLoan;
-                                $totalAmountEarned = $totalAmountEarned < 0 ? 0 : $totalAmountEarned;
-                                $netPay = $totalAmountEarned - $totalDeduction;
-                                $netPay = $netPay < 0 ? 0 : $netPay;
-                            @endphp
-                            <tr>
-                                <td>
-                                    <h6 class="mt-3 sub-title">Total Salary Earned:
-                                        {{ number_format($totalAmountEarned, 2) }}
-                                    </h6>
-                                </td>
-                                <td>
-                                    <h6 class="mt-3 sub-title">Total Deduction:
-                                        {{ number_format($totalDeduction, 2) }}
-                                    </h6>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h6 class="mt-3 sub-title">NET PAY: {{ number_format($netPay) }}</h6>
-                                </td>
-
-                            </tr>
-                        </table>
-
-                    </td>
-                    <td>
-                        <div class="mb-2 text-center">
-                            <h6 class="title">MUNICIPALITY OF CALAUAN</h6>
-                            <h6 class="sub-title">RECEIPT {{ $employee->employee_number }}</h6>
-                            <span> &nbsp;</span>
-                        </div>
-                        <div class="contents">
-                            <h6 class="sub-title">Received: </h6>
-                            <h6 class="mb-3 text-center sub-title">NET PAY ₱ {{ number_format($netPay) }}</h6>
-                            <h6 class="sub-title">For Period:</h6>
-                            <h6 class="mb-4 text-center sub-title">{{ $filter['from'] }}-{{ $filter['to'] }}</h6>
-                            <h6 class="mb-5 sub-title">Received By: </h6>
-                            <h6 class="px-3 border-bottom-2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h6>
-                            <h6 class="mb-3 text-center title">{{ $employee->full_name }}</h6>
-                            <h6 class="px-3 border-bottom-2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h6>
-                            <h6 class="text-center title">DATE </h6>
-                        </div>
-                    </td>
-                </tr>
-            </table>
+    <div class="container mx-auto">
+        <div class="flex justify-center items-center my-5">
+            <div class="flex flex-col " style="width: 200px">
+                <button type="button"
+                    class="text-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                    onclick="generatePDF('{{ $file_name }}')">
+                    Download
+                </button>
+                <a href="{{ route('payrolls.index') }}"
+                    class="text-center text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
+                    Back to Payroll
+                </a>
+            </div>
         </div>
-    @endforeach
+        <div id="element-to-print" class="">
+            @php
+                $count = 1;
+            @endphp
+            @foreach ($employees as $employee)
+                @if ($count > 3)
+                    @php
+                        $count = 1;
+                    @endphp
+                @endif
+                @if ($count == 1)
+                    <div class="grid grid-cols-3 grid-rows-2 gap-1">
+                @endif
+                @php
+                    $totalAmountEarned = 0;
+                    $totalAllowance = 0;
+                    $totalDeduction = 0;
+                    $netpay = 0;
+                    $amountEarned = $employee->getTotalSalaryBy($payroll['month'], $payroll['year'], $from, $to);
+                    $monthlySalary = $employee->data->getMonthlySalary($payroll['month'], $payroll['year']);
+                @endphp
+                <div class="border border-dark flex flex-col p-2">
+                    <div class="head">
+                        <h1 class="text-sm text-center font-bold">MUNICIPALITY OF CALAUAN</h1>
+                        <h1 class="text-xs text-center font-bold">{{ $department->dep_name }}</h1>
+                        <h1 class="text-xs font-bold my-3">Payslip for the period of: {{ $period }}</h1>
+                    </div>
+                    <div class="body w-full">
+                        <table class=" w-full">
+                            <thead>
+                                <tr>
+                                    <th class="text-left">
+                                        <span class="text-xs font-bold">Name:</span>
+                                    </th>
+                                    <th class="">
+                                        <span class="text-xs font-bold"></span>
+                                    </th>
+                                    <th class="">
+                                        <span class="text-xs font-bold">{{ $employee->full_name }}</span>
+                                    </th>
+                                    <th class="">
+                                        <span class="text-xs font-bold"></span>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th class="text-left">
+                                        <span class="text-xs">Designation:</span>
+                                    </th>
+                                    <th class="">
+                                        <span class="text-xs"></span>
+                                    </th>
+                                    <th class="">
+                                        <span
+                                            class="text-xs">{{ $employee->data->designation->designation_code }}</span>
+                                    </th>
+                                    <th class="">
+                                        <span class="text-xs"></span>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th class="text-left">
+                                        <span class="text-xs">Monthly Salary:</span>
+                                    </th>
+                                    <th class="">
+                                        <span class="text-xs"></span>
+                                    </th>
+                                    <th class="">
+                                        <span class="text-xs">{{ number_format($monthlySalary, 2) }}</span>
+                                    </th>
+                                    <th class="">
+                                        <span class="text-xs"></span>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th class="text-left">
+                                        <span class="text-xs">Amount Earned:</span>
+                                    </th>
+                                    <th class="">
+                                        <span class="text-xs"></span>
+                                    </th>
+                                    <th class="">
+                                        <span class="text-xs">{{ number_format($amountEarned, 2) }}</span>
+                                    </th>
+                                    <th class="">
+                                        <span class="text-xs"></span>
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach ($allowances as $allowance)
+                                    <tr>
+                                        <td>
+                                            <span class="text-xs">{{ $allowance->allowance_code }}:</span>
+                                        </td>
+                                        <td><span class="text-xs"></span></td>
+                                        <td class="text-xs text-center">
+                                            @if ($employee->getAllowance($allowance->id) != 0)
+                                                @php
+                                                    $totalAllowance =
+                                                        $totalAllowance + $employee->getAllowance($allowance->id);
+                                                @endphp
+                                                <span>
+                                                    {{ number_format($employee->getAllowance($allowance->id), 2) }}
+                                                </span>
+                                            @else
+                                                <span class="text-center">
+                                                    -
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td><span class="text-xs"></span></td>
+                                    </tr>
+                                @endforeach
+                                @php
+                                    $totalAmountEarned = $amountEarned + $totalAllowance;
+                                @endphp
+                                <tr>
+                                    <td>
+                                        <span class="text-xs font-bold">TOTAL AMOUNT EARNED:</span>
+                                    </td>
+                                    <td><span class="text-xs"></span></td>
+                                    <td><span class="text-xs"></span></td>
+                                    <td>
+                                        <span
+                                            class="text-xs font-bold">{{ number_format($totalAmountEarned, 2) }}</span>
+                                    </td>
+                                </tr>
+                                @foreach ($deductions as $deduction)
+                                    <tr>
+                                        <td>
+                                            <span class="text-xs">{{ $deduction->deduction_code }}:</span>
+                                        </td>
+                                        <td><span class="text-xs"></span></td>
+                                        <td class="text-xs text-center">
+                                            @if ($employee->getdeduction($deduction->id) != 0)
+                                                @php
+                                                    $totalDeduction =
+                                                        $totalDeduction + $employee->getdeduction($deduction->id);
+                                                @endphp
+                                                <span>
+                                                    {{ number_format($employee->getdeduction($deduction->id), 2) }}
+                                                </span>
+                                            @else
+                                                <span class="text-center">
+                                                    -
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td><span class="text-xs"></span></td>
+                                    </tr>
+                                @endforeach
+                                @foreach ($loans as $loan)
+                                    <tr>
+                                        <td>
+                                            <span class="text-xs">{{ $loan->name }}:</span>
+                                        </td>
+                                        <td><span class="text-xs"></span></td>
+                                        <td class="text-xs text-center">
+                                            @if ($employee->getLoan($loan->id, $payroll['date_from_to']) != 0)
+                                                @php
+                                                    $totalDeduction =
+                                                        $totalDeduction +
+                                                        $employee->getLoan($loan->id, $payroll['date_from_to']);
+                                                @endphp
+                                                <span>
+                                                    {{ number_format($employee->getLoan($loan->id, $payroll['date_from_to']), 2) }}
+                                                </span>
+                                            @else
+                                                <span class="text-center">
+                                                    -
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td><span class="text-xs"></span></td>
+                                    </tr>
+                                @endforeach
+                                @php
+                                    $netpay = $totalAmountEarned - $totalDeduction;
+                                @endphp
+                                <tr>
+                                    <td>
+                                        <span class="text-xs font-bold">TOTAL DEDUCTIONS:</span>
+                                    </td>
+                                    <td><span class="text-xs"></span></td>
+                                    <td><span class="text-xs"></span></td>
+                                    <td>
+                                        <span
+                                            class="text-xs font-bold border-b-2 border-dark">{{ number_format($totalDeduction, 2) }}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span class="text-xs font-bold text-blue-700">NET PAY:</span>
+                                    </td>
+                                    <td><span class="text-xs"></span></td>
+                                    <td><span class="text-xs"></span></td>
+                                    <td>
+                                        <span
+                                            class="text-xs font-bold text-blue-700  border-b-2 border-gray-500">{{ number_format($netpay, 2) }}</span>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                @if ($count == 3 || $loop->last)
+        </div>
+        <div class="page-break"></div> <!-- Page break for printing -->
+        @endif
+        @php
+            $count++;
+        @endphp
+        @endforeach
+
+    </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"
+        integrity="sha512-YcsIPGdhPK4P/uRW6/sruonlYj+Q7UHWeKfTAkBW+g83NKM+jMJFJ4iAPfSnVp7BKD4dKMHmVSvICUbE/V1sSw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        function generatePDF(filename) {
+            console.log(filename);
+            var element = document.getElementById('element-to-print');
+            var opt = {
+                margin: .2,
+                filename: filename + '.pdf',
+                image: {
+                    type: 'jpeg',
+                    quality: 0.98
+                },
+                html2canvas: {
+                    scale: 2
+                },
+                jsPDF: {
+                    unit: 'in',
+                    format: 'a4',
+                    orientation: 'landscape'
+                }
+            };
+
+            // New Promise-based usage:
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
 </body>
 
 </html>

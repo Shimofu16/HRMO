@@ -60,7 +60,14 @@ class DashboardController extends Controller
         $payrollHistory = $this->getAttendanceBy('payrollHistory');
 
 
-        // dd($this->getAttendanceBy('weekly'));
+        // dd(
+        //     $this->getAttendanceBy('recent'),
+        //      $this->getAttendanceBy('weekly'),
+        //      $this->getAttendanceBy('averageSalaryPerDepartment'),
+        //       $this->getAttendanceBy('employeesPerDepartment'),
+        //       $this->getAttendanceBy('employeesPerCategory'),
+        //       $this->getAttendanceBy('payrollHistory'),
+        //       );
         return view(
             'dashboard',
             compact(
@@ -79,9 +86,9 @@ class DashboardController extends Controller
         switch ($filter) {
             case 'recent':
                 $currentTime = Carbon::now();
-                $thirtyMinutesAgo = $currentTime->subMinutes(30);
-                return Attendance::whereBetween('created_at', [$thirtyMinutesAgo, $currentTime])
+                return Attendance::whereDate('created_at', $currentTime)
                     ->limit(5)
+                    ->orderBy('id', 'DESC')
                     ->get();
             case 'weekly':
                 $startOfWeek = Carbon::now()->startOfWeek();
@@ -89,15 +96,16 @@ class DashboardController extends Controller
 
                 $attendanceByDayOfWeek = Attendance::whereBetween('created_at', [$startOfWeek, $endOfWeek])
                     ->get()
-                    ->groupBy(function ($attendance) {
-                        return Carbon::parse($attendance->created_at)->format('l'); // 'l' returns the full name of the day (e.g., Monday)
-                    })
                     ->map(function ($group, $dayOfWeek) {
                         return [
                             'label' => $dayOfWeek,
                             'count' => $group->count(),
                         ];
-                    });
+                    })
+                    ->toArray();
+
+                    
+
 
                 return $attendanceByDayOfWeek;
             case 'averageSalaryPerDepartment':
@@ -117,16 +125,16 @@ class DashboardController extends Controller
             case 'payrollHistory':
                 $payrollHistory = [];
                 // // annually
-                // $departments = Department::with('employees')->get();
-                // foreach ($departments as $key => $department) {
-                //     foreach ($department->employees as $key => $employee) {
-                //         $averageSalaryPerDepartment[] =
-                //             [
-                //                 'label' => $department->dep_name,
-                //                 'count' => getTotalSalaryByYearAndDepartment($employee, now()->format('Y'), $department->id)
-                //             ];
-                //     }
-                // }
+                $departments = Department::with('employees')->get();
+                foreach ($departments as $key => $department) {
+                    foreach ($department->employees as $key => $employee) {
+                        $averageSalaryPerDepartment[] =
+                            [
+                                'label' => $department->dep_name,
+                                'count' => getTotalSalaryByYearAndDepartment($employee, now()->format('Y'), $department->id)
+                            ];
+                    }
+                }
                 return $payrollHistory;
             case 'employeesPerDepartment':
                 $employeesPerDepartment = [];

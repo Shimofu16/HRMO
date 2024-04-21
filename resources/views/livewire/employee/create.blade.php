@@ -246,13 +246,13 @@
                                         <div class="w-1/2 px-2">
                                             <input type="checkbox" name="1-15_{{ $selected_loan->id }}" id="1-15_{{ $selected_loan->id }}" value="1-15"
                                                 class="mr-2 form-checkbox"
-                                                wire:model="arraySelectedLoans.{{ $selected_loan->id }}.range.1">
+                                                wire:model="arraySelectedLoans.{{ $selected_loan->id }}.range.1-15">
                                             <label for="1-15_{{ $selected_loan->id }}" class="text-gray-900">1-15</label>
                                         </div>
                                         <div class="w-1/2 px-2">
                                             <input type="checkbox" name="16-31_{{ $selected_loan->id }}" id="16-31_{{ $selected_loan->id }}" value="16-31"
                                                 class="mr-2 form-checkbox"
-                                                wire:model="arraySelectedLoans.{{ $selected_loan->id }}.range.2">
+                                                wire:model="arraySelectedLoans.{{ $selected_loan->id }}.range.16-31">
                                             <label for="16-31_{{ $selected_loan->id }}" class="text-gray-900">16-31</label>
                                         </div>
                                     </div>

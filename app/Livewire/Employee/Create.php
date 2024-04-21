@@ -149,7 +149,7 @@ class Create extends Component
 
         // );
 
-        // Create a new employee instance   
+        // Create a new employee instance
         $employee = Employee::create([
             'employee_number' => $this->employee_number,
             'ordinance_number' => $this->ordinance_number,
@@ -193,12 +193,12 @@ class Create extends Component
 
             if ($this->arraySelectedLoans) {
                 $loansData = [];
-            
+
                 foreach ($this->arraySelectedLoans as $loanId => $loanDetails) {
                     $loanAmount = $loanDetails['amount'];
                     $loanDuration = $loanDetails['duration'];
                     $selectedRanges = array_keys(array_filter($loanDetails['range'], 'boolval'));
-            
+
                     $loansData[] = [
                         'loan_id' => $loanId,
                         'amount' => $loanAmount,
@@ -209,7 +209,7 @@ class Create extends Component
                 // Create loans for the employee
                 $employee->loans()->createMany($loansData);
             }
-            
+
         }
 
         // Create activity

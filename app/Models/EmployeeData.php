@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -49,4 +50,15 @@ class EmployeeData extends Model
     {
         return $this->belongsTo(Level::class, 'level_id');
     }
+
+    public function getMonthlySalary($month, $year){
+        if ($this->category->category_code == "JO") {
+            $daily = $this->level->amount;
+            $days = Carbon::createFromDate($year,  date('m', strtotime($month)), 1)->daysInMonth;
+            return $daily * $days;
+        }
+        return $this->salary_grade_step_amount;
+    }
+
+    
 }

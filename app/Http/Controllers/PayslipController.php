@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Allowance;
+use App\Models\Deduction;
 use App\Models\Department;
 use App\Models\Employee;
+use App\Models\Loan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
@@ -11,7 +14,8 @@ use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 class PayslipController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $departments = Department::all();
         return view('payslips.index', compact('departments'));
     }
@@ -19,10 +23,10 @@ class PayslipController extends Controller
     {
         $department = Department::find($department_id);
         $payroll = json_decode(urldecode($payroll), true);
-        $employees = Employee::with('data')->whereHas('data', function($query) use ($department_id){
+        $employees = Employee::with('data')->whereHas('data', function ($query) use ($department_id) {
             $query->where('department_id', $department_id);
         })
-        ->get();
+            ->get();
         // seperate the filter 1-15
         $filter = explode('-', $payroll['date_from_to']);
         $from = Carbon::create(date('Y'), date('m'), $filter[0]);
@@ -32,27 +36,37 @@ class PayslipController extends Controller
         $year = $payroll['year'];
 
         if (!checkdate($month, $day, $year)) {
-            $day = date('t', mktime(0, 0, 0, $month, 1, $year)); // get last day of the month
+            $to = date('t', mktime(0, 0, 0, $month, 1, $year)); // get last day of the month
         }
 
         $to = Carbon::create($year, $month, $day);
 
-        $filter = [
-            'from' => date('m/d/Y', strtotime($from)),
-            'to' => date('m/d/Y', strtotime($to)),
-        ];
+        $period = sprintf("%s %s - %s %s", $payroll['month'], $from->format('d'), $to->format('d'), $year);
 
-        createActivity('Create Payslip', 'Generate Payslip for '. $department->dep_code, request()->getClientIp(true));
+        createActivity('Create Payslip', 'Generate Payslip for ' . $department->dep_code, request()->getClientIp(true));
 
-        $file_name = $department->dep_code.'-Payslip-'.$from->format('m-d-Y').'-'.$to->format('m-d-Y').'.pdf';
-        // return view('downloads.payslips', compact('department', 'employees', 'filter'));
-        $pdf = PDF::loadView('downloads.payslips', [
+        $file_name = $department->dep_code . '-Payslip-' . $from->format('m-d-Y') . '-' . $to->format('m-d-Y') . '.pdf';
+        return view('downloads.payslips', [
             'department'  => $department,
             'employees' => $employees,
-            'filter' => $filter,
+            'period' => $period,
             'payroll' => $payroll,
+            'from' => $filter[0],
+            'to' => $filter[1],
+            'file_name' => $file_name,
+            'allowances' => Allowance::all(),
+            'deductions' => Deduction::all(),
+            'loans' => Loan::all(),
         ]);
+        // $pdf = PDF::loadView('downloads.payslips', [
+        //     'department'  => $department,
+        //     'employees' => $employees,
+        //     'filter' => $filter,
+        //     'payroll' => $payroll,
+        // ])
+        // ->setPaper('a4', 'landscape');
 
-        return $pdf->download($file_name);
+        // return $pdf
+        //     ->stream($file_name);
     }
 }

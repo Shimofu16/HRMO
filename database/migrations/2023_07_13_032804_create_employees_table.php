@@ -24,6 +24,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('employee_id')->constrained('employees', 'id');
             $table->foreignId('deduction_id')->constrained('deductions', 'id');
+            $table->double('amount')->nullable();
             $table->timestamps();
         });
         Schema::create('employee_allowances', function (Blueprint $table) {

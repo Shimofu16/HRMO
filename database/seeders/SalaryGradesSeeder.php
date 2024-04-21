@@ -59,10 +59,6 @@ class SalaryGradesSeeder extends Seeder
                 ['step' => 'Step 1', 'amount' => 16000, 'category_type'=> 'Other'],
                 ['step' => 'Step 2', 'amount' => 18000, 'category_type'=> 'Other'],
             ],
-            // 3
-            [
-                ['name' => 'Step 1', 'amount' => 16000, 'category_type'=> 'JO'],
-            ],
         ];
         // dd($salary_grades);
         // Loop through the sa;art grades array and create records

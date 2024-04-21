@@ -19,7 +19,9 @@ class EmployeeLoan extends Model
         'ranges',
     ];
 
-    protected $casts = ['ranges'=> Json::class];
+    protected $casts = [
+        'ranges' => Json::class,
+    ];
 
     public function employee()
     {

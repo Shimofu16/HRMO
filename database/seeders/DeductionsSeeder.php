@@ -43,14 +43,14 @@ class DeductionsSeeder extends Seeder
                 'deduction_type' => $deduction_types[array_rand($deduction_types)],
                 'deduction_range' => $deduction_ranges[array_rand($deduction_ranges)],
             ],
-            [
-                'deduction_code' => 'With Holding Tax',
-                'deduction_name' =>  'With Holding Tax',
-                'deduction_amount' => 100,
-                'deduction_amount_type' => 'fixed_amount',
-                'deduction_type' => $deduction_types[array_rand($deduction_types)],
-                'deduction_range' => $deduction_ranges[array_rand($deduction_ranges)],
-            ],
+            // [
+            //     'deduction_code' => 'With Holding Tax',
+            //     'deduction_name' =>  'With Holding Tax',
+            //     'deduction_amount' => 100,
+            //     'deduction_amount_type' => 'fixed_amount',
+            //     'deduction_type' => $deduction_types[array_rand($deduction_types)],
+            //     'deduction_range' => $deduction_ranges[array_rand($deduction_ranges)],
+            // ],
         ];
 
 
