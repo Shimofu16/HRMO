@@ -17,7 +17,7 @@ class AllowancesSeeder extends Seeder
             [
                 'allowance_code' => 'ACA&PERA',
                 'allowance_name' => 'Additional Compensation Allowance and Personal Economic Relief Allowance',
-                'allowance_ranges' => ['1-15'],
+                'allowance_ranges' => ['1-15', '16-31'],
                 'allowance_amount' => '1000',
             ],
             [
@@ -47,7 +47,7 @@ class AllowancesSeeder extends Seeder
             [
                 'allowance_code' => 'Transportation',
                 'allowance_name' => 'Transportation Allowance',
-                'allowance_ranges' => ['1-15', '15-31'],
+                'allowance_ranges' => ['1-15', '16-31'],
                 'allowance_amount' => '1100',
             ],
             // Add more allowances here
@@ -56,6 +56,11 @@ class AllowancesSeeder extends Seeder
         foreach ($allowances as $allowance) {
           $allowance =  Allowance::create($allowance);
           $allowance->categories()->create(['category_id' => 1]);
+          $allowance->categories()->create(['category_id' => 3]);
+          $allowance->categories()->create(['category_id' => 4]);
+          $allowance->categories()->create(['category_id' => 5]);
+          $allowance->categories()->create(['category_id' => 6]);
+
         }
     }
 }

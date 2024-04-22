@@ -211,7 +211,7 @@ class EmployeeAttendanceController extends Controller
                 $results = $this->calculateSalary($salary_grade, $employee, $attendance, $timeIn, $timeOut, $current_time, false);
 
             }
-            
+
 
             $status = $results['status'];
 
@@ -235,6 +235,63 @@ class EmployeeAttendanceController extends Controller
         return $status;
     }
 
+
+    private function calculateSalary($salaryGrade, $employee, $attendance, $timeIn, $timeOut, $currentTime, $isJO)
+    {
+        // Default working days and hours
+        $workingDays = 15;
+        $requiredHoursWork = 8;
+
+        // Carbon instances for attendance and defaults
+        $attendanceTimeIn = Carbon::parse($attendance->time_in);
+        $attendanceTimeOut = Carbon::parse($currentTime);
+        $defaultTimeIn = Carbon::parse($timeIn);
+        $defaultTimeOut = Carbon::parse($timeOut);
+
+        // Calculate hours worked, handling negative values and exceeding 8 hours
+        $hourWorked = $attendanceTimeIn->diffInHours($attendanceTimeOut, true) - 1;
+        $hourWorked = max(0, min($hourWorked, $requiredHoursWork)); // Ensure 0-8 hours
+
+        // Calculate minutes late
+        $minutesLate = $defaultTimeIn->diffInMinutes($attendanceTimeIn);
+
+        // Calculate salary per hour (applicable only for non-JO employees)
+        if (!$isJO) {
+            $subTotal = ($salaryGrade / 2) / ($workingDays * $requiredHoursWork);
+            $salaryPerHour = $subTotal;
+
+            // Sick leave handling (requires a `computeSickLeave` function)
+            $sickLeave = $employee->data->sick_leave_points;
+            if ($sickLeave > 0) {
+                $sickLeave = $this->computeSickLeave($sickLeave, $minutesLate);
+            }
+        }
+
+        // Determine attendance status and adjust salary (if applicable)
+        $status = ($currentTime < $timeOut) ? 'Under-time' : 'Time-out';
+        if (!$isJO && $currentTime < $timeOut) {
+            $diff = $defaultTimeOut->diffInMinutes($currentTime);
+            $notWorkedHour = $diff / 60;
+            $salaryPerHour -= $notWorkedHour;
+        }
+
+        // Calculate total salary for the day (applicable only for non-JO employees)
+        if (!$isJO) {
+            $totalSalaryForToday = max(0, $salaryPerHour * $hourWorked); // Ensure non-negative
+            if ($attendance->time_in_status === 'Late') {
+                $totalSalaryForToday -= ($sickLeave === 0) ? $this->getLateByMinutes($minutesLate) : 0;
+            }
+            $employee->data->update(['sick_leave_points' => $sickLeave]);
+        } else {
+            $totalSalaryForToday = $salaryGrade;
+        }
+
+        return [
+            'salary' => $totalSalaryForToday,
+            'status' => $status,
+            'hour_worked' => $hourWorked,
+        ];
+    }
     private function computeSickLeave($sick_leave, $minute_late)
     {
         $sick_leave_left = 0;
@@ -249,63 +306,6 @@ class EmployeeAttendanceController extends Controller
 
         return $sick_leave_left;
     }
-    private function calculateSalary($salaryGrade, $employee, $attendance, $timeIn, $timeOut, $currentTime, $isJO)
-    {
-        // Default working days and hours
-        $workingDays = 15;
-        $requiredHoursWork = 8;
-    
-        // Carbon instances for attendance and defaults
-        $attendanceTimeIn = Carbon::parse($attendance->time_in);
-        $attendanceTimeOut = Carbon::parse($attendance->time_out);
-        $defaultTimeIn = Carbon::parse($timeIn);
-        $defaultTimeOut = Carbon::parse($timeOut);
-    
-        // Calculate hours worked, handling negative values and exceeding 8 hours
-        $hourWorked = $attendanceTimeIn->diffInHours($attendanceTimeOut, true) - 1;
-        $hourWorked = max(0, min($hourWorked, $requiredHoursWork)); // Ensure 0-8 hours
-    
-        // Calculate minutes late
-        $minutesLate = $defaultTimeIn->diffInMinutes($attendanceTimeIn);
-    
-        // Calculate salary per hour (applicable only for non-JO employees)
-        if (!$isJO) {
-            $subTotal = ($salaryGrade / 2) / ($workingDays * $requiredHoursWork);
-            $salaryPerHour = $subTotal;
-    
-            // Sick leave handling (requires a `computeSickLeave` function)
-            $sickLeave = $employee->data->sick_leave_points;
-            if ($sickLeave > 0) {
-                $sickLeave = $this->computeSickLeave($sickLeave, $minutesLate);
-            }
-        }
-    
-        // Determine attendance status and adjust salary (if applicable)
-        $status = ($currentTime < $timeOut) ? 'Under-time' : 'Time-out';
-        if (!$isJO && $currentTime < $timeOut) {
-            $diff = $defaultTimeOut->diffInMinutes($currentTime);
-            $notWorkedHour = $diff / 60;
-            $salaryPerHour -= $notWorkedHour;
-        }
-    
-        // Calculate total salary for the day (applicable only for non-JO employees)
-        if (!$isJO) {
-            $totalSalaryForToday = max(0, $salaryPerHour * $hourWorked); // Ensure non-negative
-            if ($attendance->time_in_status === 'Late') {
-                $totalSalaryForToday -= ($sickLeave === 0) ? $this->getLateByMinutes($minutesLate) : 0;
-            }
-            $employee->data->update(['sick_leave_points' => $sickLeave]);
-        } else {
-            $totalSalaryForToday = $salaryGrade;
-        }
-    
-        return [
-            'salary' => $totalSalaryForToday,
-            'status' => $status,
-            'hour_worked' => $hourWorked,
-        ];
-    }
-    
     private function getLateByMinutes($minute_late)
     {
         $equivalentMinutes = [

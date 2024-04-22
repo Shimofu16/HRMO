@@ -33,7 +33,8 @@ class DatabaseSeeder extends Seeder
             AllowancesSeeder::class,
             DeductionsSeeder::class,
             LoanSeeder::class,
-            EmployeeSeeder::class
+            EmployeeSeeder::class,
+            AttendanceSeeder::class,
         ]);
     }
 }

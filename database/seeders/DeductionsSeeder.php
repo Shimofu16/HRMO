@@ -25,7 +25,7 @@ class DeductionsSeeder extends Seeder
                 'deduction_amount' => rand(100, 1000),
                 'deduction_amount_type' => 'fixed_amount',
                 'deduction_type' => $deduction_types[array_rand($deduction_types)],
-                'deduction_range' => $deduction_ranges[array_rand($deduction_ranges)],
+                'deduction_range' => '1-15',
             ],
             [
                 'deduction_code' => 'Pag-ibig',
@@ -33,7 +33,7 @@ class DeductionsSeeder extends Seeder
                 'deduction_amount' => 100,
                 'deduction_amount_type' => 'fixed_amount',
                 'deduction_type' => $deduction_types[array_rand($deduction_types)],
-                'deduction_range' => '16-30',
+                'deduction_range' => '16-31',
             ],
             [
                 'deduction_code' => 'Phil Health',
@@ -41,7 +41,7 @@ class DeductionsSeeder extends Seeder
                 'deduction_amount' => 2,
                 'deduction_amount_type' => 'percentage',
                 'deduction_type' => $deduction_types[array_rand($deduction_types)],
-                'deduction_range' => $deduction_ranges[array_rand($deduction_ranges)],
+                'deduction_range' => '1-15',
             ],
             // [
             //     'deduction_code' => 'With Holding Tax',
@@ -55,10 +55,6 @@ class DeductionsSeeder extends Seeder
 
 
         foreach ($deductions as $deduction) {
-            /* $amount_type = $deduction_amount_types[array_rand($deduction_amount_types)];
-            $amount = $amount_type == 'percentage' ? rand(10, 30) : rand(100, 1000);
-            $type = $deduction_types[array_rand($deduction_types)];
-            $range = $deduction_ranges[array_rand($deduction_ranges)]; */
             Deduction::create($deduction);
         }
     }

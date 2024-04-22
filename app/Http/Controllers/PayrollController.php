@@ -29,13 +29,15 @@ class PayrollController extends Controller
 
             // get all the months in attendance and sort it
             // Get all unique months from the created_at column and sort them
-            $months = Attendance::orderBy('created_at')
-                ->distinct('month')
+            $months = Attendance::select('time_in')
+                ->orderBy('time_in')
+                ->distinct()
                 ->get();
 
 
-            $payrolls = $this->getPayroll($employee_departments, $months);
-            // dd($payrolls, $employee_departments, $months);
+
+                $payrolls = $this->getPayroll($employee_departments, $months);
+                // dd( $employee_departments, $months);
             $departments = Department::all();
             // Other code to retrieve the payrolls
 
@@ -58,7 +60,7 @@ class PayrollController extends Controller
         foreach ($departments as $department) {
             foreach ($months as $month) {
                 foreach ($fromTo as $itemDay) {
-                    $day = $month->created_at->day;
+                    $day = date('d', strtotime($month->time_in));
 
                     // Check if the day falls within the specified range
                     $isInRange = ($itemDay == '1-15' && $day >= 1 && $day <= 15) ||
@@ -73,8 +75,8 @@ class PayrollController extends Controller
                             $payrolls[$uniqueKey] = [
                                 'department_id' => $department->id,
                                 'department' => $department->dep_name,
-                                'month' => date('F', strtotime($month->created_at)),
-                                'year' => date('Y', strtotime($month->created_at)),
+                                'month' => date('F', strtotime($month->time_in)),
+                                'year' => date('Y', strtotime($month->time_in)),
                                 'date_from_to' => $itemDay,
                             ];
                         }
