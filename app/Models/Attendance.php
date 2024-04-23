@@ -18,6 +18,6 @@ class Attendance extends Model
 
     public function totalEmployee()
     {
-        return Attendance::whereDate('created_at', $this->date)->count();
+        return Attendance::whereDate('time_in', $this->date)->count();
     }
 }

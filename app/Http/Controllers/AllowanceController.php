@@ -57,11 +57,21 @@ class AllowanceController extends Controller
             'allowance_code' => 'required',
             'allowance_name' => 'required',
             'allowance_amount' => 'required',
-            'allowance_range' => 'required',
+            'allowance_ranges' => 'required',
             'category_id' => 'required',
         ]);
 
-        $allowance->update($request->all());
+        $allowance->update([
+            'allowance_code' => $request->allowance_code,
+            'allowance_name' => $request->allowance_name,
+            'allowance_amount' => $request->allowance_amount,
+            'allowance_ranges' => $request->allowance_ranges,
+        ]);
+        $categories = $request->category_id;
+        $allowance->categories()->delete();
+        foreach ($categories as $key => $category) {
+            $allowance->categories()->create(['category_id' => $category]);
+        }
 
         createActivity('Update Allowance', 'Allowance ' . $allowance->allowance_name . ' updated successfully.', request()->getClientIp(true), $allowance, $request);
 

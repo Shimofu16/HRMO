@@ -67,7 +67,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('employee_id')->constrained('employees', 'id');
             $table->dateTime('time_in')->nullable();
-            $table->string('time_in_status');
+            $table->string('time_in_status')->nullable();
             $table->string('time_in_image')->nullable();
             $table->dateTime('time_out')->nullable();
             $table->string('time_out_status')->nullable();
@@ -75,6 +75,7 @@ return new class extends Migration
             $table->double('salary')->nullable();
             $table->double('deduction')->nullable();
             $table->bigInteger('hours')->nullable();
+            $table->dateTime('absent_at')->nullable();
             $table->boolean('isPresent')->default(false);
             $table->timestamps();
         });

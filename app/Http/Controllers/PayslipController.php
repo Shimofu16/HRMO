@@ -27,6 +27,7 @@ class PayslipController extends Controller
             $query->where('department_id', $department_id);
         })
             ->get();
+
         // seperate the filter 1-15
         $filter = explode('-', $payroll['date_from_to']);
         $from = Carbon::create(date('Y'), date('m'), $filter[0]);

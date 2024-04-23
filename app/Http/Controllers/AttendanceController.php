@@ -14,14 +14,16 @@ class AttendanceController extends Controller
 {
     public function index($filter_by = null, $filter_id = null)
     {
-        $attendances = Attendance::query()->with('employee')->whereDate('created_at', now());
+        $attendances = Attendance::query()->with('employee')->where('isPresent', 1)->whereDate('time_in', now());
         if ($filter_by =="department") {
             $attendances->whereHas('employee.data', function ($query) use ($filter_id) {
                 $query->where('department_id', $filter_id);
             });
-            
-            // $attendances = $attendances->get();
-            // dd($attendances);
+        }
+        if ($filter_by =="date") {
+            $attendances->whereHas('employee.data', function ($query) use ($filter_id) {
+                $query->where('department_id', $filter_id);
+            });
         }
 
         $employees = Employee::all();
@@ -45,7 +47,7 @@ class AttendanceController extends Controller
 
         $employee = Employee::with('attendances')->where('emp_no', $request->input('employee_no'))->first();
         // Check if the employee has attendance for the current date
-        $existingAttendance = $employee->attendances()->whereDate('created_at', now())->first();
+        $existingAttendance = $employee->attendances()->whereDate('time_in', now())->first();
 
         if (!$existingAttendance) {
             // Create a new attendance record only if it doesn't exist for the current date
@@ -66,13 +68,13 @@ class AttendanceController extends Controller
     public function create()
     {
         // Retrieve attendance history records and pass them to the view
-        $attendanceHistory = Attendance::with('employee')->orderBy('created_at', 'desc')->get();
+        $attendanceHistory = Attendance::with('employee')->where('isPresent', 1)->orderBy('created_at', 'desc')->get();
         return view('attendances.history', compact('attendanceHistory'));
     }
     public function history()
     {
         // Retrieve distinct creation dates from the Attendance records and format it desc
-        $attendances = Attendance::selectRaw('DATE(created_at) as date')->distinct()->orderBy('date', 'desc')->get();
+        $attendances = Attendance::selectRaw('DATE(time_in) as date')->where('isPresent', 1)->distinct()->orderBy('date', 'desc')->get();
 
         return view('attendances.history', compact('attendances'));
     }
@@ -80,7 +82,7 @@ class AttendanceController extends Controller
     public function historyShow($date)
     {
         // get all dates in attendance and there shuld be no duplicate date
-        $attendances = Attendance::with('employee')->whereDate('created_at', $date)->get();
+        $attendances = Attendance::with('employee')->whereDate('time_in', $date)->get();
 
         return view('attendances.show', compact('attendances', 'date'));
     }

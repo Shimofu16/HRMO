@@ -140,7 +140,7 @@
                                         </div>
                                         <div class="flex">
                                             <span
-                                                class="text-xs leading-tight dark:text-white/80">{{ $recentAttendance->created_at->diffForHumans() }}</span>
+                                                class="text-xs leading-tight dark:text-white/80">{{ \Carbon\Carbon::parse($recentAttendance->time_in)->diffForHumans() }}</span>
                                         </div>
                                     </li>
 
@@ -330,10 +330,12 @@
         document.addEventListener("DOMContentLoaded", () => {
 
             const attendanceCountPerWeek = {!! json_encode($attendanceCountPerWeek) !!};
-            console.log(attendanceCountPerWeek.map(d => d.label))
+            // console.log(attendanceCountPerWeek.map(d => d.label))
             const averageSalaryPerDepartment = {!! json_encode($averageSalaryPerDepartment) !!};
+            const payrollHistory = {!! json_encode($payrollHistory) !!};
             generateBarChart('#attendanceCountPerWeek', 'Weekly Attendance', attendanceCountPerWeek);
             generateBarChart('#averageSalaryPerDepartment', 'Average Salary', averageSalaryPerDepartment);
+            generateBarChart('#payrollHistory', 'Payroll', payrollHistory);
 
 
             const employeesPerDepartment = {!! json_encode($employeesPerDepartment) !!};

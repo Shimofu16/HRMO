@@ -46,7 +46,10 @@
                         $from = $dates[0];
                         $to = $dates[1];
                         $totalSalary = $employee->getTotalSalaryBy($payroll['month'], $payroll['year'], $from, $to); // Get the total salary of the employee
-                        $netPay = $totalSalary + $employee->computeAllowance() - $employee->computeDeduction();
+                        $netPay =
+                            $employee->computeAllowance($payroll['date_from_to']) +
+                            $totalSalary -
+                            $employee->computeDeduction($payroll['date_from_to']);
                         $netPay = $netPay < 0 ? 0 : $netPay;
                         $totalNetPay += $netPay; // Accumulate the net pay value
 
@@ -54,10 +57,14 @@
                     <tr>
                         <td class=" p-3">{{ $employee->full_name }}</td>
 
-                        <td class=" p-3 ">{{ number_format($employee->data->salary_grade_step_amount, 2) }}</td>
+                        <td class=" p-3 ">
+                            {{ number_format($employee->data->getMonthlySalary($payroll['month'], $payroll['year']), 2) }}
+                        </td>
                         <td class=" p-3 ">{{ number_format($totalSalary, 2) }}</td>
-                        <td class=" p-3 ">{{ number_format($employee->computeAllowance(), 2) }}</td>
-                        <td class=" p-3 ">{{ number_format($employee->computeDeduction(), 2) }}</td>
+                        <td class=" p-3 ">{{ number_format($employee->computeAllowance($payroll['date_from_to']), 2) }}
+                        </td>
+                        <td class=" p-3 ">{{ number_format($employee->computeDeduction($payroll['date_from_to']), 2) }}
+                        </td>
                         <td class=" p-3 ">{{ number_format($netPay, 2) }}</td>
                         <td class="px-4 py-2 text-center border-b">
                             <a href="{{ route('employees.show', $employee) }}"

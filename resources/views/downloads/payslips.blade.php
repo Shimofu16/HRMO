@@ -178,13 +178,13 @@
                                         </td>
                                         <td><span class="text-xs"></span></td>
                                         <td class="text-xs text-center">
-                                            @if ($employee->getAllowance($allowance->id) != 0)
+                                            @if ($employee->getAllowance($allowance->id, $payroll['date_from_to']) != 0)
                                                 @php
                                                     $totalAllowance =
-                                                        $totalAllowance + $employee->getAllowance($allowance->id);
+                                                        $totalAllowance + $employee->getAllowance($allowance->id, $payroll['date_from_to']);
                                                 @endphp
                                                 <span>
-                                                    {{ number_format($employee->getAllowance($allowance->id), 2) }}
+                                                    {{ number_format($employee->getAllowance($allowance->id, $payroll['date_from_to']), 2) }}
                                                 </span>
                                             @else
                                                 <span class="text-center">
@@ -216,13 +216,13 @@
                                         </td>
                                         <td><span class="text-xs"></span></td>
                                         <td class="text-xs text-center">
-                                            @if ($employee->getdeduction($deduction->id) != 0)
+                                            @if ($employee->getdeduction($deduction->id, $payroll['date_from_to']) != 0)
                                                 @php
                                                     $totalDeduction =
-                                                        $totalDeduction + $employee->getdeduction($deduction->id);
+                                                        $totalDeduction + $employee->getdeduction($deduction->id, $payroll['date_from_to']);
                                                 @endphp
                                                 <span>
-                                                    {{ number_format($employee->getdeduction($deduction->id), 2) }}
+                                                    {{ number_format($employee->getdeduction($deduction->id, $payroll['date_from_to']), 2) }}
                                                 </span>
                                             @else
                                                 <span class="text-center">
@@ -290,15 +290,15 @@
                 </div>
 
                 @if ($count == 3 || $loop->last)
-        </div>
-        <div class="page-break"></div> <!-- Page break for printing -->
-        @endif
-        @php
-            $count++;
-        @endphp
-        @endforeach
+                    </div>
+                    <div class="page-break"></div> <!-- Page break for printing -->
+                @endif
+                @php
+                    $count++;
+                @endphp
+            @endforeach
 
-    </div>
+        </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"
         integrity="sha512-YcsIPGdhPK4P/uRW6/sruonlYj+Q7UHWeKfTAkBW+g83NKM+jMJFJ4iAPfSnVp7BKD4dKMHmVSvICUbE/V1sSw=="

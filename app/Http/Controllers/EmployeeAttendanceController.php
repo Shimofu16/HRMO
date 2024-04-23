@@ -82,7 +82,7 @@ class EmployeeAttendanceController extends Controller
 
             // Check if the employee has already timed in for the day
             $existingTimeIn = $employee->attendances()
-                ->whereDate('created_at', now())
+                ->whereDate('time_in', now())
                 ->whereNull('time_out') // Check if the employee has not timed out yet
                 ->first();
 
@@ -100,13 +100,13 @@ class EmployeeAttendanceController extends Controller
 
             // Check if the employee has already timed out for the day
             $existingTimeOut = $employee->attendances()
-                ->whereDate('created_at', now())
+                ->whereDate('time_in', now())
                 ->whereNotNull('time_in') // Check if the employee has already timed in
                 ->whereNotNull('time_out') // Check if the employee has already timed out
                 ->first();
             // Check if the employee has timed in for the day
             $existingTimeIn = $employee->attendances()
-                ->whereDate('created_at', now())
+                ->whereDate('time_in', now())
                 ->whereNotNull('time_in')
                 ->whereNull('time_out')
                 ->first();
@@ -202,7 +202,7 @@ class EmployeeAttendanceController extends Controller
             ]);
         } else {
 
-            $attendance = $employee->attendances()->whereDate('created_at', Carbon::today())->first();
+            $attendance = $employee->attendances()->whereDate('time_in', Carbon::today())->first();
             if ($employee->data->category->category_code == "JO") {
                 $salary_grade = $employee->data->level->amount;
                 $results = $this->calculateSalary($salary_grade, $employee, $attendance, $timeIn, $timeOut, $current_time, true);

@@ -27,53 +27,59 @@ class AttendanceSeeder extends Seeder
         for ($day = 1; $day <= $daysInMonth; $day++) {
             $date = Carbon::create($year, $month, $day, 7, 0, 0); // Start time at 7 am
             $timeOut = $date->copy()->addHours(rand(9, 11)); // Randomly set time out between 4 pm to 6 pm
-
-            // Check if the day is a weekend and the employee is not "JO"
-            if ($date->isWeekend() && $employee->data->category->category_code != "JO") {
-                continue; // Skip to the next iteration
-            }
-
-            // Loop to create multiple schedules within a day
-            while ($date->lt($timeOut)) {
+            if (random_int(0, 1) ==  1) {
+                
                 // Check if the day is a weekend and the employee is not "JO"
                 if ($date->isWeekend() && $employee->data->category->category_code != "JO") {
-                    $date->addDay(); // Move to the next day
                     continue; // Skip to the next iteration
                 }
+                // Loop to create multiple schedules within a day
+                while ($date->lt($timeOut)) {
+                    // Check if the day is a weekend and the employee is not "JO"
+                    if ($date->isWeekend() && $employee->data->category->category_code != "JO") {
+                        $date->addDay(); // Move to the next day
+                        continue; // Skip to the next iteration
+                    }
 
-                // Calculate salary for the day
+                    // Calculate salary for the day
 
 
-                // Create attendance record for time in
-                $attendance = Attendance::create([
-                    'employee_id' => $employee->id,
-                    'time_in_status' => 'On-time',
-                    'time_in' => $date,
-                ]);
-                if ($employee->data->category->category_code == "JO") {
-                    $salary_grade = $employee->data->level->amount;
-                    $results = $this->calculateSalary($salary_grade, $attendance, $timeOut, true);
-                }else{
-                    $salary_grade = $employee->data->salary_grade_step_amount;
-                    $results = $this->calculateSalary($salary_grade, $attendance, $timeOut, false);
+                    // Create attendance record for time in
+                    $attendance = Attendance::create([
+                        'employee_id' => $employee->id,
+                        'time_in_status' => 'On-time',
+                        'time_in' => $date,
+                    ]);
+                    if ($employee->data->category->category_code == "JO") {
+                        $salary_grade = $employee->data->level->amount;
+                        $results = $this->calculateSalary($salary_grade, $attendance, $timeOut, true);
+                    } else {
+                        $salary_grade = $employee->data->salary_grade_step_amount;
+                        $results = $this->calculateSalary($salary_grade, $attendance, $timeOut, false);
+                    }
+                    // Update the attendance record for time out
+                    $status = $results['status'];
+
+                    $total_salary_for_today = $results['salary'];
+
+                    $hours = $results['hour_worked'];
+
+                    // Update the attendance record
+                    $attendance->update([
+                        'time_out_status' => $status,
+                        'time_out' => $timeOut,
+                        'hours' => $hours,
+                        'salary' => $total_salary_for_today,
+                        'isPresent' => 1,
+                    ]);
+
+                    $date->addDay(); // Move to the next day
                 }
-                // Update the attendance record for time out
-                $status = $results['status'];
-
-                $total_salary_for_today = $results['salary'];
-
-                $hours = $results['hour_worked'];
-
-                // Update the attendance record
-                $attendance->update([
-                    'time_out_status' => $status,
-                    'time_out' => $timeOut,
-                    'hours' => $hours,
-                    'salary' => $total_salary_for_today,
-                    'isPresent' => 1,
+            } else {
+                Attendance::create([
+                    'employee_id' => $employee->id,
+                    'absent_at' => $date
                 ]);
-
-                $date->addDay(); // Move to the next day
             }
         }
     }
@@ -109,6 +115,4 @@ class AttendanceSeeder extends Seeder
             'hour_worked' => $hourWorked,
         ];
     }
-
-
 }

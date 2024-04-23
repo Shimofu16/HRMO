@@ -98,91 +98,94 @@ if (!function_exists('getSalaryGradesTotalSteps')) {
 }
 if (!function_exists('attendanceCount')) {
 
-    function attendanceCount($employee, $payroll, $from, $to)
-    {
-        $present = 0;
-        $absent = 0;
-        $late = 0;
-        $under_time = 0;
+    function attendanceCount($employee, $payroll, $from, $to) {
+        $month = date('m', strtotime($payroll['month']));
+        $year = date('Y', strtotime($payroll['year']));
+        $lastDayOfTheMonth = $to;
+        if (!checkdate($month, $to, $year)) {
+            $lastDayOfTheMonth = date('t', mktime(0, 0, 0, $month, 1, $year)); // get last day of the month
+        }
+
         $total_man_hour = 0;
         $attendances = [];
-        $currentDay = now()->format('d');
-        $month = date('m', strtotime($payroll['month']));
-        $loopEnd = ($to == 31) ? $to : $from;
-        $loopStart = ($to == 15) ? 1 : 15;
+
+        $loopEnd = ($to == 15) ? $lastDayOfTheMonth : $from;
+        $loopStart = ($to == 15) ? $from : 15;
+
+        // dd($loopEnd, $loopStart, $lastDayOfTheMonth);
+        $from = sprintf('%04d-%02d-%02d', $year, $month, $from);
+        $to = sprintf('%04d-%02d-%02d', $year, $month, $to);
+
+
+        $from = Carbon::parse($from)->format('Y-m-d'); // Assuming 1st day of the month
+        $to = Carbon::parse($to)->format('Y-m-d'); // Use $to for the last day
+
         for ($i = $loopStart; $i <= $loopEnd; $i++) {
-            $day = str_pad($i, 2, '0', STR_PAD_LEFT); // Ensure leading zero if needed
+          $day = str_pad($i, 2, '0', STR_PAD_LEFT);
+          $attendance = $employee->attendances()
+            ->whereMonth('time_in', $month)
+            ->whereYear('time_in', $year)
+            ->whereDay('time_in', $day)
+            ->where('isPresent', 1)
+            ->first();
 
-            // Get attendance for that day from created_at
-            $attendance = $employee->attendances()
-                ->whereMonth('created_at', $month)
-                ->whereDay('created_at', $day)
-                ->where('isPresent', 1)
-                ->first();
+          if ($attendance) {
 
-            if ($attendance) {
-                $present++;
+            $timeIn = Carbon::parse($attendance->time_in);
+            $manhours = $attendance->hours;
+            $timeInInterval = '';
+            $timeOutInterval = Carbon::parse('17:00');
 
-                $timeIn = Carbon::parse($attendance->time_in);
-                $manhours = $attendance->hours;
-                $timeInInterval = '';
-
-                // Define time out interval
-                $timeOutInterval = Carbon::parse('17:00');
-
-                // Define time in interval based on different scenarios
-                if ($timeIn->between(Carbon::parse('6:59'), Carbon::parse('7:11'))) {
-                    $timeInInterval = Carbon::parse('7:00');
-                } elseif ($timeIn->between(Carbon::parse('7:11'), Carbon::parse('7:40'))) {
-                    $timeInInterval = Carbon::parse('7:30');
-                } else {
-                    $timeInInterval = Carbon::parse('8:00');
-                }
-
-                // Count late and under-time attendances
-                if ($attendance->time_in_status == 'Late') {
-                    $late++;
-                }
-
-                if ($attendance->isPresent && $attendance->time_out_status == 'Under-time') {
-                    $under_time++;
-                }
-
-                // Collect attendance details
-                $attendances[$i] = [
-                    'day' => $day,
-                    'time_in' => $attendance->time_in,
-                    'time_in_interval' => $timeInInterval,
-                    'time_out' => $attendance->time_out,
-                    'time_out_interval' => $timeOutInterval,
-                    'deduction' => $attendance->deduction,
-                    'manhours' => $manhours,
-                ];
-
-                $total_man_hour += $manhours;
+            // Define time in interval based on different scenarios
+            if ($timeIn->between(Carbon::parse('6:59'), Carbon::parse('7:11'))) {
+              $timeInInterval = Carbon::parse('7:00');
+            } elseif ($timeIn->between(Carbon::parse('7:11'), Carbon::parse('7:40'))) {
+              $timeInInterval = Carbon::parse('7:30');
             } else {
-                // Count the absents
-                if ($i <= $currentDay) {
-                    $absent++;
-                }
-
-                // Absent day details
-                $attendances[$i] = [
-                    'day' => $day,
-                    'time_in' => '',
-                    'time_in_interval' => '',
-                    'time_out' => '',
-                    'time_out_interval' => '',
-                    'manhours' => '',
-                ];
+              $timeInInterval = Carbon::parse('8:00');
             }
+
+            // Consider weekends and employee category
+            $isWeekend = (Carbon::parse($payroll['month'] . '-' . $day))->isWeekend();
+            if ($isWeekend && $employee->category !== 'JO') {
+              $attendances[$i] = [
+                'day' => $day,
+                'time_in' => '',
+                'time_in_interval' => '',
+                'time_out' => '',
+                'time_out_interval' => '',
+                'manhours' => 0, // No manhours for weekends (except JO)
+              ];
+            } else {
+              $attendances[$i] = [
+                'day' => $day,
+                'time_in' => $attendance->time_in,
+                'time_in_interval' => $timeInInterval,
+                'time_out' => $attendance->time_out,
+                'time_out_interval' => $timeOutInterval,
+                'deduction' => $attendance->deduction,
+                'manhours' => $manhours,
+              ];
+              $total_man_hour += $manhours;
+            }
+          } else {
+            // Absent day details
+            $attendances[$i] = [
+              'day' => $day,
+              'time_in' => '',
+              'time_in_interval' => '',
+              'time_out' => '',
+              'time_out_interval' => '',
+              'manhours' => '',
+            ];
+          }
         }
 
         return [
-            'present' => $present,
-            'absent' => $absent,
-            'late' => $late,
-            'under_time' => $under_time,
+            'present' => $employee->attendances()->whereBetween('time_in', [$from , $to])->where('isPresent', 1)->count(),
+            'absent' => $employee->attendances()->whereBetween('absent_at', [$from , $to])->where('isPresent', 0)->count(),
+            'late' => $employee->attendances()->whereBetween('time_in', [$from , $to])->where('time_out_status', 'Under-time')->count(),
+            'under_time' => $employee->attendances()->whereBetween('time_in', [$from , $to])->where('time_out_status', 'Under-time')->count(),
             'total_man_hour' => $total_man_hour,
             'attendances' => $attendances,
         ];
@@ -345,23 +348,28 @@ if (!function_exists('countAttendancesTest')) {
         ]);
     }
 }
-if (!function_exists('getTotalSalaryByYearAndDepartment')) {
+if (!function_exists('getTotalSalaryDepartment')) {
 
-    function getTotalSalaryByYearAndDepartment($employee, $year, $department_id)
+    function getTotalSalaryDepartment($employeesData, $filterBy, $filter)
     {
         $totalSalary = 0;
-        $year = date('Y', strtotime($year));
-        if ($employee->attendances) {
-            $attendances = $employee->attendances()
-                ->whereHas('employee.data', function ($query) use ($department_id) {
-                    $query->where('department_id', $department_id);
-                })
-                ->whereYear('created_at', $year)
-                ->get();
-    
-            // Sum up the allowance amounts
-            foreach ($attendances as $attendance) {
-                $totalSalary += $attendance->salary;
+        if (!empty($employeesData)) {
+            foreach ($employeesData as $key => $employeeData) {
+                if ($employeeData->employee->attendances) {
+                    $attendances = $employeeData->employee->attendances()
+                        ->whereYear('time_in', $filter)
+                        ->get();
+                    if ($filterBy == 'month') {
+                        $attendances = $employeeData->employee->attendances()
+                            ->whereMonth('time_in', $filter)
+                            ->get();
+                    }
+
+                    // Sum up the allowance amounts
+                    foreach ($attendances as $attendance) {
+                        $totalSalary += $attendance->salary;
+                    }
+                }
             }
         }
 

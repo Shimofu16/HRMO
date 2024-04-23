@@ -89,20 +89,22 @@ class Employee extends Model
         return $this->hasOne(EmployeeData::class, 'employee_id');
     }
 
-    public function computeAllowance($dates = null)
+    public function computeAllowance($range = null)
     {
         $totalAllowance = 0;
 
-        // If no specific dates provided, compute allowance for all dates
-        if (!$dates) {
+        // If no specific range provided, compute allowance for all range
+        if (!$range) {
             foreach ($this->allowances as $allowance) {
                 $totalAllowance += $allowance->allowance->allowance_amount;
             }
         } else {
             // Compute allowance for specific dates
             foreach ($this->allowances as $allowance) {
-                if ($dates == $allowance->allowance_range) {
-                    $totalAllowance += $allowance->allowance->allowance_amount;
+                foreach ($allowance->allowance->allowance_ranges as $key => $allowance_range) {
+                    if ($range == $allowance_range){
+                        return $allowance->allowance->allowance_amount;
+                    }
                 }
             }
         }
@@ -110,12 +112,12 @@ class Employee extends Model
         return $totalAllowance;
     }
 
-    public function computeDeduction($dates = null)
+    public function computeDeduction($range = null)
     {
         $totalDeduction = 0;
 
-        // If no specific dates provided, compute deduction for all dates
-        if (!$dates) {
+        // If no specific range provided, compute deduction for all range
+        if (!$range) {
             foreach ($this->deductions as $deduction) {
                 $amount = $deduction->deduction->deduction_amount;
                 if ($deduction->deduction->deduction_amount_type == 'percentage') {
@@ -127,9 +129,9 @@ class Employee extends Model
                 $totalDeduction += $amount;
             }
         } else {
-            // Compute deduction for specific dates
+            // Compute deduction for specific range
             foreach ($this->deductions as $deduction) {
-                if ($dates == $deduction->deduction_range) {
+                if ($range == $deduction->deduction->deduction_range) {
                     $amount = $deduction->deduction->deduction_amount;
                     if ($deduction->deduction->deduction_amount_type == 'percentage') {
                         $amount = $amount / 100;
@@ -147,12 +149,12 @@ class Employee extends Model
 
     public function getTotalSalaryBy($month, $year, $from, $to)
     {
+        $totalSalary = 0;
         $month = date('m', strtotime($month));
         $year = date('Y', strtotime($year));
         if (!checkdate($month, $to, $year)) {
             $to = date('t', mktime(0, 0, 0, $month, 1, $year)); // get last day of the month
         }
-        $totalSalary = 0;
 
         $from = sprintf('%04d-%02d-%02d', $year, $month, $from);
         $to = sprintf('%04d-%02d-%02d', $year, $month, $to);
@@ -162,8 +164,8 @@ class Employee extends Model
         $to = Carbon::parse($to)->format('Y-m-d'); // Use $to for the last day
 
 
-        $attendances = $this->attendances()->whereBetween('created_at', [$from, $to])->get();
-        // dd($attendances, $from, $to);
+        $attendances = $this->attendances()->whereBetween('time_in', [$from, $to])->get();
+        // dd($attendances, $from, $to, $year);
         // Sum up the allowance amounts
         foreach ($attendances as $attendance) {
             $totalSalary += $attendance->salary;
@@ -171,19 +173,32 @@ class Employee extends Model
 
         return $totalSalary;
     }
-    public function getAllowance($allowance_id)
+    public function getAllowance($allowance_id, $range)
     {
         $allowance = $this->allowances()->where('allowance_id', $allowance_id)->first();
         if ($allowance) {
-            return $allowance->allowance->allowance_amount;
+            foreach ($allowance->allowance->allowance_ranges as $key => $allowance_range) {
+                if ($range == $allowance_range){
+                    return $allowance->allowance->allowance_amount;
+                }
+            }
         }
         return 0;
     }
-    public function getDeduction($deduction_id)
+    public function getDeduction($deduction_id, $range)
     {
         $deduction = $this->deductions()->where('deduction_id', $deduction_id)->first();
         if ($deduction) {
-            return $deduction->deduction->deduction_amount;
+            if ($range == $deduction->deduction->deduction_range) {
+                $amount = $deduction->deduction->deduction_amount;
+                if ($deduction->deduction->deduction_amount_type == 'percentage') {
+                    $amount = $amount / 100;
+                    if ($deduction->deduction->deduction_name == 'Phil Health') {
+                        $amount = ($this->data->salary_grade_step_amount / 2) * .02;
+                    }
+                }
+                return $amount;
+            }
         }
         return 0;
     }

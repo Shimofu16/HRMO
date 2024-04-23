@@ -11,6 +11,7 @@ use App\Models\EmployeeAllowance;
 use App\Models\EmployeeDeduction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -86,26 +87,24 @@ class DashboardController extends Controller
         switch ($filter) {
             case 'recent':
                 $currentTime = Carbon::now();
-                return Attendance::whereDate('created_at', $currentTime)
+                return Attendance::whereDate('time_in', $currentTime)
                     ->limit(5)
                     ->orderBy('id', 'DESC')
                     ->get();
             case 'weekly':
+
                 $startOfWeek = Carbon::now()->startOfWeek();
                 $endOfWeek = Carbon::now()->endOfWeek();
 
-                $attendanceByDayOfWeek = Attendance::whereBetween('created_at', [$startOfWeek, $endOfWeek])
-                    ->get()
-                    ->map(function ($group, $dayOfWeek) {
-                        return [
-                            'label' => $dayOfWeek,
-                            'count' => $group->count(),
-                        ];
-                    })
-                    ->toArray();
-
-                    
-
+                for ($day = $startOfWeek; $day->lte($endOfWeek); $day = $day->addDay()) {
+                    $dayName = date('l', $day->timestamp);
+                    $attendanceByDayOfWeek[] = [
+                        'label' => $dayName,
+                        'count' => Attendance::whereBetween('time_in', [$startOfWeek, $endOfWeek])
+                            ->whereDay('time_in', $day->format('d'))
+                            ->count(),
+                    ];
+                }
 
                 return $attendanceByDayOfWeek;
             case 'averageSalaryPerDepartment':
@@ -113,28 +112,26 @@ class DashboardController extends Controller
                 // annually
                 $departments = Department::with('employees')->get();
                 foreach ($departments as $key => $department) {
-                    foreach ($department->employees as $key => $employee) {
-                        $averageSalaryPerDepartment[] =
-                            [
-                                'label' => $department->dep_name,
-                                'count' => getTotalSalaryByYearAndDepartment($employee, now()->format('Y'), $department->id)
-                            ];
-                    }
+                    $averageSalaryPerDepartment[] =
+                        [
+                            'label' => $department->dep_name,
+                            'count' => getTotalSalaryDepartment($department->employees, 'year', now()->format('Y'))
+                        ];
                 }
+                // dd($averageSalaryPerDepartment);
                 return $averageSalaryPerDepartment;
             case 'payrollHistory':
                 $payrollHistory = [];
                 // // annually
                 $departments = Department::with('employees')->get();
                 foreach ($departments as $key => $department) {
-                    foreach ($department->employees as $key => $employee) {
-                        $averageSalaryPerDepartment[] =
-                            [
-                                'label' => $department->dep_name,
-                                'count' => getTotalSalaryByYearAndDepartment($employee, now()->format('Y'), $department->id)
-                            ];
-                    }
+                    $payrollHistory[] =
+                        [
+                            'label' => $department->dep_name,
+                            'count' => getTotalSalaryDepartment($department->employees, 'month', now()->format('m'))
+                        ];
                 }
+                    //   dd($payrollHistory);
                 return $payrollHistory;
             case 'employeesPerDepartment':
                 $employeesPerDepartment = [];

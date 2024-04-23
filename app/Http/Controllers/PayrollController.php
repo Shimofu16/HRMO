@@ -30,6 +30,7 @@ class PayrollController extends Controller
             // get all the months in attendance and sort it
             // Get all unique months from the created_at column and sort them
             $months = Attendance::select('time_in')
+                ->where('isPresent', 1)
                 ->orderBy('time_in')
                 ->distinct()
                 ->get();
@@ -136,7 +137,6 @@ class PayrollController extends Controller
 
         $data = attendanceCount($employee, $payroll, $from, $to);
 
-        // dd($data, $payroll, $employee, $from,$to);
         // Pass the payroll record to the view
         return view(
             'payrolls.dtr',

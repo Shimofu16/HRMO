@@ -35,7 +35,7 @@ class CheckAttendance extends Command
         foreach ($employees as $employee) {
             // check if employee has attendance for today
             $attendance = Attendance::where('employee_id', $employee->id)
-                ->whereDate('created_at', Carbon::today())
+                ->whereDate('time_in', Carbon::today())
                 ->first();
             if (!$attendance) {
                 // Employee has not timed in, show error message

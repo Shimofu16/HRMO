@@ -26,26 +26,31 @@
                             <div class="col-span-6 sm:col-span-2">
                                 <label for="allowance_amount" class="block font-medium text-gray-700">Amount</label>
                                 <input type="number" name="allowance_amount" id="allowance_amount"
-                                    class="block w-full mt-1 rounded" required value="{{ $allowance->allowance_amount }}">
+                                    class="block w-full mt-1 rounded" required
+                                    value="{{ $allowance->allowance_amount }}">
                             </div>
                         </div>
                         <div class="grid grid-cols-6 gap-6">
                             <div class="col-span-3 sm:col-span-3">
-                                <label for="allowance_range" class="block font-medium text-gray-700">Range</label>
-                                <input type="text" name="allowance_range" id="allowance_range"
-                                    class="block w-full mt-1 rounded" required placeholder="Ex: 1-15 or 16-31" value="{{ $allowance->allowance_range }}">
+                                <label for="allowance_ranges" class="block font-medium text-gray-700">Range</label>
+                                <select name="allowance_ranges[]" id="allowance_ranges" class="block w-full mt-1 rounded form-select" multiple="multiple" required>
+                                    <option value="1-15">1-15</option>
+                                    <option value="16-31">16-31</option>
+                                </select>
                             </div>
                             <div class="col-span-3 sm:col-span-3">
-                                <label for="category_id" class="block font-medium text-gray-700">Type</label>
-                                <select name="category_id" id="category_id" class="block w-full mt-1 rounded form-select"
-                                    required>
-                                    <option value="" disabled selected>--Please select here--</option>
+                                <label for="category_id" class="block font-medium text-gray-700">Category</label>
+                                <select name="category_id[]" id="category_id" class="block w-full mt-1 rounded form-select" multiple="multiple" required>
                                     @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}" {{ ($category->id == $allowance->category_id) ? 'selected' : '' }}>{{ $category->category_name }}</option>
+                                        <option value="{{ $category->id }}">{{ $category->category_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
+                        <p id="helper-text-explanation" class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                            Note:To update the range and category, select all the data you want to change.
+                          </p>
+
                         <div class="flex items-center justify-end mt-6">
                             <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4">
                                 Update
@@ -58,4 +63,16 @@
             </div>
         </div>
     </div>
+    @push('styles')
+        <link rel="stylesheet" href="{{ asset('assets/select2-4.1.0-rc.0/css/select2.min.css') }}">
+    @endpush
+    @push('scripts')
+        <script src="{{ asset('assets/select2-4.1.0-rc.0/js/select2.min.js') }}"></script>
+        <script>
+            $(document).ready(function() {
+                $('#category_id').select2();
+                $('#allowance_ranges').select2();
+            });
+        </script>
+    @endpush
 </x-app-layout>
