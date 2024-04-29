@@ -39,14 +39,15 @@ use Illuminate\Http\Request;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+require __DIR__ . '/auth.php';
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard/{filter?}', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard/{filter?}', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('employees', EmployeeController::class)->names([
         'create' => 'employees.create',
         'store' => 'employees.store',
@@ -126,8 +127,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('leave-requests', LeaveController::class)->only([
         'create', 'store', 'edit', 'update',
     ]);
-    
-    Route::get('{status}', [LeaveController::class,'index'])->name('leave-requests.index');
+
+    Route::get('{status}', [LeaveController::class, 'index'])->name('leave-requests.index');
 
     Route::resource('allowances', AllowanceController::class)->names([
         'index' => 'allowances.index',
@@ -250,7 +251,7 @@ Route::middleware(['auth'])->group(function () {
     // Activity Log
     Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
 });
-Route::prefix('employee/attendance')->name('employee.attendance.')->controller(EmployeeAttendanceController::class)->group(function () {
+Route::prefix('employee/attendance')->name('employee.attendance.')->middleware('guest')->controller(EmployeeAttendanceController::class)->group(function () {
     Route::get('',  'index')->name('index');
     Route::post('/store',  'store')->name('store');
 });
@@ -273,8 +274,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-    Route::get('/test', function(){
-        return view('attendances.employees.test');
-    });
+Route::get('/test', function () {
+    return view('attendances.employees.test');
+});
 
-require __DIR__ . '/auth.php';
+
