@@ -131,7 +131,7 @@ class DashboardController extends Controller
                             'count' => getTotalSalaryDepartment($department->employees, 'month', now()->format('m'))
                         ];
                 }
-                    //   dd($payrollHistory);
+                //   dd($payrollHistory);
                 return $payrollHistory;
             case 'employeesPerDepartment':
                 $employeesPerDepartment = [];

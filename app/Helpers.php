@@ -96,6 +96,7 @@ if (!function_exists('getSalaryGradesTotalSteps')) {
         return $total_steps;
     }
 }
+
 if (!function_exists('attendanceCount')) {
 
     function attendanceCount($employee, $payroll, $from, $to) {

@@ -43,7 +43,7 @@
                 </div>
 
                 <div class="col-span-6 sm:col-span-2">
-                    <label for="category_id" class="block font-medium text-gray-700">Category</label>
+                    <label for="category_id" class="block font-medium text-gray-700">Type of Employment</label>
                     <select name="category_id" id="category_id" wire:model.live='category_id'
                         class="block w-full mt-1 rounded form-select" required>
                         <option value="" selected>--Please select here--</option>
@@ -55,7 +55,7 @@
                     </select>
                 </div>
                 <div class="col-span-6 sm:col-span-2">
-                    <label for="department_id" class="block font-medium text-gray-700">Departments</label>
+                    <label for="department_id" class="block font-medium text-gray-700">Department</label>
                     <select name="department_id" id="department_id" wire:model='department_id'
                         class="block w-full mt-1 rounded form-select" required>
                         <option value="" selected>--Please select here--</option>
@@ -68,7 +68,7 @@
                     <input type="hidden" name="isJOSelected" id="isJOSelected" value="{{ $isJOSelected }}">
                     @if ($isJOSelected)
                         <div class="col-span-6 sm:col-span-2">
-                            <label for="level_id" class="block font-medium text-gray-700">Level</label>
+                            <label for="level_id" class="block font-medium text-gray-700">Classification</label>
                             <select name="level_id" id="level_id" wire:model='level_id'
                                 class="block w-full mt-1 rounded form-select" required>
                                 <option value="" selected>--Please select here--</option>
@@ -94,13 +94,14 @@
                         <div class="col-span-6 sm:col-span-2">
                             <label for="salary_grade_step" class="block font-medium text-gray-700">Salary
                                 Grade Step</label>
-                            <select name="salary_grade_step" id="salary_grade_step" wire:model='salary_grade_step'
-                                class="block w-full mt-1 rounded form-select" required>
+                            <select name="salary_grade_step" id="salary_grade_step"
+                                wire:model.live='salary_grade_step' class="block w-full mt-1 rounded form-select"
+                                required>
                                 @if ($salary_grade_steps)
                                     <option value="" selected>--Please select here--</option>
                                     @foreach ($salary_grade_steps as $key => $salary_grade_step)
                                         <option value="{{ $salary_grade_step['step'] }}">
-                                            {{ $salary_grade_step['step'] }}
+                                            {{ $salary_grade_step['step'] }} -    {{ number_format($salary_grade_step['amount']) }}
                                         </option>
                                     @endforeach
                                 @else
@@ -113,7 +114,7 @@
 
 
                 <div class="col-span-6 sm:col-span-2">
-                    <label for="designation_id" class="block font-medium text-gray-700">Designation</label>
+                    <label for="designation_id" class="block font-medium text-gray-700">Position Title</label>
                     <select name="designation_id" id="designation_id" wire:model='designation_id'
                         class="block w-full mt-1 rounded form-select" required>
                         <option value="" selected>--Please select here--</option>
@@ -155,7 +156,7 @@
 
 
                     <div class="col-span-6 sm:col-span-2">
-                        <label class="block font-medium text-gray-700">Deductions</label>
+                        <label class="block font-medium text-gray-700">Contribution</label>
                         <div class="flex flex-wrap">
                             <div class="w-full">
                                 <h4 class="text-sm">Mandatory</h4>
@@ -208,6 +209,16 @@
                             </select>
                         </div>
                     </div>
+                    @if ($isWithHoldingTax)
+                        <div class="col-span-6 sm:col-span-2">
+                            <div class="col-span-6 sm:col-span-2">
+                                <label for="holding_tax" class="block font-medium text-gray-700">With Hodling Tax
+                                </label>
+                                <input type="number" name="holding_tax" id="duration" step="0.01"
+                                    class="block w-full mt-1 rounded form-input" wire:model="holding_tax">
+                            </div>
+                        </div>
+                    @endif
                 </div>
                 @if ($selected_loans)
                     @foreach ($selected_loans as $selected_loan)
@@ -244,16 +255,20 @@
                                 <div class="flex mt-1">
                                     <div class="flex flex-col space-y-2  w-1/2">
                                         <div class="w-1/2 px-2">
-                                            <input type="checkbox" name="1-15_{{ $selected_loan->id }}" id="1-15_{{ $selected_loan->id }}" value="1-15"
+                                            <input type="checkbox" name="1-15_{{ $selected_loan->id }}"
+                                                id="1-15_{{ $selected_loan->id }}" value="1-15"
                                                 class="mr-2 form-checkbox"
                                                 wire:model="arraySelectedLoans.{{ $selected_loan->id }}.range.1-15">
-                                            <label for="1-15_{{ $selected_loan->id }}" class="text-gray-900">1-15</label>
+                                            <label for="1-15_{{ $selected_loan->id }}"
+                                                class="text-gray-900">1-15</label>
                                         </div>
                                         <div class="w-1/2 px-2">
-                                            <input type="checkbox" name="16-31_{{ $selected_loan->id }}" id="16-31_{{ $selected_loan->id }}" value="16-31"
+                                            <input type="checkbox" name="16-31_{{ $selected_loan->id }}"
+                                                id="16-31_{{ $selected_loan->id }}" value="16-31"
                                                 class="mr-2 form-checkbox"
                                                 wire:model="arraySelectedLoans.{{ $selected_loan->id }}.range.16-31">
-                                            <label for="16-31_{{ $selected_loan->id }}" class="text-gray-900">16-31</label>
+                                            <label for="16-31_{{ $selected_loan->id }}"
+                                                class="text-gray-900">16-31</label>
                                         </div>
                                     </div>
                                     <div>

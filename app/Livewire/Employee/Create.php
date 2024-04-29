@@ -47,11 +47,13 @@ class Create extends Component
     public $designations;
     public $salary_grades;
     public $allowances;
+    public $holding_tax;
     public $levels;
     public $mandatory_deductions;
     public $non_mandatory_deductions;
 
     public $isJOSelected;
+    public $isWithHoldingTax = false;
 
     public function updatedEmployeeId($value)
     {
@@ -73,7 +75,19 @@ class Create extends Component
     {
         if ($value) {
             $this->salary_grade_steps = SalaryGrade::find($value)->steps;
-            // dd(   $this->salary_grade_steps);
+            // dd(   $this->salary_grade_step);
+        }
+    }
+    public function updatedSalaryGradeStep($value)
+    {
+        if ($value) {
+            $limit = 20833;
+            foreach ($this->salary_grade_steps as $key => $salary_grade_step) {
+                if ($value == $salary_grade_step['step'] && $salary_grade_step['amount'] > $limit) {
+                    $this->isWithHoldingTax = true;
+                }
+            }
+            // dd($this->isWithHoldingTax  );
         }
     }
     public function updatedCategoryId($value)
@@ -174,6 +188,7 @@ class Create extends Component
                 'salary_grade_id' => $this->salary_grade_id,
                 'salary_grade_step' => $this->salary_grade_step,
                 'sick_leave_points' => $this->sick_leave_points,
+                'holding_tax' => ($this->holding_tax) ? $this->holding_tax : null,
             ]);
 
             if ($this->selectedAllowanceIds) {
@@ -209,7 +224,6 @@ class Create extends Component
                 // Create loans for the employee
                 $employee->loans()->createMany($loansData);
             }
-
         }
 
         // Create activity

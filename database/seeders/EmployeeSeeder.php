@@ -46,6 +46,13 @@ class EmployeeSeeder extends Seeder
             } else {
                 $salary_grade = SalaryGrade::find($faker->numberBetween(1, SalaryGrade::count()));
                 $salary_grade_step = 'Step ' . $faker->numberBetween(1, count($salary_grade->steps));
+                $holding_tax = null;
+                $limit = 20833;
+                foreach ($salary_grade->steps as $key => $salary_grade_steps) {
+                    if ($salary_grade_step == $salary_grade_steps['step'] && $salary_grade_steps['amount'] > $limit) {
+                        $holding_tax = $faker->numberBetween(500,2000);
+                    }
+                }
                 $sick_leave_points = $faker->randomFloat(null, 1, 15);
                 // Generate a random number of allowances to select (between 1 and the total number)
                 $numAllowances = $faker->numberBetween(1, Allowance::count());
@@ -62,6 +69,7 @@ class EmployeeSeeder extends Seeder
                     'salary_grade_id' => $salary_grade->id,
                     'salary_grade_step' => $salary_grade_step,
                     'sick_leave_points' => $sick_leave_points,
+                    'holding_tax' => ($holding_tax) ?? $holding_tax,
                 ]);
 
 

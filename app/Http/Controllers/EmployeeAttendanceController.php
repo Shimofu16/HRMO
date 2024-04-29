@@ -249,7 +249,7 @@ class EmployeeAttendanceController extends Controller
         $defaultTimeOut = Carbon::parse($timeOut);
 
         // Calculate hours worked, handling negative values and exceeding 8 hours
-        $hourWorked = $attendanceTimeIn->diffInHours($attendanceTimeOut, true) - 1;
+        $hourWorked = $defaultTimeIn->diffInHours($attendanceTimeOut, true) - 1;
         $hourWorked = max(0, min($hourWorked, $requiredHoursWork)); // Ensure 0-8 hours
 
         // Calculate minutes late

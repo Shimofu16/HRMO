@@ -13,9 +13,12 @@ module.exports = {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            fontSize: {
+                '2xs': '10px',
+              },
         },
     },
 
-
+    plugins: [require('@tailwindcss/forms')],
     darkMode: ['selector', '[data-mode="dark"]'],
 };

@@ -1,7 +1,7 @@
 
 @extends('settings.index')
 @section('header')
-    Designations
+    Position Title
 @endsection
 @section('contents')
     <div class="bg-white mt-8 p-5 mx-8 shadow rounded-md">
@@ -9,13 +9,13 @@
             @csrf
             <div class="grid grid-cols-6 gap-6">
                 <div class="col-span-6 sm:col-span-3">
-                    <label for="designation_code" class="block font-medium text-gray-700">Designation
+                    <label for="designation_code" class="block font-medium text-gray-700">
                         Code</label>
                     <input type="text" name="designation_code" id="designation_code"
                         class="block w-full mt-1 rounded" required>
                 </div>
                 <div class="col-span-6 sm:col-span-3">
-                    <label for="designation_name" class="block font-medium text-gray-700">Designation
+                    <label for="designation_name" class="block font-medium text-gray-700">
                         Name</label>
                     <input type="text" name="designation_name" id="designation_name"
                         class="block w-full mt-1 rounded" required>
@@ -49,12 +49,12 @@
                         <td class="px-4 py-2 border-b">
                             <a href="{{ route('designations.edit', $designation) }}"
                                 class="text-blue-500 hover:text-blue-700">Edit</a>
-                            <form class="inline-block" action="{{ route('designations.destroy', $designation) }}"
+                            {{-- <form class="inline-block" action="{{ route('designations.destroy', $designation) }}"
                                 method="POST">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-red-500 hover:text-red-700">Delete</button>
-                            </form>
+                            </form> --}}
                         </td>
                     </tr>
                 @endforeach

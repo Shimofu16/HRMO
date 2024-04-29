@@ -34,7 +34,7 @@
             padding: 0 !important;
         }
 
-    
+
 
         .page-break {
             page-break-after: always;
@@ -56,10 +56,12 @@
         }
     </style>  --}}
     <style>
-        td {
+        td, tr{
             padding: 0;
             margin: 0;
+            height: auto;
         }
+
     </style>
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -71,12 +73,12 @@
         <div class="flex justify-center items-center my-5">
             <div class="flex flex-col " style="width: 200px">
                 <button type="button"
-                    class="text-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                    class="text-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-xs px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                     onclick="generatePDF('{{ $file_name }}')">
                     Download
                 </button>
                 <a href="{{ route('payrolls.index') }}"
-                    class="text-center text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
+                    class="text-center text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-xs px-5 py-2.5 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
                     Back to Payroll
                 </a>
             </div>
@@ -104,68 +106,68 @@
                 @endphp
                 <div class="border border-dark flex flex-col p-2">
                     <div class="head">
-                        <h1 class="text-sm text-center font-bold">MUNICIPALITY OF CALAUAN</h1>
-                        <h1 class="text-xs text-center font-bold">{{ $department->dep_name }}</h1>
-                        <h1 class="text-xs font-bold my-3">Payslip for the period of: {{ $period }}</h1>
+                        <h1 class="text-xs text-center font-bold">MUNICIPALITY OF CALAUAN</h1>
+                        <h1 class="text-[10px] text-center font-bold">{{ $department->dep_name }}</h1>
+                        <h1 class="text-[10px] font-bold mt-3">Payslip for the period of: {{ $period }}</h1>
                     </div>
                     <div class="body w-full">
                         <table class=" w-full">
                             <thead>
                                 <tr>
                                     <th class="text-left">
-                                        <span class="text-xs font-bold">Name:</span>
+                                        <span class="text-[10px] font-bold">Name:</span>
                                     </th>
                                     <th class="">
-                                        <span class="text-xs font-bold"></span>
+                                        <span class="text-[10px] font-bold"></span>
                                     </th>
                                     <th class="">
-                                        <span class="text-xs font-bold">{{ $employee->full_name }}</span>
+                                        <span class="text-[10px] font-bold">{{ $employee->full_name }}</span>
                                     </th>
                                     <th class="">
-                                        <span class="text-xs font-bold"></span>
+                                        <span class="text-[10px] font-bold"></span>
                                     </th>
                                 </tr>
                                 <tr>
                                     <th class="text-left">
-                                        <span class="text-xs">Designation:</span>
+                                        <span class="text-[10px]">Designation:</span>
                                     </th>
                                     <th class="">
-                                        <span class="text-xs"></span>
+                                        <span class="text-[10px]"></span>
                                     </th>
                                     <th class="">
                                         <span
-                                            class="text-xs">{{ $employee->data->designation->designation_code }}</span>
+                                            class="text-[10px]">{{ $employee->data->designation->designation_code }}</span>
                                     </th>
                                     <th class="">
-                                        <span class="text-xs"></span>
+                                        <span class="text-[10px]"></span>
                                     </th>
                                 </tr>
                                 <tr>
                                     <th class="text-left">
-                                        <span class="text-xs">Monthly Salary:</span>
+                                        <span class="text-[10px]">Monthly Salary:</span>
                                     </th>
                                     <th class="">
-                                        <span class="text-xs"></span>
+                                        <span class="text-[10px]"></span>
                                     </th>
                                     <th class="">
-                                        <span class="text-xs">{{ number_format($monthlySalary, 2) }}</span>
+                                        <span class="text-[10px]">{{ number_format($monthlySalary, 2) }}</span>
                                     </th>
                                     <th class="">
-                                        <span class="text-xs"></span>
+                                        <span class="text-[10px]"></span>
                                     </th>
                                 </tr>
                                 <tr>
                                     <th class="text-left">
-                                        <span class="text-xs">Amount Earned:</span>
+                                        <span class="text-[10px]">Amount Earned:</span>
                                     </th>
                                     <th class="">
-                                        <span class="text-xs"></span>
+                                        <span class="text-[10px]"></span>
                                     </th>
                                     <th class="">
-                                        <span class="text-xs">{{ number_format($amountEarned, 2) }}</span>
+                                        <span class="text-[10px]">{{ number_format($amountEarned, 2) }}</span>
                                     </th>
                                     <th class="">
-                                        <span class="text-xs"></span>
+                                        <span class="text-[10px]"></span>
                                     </th>
                                 </tr>
                             </thead>
@@ -174,14 +176,18 @@
                                 @foreach ($allowances as $allowance)
                                     <tr>
                                         <td>
-                                            <span class="text-xs">{{ $allowance->allowance_code }}:</span>
+                                            <span class="text-[10px]">{{ $allowance->allowance_code }}:</span>
                                         </td>
-                                        <td><span class="text-xs"></span></td>
-                                        <td class="text-xs text-center">
+                                        <td><span class="text-[10px]"></span></td>
+                                        <td class="text-[10px] text-center">
                                             @if ($employee->getAllowance($allowance->id, $payroll['date_from_to']) != 0)
                                                 @php
                                                     $totalAllowance =
-                                                        $totalAllowance + $employee->getAllowance($allowance->id, $payroll['date_from_to']);
+                                                        $totalAllowance +
+                                                        $employee->getAllowance(
+                                                            $allowance->id,
+                                                            $payroll['date_from_to'],
+                                                        );
                                                 @endphp
                                                 <span>
                                                     {{ number_format($employee->getAllowance($allowance->id, $payroll['date_from_to']), 2) }}
@@ -192,7 +198,7 @@
                                                 </span>
                                             @endif
                                         </td>
-                                        <td><span class="text-xs"></span></td>
+                                        <td><span class="text-[10px]"></span></td>
                                     </tr>
                                 @endforeach
                                 @php
@@ -200,26 +206,30 @@
                                 @endphp
                                 <tr>
                                     <td>
-                                        <span class="text-xs font-bold">TOTAL AMOUNT EARNED:</span>
+                                        <span class="text-[10px] font-bold">TOTAL AMOUNT EARNED:</span>
                                     </td>
-                                    <td><span class="text-xs"></span></td>
-                                    <td><span class="text-xs"></span></td>
+                                    <td><span class="text-[10px]"></span></td>
+                                    <td><span class="text-[10px]"></span></td>
                                     <td>
                                         <span
-                                            class="text-xs font-bold">{{ number_format($totalAmountEarned, 2) }}</span>
+                                            class="text-[10px] font-bold">{{ number_format($totalAmountEarned, 2) }}</span>
                                     </td>
                                 </tr>
                                 @foreach ($deductions as $deduction)
                                     <tr>
                                         <td>
-                                            <span class="text-xs">{{ $deduction->deduction_code }}:</span>
+                                            <span class="text-[10px]">{{ $deduction->deduction_code }}:</span>
                                         </td>
-                                        <td><span class="text-xs"></span></td>
-                                        <td class="text-xs text-center">
+                                        <td><span class="text-[10px]"></span></td>
+                                        <td class="text-[10px] text-center">
                                             @if ($employee->getdeduction($deduction->id, $payroll['date_from_to']) != 0)
                                                 @php
                                                     $totalDeduction =
-                                                        $totalDeduction + $employee->getdeduction($deduction->id, $payroll['date_from_to']);
+                                                        $totalDeduction +
+                                                        $employee->getdeduction(
+                                                            $deduction->id,
+                                                            $payroll['date_from_to'],
+                                                        );
                                                 @endphp
                                                 <span>
                                                     {{ number_format($employee->getdeduction($deduction->id, $payroll['date_from_to']), 2) }}
@@ -230,16 +240,38 @@
                                                 </span>
                                             @endif
                                         </td>
-                                        <td><span class="text-xs"></span></td>
+                                        <td><span class="text-[10px]"></span></td>
                                     </tr>
                                 @endforeach
+                                <tr>
+                                    <td>
+                                        <span class="text-[10px]">With Holding Tax:</span>
+                                    </td>
+                                    <td><span class="text-[10px]"></span></td>
+                                    <td class="text-[10px] text-center">
+                                        @if ($employee->data->holding_tax)
+                                            @php
+                                                $totalDeduction = $totalDeduction + $employee->data->holding_tax;
+                                            @endphp
+                                            <span>
+                                                {{ number_format($employee->data->holding_tax, 2)  }}
+                                            </span>
+                                        @else
+                                            <span class="text-center">
+                                                -
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td><span class="text-[10px]"></span></td>
+                                </tr>
+
                                 @foreach ($loans as $loan)
                                     <tr>
                                         <td>
-                                            <span class="text-xs">{{ $loan->name }}:</span>
+                                            <span class="text-[10px]">{{ $loan->name }}:</span>
                                         </td>
-                                        <td><span class="text-xs"></span></td>
-                                        <td class="text-xs text-center">
+                                        <td><span class="text-[10px]"></span></td>
+                                        <td class="text-[10px] text-center">
                                             @if ($employee->getLoan($loan->id, $payroll['date_from_to']) != 0)
                                                 @php
                                                     $totalDeduction =
@@ -255,7 +287,7 @@
                                                 </span>
                                             @endif
                                         </td>
-                                        <td><span class="text-xs"></span></td>
+                                        <td><span class="text-[10px]"></span></td>
                                     </tr>
                                 @endforeach
                                 @php
@@ -263,24 +295,24 @@
                                 @endphp
                                 <tr>
                                     <td>
-                                        <span class="text-xs font-bold">TOTAL DEDUCTIONS:</span>
+                                        <span class="text-[10px] font-bold">TOTAL DEDUCTIONS:</span>
                                     </td>
-                                    <td><span class="text-xs"></span></td>
-                                    <td><span class="text-xs"></span></td>
+                                    <td><span class="text-[10px]"></span></td>
+                                    <td><span class="text-[10px]"></span></td>
                                     <td>
                                         <span
-                                            class="text-xs font-bold border-b-2 border-dark">{{ number_format($totalDeduction, 2) }}</span>
+                                            class="text-[10px] font-bold border-b-2 border-dark">{{ number_format($totalDeduction, 2) }}</span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        <span class="text-xs font-bold text-blue-700">NET PAY:</span>
+                                        <span class="text-[10px] font-bold text-blue-700">NET PAY:</span>
                                     </td>
-                                    <td><span class="text-xs"></span></td>
-                                    <td><span class="text-xs"></span></td>
+                                    <td><span class="text-[10px]"></span></td>
+                                    <td><span class="text-[10px]"></span></td>
                                     <td>
                                         <span
-                                            class="text-xs font-bold text-blue-700  border-b-2 border-gray-500">{{ number_format($netpay, 2) }}</span>
+                                            class="text-[10px] font-bold text-blue-700  border-b-2 border-gray-500">{{ number_format($netpay, 2) }}</span>
                                     </td>
                                 </tr>
 
@@ -290,15 +322,15 @@
                 </div>
 
                 @if ($count == 3 || $loop->last)
-                    </div>
-                    <div class="page-break"></div> <!-- Page break for printing -->
-                @endif
-                @php
-                    $count++;
-                @endphp
-            @endforeach
-
         </div>
+        <div class="page-break"></div> <!-- Page break for printing -->
+        @endif
+        @php
+            $count++;
+        @endphp
+        @endforeach
+
+    </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"
         integrity="sha512-YcsIPGdhPK4P/uRW6/sruonlYj+Q7UHWeKfTAkBW+g83NKM+jMJFJ4iAPfSnVp7BKD4dKMHmVSvICUbE/V1sSw=="

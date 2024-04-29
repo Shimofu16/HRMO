@@ -11,15 +11,14 @@
                 </div>
             </div>
             <!-- Navigation Links -->
-            <ul
-                class="space-x-8 flex p-4 flex items-center">
+            <ul class="space-x-8 flex p-4 items-center">
                 <li>
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </li>
                 <li class="relative group">
-                    <x-nav-link :href="route('attendances.index')" :active="request()->routeIs('attendances.index')" >
+                    <x-nav-link :href="route('attendances.index')" :active="request()->routeIs('attendances.index')">
                         {{ __('Attendance') }}
                     </x-nav-link>
                     <div id="suppliers-dropdown"
@@ -27,17 +26,25 @@
                         <div class="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44">
                             <ul class="py-2 text-sm text-gray-900" aria-labelledby="dropdownLargeButton">
                                 <li>
-                                  <a href="{{ route('attendances-history.index') }}" class="block px-4 py-2 hover:bg-gray-300 ">History</a>
+                                    <a href="{{ route('attendances-history.index') }}"
+                                        class="block px-4 py-2 hover:bg-gray-300 ">History</a>
                                 </li>
                                 <li>
-                                  <a href="{{ route('seminars.index') }}" class="block px-4 py-2 hover:bg-gray-300 ">Seminar</a>
+                                    <a href="{{ route('seminars.index') }}"
+                                        class="block px-4 py-2 hover:bg-gray-300 ">Travel Order
+                                    </a>
                                 </li>
-                              </ul>
+                                <li>
+                                    <a href="{{ route('leave-requests.index', ['status' => 'pending']) }}"
+                                        class="block px-4 py-2 hover:bg-gray-300 ">Leave Requests
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </li>
                 <li class="relative group">
-                    <x-nav-link :href="route('employees.index')" :active="request()->routeIs('employees.index')" >
+                    <x-nav-link :href="route('employees.index')" :active="request()->routeIs('employees.index')">
                         {{ __('Employees') }}
                     </x-nav-link>
                     {{-- <div id="suppliers-dropdown"

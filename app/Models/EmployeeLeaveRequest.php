@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class EmployeeSickLeaveRequest extends Model
+class EmployeeLeaveRequest extends Model
 {
     use HasFactory;
     protected $fillable = [
         'employee_id',
-        'date',
+        'start',
+        'end',
         'type',
-        'reason',
         'status',
     ];
 

@@ -1,10 +1,10 @@
 
 @extends('settings.index')
 @section('header')
-    Deductions
+    Contribution
 @endsection
 @section('contents')
- 
+
     <div class="bg-white mt-8 p-5 mx-8 shadow rounded-md">
         <form action="{{ route('deductions.store') }}" method="POST">
             @csrf
@@ -90,12 +90,12 @@
                         <td class="border-b px-4 py-2">
                             <a href="{{ route('deductions.edit', $deduction) }}"
                                 class="text-blue-500 hover:text-blue-700">Edit</a>
-                            <form class="inline-block" action="{{ route('deductions.destroy', $deduction) }}"
+                            {{-- <form class="inline-block" action="{{ route('deductions.destroy', $deduction) }}"
                                 method="POST">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-red-500 hover:text-red-700">Delete</button>
-                            </form>
+                            </form> --}}
                         </td>
                     </tr>
                 @endforeach

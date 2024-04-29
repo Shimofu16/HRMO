@@ -16,8 +16,15 @@ class AttendanceSeeder extends Seeder
     public function run(): void
     {
         $employees = Employee::all();
-        foreach ($employees as $key => $employee) {
-            $this->generateEmployeeSchedule($employee, now()->format('m'),  now()->format('Y'));
+        $months = [
+            Carbon::now()->subMonths(2),
+            Carbon::now()->subMonths(1),
+            Carbon::now(),
+        ];
+        foreach ($months as $key => $month) {
+            foreach ($employees as $key => $employee) {
+                $this->generateEmployeeSchedule($employee, date('m', strtotime($month)),  now()->format('Y'));
+            }
         }
     }
     private function generateEmployeeSchedule($employee, $month, $year)
@@ -92,9 +99,11 @@ class AttendanceSeeder extends Seeder
         // Carbon instances for attendance and defaults
         $attendanceTimeIn = Carbon::parse($attendance->time_in);
         $attendanceTimeOut = Carbon::parse($timeOut);
+        $timeIn = '08:00:00'; // 8am
+        $defaultTimeIn = Carbon::parse($timeIn);
 
         // Calculate hours worked, handling negative values and exceeding 8 hours
-        $hourWorked = $attendanceTimeIn->diffInHours($attendanceTimeOut, true) - 1;
+        $hourWorked = $defaultTimeIn->diffInHours($attendanceTimeOut, true) - 1;
         $hourWorked = max(0, min($hourWorked, $requiredHoursWork)); // Ensure 0-8 hours
 
 

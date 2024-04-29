@@ -67,9 +67,9 @@ class Employee extends Model
     /**
      * Get the sick leave request associated with the employee.
      */
-    public function sickLeaveRequests()
+    public function leaveRequests()
     {
-        return $this->hasMany(SickLeaveRequest::class);
+        return $this->hasMany(EmployeeLeaveRequest::class);
     }
 
     /**

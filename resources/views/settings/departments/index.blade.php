@@ -1,6 +1,6 @@
 @extends('settings.index')
 @section('header')
-    Departments
+    Department
 @endsection
 @section('contents')
 
@@ -9,7 +9,7 @@
             @csrf
             <div class="grid grid-cols-6 gap-6">
                 <div class="col-span-6 sm:col-span-3">
-                    <label for="dep_name" class="block font-medium text-gray-700">Department
+                    <label for="dep_name" class="block font-medium text-gray-700">
                         Name</label>
                     <input type="text" name="dep_name" id="dep_name" class="block w-full mt-1 rounded" required>
                 </div>
@@ -42,12 +42,12 @@
                         <td class="border-b px-4 py-2">
                             <a href="{{ route('departments.edit', $department) }}"
                                 class="text-blue-500 hover:text-blue-700">Edit</a>
-                            <form class="inline-block" action="{{ route('departments.destroy', $department) }}"
+                            {{-- <form class="inline-block" action="{{ route('departments.destroy', $department) }}"
                                 method="POST">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-red-500 hover:text-red-700">Delete</button>
-                            </form>
+                            </form> --}}
                         </td>
                     </tr>
                 @endforeach

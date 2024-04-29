@@ -14,7 +14,7 @@ class AttendanceController extends Controller
 {
     public function index($filter_by = null, $filter_id = null)
     {
-        $attendances = Attendance::query()->with('employee')->where('isPresent', 1)->whereDate('time_in', now());
+        $attendances = Attendance::query()->with('employee')->whereDate('time_in', now());
         if ($filter_by =="department") {
             $attendances->whereHas('employee.data', function ($query) use ($filter_id) {
                 $query->where('department_id', $filter_id);

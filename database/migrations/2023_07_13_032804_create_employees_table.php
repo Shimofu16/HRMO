@@ -54,6 +54,7 @@ return new class extends Migration
             $table->foreignId('level_id')->nullable()->constrained('levels', 'id');
             $table->string('salary_grade_step')->nullable();
             $table->double('sick_leave_points')->nullable();
+            $table->double('holding_tax')->nullable();
             $table->timestamps();
         });
         Schema::create('seminar_attendances', function (Blueprint $table) {
@@ -61,6 +62,15 @@ return new class extends Migration
             $table->foreignId('employee_id')->constrained('employees', 'id');
             $table->foreignId('seminar_id')->constrained('seminars', 'id');
             $table->double('salary');
+            $table->timestamps();
+        });
+        Schema::create('employee_leave_requests', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('employee_id')->constrained('employees', 'id');
+            $table->date('start');
+            $table->date('end');
+            $table->enum('type', ['vacation', 'sick', 'force']);
+            $table->enum('status', ['accepted', 'pending', 'rejected']);
             $table->timestamps();
         });
         Schema::create('attendances', function (Blueprint $table) {
@@ -92,6 +102,7 @@ return new class extends Migration
         Schema::dropIfExists('employee_loans');
         Schema::dropIfExists('employee_data');
         Schema::dropIfExists('seminar_attendances');
+        Schema::dropIfExists('employee_leave_requests');
         Schema::dropIfExists('attendances');
     }
 };

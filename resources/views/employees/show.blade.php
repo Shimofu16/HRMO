@@ -28,13 +28,13 @@
                     </button>
                 </form>
                 <hr>
-                <a href="{{ route('seminars.payslip', ['employee_id' => $employee->id]) }}"
+                {{-- <a href="{{ route('seminars.payslip', ['employee_id' => $employee->id]) }}"
                     class="inline-flex items-center px-4 py-2 font-bold text-gray-800 bg-gray-300 rounded hover:bg-gray-400">
                     <svg class="w-4 h-4 mr-2 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                         <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" />
                     </svg>
                     <span>Payslip (Seminars)</span>
-                </a>
+                </a> --}}
                 <a href="{{ route('employees.index') }}"
                     class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
                     Back to Employee List
@@ -48,16 +48,13 @@
             <h3><strong>Employee No.: </strong>{{ $employee->employee_number }}</h3>
             <h3><strong>Ordinance Item No.: </strong>{{ $employee->ordinance_number }}</h3>
             <h3><strong>Name: </strong>{{ $employee->full_name }}</h3>
-            <div class="my-3 border-b border-gray-100">
-                <h1 class="text-2xl font-bold">Other Information</h1>
-            </div>
+
             <h3><strong>Department: </strong>{{ $employee->data->department->dep_name }}</h3>
             <h3><strong>Designation: </strong>{{ $employee->data->designation->designation_name }}</h3>
-            <h3><strong>Category: </strong>{{ $employee->data->category->category_name }}</h3>
+            <h3><strong>Type of Employment: </strong>{{ $employee->data->category->category_name }}</h3>
             @if ($employee->data->salary_grade_id != null)
                 <h3><strong>Salary Grade: </strong> Salary Grade {{ $employee->data->salary_grade_id }}</h3>
-                <h3><strong>Salary Grade Step: </strong> {{ $employee->data->salary_grade_step }} -
-                    {{ number_format($employee->data->salary_grade_step_amount, 2) }}</h3>
+                <h3><strong>Salary Grade Step: </strong> {{ $employee->data->salary_grade_step }} -  {{ number_format($employee->data->salary_grade_step_amount, 2) }}</h3>
                 <h3><strong>Sick Leave Points: </strong>{{ number_format($employee->data->sick_leave_points, 2) }}</h3>
                 <div class="my-3 border-b border-gray-100">
                     <h1 class="text-2xl font-bold">Deductions & Allowances</h1>
@@ -70,12 +67,14 @@
                         @endphp
                         @forelse ($employee->allowances as $allowance)
                             <span>{{ $allowance->allowance->allowance_name }} -
-                                {{ $allowance->allowance->allowance_amount }}</span>
+                                {{ number_format($allowance->allowance->allowance_amount, 2) }}
+                            </span>
+                                <br>
                         @empty
                             <span class="text-center">No Allowance</span>
                         @endforelse
                         <br>
-                        <span>{{ number_format($total_allowances) }}</span>
+                        <span>Total Allowance: {{ number_format($total_allowances) }}</span>
                     </div>
                 @endif
                 @if (count($employee->deductions) > 0)
@@ -86,11 +85,18 @@
                         @endphp
                         @forelse ($employee->deductions as $deduction)
                             <span>{{ $deduction->deduction->deduction_name }} -
-                                {{ $deduction->deduction->deduction_amount_type == 'percentage' ? percentage($deduction->deduction->deduction_amount) : number_format($deduction->deduction->deduction_amount) }}</span>
+                                {{ $deduction->deduction->deduction_amount_type == 'percentage' ? percentage($deduction->deduction->deduction_amount) : number_format($deduction->deduction->deduction_amount,2) }}</span>
                             <br>
                         @empty
                             <span class="text-center">No Deductions</span>
                         @endforelse
+                        @if ($employee->data->holding_tax)
+                            @php
+                                $total_deductions = $total_deductions + $employee->data->holding_tax;
+                            @endphp
+                            <span>With Holding Tax -
+                                {{ number_format($employee->data->holding_tax) }}</span>
+                        @endif
                         <br>
                         <span>Total: {{ number_format($total_deductions) }}</span>
                     </div>
@@ -100,6 +106,15 @@
                     {{ number_format($employee->data->level->amount, 2) }}</h3>
             @endif
 
+            <div class="my-3 border-b border-gray-100">
+                <h1 class="text-2xl font-bold">Other Information</h1>
+            </div>
+            <h2><strong>Loan - (amount of total Loan)</strong></h2> <br>
+            <h3 style="margin-left: 4rem"><strong>(paid amount)</strong> ---------- (date mm/dd/yyyy)</h3>
+            <h3 style="margin-left: 4rem"><strong>(paid amount)</strong> ---------- (date mm/dd/yyyy)</h3>
+            <h3 style="margin-left: 4rem"><strong>(paid amount)</strong> ---------- (date mm/dd/yyyy)</h3>
+            <h3 style="margin-left: 4rem"><strong>2,500.00</strong> ---------- 01/15/2024</h3> <br>
+            <h3><strong>Balance:</strong></h3>
         </div>
 
 

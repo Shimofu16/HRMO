@@ -17,6 +17,7 @@ use App\Http\Controllers\DeductionController;
 use App\Http\Controllers\EmployeeAttendanceController;
 use App\Http\Controllers\EmployeeLoansController;
 use App\Http\Controllers\HolidayController;
+use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\PayslipController;
 use App\Http\Controllers\SalaryGradeStepController;
@@ -121,6 +122,12 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('salary-grades', SalaryGradeController::class)->only([
         'index', 'create', 'store', 'edit', 'update',
     ]);
+
+    Route::resource('leave-requests', LeaveController::class)->only([
+        'create', 'store', 'edit', 'update',
+    ]);
+    
+    Route::get('{status}', [LeaveController::class,'index'])->name('leave-requests.index');
 
     Route::resource('allowances', AllowanceController::class)->names([
         'index' => 'allowances.index',
@@ -266,5 +273,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+    Route::get('/test', function(){
+        return view('attendances.employees.test');
+    });
 
 require __DIR__ . '/auth.php';

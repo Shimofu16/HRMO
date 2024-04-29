@@ -1,7 +1,7 @@
 
 @extends('settings.index')
 @section('header')
-    Loans
+    Loan
 @endsection
 @section('contents')
 
@@ -49,11 +49,11 @@
                         <td class="border-b px-4 py-2">
                             <a href="{{ route('loans.edit', $loan) }}"
                                 class="text-blue-500 hover:text-blue-700">Edit</a>
-                            <form class="inline-block" action="{{ route('loans.destroy', $loan) }}" method="POST">
+                            {{-- <form class="inline-block" action="{{ route('loans.destroy', $loan) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-red-500 hover:text-red-700">Delete</button>
-                            </form>
+                            </form> --}}
                         </td>
                     </tr>
                 @endforeach

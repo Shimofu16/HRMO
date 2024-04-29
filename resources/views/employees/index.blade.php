@@ -77,12 +77,12 @@
             <thead>
                 <tr>
                     <th class="px-4 py-4 text-left border-b">#</th>
-                    <th class="px-4 py-4 text-left border-b">Employee<br>ID</th>
+                    <th class="px-4 py-4 text-left border-b">ID<br>Number</th>
                     <th class="px-4 py-4 text-left border-b">Ordinance<br>Item No.</th>
                     <th class="px-4 py-4 text-left border-b">Name</th>
                     <th class="px-4 py-4 text-left border-b">Department</th>
-                    <th class="px-4 py-4 text-left border-b">Designation</th>
-                    <th class="px-4 py-4 text-left border-b">Category</th>
+                    <th class="px-4 py-4 text-left border-b">Position Title</th>
+                    <th class="px-4 py-4 text-left border-b">Type of Employment</th>
                     <th class="px-4 py-4 border-b">Actions</th>
                 </tr>
             </thead>
@@ -102,8 +102,6 @@
                         <td class="px-4 py-3 border-b flex flex-col">
                             <a href="{{ route('employees.show', $employee) }}"
                                 class="text-green-500 hover:text-green-700 p-2">View Info.</a>
-                                <a href="{{ route('seminars.payslip', ['employee_id' => $employee->id]) }}"
-                                    class="text-blue-500 hover:text-blue-700 p-2">Generate Payslip (Seminars)</a>
                             <form class="inline-block" action="{{ route('employees.destroy', $employee) }}"
                                 method="POST">
                                 @csrf

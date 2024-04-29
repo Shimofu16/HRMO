@@ -6,8 +6,8 @@
     </x-slot>
 
 
-    {{-- <div class="grid grid-cols-1 gap-6 mb-6 w-full xl:grid-cols-2 2xl:grid-cols-4">
-                <div class="bg-white shadow-lg shadow-gray-200 rounded-2xl p-4 ">
+    {{-- <div class="grid w-full grid-cols-1 gap-6 mb-6 xl:grid-cols-2 2xl:grid-cols-4">
+                <div class="p-4 bg-white shadow-lg shadow-gray-200 rounded-2xl ">
                     <div class="flex flex-col items-center justify-center">
                         <h1 class="text-lg">Employees Per Department</h1>
                         <div class="h-1/6">
@@ -23,7 +23,7 @@
                         <h3>Total Employees: {{ $totalEmployees }} </h3>
                     </div>
                 </div>
-                <div class="bg-white shadow-lg shadow-gray-200 rounded-2xl p-4 ">
+                <div class="p-4 bg-white shadow-lg shadow-gray-200 rounded-2xl ">
                     <div class="flex flex-col items-center justify-center">
                         <h1 class="text-lg">Attendance Count Per {{ Str::ucfirst($filter) }}</h1>
                         <div class="h-1/6">
@@ -39,11 +39,11 @@
                     </div>
                 </div>
             </div>
-            <div class="grid grid-cols-1 gap-6 mb-6 w-full xl:grid-cols-4 2xl:grid-cols-6">
-                <div class="bg-white shadow-lg shadow-gray-200 rounded-2xl p-4 ">
+            <div class="grid w-full grid-cols-1 gap-6 mb-6 xl:grid-cols-4 2xl:grid-cols-6">
+                <div class="p-4 bg-white shadow-lg shadow-gray-200 rounded-2xl ">
                     <div class="flex flex-col items-center justify-center">
                         <h1 class="text-lg">Salary Per {{ Str::ucfirst($filter) }}</h1>
-                        <div class="h-1/5 w-full">
+                        <div class="w-full h-1/5">
                             @if (count($totalSalary) > 0)
                                 <canvas id="totalSalary"></canvas>
                             @else
@@ -93,7 +93,7 @@
                         <div class="p-4 pb-0 mb-0 rounded-t-4">
                             <div class="flex justify-between">
                                 <h6 class="mb-2 dark:text-white">
-                                    <strong>Attendance monitoring</strong>
+                                    <strong>Attendance Monitoring</strong>
                                 </h6>
                             </div>
                         </div>
@@ -101,7 +101,7 @@
                             @if (count($attendanceCountPerWeek) > 0)
                                 <canvas id="attendanceCountPerWeek"></canvas>
                             @else
-                                <div class="flex justify-center items-center h-full">
+                                <div class="flex items-center justify-center h-full">
                                     <span
                                         class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                                         No Data
@@ -178,7 +178,7 @@
                         <div class="p-4 pb-0 mb-0 rounded-t-4">
                             <div class="flex justify-between">
                                 <h6 class="mb-2 dark:text-white">
-                                    <strong>Average Salary per Department(anually)</strong>
+                                    <strong>Average Salary per Department( Anually )</strong>
                                 </h6>
                             </div>
                         </div>
@@ -187,7 +187,7 @@
                             @if (count($averageSalaryPerDepartment) > 0)
                                 <canvas id="averageSalaryPerDepartment"></canvas>
                             @else
-                                <div class="flex justify-center items-center h-full">
+                                <div class="flex items-center justify-center h-full">
                                     <span
                                         class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                                         No Data
@@ -203,14 +203,14 @@
                         class="border-black/12.5 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl relative flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid bg-white bg-clip-border">
                         <div class="p-4 pb-5 rounded-t-4">
                             <h6 class="mb-0 dark:text-white">
-                                <strong>Employees per Deprtments</strong>
+                                <strong>Employees per Department</strong>
                             </h6>
                         </div>
                         <div class="flex-auto p-4 overflow-y-auto" style="height: 20rem; width: 100%;">
                             @if (count($employeesPerDepartment) > 0)
                                 <canvas id="employeesPerDepartment"></canvas>
                             @else
-                                <div class="flex justify-center items-center h-full">
+                                <div class="flex items-center justify-center h-full">
                                     <span
                                         class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                                         No Data
@@ -229,7 +229,7 @@
                         <div class="p-4 pb-0 mb-0 rounded-t-4">
                             <div class="flex justify-between">
                                 <h6 class="mb-2 dark:text-white">
-                                    <strong>Payroll History(Monthly)</strong>
+                                    <strong>Payroll History( Monthly )</strong>
                                 </h6>
                             </div>
                         </div>
@@ -238,7 +238,7 @@
                             @if (count($payrollHistory) > 0)
                                 <canvas id="payrollHistory"></canvas>
                             @else
-                                <div class="flex justify-center items-center h-full">
+                                <div class="flex items-center justify-center h-full">
                                     <span
                                         class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                                         No Data
@@ -253,7 +253,7 @@
                         class="border-black/12.5 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl relative flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid bg-white bg-clip-border">
                         <div class="p-4 pb-5 rounded-t-4">
                             <h6 class="mb-0 dark:text-white">
-                                <strong>Employees per Categories</strong>
+                                <strong>Employees per Type of Employment</strong>
                             </h6>
                         </div>
                         <div class="flex-auto p-4 overflow-y-auto" style="height: 20rem; width: 100%;">

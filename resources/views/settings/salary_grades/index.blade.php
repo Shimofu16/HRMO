@@ -1,6 +1,6 @@
 @extends('settings.index')
 @section('header')
-    Salary Grades
+    Salary Grade
 @endsection
 @section('contents')
     <div class="bg-white  mt-5 p-5 shadow rounded-md">
