@@ -19,6 +19,7 @@ class Create extends Component
     public float $points = 0;
     public float $points_per_day = 1.25;
     public int $days = 0;
+    public int $days_leave = 0;
 
     public function updatedEmployeeId($value){
         $this->employee = Employee::find($value);
@@ -29,11 +30,11 @@ class Create extends Component
     }
     public function updatedEnd($value){
         if ($value) {
-            $start = Carbon::parse($this->start)->subDay();
-            $end = Carbon::parse($this->end)->addDay();
+            $start = Carbon::parse($this->start);
+            $end = Carbon::parse($this->end);
              //count the days between start and end
-             $daysCount = $start->diffInDays($end);
-             if ($daysCount > $this->days) {
+             $this->days_leave = $start->diffInDays($end);
+             if ($this->days_leave >= $this->days && $this->days_leave != $this->days) {
                  return session()->flash('error', 'The number of days exceeds the allowed limit.');
              }
         }
@@ -46,12 +47,13 @@ class Create extends Component
             'end'=> $this->end,
             'type'=> $this->type,
             'status'=> 'pending',
+            'days'=> $this->days_leave,
         ]);
          // Create activity
          createActivity('Create Employee Leave Request', 'Create Employee Leave Request for ' . $this->employee->full_name .'.', request()->getClientIp(true));
 
          // Redirect to the index page with a success message
-         return redirect()->route('leave-requests.show', ['status' => 'pending'])->with('success', 'Leave Request created successfully.');
+         return redirect()->route('leave-requests.index', ['status' => 'pending'])->with('success', 'Leave Request created successfully.');
     }
 
     public function mount()

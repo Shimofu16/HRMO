@@ -19,6 +19,7 @@ use App\Http\Controllers\EmployeeLoansController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\LevelController;
+use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PayslipController;
 use App\Http\Controllers\SalaryGradeStepController;
 use App\Http\Controllers\ScheduleController;
@@ -124,11 +125,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         'index', 'create', 'store', 'edit', 'update',
     ]);
 
-    Route::resource('leave-requests', LeaveController::class)->only([
-        'create', 'store', 'edit', 'update',
-    ]);
-
-    Route::get('{status}', [LeaveController::class, 'index'])->name('leave-requests.index');
 
     Route::resource('allowances', AllowanceController::class)->names([
         'index' => 'allowances.index',
@@ -250,6 +246,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Activity Log
     Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
+
+    Route::get('password-code', [PasswordController::class, 'index'])->name('password-code.index');
+    Route::put('password-code/update', [PasswordController::class, 'update'])->name('password-code.update');
+
+    Route::resource('leave-requests', LeaveController::class)->only([
+        'create', 'store', 'edit', 'update',
+    ]);
+
+    Route::get('{status}', [LeaveController::class, 'index'])->name('leave-requests.index');
+
 });
 Route::prefix('employee/attendance')->name('employee.attendance.')->middleware('guest')->controller(EmployeeAttendanceController::class)->group(function () {
     Route::get('',  'index')->name('index');

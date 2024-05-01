@@ -69,6 +69,7 @@ return new class extends Migration
             $table->foreignId('employee_id')->constrained('employees', 'id');
             $table->date('start');
             $table->date('end');
+            $table->integer('days');
             $table->enum('type', ['vacation', 'sick', 'force']);
             $table->enum('status', ['accepted', 'pending', 'rejected']);
             $table->timestamps();

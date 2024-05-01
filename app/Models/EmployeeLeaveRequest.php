@@ -12,6 +12,7 @@ class EmployeeLeaveRequest extends Model
         'employee_id',
         'start',
         'end',
+        'days',
         'type',
         'status',
     ];

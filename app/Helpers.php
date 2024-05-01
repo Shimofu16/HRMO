@@ -152,7 +152,7 @@ if (!function_exists('attendanceCount')) {
                 }
 
 
-                if ($isWeekend && $employee->category !== 'JO') {
+                if ($isWeekend && $employee->data->category->category_code !== 'JO') {
                     $attendances[$i] = [
                         'day' => date('d', strtotime($date)) . '-' . Str::substr(date('l', strtotime($date)), 0, 3),
                         'time_in' => '-----',

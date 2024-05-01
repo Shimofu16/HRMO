@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Employee;
 
+use App\Models\AdminPassword;
 use App\Models\Loan;
 use App\Models\SalaryGrade;
 use Livewire\Component;
@@ -13,6 +14,7 @@ use App\Models\Designation;
 use App\Models\Employee;
 use App\Models\Level;
 use App\Models\SalaryGradeStep;
+use Illuminate\Support\Facades\Hash;
 
 class Create extends Component
 {
@@ -52,8 +54,11 @@ class Create extends Component
     public $mandatory_deductions;
     public $non_mandatory_deductions;
 
-    public $isJOSelected;
-    public $isWithHoldingTax = false;
+    public $password;
+
+    public bool  $isJOSelected = false;
+    public bool  $isWithHoldingTax = false;
+    public bool $isAlreadyLogIn = false;
 
     public function updatedEmployeeId($value)
     {
@@ -233,6 +238,14 @@ class Create extends Component
         return redirect()->route('employees.index')->with('success', 'Employee created successfully.');
     }
 
+    public function login()
+    {
+        $current_password = AdminPassword::first()->password;
+        if (Hash::check($this->password, $current_password)) {
+            $this->isAlreadyLogIn = true;
+        }
+        return session()->flash('error', 'Wrong password.');
+    }
     public function mount()
     {
         $this->loans = Loan::all();
@@ -244,6 +257,8 @@ class Create extends Component
         $this->mandatory_deductions = Deduction::where('deduction_type', 'Mandatory')->get();
         $this->non_mandatory_deductions = Deduction::where('deduction_type', 'Non-Mandatory')->get();
         $this->isJOSelected = false;
+        $this->isWithHoldingTax = false;
+        $this->isAlreadyLogIn = false;
     }
 
     public function render()

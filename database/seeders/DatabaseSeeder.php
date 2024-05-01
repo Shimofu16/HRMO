@@ -35,6 +35,7 @@ class DatabaseSeeder extends Seeder
             LoanSeeder::class,
             EmployeeSeeder::class,
             AttendanceSeeder::class,
+            AdminPasswordSeeder::class,
         ]);
     }
 }

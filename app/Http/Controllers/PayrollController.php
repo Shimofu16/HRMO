@@ -28,17 +28,21 @@ class PayrollController extends Controller
             $employee_departments = $employee_departments->get();
 
             // get all the months in attendance and sort it
-            // Get all unique months from the created_at column and sort them
-            $months = Attendance::select('time_in')
-                ->where('isPresent', 1)
-                ->orderBy('time_in')
-                ->distinct()
-                ->get();
+            // Get all unique months from the time_in column and sort them
+            $months = Attendance::selectRaw('MONTH(time_in) as month, MIN(time_in) as earliest_time_in')
+    ->where('isPresent', 1)
+    ->whereYear('time_in', now()->format('Y'))
+    ->groupByRaw('MONTH(time_in)')
+    ->orderByRaw('MONTH(time_in)')
+    ->get();
 
 
 
-                $payrolls = $this->getPayroll($employee_departments, $months);
-                // dd( $employee_departments, $months);
+
+
+
+            $payrolls = $this->getPayroll($employee_departments, $months);
+            // dd($months, $payrolls);
             $departments = Department::all();
             // Other code to retrieve the payrolls
 
@@ -61,26 +65,19 @@ class PayrollController extends Controller
         foreach ($departments as $department) {
             foreach ($months as $month) {
                 foreach ($fromTo as $itemDay) {
-                    $day = date('d', strtotime($month->time_in));
 
-                    // Check if the day falls within the specified range
-                    $isInRange = ($itemDay == '1-15' && $day >= 1 && $day <= 15) ||
-                        ($itemDay == '16-31' && $day >= 16 && $day <= 31);
+                    // Create a unique key for the payroll record
+                    $uniqueKey = "{$department->id}_{$month->month}_{$itemDay}";
 
-                    if ($isInRange) {
-                        // Create a unique key for the payroll record
-                        $uniqueKey = "{$department->id}_{$month->month}_{$itemDay}";
-
-                        // Only create a new payroll record if it doesn't exist
-                        if (!isset($payrolls[$uniqueKey])) {
-                            $payrolls[$uniqueKey] = [
-                                'department_id' => $department->id,
-                                'department' => $department->dep_name,
-                                'month' => date('F', strtotime($month->time_in)),
-                                'year' => date('Y', strtotime($month->time_in)),
-                                'date_from_to' => $itemDay,
-                            ];
-                        }
+                    // Only create a new payroll record if it doesn't exist
+                    if (!isset($payrolls[$uniqueKey])) {
+                        $payrolls[$uniqueKey] = [
+                            'department_id' => $department->id,
+                            'department' => $department->dep_name,
+                            'month' => date('F', strtotime($month->earliest_time_in)),
+                            'year' => date('Y', strtotime($month->earliest_time_in)),
+                            'date_from_to' => $itemDay,
+                        ];
                     }
                 }
             }

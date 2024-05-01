@@ -17,29 +17,28 @@ class AttendanceSeeder extends Seeder
     {
         $employees = Employee::all();
         $months = [
+            Carbon::now()->subMonths(3),
             Carbon::now()->subMonths(2),
             Carbon::now()->subMonths(1),
-            Carbon::now(),
         ];
-        foreach ($months as $key => $month) {
+        foreach ($months as $index => $month) {
             foreach ($employees as $key => $employee) {
                 $this->generateEmployeeSchedule($employee, date('m', strtotime($month)),  now()->format('Y'));
             }
         }
     }
+
     private function generateEmployeeSchedule($employee, $month, $year)
     {
         $daysInMonth = Carbon::create($year, $month)->daysInMonth;
         $timeIn = '08:00:00'; // 8am
         $defaultTimeIn = Carbon::parse($timeIn);
 
-        $tenAMThreshold = Carbon::parse('10:00:00');
         $deductionPerMinute =  0.02;
         $deduction =  0;
         for ($day = 1; $day <= $daysInMonth; $day++) {
-            $date = Carbon::create($year, $month, $day, rand(7, 10), 0, 0); // Start
-            $now = $date->copy()->format('H:i:s');
-            $timeOut = $date->copy()->addHours(rand(7, 11)); // Randomly set time out between 4 pm to 6 pm
+            $date = Carbon::create($year, $month, $day, rand(7, 10), 0, 0); // Random time in between 7 AM and 10 AM
+            $timeOut = $date->copy()->addHours(rand(8, 11)); // Random time out between 3 PM to 6 PM
             if (random_int(0, 1) ==  1) {
 
                 // Check if the day is a weekend and the employee is not "JO"
@@ -55,44 +54,45 @@ class AttendanceSeeder extends Seeder
                     }
 
                     // Check if employee is on time, half-day or late
-                    $time_in_status = 'On-time';
+                    $timeInStatus = 'On-time';
+                    $now = $date->copy()->format('H:i:s');
                     if ($now < $timeIn) {
-                        $time_in_status = 'Half-Day';
+                        $timeInStatus = 'Half-Day';
                     }
                     if ($now > $timeIn) {
-                        $time_in_status = 'Late';
-                        $minute_late = $defaultTimeIn->diffInMinutes($now);
-                        $deduction = $minute_late * $deductionPerMinute;
+                        $timeInStatus = 'Late';
+                        $minuteLate = $defaultTimeIn->diffInMinutes($now);
+                        $deduction = $minuteLate * $deductionPerMinute;
                     }
 
                     // Create attendance record for time in
-                    $attendance =    Attendance::create([
+                    $attendance = Attendance::create([
                         'employee_id' => $employee->id,
-                        'time_in_status' => $time_in_status,
+                        'time_in_status' => $timeInStatus,
                         'time_in' => $date,
                         'deduction' => $deduction,
                     ]);
 
                     if ($employee->data->category->category_code == "JO") {
-                        $salary_grade = $employee->data->level->amount;
-                        $results = $this->calculateSalary($salary_grade, $employee, $attendance, $timeOut, true);
+                        $salaryGrade = $employee->data->level->amount;
+                        $results = $this->calculateSalary($salaryGrade, $employee, $attendance, $timeOut, true);
                     } else {
-                        $salary_grade = $employee->data->salary_grade_step_amount;
-                        $results = $this->calculateSalary($salary_grade, $employee, $attendance, $timeOut, false);
+                        $salaryGrade = $employee->data->salary_grade_step_amount;
+                        $results = $this->calculateSalary($salaryGrade, $employee, $attendance, $timeOut, false);
                     }
                     // Update the attendance record for time out
                     $status = $results['status'];
 
-                    $total_salary_for_today = $results['salary'];
+                    $totalSalaryForToday = $results['salary'];
 
-                    $hours = $results['hour_worked'];
+                    $hoursWorked = $results['hour_worked'];
 
                     // Update the attendance record
                     $attendance->update([
                         'time_out_status' => $status,
                         'time_out' => $timeOut,
-                        'hours' => $hours,
-                        'salary' => $total_salary_for_today,
+                        'hours' => $hoursWorked,
+                        'salary' => $totalSalaryForToday,
                         'isPresent' => 1,
                     ]);
 
@@ -122,8 +122,8 @@ class AttendanceSeeder extends Seeder
         $now = $defaultTimeOut->copy()->format('H:i:s');
 
         // Calculate hours worked, handling negative values and exceeding 8 hours
-        $hourWorked = $defaultTimeIn->diffInHours($attendanceTimeOut, true) - 1;
-        $hourWorked = max(0, min($hourWorked, $requiredHoursWork)); // Ensure 0-8 hours
+        $hoursWorked = $defaultTimeIn->diffInHours($attendanceTimeOut, true) - 2;
+        $hoursWorked = max(0, min($hoursWorked, $requiredHoursWork)); // Ensure 0-8 hours
 
         // Calculate minutes late
         $minutesLate = $defaultTimeIn->diffInMinutes($attendanceTimeIn);
@@ -141,15 +141,15 @@ class AttendanceSeeder extends Seeder
         }
 
         // Determine attendance status and adjust salary (if applicable)
-        $status = ($now < $timeOut) ? 'Under-time' : 'Time-out';
-        if (!$isJO && $now < $timeOut) {
+        $status = ($timeOut < $now) ? 'Under-time' : 'Time-out';
+        if (!$isJO && $timeOut < $now) {
             $notWorkedHour = $defaultTimeOut->diffInHours($timeOut);
             $salaryPerHour -= $notWorkedHour;
         }
 
         // Calculate total salary for the day (applicable only for non-JO employees)
         if (!$isJO) {
-            $totalSalaryForToday = max(0, $salaryPerHour * $hourWorked); // Ensure non-negative
+            $totalSalaryForToday = max(0, $salaryPerHour * $hoursWorked); // Ensure non-negative
             if ($attendance->time_in_status === 'Late') {
                 $totalSalaryForToday -= ($sickLeave === 0) ? $this->getLateByMinutes($minutesLate) : 0;
             }
@@ -161,24 +161,26 @@ class AttendanceSeeder extends Seeder
         return [
             'salary' => $totalSalaryForToday,
             'status' => $status,
-            'hour_worked' => $hourWorked,
+            'hour_worked' => $hoursWorked,
         ];
     }
-    private function computeSickLeave($sick_leave, $minute_late)
+
+    private function computeSickLeave($sickLeave, $minuteLate)
     {
-        $sick_leave_left = 0;
+        $sickLeaveLeft = 0;
 
         // Compute the sick leave deduction per minute
-        $sick_leave_left = $sick_leave - $this->getLateByMinutes($minute_late);
+        $sickLeaveLeft = $sickLeave - $this->getLateByMinutes($minuteLate);
 
-        // check if sick_leave_left is less than 0
-        if ($sick_leave_left < 0) {
-            $sick_leave_left = 0;
+        // check if sickLeaveLeft is less than 0
+        if ($sickLeaveLeft < 0) {
+            $sickLeaveLeft = 0;
         }
 
-        return $sick_leave_left;
+        return $sickLeaveLeft;
     }
-    private function getLateByMinutes($minute_late)
+
+    private function getLateByMinutes($minuteLate)
     {
         $equivalentMinutes = [
             1 => 0.002, 2 => 0.004, 3 => 0.006, 4 => 0.008, 5 => 0.010,
@@ -194,8 +196,8 @@ class AttendanceSeeder extends Seeder
             51 => 0.106, 52 => 0.108, 53 => 0.110, 54 => 0.112, 55 => 0.114,
             56 => 0.117, 57 => 0.119, 58 => 0.121, 59 => 0.123, 60 => 0.125
         ];
-        if (array_key_exists($minute_late, $equivalentMinutes)) {
-            return $equivalentMinutes[$minute_late];
+        if (array_key_exists($minuteLate, $equivalentMinutes)) {
+            return $equivalentMinutes[$minuteLate];
         } else {
             return 0;
         }
