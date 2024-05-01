@@ -99,7 +99,8 @@ if (!function_exists('getSalaryGradesTotalSteps')) {
 
 if (!function_exists('attendanceCount')) {
 
-    function attendanceCount($employee, $payroll, $from, $to) {
+    function attendanceCount($employee, $payroll, $from, $to)
+    {
         $month = date('m', strtotime($payroll['month']));
         $year = date('Y', strtotime($payroll['year']));
         $lastDayOfTheMonth = $to;
@@ -108,85 +109,98 @@ if (!function_exists('attendanceCount')) {
         }
 
         $total_man_hour = 0;
+        $present = 0;
+        $absent = 0;
+        $late = 0;
+        $underTime = 0;
         $attendances = [];
 
-        $loopEnd = ($to == 15) ? $lastDayOfTheMonth : $from;
-        $loopStart = ($to == 15) ? $from : 15;
+        $loopStart = ($to == 15) ? 1 : 16;
+        $loopEnd = ($to == 15) ? 15 : $lastDayOfTheMonth;
 
-        // dd($loopEnd, $loopStart, $lastDayOfTheMonth);
         $from = sprintf('%04d-%02d-%02d', $year, $month, $from);
-        $to = sprintf('%04d-%02d-%02d', $year, $month, $to);
+        // $to = sprintf('%04d-%02d-%02d', $year, $month, $to);
+        // $from = sprintf('%04d-%02d-%02d', $year, $month, $from);
+        $to = sprintf('%04d-%02d-%02d', $year, $month, $loopEnd);
 
 
-        $from = Carbon::parse($from)->format('Y-m-d'); // Assuming 1st day of the month
-        $to = Carbon::parse($to)->format('Y-m-d'); // Use $to for the last day
+        $from = Carbon::parse($from)->format('Y-m-d');
+        $to = Carbon::parse($to)->format('Y-m-d');
 
         for ($i = $loopStart; $i <= $loopEnd; $i++) {
-          $day = str_pad($i, 2, '0', STR_PAD_LEFT);
-          $attendance = $employee->attendances()
-            ->whereMonth('time_in', $month)
-            ->whereYear('time_in', $year)
-            ->whereDay('time_in', $day)
-            ->where('isPresent', 1)
-            ->first();
-
-          if ($attendance) {
-
-            $timeIn = Carbon::parse($attendance->time_in);
-            $manhours = $attendance->hours;
-            $timeInInterval = '';
-            $timeOutInterval = Carbon::parse('17:00');
-
-            // Define time in interval based on different scenarios
-            if ($timeIn->between(Carbon::parse('6:59'), Carbon::parse('7:11'))) {
-              $timeInInterval = Carbon::parse('7:00');
-            } elseif ($timeIn->between(Carbon::parse('7:11'), Carbon::parse('7:40'))) {
-              $timeInInterval = Carbon::parse('7:30');
-            } else {
-              $timeInInterval = Carbon::parse('8:00');
-            }
-
+            $day = str_pad($i, 2, '0', STR_PAD_LEFT);
+            $date = Carbon::parse(sprintf('%04d-%02d-%02d', $year, $month, $day))->format('Y-m-d');
+            $attendance = $employee->attendances()
+                ->whereDate('time_in', $date)
+                ->where('isPresent', 1)
+                ->first();
             // Consider weekends and employee category
             $isWeekend = (Carbon::parse($payroll['month'] . '-' . $day))->isWeekend();
-            if ($isWeekend && $employee->category !== 'JO') {
-              $attendances[$i] = [
-                'day' => $day,
-                'time_in' => '',
-                'time_in_interval' => '',
-                'time_out' => '',
-                'time_out_interval' => '',
-                'manhours' => 0, // No manhours for weekends (except JO)
-              ];
+            if ($attendance) {
+                $timeIn = Carbon::parse($attendance->time_in);
+                $manhours = $attendance->hours;
+                $timeInInterval = '';
+                $timeOutInterval = Carbon::parse('17:00');
+
+                // Define time in interval based on different scenarios
+                if ($timeIn->between(Carbon::parse('6:59'), Carbon::parse('7:11'))) {
+                    $timeInInterval = Carbon::parse('7:00');
+                } elseif ($timeIn->between(Carbon::parse('7:11'), Carbon::parse('7:40'))) {
+                    $timeInInterval = Carbon::parse('7:30');
+                } else {
+                    $timeInInterval = Carbon::parse('8:00');
+                }
+
+
+                if ($isWeekend && $employee->category !== 'JO') {
+                    $attendances[$i] = [
+                        'day' => date('d', strtotime($date)) . '-' . Str::substr(date('l', strtotime($date)), 0, 3),
+                        'time_in' => '-----',
+                        'time_in_interval' => '-----',
+                        'time_out' => '-----',
+                        'time_out_interval' => '-----',
+                        'manhours' => 0, // No manhours for weekends (except JO)
+                    ];
+                } else {
+                    if ($attendance->time_in_status == 'Late') {
+                        $late++;
+                    }
+                    if ($attendance->time_out_status == 'Under-time') {
+                        $underTime++;
+                    }
+                    $attendances[$i] = [
+                        'day' => date('d', strtotime($date)) . '-' . Str::substr(date('l', strtotime($date)), 0, 3),
+                        'time_in' => $attendance->time_in,
+                        'time_in_interval' => $timeInInterval,
+                        'time_out' => $attendance->time_out,
+                        'time_out_interval' => $timeOutInterval,
+                        'deduction' => $attendance->deduction,
+                        'manhours' => $manhours,
+                    ];
+                    $total_man_hour += $manhours;
+                    $present++;
+                }
             } else {
-              $attendances[$i] = [
-                'day' => $day,
-                'time_in' => $attendance->time_in,
-                'time_in_interval' => $timeInInterval,
-                'time_out' => $attendance->time_out,
-                'time_out_interval' => $timeOutInterval,
-                'deduction' => $attendance->deduction,
-                'manhours' => $manhours,
-              ];
-              $total_man_hour += $manhours;
+                if (!$isWeekend || $employee->category == 'JO') {
+                    $absent++;
+                }
+                // Absent day details
+                $attendances[$i] = [
+                    'day' => date('d', strtotime($date)) . '-' . Str::substr(date('l', strtotime($date)), 0, 3),
+                    'time_in' => '',
+                    'time_in_interval' => '',
+                    'time_out' => '',
+                    'time_out_interval' => '',
+                    'manhours' => '',
+                ];
             }
-          } else {
-            // Absent day details
-            $attendances[$i] = [
-              'day' => $day,
-              'time_in' => '',
-              'time_in_interval' => '',
-              'time_out' => '',
-              'time_out_interval' => '',
-              'manhours' => '',
-            ];
-          }
         }
 
         return [
-            'present' => $employee->attendances()->whereBetween('time_in', [$from , $to])->where('isPresent', 1)->count(),
-            'absent' => $employee->attendances()->whereBetween('absent_at', [$from , $to])->where('isPresent', 0)->count(),
-            'late' => $employee->attendances()->whereBetween('time_in', [$from , $to])->where('time_out_status', 'Under-time')->count(),
-            'under_time' => $employee->attendances()->whereBetween('time_in', [$from , $to])->where('time_out_status', 'Under-time')->count(),
+            'present' => $present,
+            'absent' => $absent,
+            'late' => $late,
+            'under_time' => $underTime,
             'total_man_hour' => $total_man_hour,
             'attendances' => $attendances,
         ];

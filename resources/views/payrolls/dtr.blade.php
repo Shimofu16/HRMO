@@ -2,7 +2,10 @@
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                {{ $employee->full_name }} - Attendance from {{ date('F', strtotime($payroll['month'])) }} {{ $payroll['date_from_to'] }}, {{ $payroll['year'] }}
+                {{ $employee->full_name }} - {{ $employee->data->category->category_name }}
+            </h2>
+            <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                 Attendance from {{ date('F', strtotime($payroll['month'])) }} {{ $payroll['date_from_to'] }}, {{ $payroll['year'] }}
             </h2>
     </x-slot>
 
@@ -79,12 +82,12 @@
                             @foreach ($attendances as $attendance)
                                 <tr>
                                     <td class="px-4 py-2 border-b">{{ $attendance['day'] }}</td>
-                                    <td class="px-4 py-2 border-b">{{ $attendance['time_in'] ? date('h:i A',strtotime($attendance['time_in'])) :'' }}</td>
-                                    <td class="px-4 py-2 border-b">{{ $attendance['time_in_interval'] ? date('h:i A',strtotime($attendance['time_in_interval']))  :'' }}</td>
-                                    <td class="px-4 py-2 border-b">{{ $attendance['time_out'] ? date('h:i A',strtotime($attendance['time_out']))  :'' }}</td>
-                                    <td class="px-4 py-2 border-b">{{ $attendance['time_out_interval'] ? date('h:i A',strtotime($attendance['time_out_interval'])) :'' }}</td>
-                                    <td class="px-4 py-2 border-b">{{ $attendance['deduction']  ?? '' }}</td>
-                                    <td class="px-4 py-2 border-b">{{ $attendance['manhours']  ?? '' }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $attendance['time_in'] ? date('h:i A',strtotime($attendance['time_in'])) :'---------' }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $attendance['time_in_interval'] ? date('h:i A',strtotime($attendance['time_in_interval']))  :'---------' }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $attendance['time_out'] ? date('h:i A',strtotime($attendance['time_out']))  :'---------' }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $attendance['time_out_interval'] ? date('h:i A',strtotime($attendance['time_out_interval'])) :'---------' }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $attendance['deduction']  ?? '---------' }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $attendance['manhours']  ?? '---------' }}</td>
                                 </tr>
                             @endforeach
                             <tr>
