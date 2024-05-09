@@ -53,10 +53,12 @@ class Create extends Component
     public $levels;
     public $mandatory_deductions;
     public $non_mandatory_deductions;
+    public $cos_monthly_salary;
 
     public $password;
 
     public bool  $isJOSelected = false;
+    public bool  $isCOSSelected = false;
     public bool  $isWithHoldingTax = false;
     public bool $isAlreadyLogIn = false;
 
@@ -83,6 +85,16 @@ class Create extends Component
             // dd(   $this->salary_grade_step);
         }
     }
+    public function updatedCosMonthlySalary($value)
+    {
+        if ($value) {
+            $limit = 20833;
+            if ($value > $limit) {
+                $this->isWithHoldingTax = true;
+            }
+            // dd($this->isWithHoldingTax  );
+        }
+    }
     public function updatedSalaryGradeStep($value)
     {
         if ($value) {
@@ -102,6 +114,9 @@ class Create extends Component
             $category = Category::find($value);
             if ($category->category_code == "JO") {
                 $this->isJOSelected = true;
+            }
+            if ($category->category_code == "COS") {
+                $this->isCOSSelected = true;
             }
             // dd($category,$category->allowances, $this->isJOSelected);
             $this->allowances = Allowance::with('categories')->whereHas('categories', function ($query) use ($category) {
@@ -178,12 +193,15 @@ class Create extends Component
         ]);
 
         // Handle employee data
-        if ($this->isJOSelected) {
+
+        if ($this->isJOSelected || $this->isCOSSelected) {
             $employee->data()->create([
                 'department_id' => $this->department_id,
                 'designation_id' => $this->designation_id,
                 'category_id' => $this->category_id,
                 'level_id' => $this->level_id,
+                'cos_monthly_salary' => ($this->isCOSSelected) ? $this->cos_monthly_salary : null,
+                'holding_tax' => ($this->isCOSSelected) ? (($this->holding_tax) ? $this->holding_tax : null) : null,
             ]);
         } else {
             $employee->data()->create([
@@ -195,7 +213,8 @@ class Create extends Component
                 'sick_leave_points' => $this->sick_leave_points,
                 'holding_tax' => ($this->holding_tax) ? $this->holding_tax : null,
             ]);
-
+        }
+        if (!$this->isJOSelected) {
             if ($this->selectedAllowanceIds) {
                 $selectedAllowanceIds = array_keys(array_filter($this->selectedAllowanceIds, 'boolval')); // Get selected IDs
 
@@ -205,11 +224,9 @@ class Create extends Component
                 }
             }
 
-
             foreach ($this->getDeductions() as $value) {
                 $employee->deductions()->create(['deduction_id' => $value]);
             }
-
 
             if ($this->arraySelectedLoans) {
                 $loansData = [];
@@ -230,6 +247,7 @@ class Create extends Component
                 $employee->loans()->createMany($loansData);
             }
         }
+
 
         // Create activity
         createActivity('Create Employee', 'Employee ' . $employee->full_name . ' was created.', request()->getClientIp(true));

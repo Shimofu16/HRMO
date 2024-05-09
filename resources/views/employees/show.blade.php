@@ -54,7 +54,18 @@
             <h3><strong>Type of Employment: </strong>{{ $employee->data->category->category_name }}</h3>
             @if ($employee->data->salary_grade_id != null)
                 <h3><strong>Salary Grade: </strong> Salary Grade {{ $employee->data->salary_grade_id }}</h3>
-                <h3><strong>Salary Grade Step: </strong> {{ $employee->data->salary_grade_step }} -  {{ number_format($employee->data->salary_grade_step_amount, 2) }}</h3>
+                <h3><strong>Salary Grade Step: </strong> {{ $employee->data->salary_grade_step }} -
+                    {{ number_format($employee->data->monthly_salary, 2) }}</h3>
+            @else
+                @if ($employee->data->category->category_code == 'COS')
+                    <h3><strong>Monthly Salary: </strong>
+                        {{ number_format($employee->data->monthly_salary, 2) }}</h3>
+                @else
+                    <h3><strong>Level: </strong> {{ $employee->data->level->name }} -
+                        {{ number_format($employee->data->monthly_salary * 15, 2) }}</h3>
+                @endif
+            @endif
+            @if ($employee->data->category->category_code != 'JO')
                 <h3><strong>Sick Leave Points: </strong>{{ number_format($employee->data->sick_leave_points, 2) }}</h3>
                 <div class="my-3 border-b border-gray-100">
                     <h1 class="text-2xl font-bold">Deductions & Allowances</h1>
@@ -69,7 +80,7 @@
                             <span>{{ $allowance->allowance->allowance_name }} -
                                 {{ number_format($allowance->allowance->allowance_amount, 2) }}
                             </span>
-                                <br>
+                            <br>
                         @empty
                             <span class="text-center">No Allowance</span>
                         @endforelse
@@ -85,7 +96,7 @@
                         @endphp
                         @forelse ($employee->deductions as $deduction)
                             <span>{{ $deduction->deduction->deduction_name }} -
-                                {{ $deduction->deduction->deduction_amount_type == 'percentage' ? percentage($deduction->deduction->deduction_amount) : number_format($deduction->deduction->deduction_amount,2) }}</span>
+                                {{ $deduction->deduction->deduction_amount_type == 'percentage' ? percentage($deduction->deduction->deduction_amount) : number_format($deduction->deduction->deduction_amount, 2) }}</span>
                             <br>
                         @empty
                             <span class="text-center">No Deductions</span>
@@ -101,9 +112,6 @@
                         <span>Total: {{ number_format($total_deductions) }}</span>
                     </div>
                 @endif
-            @else
-                <h3><strong>Level: </strong> {{ $employee->data->level->name }} -
-                    {{ number_format($employee->data->level->amount, 2) }}</h3>
             @endif
 
             <div class="my-3 border-b border-gray-100">

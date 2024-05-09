@@ -55,6 +55,7 @@ return new class extends Migration
             $table->string('salary_grade_step')->nullable();
             $table->double('sick_leave_points')->nullable();
             $table->double('holding_tax')->nullable();
+            $table->double('cos_monthly_salary')->nullable();
             $table->timestamps();
         });
         Schema::create('seminar_attendances', function (Blueprint $table) {

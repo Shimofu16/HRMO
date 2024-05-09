@@ -108,7 +108,24 @@
                         <td class="px-4 py-2 border-b">{{ $attendance->time_in_status }}</td>
 
                         <td class="px-4 py-2 border-b">
-                            {{ $attendance->time_out ? date('h:i:s A', strtotime($attendance->time_out)) : '' }}
+                            @if ($attendance->time_out)
+                                @php
+                                    $timeOut = \Carbon\Carbon::parse($attendance->time_out);
+                                @endphp
+
+                                {{-- Check if $timeOut is 7:00am - 7:10am --}}
+                                @if ($timeOut->between(\Carbon\Carbon::parse('15:00'), \Carbon\Carbon::parse('15:10')))
+                                    3:00 PM
+                                @elseif ($timeOut->between(\Carbon\Carbon::parse('15:11'), \Carbon\Carbon::parse('15:40')))
+                                    3:30 PM
+                                @elseif ($timeOut->between(\Carbon\Carbon::parse('15:41'), \Carbon\Carbon::parse('16:10')))
+                                    4:00 PM
+                                @elseif ($timeOut->between(\Carbon\Carbon::parse('16:11'), \Carbon\Carbon::parse('16:40')))
+                                    3:30 PM
+                                @else
+                                    {{ $timeOut->format('h:i A') }}
+                                @endif
+                            @endif
                         </td>
                         <td class="px-4 py-2 border-b">
                             @if ($attendance->time_out)

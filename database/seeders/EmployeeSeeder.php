@@ -36,24 +36,44 @@ class EmployeeSeeder extends Seeder
             $department = Department::find($faker->numberBetween(1, Department::count()));
             $designation = Designation::find($faker->numberBetween(1, Designation::count()));
             $level = Level::find($faker->numberBetween(1, Level::count()));
-            if ($category->category_code == "JO") {
+            $holding_tax = null;
+            $limit = 20833;
+            $cos_monthly_salary = 0;
+            if ($category->category_code == "JO" || $category->category_code == "COS") {
+                $cos_monthly_salary = ($category->category_code == "COS") ? $faker->numberBetween(20000,40000) : null;
                 $employee->data()->create([
                     'department_id' => $department->id,
                     'designation_id' => $designation->id,
                     'category_id' => $category->id,
                     'level_id' => $level->id,
+                    'cos_monthly_salary' => $cos_monthly_salary
                 ]);
-            } else {
-                $salary_grade = SalaryGrade::find($faker->numberBetween(1, SalaryGrade::count()));
-                $salary_grade_step = 'Step ' . $faker->numberBetween(1, count($salary_grade->steps));
-                $holding_tax = null;
-                $limit = 20833;
-                foreach ($salary_grade->steps as $key => $salary_grade_steps) {
-                    if ($salary_grade_step == $salary_grade_steps['step'] && $salary_grade_steps['amount'] > $limit) {
+            } 
+            if($category->category_code != "JO") {
+                $sick_leave_points = $faker->randomFloat(null, 1, 15);
+                if ($category->category_code != "COS") {
+                    $salary_grade = SalaryGrade::find($faker->numberBetween(1, SalaryGrade::count()));
+                    $salary_grade_step = 'Step ' . $faker->numberBetween(1, count($salary_grade->steps));
+                    $employee->data()->create([
+                        'department_id' => $department->id,
+                        'designation_id' => $designation->id,
+                        'category_id' => $category->id,
+                        'salary_grade_id' => $salary_grade->id,
+                        'salary_grade_step' => $salary_grade_step,
+                        'sick_leave_points' => $sick_leave_points,
+                        'holding_tax' => ($holding_tax) ?? $holding_tax,
+                    ]);
+                    foreach ($salary_grade->steps as $key => $salary_grade_steps) {
+                        if ($salary_grade_step == $salary_grade_steps['step'] && $salary_grade_steps['amount'] > $limit) {
+                            $holding_tax = $faker->numberBetween(500,2000);
+                        }
+                    }  
+                }else{
+                    if ($cos_monthly_salary > $limit) {
                         $holding_tax = $faker->numberBetween(500,2000);
                     }
                 }
-                $sick_leave_points = $faker->randomFloat(null, 1, 15);
+           
                 // Generate a random number of allowances to select (between 1 and the total number)
                 $numAllowances = $faker->numberBetween(1, Allowance::count());
 
@@ -62,15 +82,7 @@ class EmployeeSeeder extends Seeder
 
                 // Query for allowances based on the selected IDs
                 $allowances = Allowance::whereIn('id', $allowanceIds)->get();
-                $employee->data()->create([
-                    'department_id' => $department->id,
-                    'designation_id' => $designation->id,
-                    'category_id' => $category->id,
-                    'salary_grade_id' => $salary_grade->id,
-                    'salary_grade_step' => $salary_grade_step,
-                    'sick_leave_points' => $sick_leave_points,
-                    'holding_tax' => ($holding_tax) ?? $holding_tax,
-                ]);
+                
 
 
                 // Attach selected allowances using their IDs

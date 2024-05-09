@@ -15,12 +15,13 @@
                     <div class="col-span-6 sm:col-span-2">
                         <label for="ordinance_number" class="block font-medium text-gray-700">Ordinance Item
                             Number</label>
-                        <input type="text" name="ordinance_number" id="ordinance_number" wire:model='ordinance_number'
-                            class="block w-full mt-1 rounded" required>
+                        <input type="text" name="ordinance_number" id="ordinance_number"
+                            wire:model='ordinance_number' class="block w-full mt-1 rounded" required>
                     </div>
                     @if (!$isJOSelected)
                         <div class="col-span-6 sm:col-span-2">
-                            <label for="sick_leave_points" class="block font-medium text-gray-700">Sick Leave Points</label>
+                            <label for="sick_leave_points" class="block font-medium text-gray-700">Sick Leave
+                                Points</label>
                             <input type="number" step="0.01" name="sick_leave_points" id="sick_leave_points"
                                 wire:model='sick_leave_points' class="block w-full mt-1 rounded" required>
                         </div>
@@ -66,7 +67,6 @@
                         </select>
                     </div>
                     @if ($category_id)
-                        <input type="hidden" name="isJOSelected" id="isJOSelected" value="{{ $isJOSelected }}">
                         @if ($isJOSelected)
                             <div class="col-span-6 sm:col-span-2">
                                 <label for="level_id" class="block font-medium text-gray-700">Classification</label>
@@ -78,14 +78,23 @@
                                     @endforeach
                                 </select>
                             </div>
+                        @elseif ($isCOSSelected)
+                            <div class="col-span-6 sm:col-span-2">
+                                <label for="cos_monthly_salary" class="block font-medium text-gray-700">Monthly
+                                    Salary</label>
+                                <input type="text" name="cos_monthly_salary" id="cos_monthly_salary"
+                                    wire:model.live='cos_monthly_salary' class="block w-full mt-1 rounded" required>
+                            </div>
                         @else
                             <div class="col-span-6 sm:col-span-2">
-                                <label for="salary_grade_id" class="block font-medium text-gray-700">Salary Grade</label>
+                                <label for="salary_grade_id" class="block font-medium text-gray-700">Salary
+                                    Grade</label>
                                 <select name="salary_grade_id" id="salary_grade_id" wire:model.live='salary_grade_id'
                                     class="block w-full mt-1 rounded form-select" required>
                                     <option value="" selected>--Please select here--</option>
                                     @foreach ($salary_grades as $salary_grade)
-                                        <option value="{{ $salary_grade->id }}" wire:key='{{ $salary_grade->id }}'>Salary
+                                        <option value="{{ $salary_grade->id }}" wire:key='{{ $salary_grade->id }}'>
+                                            Salary
                                             Grade
                                             {{ $salary_grade->id }}
                                         </option>
@@ -129,7 +138,7 @@
 
                 </div>
             </div>
-            @if (!$isJOSelected)
+            @if (!$isJOSelected || $isCOSSelected)
                 <div class="px-4 py-5 bg-white sm:p-6 shadow my-3">
                     <h1 class="text-xl font-bold">Salary</h1>
                     <hr class="mb-3">
@@ -227,11 +236,12 @@
                             <div class="grid grid-cols-6 gap-6 mt-3" wire:key="{{ $selected_loan->id }}">
 
                                 <div class="col-span-3 sm:col-span-2">
-                                    <input type="text" name="selected_loan_ids[]" value="{{ $selected_loan->id }}"
-                                        hidden>
+                                    <input type="text" name="selected_loan_ids[]"
+                                        value="{{ $selected_loan->id }}" hidden>
                                     <div>
                                         <label for="amount"
-                                            class="block font-medium text-gray-700">{{ $selected_loan->name }} </label>
+                                            class="block font-medium text-gray-700">{{ $selected_loan->name }}
+                                        </label>
                                         <div class="flex flex-col">
                                             <input type="number" name="amounts[]" id="amount" step="0.01"
                                                 class="block w-full mt-1 rounded form-input"

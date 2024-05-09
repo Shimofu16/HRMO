@@ -175,21 +175,18 @@ class EmployeeAttendanceController extends Controller
         $defaultTimeIn = Carbon::parse($timeIn);
         $tenAMThreshold = '10:00:00'; // 10:00am
         $timeOut = '17:00:00'; // 5pm
-
-        $deductionPerMinute =  0.02;
         $deduction =  0;
 
         if ($isTimeIn) {
             // Check if employee is on time, half-day or late
-            if ($current_time < $timeIn) {
+            if ($current_time < $timeIn || $current_time <= $timeIn) {
                 $status = 'On-time';
-            } elseif ($current_time > $tenAMThreshold) {
+            } elseif ($current_time >= $tenAMThreshold) {
                 $status = 'Half-Day';
             } elseif ($current_time > $timeIn) {
-
                 $status = 'Late';
                 $minute_late = $defaultTimeIn->diffInMinutes($current_time);
-                $deduction = $minute_late * $deductionPerMinute;
+                $deduction = $minute_late * getLateByMinutes($minute_late);
             }
 
             // Create attendance record for time in
@@ -203,20 +200,11 @@ class EmployeeAttendanceController extends Controller
         } else {
 
             $attendance = $employee->attendances()->whereDate('time_in', Carbon::today())->first();
-            if ($employee->data->category->category_code == "JO") {
-                $salary_grade = $employee->data->level->amount;
-                $results = $this->calculateSalary($salary_grade, $employee, $attendance, $timeIn, $timeOut, $current_time, true);
-            }else{
-                $salary_grade = $employee->data->salary_grade_step_amount;
-                $results = $this->calculateSalary($salary_grade, $employee, $attendance, $timeIn, $timeOut, $current_time, false);
-
-            }
-
+            $salary_grade = $employee->data->monthly_salary;
+            $results = calculateSalary($salary_grade, $employee, $attendance, $timeIn, $timeOut, $current_time, $employee->data->category->category_code == "JO");
 
             $status = $results['status'];
-
             $total_salary_for_today = $results['salary'];
-
             $hours = $results['hour_worked'];
 
             // Update the attendance record
@@ -234,8 +222,6 @@ class EmployeeAttendanceController extends Controller
         Storage::disk('public')->put($filePath, $image);
         return $status;
     }
-
-
     private function calculateSalary($salaryGrade, $employee, $attendance, $timeIn, $timeOut, $currentTime, $isJO)
     {
         // Default working days and hours
@@ -257,8 +243,7 @@ class EmployeeAttendanceController extends Controller
 
         // Calculate salary per hour (applicable only for non-JO employees)
         if (!$isJO) {
-            $subTotal = ($salaryGrade / 2) / ($workingDays * $requiredHoursWork);
-            $salaryPerHour = $subTotal;
+            $salaryPerHour = ($salaryGrade / 22) / $requiredHoursWork;
 
             // Sick leave handling (requires a `computeSickLeave` function)
             $sickLeave = $employee->data->sick_leave_points;
@@ -270,20 +255,28 @@ class EmployeeAttendanceController extends Controller
         // Determine attendance status and adjust salary (if applicable)
         $status = ($currentTime < $timeOut) ? 'Under-time' : 'Time-out';
         if (!$isJO && $currentTime < $timeOut) {
-            $diff = $defaultTimeOut->diffInMinutes($currentTime);
-            $notWorkedHour = $diff / 60;
-            $salaryPerHour -= $notWorkedHour;
+            $notWorkedHour = $defaultTimeOut->diffInHours($currentTime);
+            $salaryPerHour = $salaryPerHour - $notWorkedHour;
+
+            $sickLeave = $sickLeave - ($notWorkedHour * 1.25);
+            if ($sickLeave < 0) {
+                $sickLeave = 0;
+            }
         }
 
         // Calculate total salary for the day (applicable only for non-JO employees)
         if (!$isJO) {
             $totalSalaryForToday = max(0, $salaryPerHour * $hourWorked); // Ensure non-negative
             if ($attendance->time_in_status === 'Late') {
-                $totalSalaryForToday -= ($sickLeave === 0) ? $this->getLateByMinutes($minutesLate) : 0;
+                $totalSalaryForToday = $totalSalaryForToday - ($sickLeave === 0) ? $this->getLateByMinutes($minutesLate) : 0;
             }
             $employee->data->update(['sick_leave_points' => $sickLeave]);
         } else {
-            $totalSalaryForToday = $salaryGrade;
+            if ($attendance->time_in_status === 'Half-Day') {
+                $totalSalaryForToday = $salaryGrade / 2;
+            } else {
+                $totalSalaryForToday = $salaryGrade;
+            }
         }
 
         return [
