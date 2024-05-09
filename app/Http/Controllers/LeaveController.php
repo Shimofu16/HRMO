@@ -101,13 +101,9 @@ class LeaveController extends Controller
 
     public function takeAttendance($employee, $dates)
     {
-        if ($employee->data->category->category_code == "JO") {
-            $salaryGrade = $employee->data->level->amount;
-            $salary = $this->calculateSalary($salaryGrade, $employee, true);
-        } else {
-            $salaryGrade = $employee->data->salary_grade_step_amount;
-            $salary = $this->calculateSalary($salaryGrade, $employee, false);
-        }
+        $salary_grade = $employee->data->monthly_salary;
+        $salary = $this->calculateSalary($salary_grade, $employee->data->category->category_code == "JO");
+
         foreach ($dates as $key => $date) {
             $timeIn = $date . ' 08:00:00'; // Combine date with time in
             $timeOut = $date . ' 17:00:00'; // Combine date with time out
@@ -123,15 +119,13 @@ class LeaveController extends Controller
             ]);
         }
     }
-    public function calculateSalary($salaryGrade, $employee, $isJO)
+    public function calculateSalary($salaryGrade, $isJO)
     {
         if ($isJO) {
-            $totalSalaryForToday = $salaryGrade;
-        } else {
-            $salaryPerHour = ($salaryGrade / 2) / (15 * 8);
-            $totalSalaryForToday = max(0, $salaryPerHour * 8); // Ensure non-negative
+            return $salaryGrade;
         }
-        return    $totalSalaryForToday;
+        $salaryPerHour = ($salaryGrade / 22) / 8;
+        return max(0, $salaryPerHour * 8); // Ensure non-negative
     }
     /**
      * Remove the specified resource from storage.

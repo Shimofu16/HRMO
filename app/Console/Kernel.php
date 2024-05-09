@@ -25,6 +25,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('backup:run --only-db --filename=HRMO-DB-BACKUP-' . Carbon::now()->format('Y-m-d') . '.zip')->daily()->at('01:00');
 
         // run schedule every month
+        $schedule->command('employee:update-attendance')->everyMinute();
         $schedule->command('employee:slp')->monthly();
     }
 

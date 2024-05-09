@@ -25,9 +25,13 @@ use App\Http\Controllers\SalaryGradeStepController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SeminarController;
 use App\Models\Allowance;
+use App\Models\Attendance;
+use App\Models\Employee;
+use App\Models\FingerClock;
 use App\Models\Loan;
 use App\Models\SalaryGrade;
 use App\Models\SalaryGradeStep;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 /*
@@ -40,6 +44,7 @@ use Illuminate\Http\Request;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
 require __DIR__ . '/auth.php';
 
 Route::get('/', function () {
@@ -255,12 +260,98 @@ Route::middleware(['auth', 'verified'])->group(function () {
     ]);
 
     Route::get('{status}', [LeaveController::class, 'index'])->name('leave-requests.index');
-
 });
 Route::prefix('employee/attendance')->name('employee.attendance.')->middleware('guest')->controller(EmployeeAttendanceController::class)->group(function () {
     Route::get('',  'index')->name('index');
     Route::post('/store',  'store')->name('store');
 });
+
+
+Route::get('/update/attendances/bio', function () {
+    try {
+        $current_date = Carbon::now();
+        $employees = Employee::all();
+        foreach ($employees as $key => $employee) {
+            $temp_attendances = FingerClock::where('namee', $employee->employee_number)
+                ->latest()
+                ->get();
+                // dd($temp_attendances);
+                if (count($temp_attendances) > 0) {
+                    $attendances = collect();
+                    foreach ($temp_attendances as $key => $temp_attendance) {
+                        // dd($temp_attendance->date == $current_date->format('Y-m-d'), $temp_attendance->date, $current_date->format('Y-m-d'));
+                        if ($temp_attendance->date == $current_date->format('Y-m-d')) {
+                            $attendances[] = $temp_attendance;
+                        }
+                    }
+                    $time_in = '';
+                    $time_out = '';
+                    foreach ($attendances as $key => $attendance) {
+                        if ($attendance->time < '12:00:00') {
+                            $time_in = $attendance->time;
+                        } else {
+                            $time_out = $attendance->time;
+                        }
+                    }
+                    // Check if the employee has already timed in for the day
+                    $existingTimeIn = $employee->attendances()
+                        ->whereDate('time_in', $current_date)
+                        ->first();
+                    if (!$existingTimeIn) {
+                        $now_time_in = Carbon::parse($time_in);
+                        // dd($existingTimeIn,$time_in, $attendances);
+                        $current_time_time_in = $now_time_in->format('H:i:s');
+                        $timeIn = '08:00:00';
+                        $defaultTimeIn = Carbon::parse('08:00:00'); // 8am
+                        $tenAMThreshold = '10:00:00'; // 10:00am
+                        $timeOut = '17:00:00'; // 5pm
+                        $deduction =  0;
+        
+                        // Check if employee is on time, half-day or late
+                        if ($current_time_time_in < $timeIn || $current_time_time_in <= $timeIn) {
+                            $status = 'On-time';
+                        } elseif ($current_time_time_in >= $tenAMThreshold) {
+                            $status = 'Half-Day';
+                        } elseif ($current_time_time_in > $timeIn) {
+                            $status = 'Late';
+                            $minute_late = $defaultTimeIn->diffInMinutes($current_time_time_in);
+                            $deduction = $minute_late * getLateByMinutes($minute_late);
+                        }
+        
+                        // Create attendance record for time in
+                        $attendance =    Attendance::create([
+                            'employee_id' => $employee->id,
+                            'time_in_status' => $status,
+                            'time_in' => $now_time_in,
+                            'deduction' => $deduction,
+                        ]);
+                        $now_time_out = Carbon::parse($time_out);
+                        $current_time_time_out = $now_time_out->format('H:i:s');
+                        $salary_grade = $employee->data->monthly_salary;
+                        $results = calculateSalary($salary_grade, $employee, $attendance, $timeIn, $timeOut, $current_time_time_out, $employee->data->category->category_code == "JO");
+        
+                        $status = $results['status'];
+                        $total_salary_for_today = $results['salary'];
+                        $hours = $results['hour_worked'];
+        
+                        // Update the attendance record
+                        $attendance->update([
+                            'time_out_status' => $status,
+                            'time_out' => $now_time_out,
+                            'hours' => $hours,
+                            'salary' => $total_salary_for_today,
+                            'isPresent' => 1,
+                        ]);
+                    }
+                }
+            // dd($time_in, $time_out);
+        }
+        return back()->with('success', 'Successfully updated attendance');
+    } catch (\Throwable $th) {
+        return back()->with('error', $th->getMessage());
+    }
+})
+    ->name('update.attendances.bio');
 
 
 
@@ -283,5 +374,3 @@ Route::middleware('auth')->group(function () {
 Route::get('/test', function () {
     return view('attendances.employees.test');
 });
-
-

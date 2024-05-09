@@ -248,14 +248,22 @@ if (!function_exists('calculateSalary')) {
             }
         }
 
-        // Determine attendance status and adjust salary (if applicable)
-        $status = ($formattedTimeout < $formattedDefaultTimeOut) ? 'Under-time' : 'Time-out';
+        // Determine attendance status and adjust salary (if applicable)\
+        if ($formattedTimeout < $formattedDefaultTimeOut) {
+            if ($isJO || $employee->data->category->category_code == "COS") {
+                $status = 'Half-Day';
+            }else{
+                $status = 'Time-out';
+            }
+        }else{
+            $status = 'Time-out';
+        }
 
-        if (!$isJO && $status == 'Under-time') {
+        if (!$isJO && ($status == 'Under-time' || $status == 'Half-Day')) {
             $notWorkedHour = $defaultTimeOut->diffInHours($attendanceTimeOut);
             $salaryPerHour = $salaryPerHour - $notWorkedHour;
 
-            $sickLeave = $sickLeave - ($notWorkedHour * 1.25);
+            $sickLeave = $sickLeave - ($notWorkedHour * .125);
             if ($sickLeave < 0) {
                 $sickLeave = 0;
             }
