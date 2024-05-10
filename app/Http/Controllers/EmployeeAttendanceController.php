@@ -186,7 +186,7 @@ class EmployeeAttendanceController extends Controller
             } elseif ($current_time > $timeIn) {
                 $status = 'Late';
                 $minute_late = $defaultTimeIn->diffInMinutes($current_time);
-                $deduction = $minute_late * getLateByMinutes($minute_late);
+                $deduction = getLateByMinutes($minute_late);
             }
 
             // Create attendance record for time in
@@ -195,7 +195,7 @@ class EmployeeAttendanceController extends Controller
                 'time_in_status' => $status,
                 'time_in' => $now,
                 'time_in_image' => $filePath,
-                'deduction' => $deduction,
+                'time_in_deduction' => $deduction,
             ]);
         } else {
 
@@ -206,6 +206,7 @@ class EmployeeAttendanceController extends Controller
             $status = $results['status'];
             $total_salary_for_today = $results['salary'];
             $hours = $results['hour_worked'];
+            $deduction = $results['deduction'];
 
             // Update the attendance record
             $attendance->update([
@@ -215,6 +216,7 @@ class EmployeeAttendanceController extends Controller
                 'salary' => $total_salary_for_today,
                 'time_out_image' => $filePath,
                 'isPresent' => 1,
+                'time_out_deduction' => $deduction,
             ]);
         }
 

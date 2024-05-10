@@ -61,7 +61,7 @@ class AttendanceSeeder extends Seeder
                     } elseif ($now > $timeIn) {
                         $timeInStatus = 'Late';
                         $minute_late = $defaultTimeIn->diffInMinutes($now);
-                        $deduction = $minute_late * getLateByMinutes($minute_late);
+                        $deduction = getLateByMinutes($minute_late);
                     }
 
 
@@ -71,7 +71,7 @@ class AttendanceSeeder extends Seeder
                         'employee_id' => $employee->id,
                         'time_in_status' => $timeInStatus,
                         'time_in' => $date,
-                        'deduction' => $deduction,
+                        'time_in_deduction' => $deduction,
                     ]);
                     $results = calculateSalary($employee->data->monthly_salary, $employee, $attendance, '08:00:00', '17:00:00', $timeOut, $employee->data->category->category_code == "JO");
                     $status = $results['status'];
@@ -82,6 +82,7 @@ class AttendanceSeeder extends Seeder
                     $totalSalaryForToday = $results['salary'];
 
                     $hoursWorked = $results['hour_worked'];
+                    $deduction = $results['deduction'];
 
                     // Update the attendance record
                     $attendance->update([
@@ -90,7 +91,9 @@ class AttendanceSeeder extends Seeder
                         'hours' => $hoursWorked,
                         'salary' => $totalSalaryForToday,
                         'isPresent' => 1,
+                        'time_out_deduction' => $deduction,
                     ]);
+
 
                     $date->addDay(); // Move to the next day
                 }

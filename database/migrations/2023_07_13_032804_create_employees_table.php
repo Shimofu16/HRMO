@@ -81,11 +81,12 @@ return new class extends Migration
             $table->dateTime('time_in')->nullable();
             $table->string('time_in_status')->nullable();
             $table->string('time_in_image')->nullable();
+            $table->double('time_in_deduction')->nullable();
             $table->dateTime('time_out')->nullable();
             $table->string('time_out_status')->nullable();
             $table->string('time_out_image')->nullable();
+            $table->double('time_out_deduction')->nullable();
             $table->double('salary')->nullable();
-            $table->double('deduction')->nullable();
             $table->bigInteger('hours')->nullable();
             $table->dateTime('absent_at')->nullable();
             $table->boolean('isPresent')->default(false);
