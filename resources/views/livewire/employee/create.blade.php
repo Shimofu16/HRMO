@@ -44,6 +44,7 @@
                             class="block w-full mt-1 rounded" required>
                     </div>
 
+
                     <div class="col-span-6 sm:col-span-2">
                         <label for="category_id" class="block font-medium text-gray-700">Type of Employment</label>
                         <select name="category_id" id="category_id" wire:model.live='category_id'
@@ -135,7 +136,11 @@
                             @endforeach
                         </select>
                     </div>
-
+                    <div class="col-span-6 sm:col-span-2">
+                        <label for="employee_photo" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Picture</label>
+                        <input type="file" name="employee_photo" id="employee_photo" wire:model='employee_photo'
+                            class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" required>
+                    </div>
                 </div>
             </div>
             @if (!$isJOSelected || $isCOSSelected)

@@ -306,18 +306,20 @@ Route::get('/update/attendances/bio', function () {
                         $tenAMThreshold = '10:00:00'; // 10:00am
                         $timeOut = '17:00:00'; // 5pm
                         $deduction =  0;
-        
+
                         // Check if employee is on time, half-day or late
                         if ($current_time_time_in < $timeIn || $current_time_time_in <= $timeIn) {
                             $status = 'On-time';
                         } elseif ($current_time_time_in >= $tenAMThreshold) {
                             $status = 'Half-Day';
+                            $minute_late = $defaultTimeIn->diffInMinutes(Carbon::parse($current_time_time_in));
+                            $deduction = getLateByMinutes($minute_late);
                         } elseif ($current_time_time_in > $timeIn) {
                             $status = 'Late';
-                            $minute_late = $defaultTimeIn->diffInMinutes($current_time_time_in);
-                            $deduction = $minute_late * getLateByMinutes($minute_late);
+                            $minute_late = $defaultTimeIn->diffInMinutes(Carbon::parse($current_time_time_in));
+                            $deduction = getLateByMinutes($minute_late);
                         }
-        
+
                         // Create attendance record for time in
                         $attendance =    Attendance::create([
                             'employee_id' => $employee->id,
@@ -329,11 +331,11 @@ Route::get('/update/attendances/bio', function () {
                         $current_time_time_out = $now_time_out->format('H:i:s');
                         $salary_grade = $employee->data->monthly_salary;
                         $results = calculateSalary($salary_grade, $employee, $attendance, $timeIn, $timeOut, $current_time_time_out, $employee->data->category->category_code == "JO");
-        
+
                         $status = $results['status'];
                         $total_salary_for_today = $results['salary'];
                         $hours = $results['hour_worked'];
-        
+
                         // Update the attendance record
                         $attendance->update([
                             'time_out_status' => $status,

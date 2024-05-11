@@ -70,42 +70,12 @@
                         <td class="px-4 py-2 border-b">{{ $loop->iteration }}</td>
                         <td class="px-4 py-2 border-b">{{ $attendance->employee->full_name }}</td>
                         <td class="px-4 py-2 border-b">
-                            {{--
-                                intervals
-                                7:00am - 7:10am = 7:00am,
-
-                                7:11am - 7:40 = 7:30am,
-
-                                7:41am - 8:10am = 8:00am,
-                                --}}
-                            @php
-                                $timeIn = \Carbon\Carbon::parse($attendance->time_in);
-                            @endphp
-
-                            {{-- Check if $timeIn is 7:00am - 7:10am --}}
-                            @if ($timeIn->between(\Carbon\Carbon::parse('7:00'), \Carbon\Carbon::parse('7:10')))
-                                7:00 AM
-                            @elseif ($timeIn->between(\Carbon\Carbon::parse('7:11'), \Carbon\Carbon::parse('7:40')))
-                                7:30 AM
-                            @elseif ($timeIn->between(\Carbon\Carbon::parse('7:41'), \Carbon\Carbon::parse('8:10')))
-                                8:00 AM
-                            @else
-                                {{ $timeIn->format('h:i A') }}
-                            @endif
+                            {{ getInterval($attendance->time_in, true, true) }}
                         </td>
                         <td class="px-4 py-2 border-b">
                             {{-- check if late --}}
                             @if ($attendance->time_in_status == 'Late')
-                                @php
-                                    $timeIn = \Carbon\Carbon::parse($attendance->time_in);
-                                    $now = \Carbon\Carbon::parse('08:00:00');
-                                    $late = $now->diffInMinutes($timeIn);
-                                @endphp
-                                {{-- @if ($late >= 60)
-                                    {{ floor($late / 60) }} hr {{ $late % 60 }} mins
-                                @else
-                                @endif --}}
-                                {{ $late }} mins
+                                {{ getLate($attendance->time_in, true) }}
                             @endif
                         </td>
                         <td class="px-4 py-2 border-b">
@@ -116,22 +86,7 @@
 
                         <td class="px-4 py-2 border-b">
                             @if ($attendance->time_out)
-                                @php
-                                    $timeOut = \Carbon\Carbon::parse($attendance->time_out);
-                                @endphp
-
-                                {{-- Check if $timeOut is 7:00am - 7:10am --}}
-                                @if ($timeOut->between(\Carbon\Carbon::parse('15:00'), \Carbon\Carbon::parse('15:10')))
-                                    3:00 PM
-                                @elseif ($timeOut->between(\Carbon\Carbon::parse('15:11'), \Carbon\Carbon::parse('15:40')))
-                                    3:30 PM
-                                @elseif ($timeOut->between(\Carbon\Carbon::parse('15:41'), \Carbon\Carbon::parse('16:10')))
-                                    4:00 PM
-                                @elseif ($timeOut->between(\Carbon\Carbon::parse('16:11'), \Carbon\Carbon::parse('16:40')))
-                                    3:30 PM
-                                @else
-                                    {{ $timeOut->format('h:i A') }}
-                                @endif
+                                {{ getInterval($attendance->time_in, false, true) }}
                             @endif
                         </td>
                         <td class="px-4 py-2 border-b">

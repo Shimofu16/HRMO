@@ -36,8 +36,10 @@ class AttendanceSeeder extends Seeder
         $tenAMThreshold = '10:00:00'; // 10:00am
         $deduction =  0;
         for ($day = 1; $day <= $daysInMonth; $day++) {
-            $date = Carbon::create($year, $month, $day, rand(7, 10), 0, 0); // Random time in between 7 AM and 10 AM
-            $timeOut = $date->copy()->addHours(rand(8, 11)); // Random time out between 3 PM to 6 PM
+            $randomTimeInHour = rand(7, 11);
+            $randomTimeOutHour = ($randomTimeInHour > 9) ? rand(6, 9) : rand(7, 9) ; ;
+            $date = Carbon::create($year, $month, $day,$randomTimeInHour ,rand(20, 40), 0); // Random time in between 7 AM and 11 AM
+            $timeOut = $date->copy()->addHours($randomTimeOutHour); // Random time out between 3 PM to 6 PM
             if (random_int(0, 1) ==  1) {
 
                 // Check if the day is a weekend and the employee is not "JO"
@@ -58,9 +60,11 @@ class AttendanceSeeder extends Seeder
                         $timeInStatus = 'On-time';
                     } elseif ($now >= $tenAMThreshold) {
                         $timeInStatus = 'Half-Day';
+                        $minute_late = $defaultTimeIn->diffInMinutes(Carbon::parse($now));
+                        $deduction = getLateByMinutes($minute_late);
                     } elseif ($now > $timeIn) {
                         $timeInStatus = 'Late';
-                        $minute_late = $defaultTimeIn->diffInMinutes($now);
+                        $minute_late = $defaultTimeIn->diffInMinutes(Carbon::parse($now));
                         $deduction = getLateByMinutes($minute_late);
                     }
 

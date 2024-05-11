@@ -15,12 +15,15 @@ use App\Models\Employee;
 use App\Models\Level;
 use App\Models\SalaryGradeStep;
 use Illuminate\Support\Facades\Hash;
+use Livewire\WithFileUploads;
 
 class Create extends Component
 {
+    use WithFileUploads;
     public $employee;
 
     public $employee_number;
+    public $employee_photo;
     public $ordinance_number;
     public $sick_leave_points;
     public $first_name;
@@ -156,6 +159,7 @@ class Create extends Component
     private function validateData()
     {
         $this->validate([
+            'photo' => 'image|max:1024',
             'employee_number' => ['required', 'unique:employees,employee_number'],
             'ordinance_number' => ['required', 'unique:employees,ordinance_number'],
         ]);
@@ -176,16 +180,13 @@ class Create extends Component
     public function save()
     {
 
-        // dd(
-        //     array_keys(array_filter($this->selectedAllowanceIds, 'boolval')),
-        //  $this->getDeductions(),
-        //  $this->arraySelectedLoans
-
-        // );
+        $file_name = md5($this->employee_photo . microtime()).'.'.$this->employee_photo->extension();
+        $this->employee_photo->storeAs('public/photos', $file_name);
 
         // Create a new employee instance
         $employee = Employee::create([
             'employee_number' => $this->employee_number,
+            'employee_photo' => $file_name,
             'ordinance_number' => $this->ordinance_number,
             'first_name' => $this->first_name,
             'middle_name' => $this->middle_name,

@@ -183,9 +183,11 @@ class EmployeeAttendanceController extends Controller
                 $status = 'On-time';
             } elseif ($current_time >= $tenAMThreshold) {
                 $status = 'Half-Day';
+                $minute_late = $defaultTimeIn->diffInMinutes(Carbon::parse($current_time));
+                $deduction = getLateByMinutes($minute_late);
             } elseif ($current_time > $timeIn) {
                 $status = 'Late';
-                $minute_late = $defaultTimeIn->diffInMinutes($current_time);
+                $minute_late = $defaultTimeIn->diffInMinutes(Carbon::parse($current_time));
                 $deduction = getLateByMinutes($minute_late);
             }
 

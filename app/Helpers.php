@@ -36,7 +36,6 @@ if (!function_exists('createActivity')) {
         }
     }
 }
-
 if (!function_exists('toCode')) {
     function toCode($text)
     {
@@ -78,7 +77,6 @@ if (!function_exists('getLoan')) {
         return $loan / ($duration * 2);
     }
 }
-
 if (!function_exists('getSalaryGradesTotalSteps')) {
 
     function getSalaryGradesTotalSteps()
@@ -96,7 +94,85 @@ if (!function_exists('getSalaryGradesTotalSteps')) {
         return $total_steps;
     }
 }
+if (!function_exists('getLate')) {
+    function getLate($time, $isFormatted)
+    {
+        $timeIn = Carbon::parse(date('H:i:s', strtotime($time)));
+        $now = Carbon::parse('08:00:00');
+        $minute_late = $now->diffInMinutes($timeIn);
+        $late = '';
 
+        if ($isFormatted) {
+            if ($minute_late >= 60) {
+                return floor($minute_late / 60) . " hr " . ($minute_late % 60) . " mins";
+            } else {
+                return $minute_late % 60 . " mins";
+            }
+        }
+
+        return $minute_late % 60 . " mins";
+    }
+}
+if (!function_exists('getInterval')) {
+
+    function getInterval($time, $isTimeIn, $isFormatted)
+    {
+        $time = Carbon::parse(date('H:i:s', strtotime($time)));
+        // dd($time);
+        if ($isTimeIn) {
+            if ($time->between(Carbon::parse('7:00:00'), Carbon::parse('7:10:00'))) {
+                $interval = Carbon::parse('7:00:00');
+            } elseif ($time->between(Carbon::parse('7:11:00'), Carbon::parse('7:40:00'))) {
+                $interval = Carbon::parse('7:30:00');
+            } elseif ($time->between(Carbon::parse('7:41:00'), Carbon::parse('8:10:00'))) {
+                $interval = Carbon::parse('8:00:00');
+            } elseif ($time->between(Carbon::parse('8:11:00'), Carbon::parse('8:40:00'))) {
+                $interval = Carbon::parse('8:30:00');
+            } elseif ($time->between(Carbon::parse('8:41:00'), Carbon::parse('9:10:00'))) {
+                $interval = Carbon::parse('9:00:00');
+            } elseif ($time->between(Carbon::parse('9:11:00'), Carbon::parse('9:40:00'))) {
+                $interval = Carbon::parse('9:30:00');
+            } elseif ($time->between(Carbon::parse('9:41:00'), Carbon::parse('10:10:00'))) {
+                $interval = Carbon::parse('10:00:00');
+            } elseif ($time->between(Carbon::parse('10:11:00'), Carbon::parse('10:40:00'))) {
+                $interval = Carbon::parse('10:30:00');
+            } elseif ($time->between(Carbon::parse('10:41:00'), Carbon::parse('11:10:00'))) {
+                $interval = Carbon::parse('11:00:00');
+            } elseif ($time->between(Carbon::parse('11:11:00'), Carbon::parse('11:40:00'))) {
+                $interval = Carbon::parse('11:30:00');
+            } else {
+                $interval = Carbon::parse('12:00:00');
+            }
+        } else {
+            if ($time->between(Carbon::parse('13:00:00'), Carbon::parse('13:10:00'))) {
+                $interval = Carbon::parse('13:00:00');
+            } elseif ($time->between(Carbon::parse('13:11:00'), Carbon::parse('13:40:00'))) {
+                $interval = Carbon::parse('13:30:00');
+            } elseif ($time->between(Carbon::parse('13:41:00'), Carbon::parse('14:10:00'))) {
+                $interval = Carbon::parse('14:00:00');
+            } elseif ($time->between(Carbon::parse('14:11:00'), Carbon::parse('14:40:00'))) {
+                $interval = Carbon::parse('14:30:00');
+            } elseif ($time->between(Carbon::parse('14:41:00'), Carbon::parse('15:10:00'))) {
+                $interval = Carbon::parse('15:00:00');
+            } elseif ($time->between(Carbon::parse('15:11:00'), Carbon::parse('15:40:00'))) {
+                $interval = Carbon::parse('15:30:00');
+            } elseif ($time->between(Carbon::parse('15:41:00'), Carbon::parse('16:10:00'))) {
+                $interval = Carbon::parse('16:00:00');
+            } elseif ($time->between(Carbon::parse('16:11:00'), Carbon::parse('16:40:00'))) {
+                $interval = Carbon::parse('16:30:00');
+            } elseif ($time->between(Carbon::parse('16:41:00'), Carbon::parse('17:10:00'))) {
+                $interval = Carbon::parse('17:00:00');
+            } else {
+                $interval = Carbon::parse('17:00:00');
+            }
+        }
+
+        if ($isFormatted) {
+            return $interval->format('h:i:s A');
+        }
+        return $interval;
+    }
+}
 if (!function_exists('attendanceCount')) {
 
     function attendanceCount($employee, $payroll, $from, $to)
@@ -137,33 +213,10 @@ if (!function_exists('attendanceCount')) {
             // Consider weekends and employee category
             $isWeekend = (Carbon::parse($payroll['month'] . '-' . $day))->isWeekend();
             if ($attendance) {
-                $timeIn = Carbon::parse($attendance->time_in);
+                
                 $manhours = $attendance->hours;
-                $timeInInterval = '';
-                $timeOutInterval ='';
-
-                // Define time in interval based on different scenarios
-                if ($timeIn->between(Carbon::parse('6:59'), Carbon::parse('7:11'))) {
-                    $timeInInterval = Carbon::parse('7:00');
-                } elseif ($timeIn->between(Carbon::parse('7:11'), Carbon::parse('7:40'))) {
-                    $timeInInterval = Carbon::parse('7:30');
-                }elseif ($timeIn->between(Carbon::parse('7:40'), Carbon::parse('8:11'))) {
-                    $timeInInterval = Carbon::parse('8:00');
-                } else {
-                    $timeInInterval =  Carbon::parse('8:00');
-                }
-
-                if ($timeIn->between(Carbon::parse('15:00'), Carbon::parse('15:10'))) {
-                    $timeOutInterval = Carbon::parse('15:00');
-                } elseif ($timeIn->between(Carbon::parse('15:11'), Carbon::parse('15:40'))) {
-                    $timeOutInterval = Carbon::parse('15:30');
-                }elseif ($timeIn->between(Carbon::parse('15:40'), Carbon::parse('16:11'))) {
-                    $timeOutInterval = Carbon::parse('16:00');
-                }elseif ($timeIn->between(Carbon::parse('16:11'), Carbon::parse('16:40'))) {
-                    $timeOutInterval = Carbon::parse('16:30');
-                } else {
-                    $timeOutInterval = Carbon::parse('17:00');
-                }
+                $timeInInterval = getInterval($attendance->time_in, true,true);
+                $timeOutInterval = getInterval($attendance->time_out, false,true);
 
                 if ($isWeekend && $employee->data->category->category_code !== 'JO') {
                     $attendances[$i] = [
@@ -296,8 +349,8 @@ if (!function_exists('calculateSalary')) {
         if (!$isJO && $formattedTimeout < $formattedDefaultTimeOut) {
             $notWorkedHour = $defaultTimeOut->diffInHours($attendanceTimeOut);
             $salaryPerHour = $salaryPerHour - $notWorkedHour;
-            $deduction = .125;
-            $sickLeave = $sickLeave - ($notWorkedHour * $deduction);
+            $deduction =  $notWorkedHour * .125;
+            $sickLeave = $sickLeave - $deduction;
             if ($sickLeave < 0) {
                 $sickLeave = 0;
             }
@@ -348,14 +401,28 @@ if (!function_exists('getLateByMinutes')) {
     function getLateByMinutes($minute_late)
     {
         $maxMinutesPerHour = 60;
-        $equivalentPerMinute = 0.025; // Equivalent per minute based on your logic (0.125 for whole hour)
+        $equivalentPerHour = 0.125; // Equivalent per minute based on your logic (0.125 for whole hour)
+        $equivalentMinutes = [
+            1 => 0.002, 2 => 0.004, 3 => 0.006, 4 => 0.008, 5 => 0.010,
+            6 => 0.012, 7 => 0.014, 8 => 0.017, 9 => 0.019, 10 => 0.021,
+            11 => 0.023, 12 => 0.025, 13 => 0.027, 14 => 0.029, 15 => 0.031,
+            16 => 0.033, 17 => 0.035, 18 => 0.037, 19 => 0.040, 20 => 0.042,
+            21 => 0.044, 22 => 0.046, 23 => 0.048, 24 => 0.050, 25 => 0.052,
+            26 => 0.054, 27 => 0.056, 28 => 0.058, 29 => 0.060, 30 => 0.062,
+            31 => 0.065, 32 => 0.067, 33 => 0.069, 34 => 0.071, 35 => 0.073,
+            36 => 0.075, 37 => 0.077, 38 => 0.079, 39 => 0.081, 40 => 0.083,
+            41 => 0.085, 42 => 0.087, 43 => 0.090, 44 => 0.092, 45 => 0.094,
+            46 => 0.096, 47 => 0.098, 48 => 0.100, 49 => 0.102, 50 => 0.104,
+            51 => 0.106, 52 => 0.108, 53 => 0.110, 54 => 0.112, 55 => 0.114,
+            56 => 0.117, 57 => 0.119, 58 => 0.121, 59 => 0.123, 60 => 0.125
+        ];
 
         $hourLate = (int) floor($minute_late / $maxMinutesPerHour);
         $remainingMinutes = $minute_late % $maxMinutesPerHour;
 
-        $equivalent = $hourLate * $equivalentPerMinute;
+        $equivalent = $hourLate * $equivalentPerHour;
         if ($remainingMinutes > 0) {
-            $equivalent += $equivalentPerMinute * $remainingMinutes;
+            $equivalent += $equivalentMinutes[$remainingMinutes];
         }
 
         return $equivalent;
