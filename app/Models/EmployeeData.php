@@ -29,10 +29,12 @@ class EmployeeData extends Model
     public function getMonthlySalaryAttribute()
     {
         if ($this->category->category_code == 'JO') {
-            return $this->level->amount;
+            $daily = $this->level->amount;
+            // $days = Carbon::createFromDate($year,  date('m', strtotime($month)), 1)->daysInMonth;
+            return $daily / 8;
         }
         if ($this->category->category_code == 'COS') {
-            return $this->cos_monthly_salary;
+            return ($this->cos_monthly_salary * 22) / 8;
         }
         if ($this->salary_grade_id) {
             foreach ($this->salaryGrade->steps as $key => $step) {
@@ -76,8 +78,8 @@ class EmployeeData extends Model
         }
         if ($this->category->category_code == "JO") {
             $daily = $this->level->amount;
-            $days = Carbon::createFromDate($year,  date('m', strtotime($month)), 1)->daysInMonth;
-            return $daily * $days;
+            // $days = Carbon::createFromDate($year,  date('m', strtotime($month)), 1)->daysInMonth;
+            return ($daily * 22) / 8;
         }
         return $this->salary_grade_step_amount;
     }

@@ -14,10 +14,10 @@
                 <h1 class="text-2xl font-bold text-center">Actions</h1>
             </div>
             <div class="flex flex-col space-y-2">
-                <a href="#"
+                {{-- <a href="#"
                     class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
                     Edit
-                </a>
+                </a> --}}
 
                 <form class="flex flex-col" action="{{ route('employees.destroy', $employee) }}" method="POST">
                     @csrf
@@ -48,7 +48,7 @@
             <div class="flex">
                 <div class="mr-3">
                     <img src="{{ asset('storage/photos/' . $employee->employee_photo) }}" class="rounded"
-                        style="height: 150px; width: 150px;">
+                        style="height: 170px; width: 170px;">
                 </div>
                 <div>
                     <h3><strong>Employee No.: </strong>{{ $employee->employee_number }}</h3>
@@ -58,24 +58,21 @@
                     <h3><strong>Department: </strong>{{ $employee->data->department->dep_name }}</h3>
                     <h3><strong>Designation: </strong>{{ $employee->data->designation->designation_name }}</h3>
                     <h3><strong>Type of Employment: </strong>{{ $employee->data->category->category_name }}</h3>
-                    @if ($employee->data->salary_grade_id != null)
-                        <h3><strong>Salary Grade: </strong> Salary Grade {{ $employee->data->salary_grade_id }}</h3>
-                        <h3><strong>Salary Grade Step: </strong> {{ $employee->data->salary_grade_step }} -
-                            {{ number_format($employee->data->monthly_salary, 2) }}</h3>
+                    @if ($employee->data->category->category_code == 'JO')
+                        <h3><strong>Level: </strong> {{ $employee->data->level->name }}</h3>
                     @else
-                        @if ($employee->data->category->category_code == 'COS')
-                            <h3><strong>Monthly Salary: </strong>
-                                {{ number_format($employee->data->monthly_salary, 2) }}</h3>
-                        @else
-                            <h3><strong>Level: </strong> {{ $employee->data->level->name }} -
-                                {{ number_format($employee->data->monthly_salary * 15, 2) }}</h3>
-                        @endif
+                        <h3><strong>Salary Grade: </strong> Salary Grade {{ $employee->data->salary_grade_id }}</h3>
+                        <h3><strong>Salary Grade Step: </strong> {{ $employee->data->salary_grade_step }} </h3>
+                    @endif
+                    <h3><strong>Monthly Salary: </strong>
+                        {{ number_format($employee->data->monthly_salary, 2) }}</h3>
+                    @if ($employee->data->category->category_code != 'JO')
+                        <h3><strong>Sick Leave Points: </strong>{{ number_format($employee->data->sick_leave_points, 2) }}</h3>
                     @endif
                 </div>
             </div>
 
             @if ($employee->data->category->category_code != 'JO')
-                <h3><strong>Sick Leave Points: </strong>{{ number_format($employee->data->sick_leave_points, 2) }}</h3>
                 <div class="my-3 border-b border-gray-100">
                     <h1 class="text-2xl font-bold">Deductions & Allowances</h1>
                 </div>
@@ -126,12 +123,35 @@
             <div class="my-3 border-b border-gray-100">
                 <h1 class="text-2xl font-bold">Other Information</h1>
             </div>
-            <h2><strong>Loan - (amount of total Loan)</strong></h2> <br>
-            <h3 style="margin-left: 4rem"><strong>(paid amount)</strong> ---------- (date mm/dd/yyyy)</h3>
-            <h3 style="margin-left: 4rem"><strong>(paid amount)</strong> ---------- (date mm/dd/yyyy)</h3>
-            <h3 style="margin-left: 4rem"><strong>(paid amount)</strong> ---------- (date mm/dd/yyyy)</h3>
-            <h3 style="margin-left: 4rem"><strong>2,500.00</strong> ---------- 01/15/2024</h3> <br>
-            <h3><strong>Balance:</strong></h3>
+            @foreach ($employee->loans as $loan)
+                @php
+                    $balnce = 0;
+                    $total_loan = 0;
+                    $total_amount_paid = 0;
+                    $loan_balance = 0;
+                    $ranges = count($loan->ranges);
+                    $total_loan = $loan->amount * $loan->duration;
+                @endphp
+                <h2 class="mb-1"><strong>{{ $loan->loan->name }} - {{ number_format($total_loan, 2) }}</strong></h2>
+                @foreach (getMonthsFromAttendance($employee) as $month)
+                    @if ($total_amount_paid <= $total_loan)
+                        @php
+                            $total_amount_paid = $total_amount_paid + $loan->amount * $ranges;
+                        @endphp
+                        <h3>
+                            <strong>{{ number_format($loan->amount * $ranges, 2) }}</strong>----------
+                            {{ date('m', strtotime($month->earliest_time_in)) }}/{{ ($ranges > 1) ? 30 : 15 ; }}/{{ date('Y', strtotime($month->earliest_time_in)) }}
+                        </h3>
+                    @endif
+                @endforeach
+                @php
+                    $balance = $total_loan - $total_amount_paid;
+                    if ($balance < 0) {
+                        $balance = 0;
+                    }
+                @endphp
+                <h3 class="mb-3"><strong>Balance: {{ number_format($balance) }}</strong></h3>
+            @endforeach
         </div>
 
 

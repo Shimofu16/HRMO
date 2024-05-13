@@ -92,7 +92,6 @@ class Employee extends Model
     public function computeAllowance($range = null)
     {
         $totalAllowance = 0;
-
         // If no specific range provided, compute allowance for all range
         if (!$range) {
             foreach ($this->allowances as $allowance) {
@@ -102,8 +101,9 @@ class Employee extends Model
             // Compute allowance for specific dates
             foreach ($this->allowances as $allowance) {
                 foreach ($allowance->allowance->allowance_ranges as $key => $allowance_range) {
+                    
                     if ($range == $allowance_range){
-                        return $allowance->allowance->allowance_amount;
+                        $totalAllowance = $totalAllowance + $allowance->allowance->allowance_amount;
                     }
                 }
             }
@@ -123,7 +123,7 @@ class Employee extends Model
                 if ($deduction->deduction->deduction_amount_type == 'percentage') {
                     $amount = $amount / 100;
                     if ($deduction->deduction->deduction_name == 'Phil Health') {
-                        $amount = ($this->data->salary_grade_step_amount / 2) * .02;
+                        $amount = ($this->data->monthly_salary / 2) * .02;
                     }
                 }
                 $totalDeduction += $amount;
@@ -136,7 +136,7 @@ class Employee extends Model
                     if ($deduction->deduction->deduction_amount_type == 'percentage') {
                         $amount = $amount / 100;
                         if ($deduction->deduction->deduction_name == 'Phil Health') {
-                            $amount = ($this->data->salary_grade_step_amount / 2) * .02;
+                            $amount = ($this->data->monthly_salary / 2) * .02;
                         }
                     }
                     $totalDeduction += $amount;
@@ -194,7 +194,7 @@ class Employee extends Model
                 if ($deduction->deduction->deduction_amount_type == 'percentage') {
                     $amount = $amount / 100;
                     if ($deduction->deduction->deduction_name == 'Phil Health') {
-                        $amount = ($this->data->salary_grade_step_amount / 2) * .02;
+                        $amount = ($this->data->monthly_salary / 2) * .02;
                     }
                 }
                 return $amount;

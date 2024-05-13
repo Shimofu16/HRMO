@@ -292,6 +292,9 @@
                                 @endforeach
                                 @php
                                     $netpay = $totalAmountEarned - $totalDeduction;
+                                    if ($netpay < 0) {
+                                        $netpay = 0;
+                                    }
                                 @endphp
                                 <tr>
                                     <td>

@@ -77,6 +77,19 @@ if (!function_exists('getLoan')) {
         return $loan / ($duration * 2);
     }
 }
+if (!function_exists('getMonthsFromAttendance')) {
+    function getMonthsFromAttendance($employee)
+    {
+
+        return Attendance::selectRaw('MONTH(time_in) as month, MIN(time_in) as earliest_time_in')
+            ->where('isPresent', 1)
+            ->where('employee_id', $employee->id)
+            ->whereYear('time_in', now()->format('Y'))
+            ->groupByRaw('MONTH(time_in)')
+            ->orderByRaw('MONTH(time_in)')
+            ->get();
+    }
+}
 if (!function_exists('getSalaryGradesTotalSteps')) {
 
     function getSalaryGradesTotalSteps()
@@ -213,10 +226,10 @@ if (!function_exists('attendanceCount')) {
             // Consider weekends and employee category
             $isWeekend = (Carbon::parse($payroll['month'] . '-' . $day))->isWeekend();
             if ($attendance) {
-                
+
                 $manhours = $attendance->hours;
-                $timeInInterval = getInterval($attendance->time_in, true,true);
-                $timeOutInterval = getInterval($attendance->time_out, false,true);
+                $timeInInterval = getInterval($attendance->time_in, true, true);
+                $timeOutInterval = getInterval($attendance->time_out, false, true);
 
                 if ($isWeekend && $employee->data->category->category_code !== 'JO') {
                     $attendances[$i] = [
@@ -277,6 +290,7 @@ if (!function_exists('calculateSalary')) {
     function calculateSalary($salaryGrade, $employee, $attendance, $timeIn, $timeOut, $currentTime, $isJO)
     {
         // Default working days and hours
+        $isCOS = $employee->data->category->category_code == "COS";
         $workingDays = 15;
         $requiredHoursWork = 8;
         $deduction = 0;
@@ -333,7 +347,15 @@ if (!function_exists('calculateSalary')) {
         // Calculate minutes late
         $minutesLate = $attendanceTimeIn->diffInMinutes($attendanceTimeIn);
         if (!$isJO) {
-            $salaryPerHour = ($salaryGrade / 22) / $requiredHoursWork;
+            if ($isCOS) {
+                if ($attendance->time_in_status === 'Half-Day' || ($status === 'Half-Day' || $status === 'Under-time')) {
+                    $salaryPerHour = (($salaryGrade / 2) / 22) / $requiredHoursWork;
+                } else {
+                    $salaryPerHour = ($salaryGrade / 22) / $requiredHoursWork;
+                }
+            } else {
+                $salaryPerHour = ($salaryGrade / 22) / $requiredHoursWork;
+            }
 
             if ($attendance->time_in_status === 'Late') {
                 // Sick leave handling (requires a `computeSickLeave` function)
@@ -346,7 +368,7 @@ if (!function_exists('calculateSalary')) {
 
 
 
-        if (!$isJO && $formattedTimeout < $formattedDefaultTimeOut) {
+        if (!$isJO && ($status === 'Half-Day' || $status === 'Under-time')) {
             $notWorkedHour = $defaultTimeOut->diffInHours($attendanceTimeOut);
             $salaryPerHour = $salaryPerHour - $notWorkedHour;
             $deduction =  $notWorkedHour * .125;
@@ -364,10 +386,10 @@ if (!function_exists('calculateSalary')) {
                 $employee->data->update(['sick_leave_points' => $sickLeave]);
             }
         } else {
-            if ($attendance->time_in_status === 'Half-Day') {
-                $totalSalaryForToday = $salaryGrade / 2;
+            if ($attendance->time_in_status === 'Half-Day' || ($status === 'Half-Day' || $status === 'Under-time')) {
+                $totalSalaryForToday = ($salaryGrade / $requiredHoursWork) / 2;
             } else {
-                $totalSalaryForToday = $salaryGrade;
+                $totalSalaryForToday = $salaryGrade / $requiredHoursWork;
             }
         }
 

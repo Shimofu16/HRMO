@@ -957,9 +957,8 @@
                         class="p-6 text-white bg-purple-600 rounded-lg shadow-md hover:bg-purple-800 mt-7 btn-txt">LOGIN</a>
 
                     <a href="{{ route('employee.attendance.index') }}"
-                        class="p-6 ml-4 text-white bg-purple-600 rounded-lg shadow-md hover:bg-purple-800 mt-7 btn-txt">Attendance With Picture</a>
-                    <a href="#"
-                        class="p-6 ml-4 text-white bg-purple-600 rounded-lg shadow-md hover:bg-purple-800 mt-7 btn-txt">Attendance With Biometric</a>
+                        class="p-6 ml-4 text-white bg-purple-600 rounded-lg shadow-md hover:bg-purple-800 mt-7 btn-txt">Attendance</a>
+                   
                 @endauth
             @endif
         </div>
