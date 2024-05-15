@@ -179,21 +179,8 @@ class EmployeeController extends Controller
      */
     public function edit(Employee $employee)
     {
-        $loans = Loan::all();
 
-        $departments = Department::all();
-
-        $categories = Category::all();
-
-        $designations = Designation::all();
-
-        $salary_grades = SalaryGrade::all();
-
-        $allowances = Allowance::all();
-
-        $deductions = Deduction::all();
-
-        return view('employees.edit', ['employee' => $employee, 'loans' => $loans, 'departments' => $departments, 'categories' => $categories, 'designations' => $designations, 'sgrades' => $salary_grades, 'allowances' => $allowances, 'deductions' => $deductions]);
+        return view('employees.edit', ['employee' => $employee]);
     }
 
     /**

@@ -45,7 +45,7 @@
                         $dates = explode('-', $payroll['date_from_to']);
                         $from = $dates[0];
                         $to = $dates[1];
-                        $totalSalary = $employee->getTotalSalaryBy($payroll['month'], $payroll['year'], $from, $to); // Get the total salary of the employee
+                        $totalSalary = attendanceCount($employee, $payroll, $from,  $to)['total_salary']; // Get the total salary of the employee
                         $netPay =
                             $employee->computeAllowance($payroll['date_from_to']) +
                             $totalSalary -

@@ -14,10 +14,10 @@
                 <h1 class="text-2xl font-bold text-center">Actions</h1>
             </div>
             <div class="flex flex-col space-y-2">
-                {{-- <a href="#"
+                <a href="{{ route('employees.edit',  $employee) }}"
                     class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
                     Edit
-                </a> --}}
+                </a>
 
                 <form class="flex flex-col" action="{{ route('employees.destroy', $employee) }}" method="POST">
                     @csrf
@@ -101,8 +101,7 @@
                             $total_deductions = $employee->computeDeduction();
                         @endphp
                         @forelse ($employee->deductions as $deduction)
-                            <span>{{ $deduction->deduction->deduction_name }} -
-                                {{ $deduction->deduction->deduction_amount_type == 'percentage' ? percentage($deduction->deduction->deduction_amount) : number_format($deduction->deduction->deduction_amount, 2) }}</span>
+                            <span>{{ $deduction->deduction->deduction_name }} - {{ number_format($employee->getDeduction($deduction->deduction_id, null), 2) }}</span>
                             <br>
                         @empty
                             <span class="text-center">No Deductions</span>
@@ -112,10 +111,10 @@
                                 $total_deductions = $total_deductions + $employee->data->holding_tax;
                             @endphp
                             <span>With Holding Tax -
-                                {{ number_format($employee->data->holding_tax) }}</span>
+                                {{ number_format($employee->data->holding_tax, 2) }}</span>
                         @endif
                         <br>
-                        <span>Total: {{ number_format($total_deductions) }}</span>
+                        <span>Total: {{ number_format($total_deductions, 2) }}</span>
                     </div>
                 @endif
             @endif
@@ -150,7 +149,7 @@
                         $balance = 0;
                     }
                 @endphp
-                <h3 class="mb-3"><strong>Balance: {{ number_format($balance) }}</strong></h3>
+                <h3 class="mb-3"><strong>Balance: {{ number_format($balance, 2) }}</strong></h3>
             @endforeach
         </div>
 

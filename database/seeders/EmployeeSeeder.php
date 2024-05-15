@@ -41,6 +41,9 @@ class EmployeeSeeder extends Seeder
             $cos_monthly_salary = 0;
             if ($category->category_code == "JO" || $category->category_code == "COS") {
                 $cos_monthly_salary = ($category->category_code == "COS") ? $faker->numberBetween(20000,40000) : null;
+                if ($cos_monthly_salary > $limit || $level->amount > $limit) {
+                    $holding_tax = $faker->numberBetween(500,2000);
+                }
                 $employee->data()->create([
                     'department_id' => $department->id,
                     'designation_id' => $designation->id,
@@ -54,6 +57,11 @@ class EmployeeSeeder extends Seeder
                 if ($category->category_code != "COS") {
                     $salary_grade = SalaryGrade::find($faker->numberBetween(1, SalaryGrade::count()));
                     $salary_grade_step = 'Step ' . $faker->numberBetween(1, count($salary_grade->steps));
+                    foreach ($salary_grade->steps as $key => $salary_grade_steps) {
+                        if ($salary_grade_step == $salary_grade_steps['step'] && $salary_grade_steps['amount'] > $limit) {
+                            $holding_tax = $faker->numberBetween(500,2000);
+                        }
+                    }  
                     $employee->data()->create([
                         'department_id' => $department->id,
                         'designation_id' => $designation->id,
@@ -63,15 +71,6 @@ class EmployeeSeeder extends Seeder
                         'sick_leave_points' => $sick_leave_points,
                         'holding_tax' => ($holding_tax) ?? $holding_tax,
                     ]);
-                    foreach ($salary_grade->steps as $key => $salary_grade_steps) {
-                        if ($salary_grade_step == $salary_grade_steps['step'] && $salary_grade_steps['amount'] > $limit) {
-                            $holding_tax = $faker->numberBetween(500,2000);
-                        }
-                    }  
-                }else{
-                    if ($cos_monthly_salary > $limit) {
-                        $holding_tax = $faker->numberBetween(500,2000);
-                    }
                 }
            
                 // Generate a random number of allowances to select (between 1 and the total number)

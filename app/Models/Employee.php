@@ -101,8 +101,8 @@ class Employee extends Model
             // Compute allowance for specific dates
             foreach ($this->allowances as $allowance) {
                 foreach ($allowance->allowance->allowance_ranges as $key => $allowance_range) {
-                    
-                    if ($range == $allowance_range){
+
+                    if ($range == $allowance_range) {
                         $totalAllowance = $totalAllowance + $allowance->allowance->allowance_amount;
                     }
                 }
@@ -178,7 +178,7 @@ class Employee extends Model
         $allowance = $this->allowances()->where('allowance_id', $allowance_id)->first();
         if ($allowance) {
             foreach ($allowance->allowance->allowance_ranges as $key => $allowance_range) {
-                if ($range == $allowance_range){
+                if ($range == $allowance_range) {
                     return $allowance->allowance->allowance_amount;
                 }
             }
@@ -189,7 +189,18 @@ class Employee extends Model
     {
         $deduction = $this->deductions()->where('deduction_id', $deduction_id)->first();
         if ($deduction) {
-            if ($range == $deduction->deduction->deduction_range) {
+            if ($range) {
+                if ($range == $deduction->deduction->deduction_range) {
+                    $amount = $deduction->deduction->deduction_amount;
+                    if ($deduction->deduction->deduction_amount_type == 'percentage') {
+                        $amount = $amount / 100;
+                        if ($deduction->deduction->deduction_name == 'Phil Health') {
+                            $amount = ($this->data->monthly_salary / 2) * .02;
+                        }
+                    }
+                    return $amount;
+                }
+            } else {
                 $amount = $deduction->deduction->deduction_amount;
                 if ($deduction->deduction->deduction_amount_type == 'percentage') {
                     $amount = $amount / 100;

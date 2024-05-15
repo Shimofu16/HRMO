@@ -236,8 +236,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     // employee
+    Route::get('/employees/{employee}', [EmployeeController::class, 'show'])->name('employees.show');
+    Route::get('/employees/edit/{employee}', [EmployeeController::class, 'edit'])->name('employees.edit');
     Route::get('/employees/{filter_by?}/{filter_id?}', [EmployeeController::class, 'index'])->name('employees.index');
-    Route::get('/employees/{id}', [EmployeeController::class, 'show'])->name('employees.show');
 
 
     // Seminar

@@ -133,11 +133,7 @@ if (!function_exists('getInterval')) {
         $time = Carbon::parse(date('H:i:s', strtotime($time)));
         // dd($time);
         if ($isTimeIn) {
-            if ($time->between(Carbon::parse('7:00:00'), Carbon::parse('7:10:00'))) {
-                $interval = Carbon::parse('7:00:00');
-            } elseif ($time->between(Carbon::parse('7:11:00'), Carbon::parse('7:40:00'))) {
-                $interval = Carbon::parse('7:30:00');
-            } elseif ($time->between(Carbon::parse('7:41:00'), Carbon::parse('8:10:00'))) {
+            if ($time->between(Carbon::parse('6:00:00'), Carbon::parse('8:10:00'))) {
                 $interval = Carbon::parse('8:00:00');
             } elseif ($time->between(Carbon::parse('8:11:00'), Carbon::parse('8:40:00'))) {
                 $interval = Carbon::parse('8:30:00');
@@ -198,6 +194,7 @@ if (!function_exists('attendanceCount')) {
         }
 
         $total_man_hour = 0;
+        $total_salary = 0;
         $present = 0;
         $absent = 0;
         $late = 0;
@@ -257,6 +254,7 @@ if (!function_exists('attendanceCount')) {
                         'manhours' => $manhours,
                     ];
                     $total_man_hour += $manhours;
+                    $total_salary += $attendance->salary;
                     $present++;
                 }
             } else {
@@ -281,6 +279,7 @@ if (!function_exists('attendanceCount')) {
             'late' => $late,
             'under_time' => $underTime,
             'total_man_hour' => $total_man_hour,
+            'total_salary' => $total_salary,
             'attendances' => $attendances,
         ];
     }
