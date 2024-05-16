@@ -353,9 +353,9 @@ if (!function_exists('calculateSalary')) {
             $salaryPerHour = ($salaryGrade / 22) / $requiredHoursWork;
             if ($isCOS) {
                 if ($attendance->time_in_status === 'Half-Day' || ($status === 'Half-Day' || $status === 'Under-time')) {
-                    $salaryPerHour = ($salaryGrade / 22) / 2;
+                    $totalSalaryForToday = ($salaryGrade / 22) / 2;
                 } else {
-                    $salaryPerHour = $salaryGrade / 22;
+                    $totalSalaryForToday = $salaryGrade / 22;
                 }
             }
 
@@ -378,13 +378,13 @@ if (!function_exists('calculateSalary')) {
             if ($sickLeave > 0) {
                 $salaryPerHour = $salaryPerHour - $notWorkedHour;
             }
-            if ($sickLeave <0 || $sickLeave <= 0) {
+            if ($sickLeave < 0 || $sickLeave <= 0) {
                 $sickLeave = 0;
                 $deduction = 0;
             }
         }
         // Calculate total salary for the day (applicable only for non-JO employees)
-        if (!$isJO) {
+        if (!$isJO && !$isCOS) {
             $totalSalaryForToday = ($salaryPerHour * $hourWorked);
             $totalSalaryForToday = ($totalSalaryForToday > 0) ? $totalSalaryForToday : 0;
             if ($attendance->time_in_status === 'Late' || ($status === 'Half-Day' || $status === 'Under-time')) {
@@ -392,10 +392,12 @@ if (!function_exists('calculateSalary')) {
                 $employee->data->update(['sick_leave_points' => $sickLeave]);
             }
         } else {
-            if ($attendance->time_in_status === 'Half-Day' || ($status === 'Half-Day' || $status === 'Under-time')) {
-                $totalSalaryForToday = $salaryGrade / 2;
-            } else {
+            if ($isJO) {
                 $totalSalaryForToday = $salaryGrade;
+                if ($attendance->time_in_status === 'Half-Day' || ($status === 'Half-Day' || $status === 'Under-time')) {
+                    $totalSalaryForToday = $salaryGrade / 2;
+                }
+                # code...
             }
         }
 

@@ -216,7 +216,7 @@ class Create extends Component
                 'holding_tax' => ($this->holding_tax) ? $this->holding_tax : null,
             ]);
         }
-        if (!$this->isJOSelected || !$this->isCOSSelected) {
+        if (!$this->isJOSelected && !$this->isCOSSelected) {
             if ($this->selectedAllowanceIds) {
                 $selectedAllowanceIds = array_keys(array_filter($this->selectedAllowanceIds, 'boolval')); // Get selected IDs
 
