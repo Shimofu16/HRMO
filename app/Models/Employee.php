@@ -144,6 +144,19 @@ class Employee extends Model
             }
         }
 
+        if ($this->data->holding_tax) {
+            $totalDeduction += $this->data->holding_tax;
+        }
+        if ($this->loans) {
+            foreach ($this->loans as $key => $loan) {
+                foreach ($loan->ranges as $key => $loan_range) {
+                    if ( $range ==$loan_range) {
+                        $totalDeduction += $loan->amount;
+                    }
+                }
+            }
+        }
+
         return $totalDeduction;
     }
 

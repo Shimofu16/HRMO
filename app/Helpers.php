@@ -350,14 +350,13 @@ if (!function_exists('calculateSalary')) {
         // Calculate minutes late
         $minutesLate = $attendanceTimeIn->diffInMinutes($attendanceTimeIn);
         if (!$isJO) {
+            $salaryPerHour = ($salaryGrade / 22) / $requiredHoursWork;
             if ($isCOS) {
                 if ($attendance->time_in_status === 'Half-Day' || ($status === 'Half-Day' || $status === 'Under-time')) {
-                    $salaryPerHour = (($salaryGrade / 2) / 22) / $requiredHoursWork;
+                    $salaryPerHour = (($salaryGrade / 22) / 2) / $requiredHoursWork;
                 } else {
-                    $salaryPerHour = ($salaryGrade / 22) / $requiredHoursWork;
+                    $salaryPerHour = $salaryGrade / 22;
                 }
-            } else {
-                $salaryPerHour = ($salaryGrade / 22) / $requiredHoursWork;
             }
 
             if ($attendance->time_in_status === 'Late') {
@@ -381,6 +380,7 @@ if (!function_exists('calculateSalary')) {
             }
             if ($sickLeave < 0) {
                 $sickLeave = 0;
+                $deduction = 0;
             }
         }
 
@@ -389,14 +389,14 @@ if (!function_exists('calculateSalary')) {
             $totalSalaryForToday = ($salaryPerHour * $hourWorked);
             $totalSalaryForToday = ($totalSalaryForToday > 0) ? $totalSalaryForToday : 0;
             if ($attendance->time_in_status === 'Late' || ($status === 'Half-Day' || $status === 'Under-time')) {
-                $totalSalaryForToday = $totalSalaryForToday - ($sickLeave === 0) ? getLateByMinutes($minutesLate) : 0;
+                // $totalSalaryForToday = $totalSalaryForToday - ($sickLeave === 0) ? getLateByMinutes($minutesLate) : 0;
                 $employee->data->update(['sick_leave_points' => $sickLeave]);
             }
         } else {
             if ($attendance->time_in_status === 'Half-Day' || ($status === 'Half-Day' || $status === 'Under-time')) {
-                $totalSalaryForToday = ($salaryGrade / $requiredHoursWork) / 2;
+                $totalSalaryForToday = $salaryGrade / 2;
             } else {
-                $totalSalaryForToday = $salaryGrade / $requiredHoursWork;
+                $totalSalaryForToday = $salaryGrade;
             }
         }
 

@@ -68,7 +68,9 @@ class AttendanceSeeder extends Seeder
                         $deduction = getLateByMinutes($minute_late);
                     }
 
-
+                    if ($employee->data->category->category_code == "JO" || $employee->data->sick_leave_points < 0) {
+                        $deduction = 0;
+                    }
 
                     // Create attendance record for time in
                     $attendance = Attendance::create([
@@ -77,6 +79,7 @@ class AttendanceSeeder extends Seeder
                         'time_in' => $date,
                         'time_in_deduction' => $deduction,
                     ]);
+
                     $results = calculateSalary($employee->data->monthly_salary, $employee, $attendance, '08:00:00', '17:00:00', $timeOut, $employee->data->category->category_code == "JO");
                     $status = $results['status'];
                     Log::info("Date: $date, Time Out: $timeOut, Time In Status: $timeInStatus, Time Out Status:$status");

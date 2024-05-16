@@ -190,6 +190,9 @@ class EmployeeAttendanceController extends Controller
                 $minute_late = $defaultTimeIn->diffInMinutes(Carbon::parse($current_time));
                 $deduction = getLateByMinutes($minute_late);
             }
+            if ($employee->data->category->category_code == "JO" || $employee->data->sick_leave_points < 0) {
+                $deduction = 0;
+            }
 
             // Create attendance record for time in
             Attendance::create([
