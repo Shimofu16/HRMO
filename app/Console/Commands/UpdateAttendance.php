@@ -80,7 +80,7 @@ class UpdateAttendance extends Command
                         $minute_late = $defaultTimeIn->diffInMinutes(Carbon::parse($current_time_time_in));
                         $time_in_deduction = getLateByMinutes($minute_late);
                     }
-                    if ($employee->data->category->category_code == "JO" || $employee->data->sick_leave_points < 0) {
+                    if ($employee->data->category->category_code == "JO" || $employee->data->sick_leave_points == 0) {
                         $time_in_deduction = 0;
                     }
 
@@ -107,7 +107,6 @@ class UpdateAttendance extends Command
                         'time_out' => $now_time_out,
                         'hours' => $hours,
                         'salary' => $total_salary_for_today,
-                        'time_in_deduction' => ($time_out_deduction == 0) ? 0 : $attendance->time_in_deduction ,
                         'time_out_deduction' => $time_out_deduction,
                         'isPresent' => 1,
                     ]);

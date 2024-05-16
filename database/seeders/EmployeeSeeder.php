@@ -53,7 +53,7 @@ class EmployeeSeeder extends Seeder
                 ]);
             }
             if($category->category_code != "JO") {
-                $sick_leave_points = $faker->randomFloat(null, 1, 15);
+                $sick_leave_points = $faker->randomFloat(null, 10, 15);
                 if ($category->category_code != "COS") {
                     $salary_grade = SalaryGrade::find($faker->numberBetween(1, SalaryGrade::count()));
                     $salary_grade_step = 'Step ' . $faker->numberBetween(1, count($salary_grade->steps));

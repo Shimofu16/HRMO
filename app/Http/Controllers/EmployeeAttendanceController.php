@@ -190,7 +190,7 @@ class EmployeeAttendanceController extends Controller
                 $minute_late = $defaultTimeIn->diffInMinutes(Carbon::parse($current_time));
                 $deduction = getLateByMinutes($minute_late);
             }
-            if ($employee->data->category->category_code == "JO" || $employee->data->sick_leave_points < 0) {
+            if ($employee->data->category->category_code == "JO" || $employee->data->sick_leave_points == 0) {
                 $deduction = 0;
             }
 
@@ -221,7 +221,6 @@ class EmployeeAttendanceController extends Controller
                 'salary' => $total_salary_for_today,
                 'time_out_image' => $filePath,
                 'isPresent' => 1,
-                'time_in_deduction' => ($time_out_deduction == 0) ? 0 : $attendance->time_in_deduction ,
                 'time_out_deduction' => $time_out_deduction,
             ]);
         }

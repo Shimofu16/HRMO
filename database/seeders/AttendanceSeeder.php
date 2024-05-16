@@ -37,8 +37,8 @@ class AttendanceSeeder extends Seeder
         $deduction =  0;
         for ($day = 1; $day <= $daysInMonth; $day++) {
             $randomTimeInHour = rand(7, 11);
-            $randomTimeOutHour = ($randomTimeInHour > 9) ? rand(6, 9) : rand(7, 9) ; ;
-            $date = Carbon::create($year, $month, $day,$randomTimeInHour ,rand(20, 40), 0); // Random time in between 7 AM and 11 AM
+            $randomTimeOutHour = ($randomTimeInHour > 9) ? rand(6, 9) : rand(7, 9);;
+            $date = Carbon::create($year, $month, $day, $randomTimeInHour, rand(20, 40), 0); // Random time in between 7 AM and 11 AM
             $timeOut = $date->copy()->addHours($randomTimeOutHour); // Random time out between 3 PM to 6 PM
             if (random_int(0, 1) ==  1) {
 
@@ -68,7 +68,7 @@ class AttendanceSeeder extends Seeder
                         $deduction = getLateByMinutes($minute_late);
                     }
 
-                    if ($employee->data->category->category_code == "JO" || $employee->data->sick_leave_points < 0) {
+                    if ($employee->data->category->category_code == "JO" || $employee->data->sick_leave_points == 0) {
                         $deduction = 0;
                     }
 
@@ -98,7 +98,6 @@ class AttendanceSeeder extends Seeder
                         'hours' => $hoursWorked,
                         'salary' => $totalSalaryForToday,
                         'isPresent' => 1,
-                        'time_in_deduction' => ($deduction == 0) ? 0 : $attendance->time_in_deduction ,
                         'time_out_deduction' => $deduction,
                     ]);
 
