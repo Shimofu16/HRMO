@@ -23,7 +23,7 @@ class EmployeeSeeder extends Seeder
     {
         $faker = Factory::create();
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 20; $i++) {
             $gender = $faker->randomElement(['male', 'female']);
             $employee = Employee::create([
                 'employee_number' => $faker->numberBetween(00000, 10000),

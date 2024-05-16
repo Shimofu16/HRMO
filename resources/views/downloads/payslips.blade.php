@@ -61,7 +61,9 @@
             margin: 0;
             height: auto;
         }
-
+        .page-break {
+            page-break-before: always;
+        }
     </style>
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -94,7 +96,7 @@
                     @endphp
                 @endif
                 @if ($count == 1)
-                    <div class="grid grid-cols-3 grid-rows-2 gap-1">
+                    <div class="grid grid-cols-3 gap-1">
                 @endif
                         @php
                             $totalAmountEarned = 0;
