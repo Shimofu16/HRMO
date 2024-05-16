@@ -113,6 +113,7 @@ class Create extends Component
     public function updatedCategoryId($value)
     {
         $this->isJOSelected = false;
+        $this->isCOSSelected = false;
         if ($value) {
             $category = Category::find($value);
             if ($category->category_code == "JO") {
@@ -215,7 +216,7 @@ class Create extends Component
                 'holding_tax' => ($this->holding_tax) ? $this->holding_tax : null,
             ]);
         }
-        if (!$this->isJOSelected) {
+        if (!$this->isJOSelected || !$this->isCOSSelected) {
             if ($this->selectedAllowanceIds) {
                 $selectedAllowanceIds = array_keys(array_filter($this->selectedAllowanceIds, 'boolval')); // Get selected IDs
 

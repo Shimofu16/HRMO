@@ -1,9 +1,9 @@
-<div class="overflow-hidden  sm:rounded-md">
+<div class="overflow-hidden sm:rounded-md">
     @if ($isAlreadyLogIn)
         <form wire:submit.prevent="save" enctype="multipart/form-data">
             {{-- <form action="{{ route('employees.store') }}" method="POST" enctype="multipart/form-data"> --}}
             @csrf
-            <div class="px-4 py-5 bg-white sm:p-6 shadow">
+            <div class="px-4 py-5 bg-white shadow sm:p-6">
                 <h1 class="text-xl font-bold">Employee Information</h1>
                 <hr class="mb-3">
                 <div class="grid grid-cols-6 gap-6">
@@ -18,7 +18,7 @@
                         <input type="text" name="ordinance_number" id="ordinance_number"
                             wire:model='ordinance_number' class="block w-full mt-1 rounded" required>
                     </div>
-                    @if (!$isJOSelected)
+                    @if (!$isJOSelected && !$isCOSSelected)
                         <div class="col-span-6 sm:col-span-2">
                             <label for="sick_leave_points" class="block font-medium text-gray-700">Sick Leave
                                 Points</label>
@@ -141,10 +141,20 @@
                         <input type="file" name="employee_photo" id="employee_photo" wire:model='employee_photo'
                             class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" required>
                     </div>
+                    @if ($isCOSSelected && $isWithHoldingTax)
+                    <div class="col-span-6 sm:col-span-2">
+                        <div class="col-span-6 sm:col-span-2">
+                            <label for="holding_tax" class="block font-medium text-gray-700">With Hodling Tax
+                            </label>
+                            <input type="number" name="holding_tax" id="duration" step="0.01"
+                                class="block w-full mt-1 rounded form-input" wire:model="holding_tax">
+                        </div>
+                    </div>
+                    @endif
                 </div>
             </div>
-            @if (!$isJOSelected || $isCOSSelected)
-                <div class="px-4 py-5 bg-white sm:p-6 shadow my-3">
+            @if (!$isJOSelected && !$isCOSSelected)
+                <div class="px-4 py-5 my-3 bg-white shadow sm:p-6">
                     <h1 class="text-xl font-bold">Salary</h1>
                     <hr class="mb-3">
                     <div class="grid grid-cols-6 gap-6">
@@ -180,7 +190,7 @@
                                 @forelse ($mandatory_deductions as $mandatory_deduction)
                                     <div class="w-1/2 px-2" wire:key="{{ $mandatory_deduction->id }}">
                                         <input type="checkbox" name="deductions[]"
-                                            value="{{ $mandatory_deduction->id }}" class="mr-2 form-checkbox hidden"
+                                            value="{{ $mandatory_deduction->id }}" class="hidden mr-2 form-checkbox"
                                             wire:model="selectedMandatoryDeductionIds.{{ $mandatory_deduction->id }}"
                                             checked>
                                         <input type="checkbox" id="deduction_{{ $mandatory_deduction->id }}"
@@ -270,7 +280,7 @@
                                 <div class="col-span-3 sm:col-span-2">
                                     <h4 class="text-sm">Range </h4>
                                     <div class="flex mt-1">
-                                        <div class="flex flex-col space-y-2  w-1/2">
+                                        <div class="flex flex-col w-1/2 space-y-2">
                                             <div class="w-1/2 px-2">
                                                 <input type="checkbox" name="1-15_{{ $selected_loan->id }}"
                                                     id="1-15_{{ $selected_loan->id }}" value="1-15"
@@ -290,7 +300,7 @@
                                         </div>
                                         <div>
                                             <button type="button" wire:click='removeLoan({{ $selected_loan->id }})'
-                                                class="bg-red-500 text-white font-bold py-2 px-4 rounded shadow hover:bg-red-700">
+                                                class="px-4 py-2 font-bold text-white bg-red-500 rounded shadow hover:bg-red-700">
                                                 X
                                             </button>
 
@@ -315,10 +325,10 @@
         </form>
     @else
         <form wire:submit.prevent="login">
-            <div class="px-4 py-5 bg-white sm:p-6 shadow my-3 flex items-center justify-center flex-col">
+            <div class="flex flex-col items-center justify-center px-4 py-5 my-3 bg-white shadow sm:p-6">
                 @if (session()->has('error'))
                     <div class="px-3 mb-3">
-                        <div class="text-white bg-red-600 px-3 py-2 rounded">
+                        <div class="px-3 py-2 text-white bg-red-600 rounded">
                             Error : {{ session('error') }}
                         </div>
                     </div>
@@ -328,7 +338,7 @@
                     <input type="password" name="password" id="password" wire:model='password'
                         class="block w-full mt-1 rounded" required>
                 </div>
-                <div class="mt-3 text-right sm:px-6 w-1/2">
+                <div class="w-1/2 mt-3 text-right sm:px-6">
                     <x-primary-button class="ml-3">
                         {{ __('Login') }}
                     </x-primary-button>

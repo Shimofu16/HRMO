@@ -353,7 +353,7 @@ if (!function_exists('calculateSalary')) {
             $salaryPerHour = ($salaryGrade / 22) / $requiredHoursWork;
             if ($isCOS) {
                 if ($attendance->time_in_status === 'Half-Day' || ($status === 'Half-Day' || $status === 'Under-time')) {
-                    $salaryPerHour = (($salaryGrade / 22) / 2) / $requiredHoursWork;
+                    $salaryPerHour = ($salaryGrade / 22) / 2;
                 } else {
                     $salaryPerHour = $salaryGrade / 22;
                 }
@@ -378,11 +378,10 @@ if (!function_exists('calculateSalary')) {
             if ($sickLeave > 0) {
                 $salaryPerHour = $salaryPerHour - $notWorkedHour;
             }
-
-        }
-        if ($sickLeave < 0) {
-            $sickLeave = 0;
-            $deduction = 0;
+            if ($sickLeave <0 || $sickLeave <= 0) {
+                $sickLeave = 0;
+                $deduction = 0;
+            }
         }
         // Calculate total salary for the day (applicable only for non-JO employees)
         if (!$isJO) {
