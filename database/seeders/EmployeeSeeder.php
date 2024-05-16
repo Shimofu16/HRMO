@@ -48,10 +48,10 @@ class EmployeeSeeder extends Seeder
                     'department_id' => $department->id,
                     'designation_id' => $designation->id,
                     'category_id' => $category->id,
-                    'level_id' => $level->id,
+                    'level_id' =>  ($category->category_code == "COS") ?  null: $level->id,
                     'cos_monthly_salary' => $cos_monthly_salary
                 ]);
-            } 
+            }
             if($category->category_code != "JO") {
                 $sick_leave_points = $faker->randomFloat(null, 1, 15);
                 if ($category->category_code != "COS") {
@@ -61,7 +61,7 @@ class EmployeeSeeder extends Seeder
                         if ($salary_grade_step == $salary_grade_steps['step'] && $salary_grade_steps['amount'] > $limit) {
                             $holding_tax = $faker->numberBetween(500,2000);
                         }
-                    }  
+                    }
                     $employee->data()->create([
                         'department_id' => $department->id,
                         'designation_id' => $designation->id,
@@ -72,7 +72,7 @@ class EmployeeSeeder extends Seeder
                         'holding_tax' => ($holding_tax) ?? $holding_tax,
                     ]);
                 }
-           
+
                 // Generate a random number of allowances to select (between 1 and the total number)
                 $numAllowances = $faker->numberBetween(1, Allowance::count());
 
@@ -81,7 +81,7 @@ class EmployeeSeeder extends Seeder
 
                 // Query for allowances based on the selected IDs
                 $allowances = Allowance::whereIn('id', $allowanceIds)->get();
-                
+
 
 
                 // Attach selected allowances using their IDs

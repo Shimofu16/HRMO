@@ -36,7 +36,7 @@
                     <span>Payslip (Seminars)</span>
                 </a> --}}
                 <a href="{{ route('employees.index') }}"
-                    class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+                    class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-gray-700 uppercase transition duration-150 ease-in-out bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25">
                     Back to Employee List
                 </a>
             </div>
@@ -58,9 +58,9 @@
                     <h3><strong>Department: </strong>{{ $employee->data->department->dep_name }}</h3>
                     <h3><strong>Designation: </strong>{{ $employee->data->designation->designation_name }}</h3>
                     <h3><strong>Type of Employment: </strong>{{ $employee->data->category->category_name }}</h3>
-                    @if ($employee->data->category->category_code == 'JO')
+                    @if ($employee->data->category->category_code == 'JO' )
                         <h3><strong>Level: </strong> {{ $employee->data->level->name }}</h3>
-                    @else
+                    @elseif ($employee->data->category->category_code != 'COS' && $employee->data->category->category_code != 'JO')
                         <h3><strong>Salary Grade: </strong> Salary Grade {{ $employee->data->salary_grade_id }}</h3>
                         <h3><strong>Salary Grade Step: </strong> {{ $employee->data->salary_grade_step }} </h3>
                     @endif

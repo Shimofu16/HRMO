@@ -15,7 +15,7 @@
                 <div class="relative">
                     {{-- reset button --}}
                     <a href="{{ route('payrolls.index') }}"
-                        class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                        class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-800 border border-transparent rounded-md hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                         Back to Payroll
                     </a>
 
@@ -55,20 +55,20 @@
 
                     @endphp
                     <tr>
-                        <td class=" p-3">{{ $employee->full_name }}</td>
+                        <td class="p-3 ">{{ $employee->full_name }}</td>
 
-                        <td class=" p-3 ">
-                            {{ number_format($employee->data->getMonthlySalary($payroll['month'], $payroll['year']), 2) }}
+                        <td class="p-3 ">
+                            {{ number_format($employee->data->monthly_salary, 2) }}
                         </td>
-                        <td class=" p-3 ">{{ number_format($totalSalary, 2) }}</td>
-                        <td class=" p-3 ">{{ number_format($employee->computeAllowance($payroll['date_from_to']), 2) }}
+                        <td class="p-3 ">{{ number_format($totalSalary, 2) }}</td>
+                        <td class="p-3 ">{{ number_format($employee->computeAllowance($payroll['date_from_to']), 2) }}
                         </td>
-                        <td class=" p-3 ">{{ number_format($employee->computeDeduction($payroll['date_from_to']), 2) }}
+                        <td class="p-3 ">{{ number_format($employee->computeDeduction($payroll['date_from_to']), 2) }}
                         </td>
-                        <td class=" p-3 ">{{ number_format($netPay, 2) }}</td>
+                        <td class="p-3 ">{{ number_format($netPay, 2) }}</td>
                         <td class="px-4 py-2 text-center border-b">
                             <a href="{{ route('employees.show', $employee) }}"
-                                class="text-blue-500 hover:text-blue-700 mr-1">
+                                class="mr-1 text-blue-500 hover:text-blue-700">
                                 View Info.
                             </a>
                             @php
@@ -85,7 +85,7 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="7" class="px-4 py-2 font-bold text-end border-t-4 border-black border-double">
+                    <td colspan="7" class="px-4 py-2 font-bold border-t-4 border-black border-double text-end">
                         Total Net Pay: {{ number_format($totalNetPay, 2) }}</td>
                 </tr>
             </tfoot>

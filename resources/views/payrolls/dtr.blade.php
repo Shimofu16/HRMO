@@ -53,13 +53,13 @@
     </div>
     <div class="py-12">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between space-x-2 mb-3 mx-5">
+            <div class="flex items-center justify-between mx-5 mb-3 space-x-2">
                 <div class="relative ">
 
                 </div>
                 <div class="relative ">
                     <a href="{{ route('payrolls.index') }}"
-                        class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                        class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-800 border border-transparent rounded-md hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                        Back to Payroll
                     </a>
                 </div>
@@ -69,13 +69,16 @@
                     <table class="min-w-full bg-white border">
                         <thead>
                             <tr>
-                                <th class="px-4 py-2 text-start border-b">Day</th>
-                                <th class="px-4 py-2 text-start border-b">Time In</th>
-                                <th class="px-4 py-2 text-start border-b">Interval</th>
-                                <th class="px-4 py-2 text-start border-b">Time Out</th>
-                                <th class="px-4 py-2 text-start border-b">Interval</th>
-                                <th class="px-4 py-2 text-start border-b">Deduction</th>
-                                <th class="px-4 py-2 text-start border-b">Man hours</th>
+                                <th class="px-4 py-2 border-b text-start">Day</th>
+                                <th class="px-4 py-2 border-b text-start">Time In</th>
+                                <th class="px-4 py-2 border-b text-start">Time  In status</th>
+                                <th class="px-4 py-2 border-b text-start">Interval</th>
+                                <th class="px-4 py-2 border-b text-start">Time Out</th>
+                                <th class="px-4 py-2 border-b text-start">Time Out status</th>
+                                <th class="px-4 py-2 border-b text-start">Interval</th>
+                                <th class="px-4 py-2 border-b text-start">Deduction</th>
+                                <th class="px-4 py-2 border-b text-start">Salary</th>
+                                <th class="px-4 py-2 border-b text-start">Man hours</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -83,10 +86,13 @@
                                 <tr>
                                     <td class="px-4 py-2 border-b">{{ $attendance['day'] }}</td>
                                     <td class="px-4 py-2 border-b">{{ $attendance['time_in'] ? date('h:i A',strtotime($attendance['time_in'])) :'---------' }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $attendance['time_in_status'] ?? '---------' }}</td>
                                     <td class="px-4 py-2 border-b">{{ $attendance['time_in_interval'] ? date('h:i A',strtotime($attendance['time_in_interval']))  :'---------' }}</td>
                                     <td class="px-4 py-2 border-b">{{ $attendance['time_out'] ? date('h:i A',strtotime($attendance['time_out']))  :'---------' }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $attendance['time_out_status'] ?? '---------' }}</td>
                                     <td class="px-4 py-2 border-b">{{ $attendance['time_out_interval'] ? date('h:i A',strtotime($attendance['time_out_interval'])) :'---------' }}</td>
                                     <td class="px-4 py-2 border-b">{{ $attendance['deduction']  ?? '---------' }}</td>
+                                    <td class="px-4 py-2 border-b">{{ $attendance['total_salary']  ?? '---------' }}</td>
                                     <td class="px-4 py-2 border-b">{{ $attendance['manhours']  ?? '---------' }}</td>
                                 </tr>
                             @endforeach

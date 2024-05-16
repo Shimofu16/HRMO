@@ -233,26 +233,17 @@ class Edit extends Component
         $this->last_name = $this->employee->last_name;
         $this->category_id = $this->employee->data->category_id;
         $this->department_id = $this->employee->data->department_id;
-        $this->level_id = $this->employee->data->level_id;
-        $this->cos_monthly_salary = $this->employee->data->cos_monthly_salary;
-        $this->salary_grade_id = $this->employee->data->salary_grade_id;
-        $this->salary_grade_steps = SalaryGrade::find($this->employee->data->salary_grade_id)->steps;
-        $this->salary_grade_step = $this->employee->data->salary_grade_step;
-        $this->designation_id = $this->employee->data->designation_id;
-        $this->allowances = Allowance::with('categories')->whereHas('categories', function ($query) {
-            $query->where('category_id', $this->employee->data->category_id);
-        })
-            ->get();
-
-        foreach ($this->employee->allowances as $key => $allowance) {
-            $this->selectedAllowanceIds[$allowance->allowance->id] = $allowance->allowance->id;
+        if ($this->isJOSelected) {
+            $this->level_id = $this->employee->data->level_id;
         }
-        foreach ($this->employee->deductions as $key => $deduction) {
-            if ($deduction->deduction->deduction_type == 'Non-Mandatory') {
-                $this->selectedNonMandatoryDeductionIds[$deduction->deduction->id] = $deduction->deduction->id;
-            }
+        if ($this->isCOSSelected) {
+            $this->cos_monthly_salary = $this->employee->data->cos_monthly_salary;
         }
-        // dd($this->selectedAllowanceIds);
+        if (!$this->isCOSSelected &&  !$this->isJOSelected) {
+            $this->salary_grade_id = $this->employee->data->salary_grade_id;
+            $this->salary_grade_steps = SalaryGrade::find($this->employee->data->salary_grade_id)->steps;
+            $this->salary_grade_step = $this->employee->data->salary_grade_step;
+              // dd($this->selectedAllowanceIds);
         $limit = 20833;
         foreach ($this->salary_grade_steps as $key => $salary_grade_step) {
             if ($this->employee->data->salary_grade_step == $salary_grade_step['step'] && $salary_grade_step['amount'] > $limit) {
@@ -260,9 +251,27 @@ class Edit extends Component
             }
         }
 
+
+        }
+        $this->designation_id = $this->employee->data->designation_id;
+        if (!$this->isJOSelected) {
+            $this->allowances = Allowance::with('categories')->whereHas('categories', function ($query) {
+                $query->where('category_id', $this->employee->data->category_id);
+            })
+                ->get();
+
+            foreach ($this->employee->allowances as $key => $allowance) {
+                $this->selectedAllowanceIds[$allowance->allowance->id] = $allowance->allowance->id;
+            }
+            foreach ($this->employee->deductions as $key => $deduction) {
+                if ($deduction->deduction->deduction_type == 'Non-Mandatory') {
+                    $this->selectedNonMandatoryDeductionIds[$deduction->deduction->id] = $deduction->deduction->id;
+                }
+            }
+        }
+
+
         $this->holding_tax = $this->employee->data->holding_tax;
-
-
 
         $this->isAlreadyLogIn = false;
     }

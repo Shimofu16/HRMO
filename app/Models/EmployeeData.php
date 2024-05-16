@@ -34,7 +34,7 @@ class EmployeeData extends Model
         if ($this->category->category_code == "JO") {
             return $this->level->amount;
         }
-        if ($this->salary_grade_id) {
+        if ($this->category->category_code != 'COS' && $this->category->category_code != "JO") {
             foreach ($this->salaryGrade->steps as $key => $step) {
                 if (Str::lower($step['step']) == Str::lower($this->salary_grade_step)) {
                     return $step['amount'];
@@ -69,16 +69,16 @@ class EmployeeData extends Model
         return $this->belongsTo(Level::class, 'level_id');
     }
 
-    public function getMonthlySalary($month = null, $year = null)
-    {
-        if ($this->category->category_code == 'COS') {
-            return $this->cos_monthly_salary;
-        }
-        if ($this->category->category_code == "JO") {
-            $daily = $this->level->amount;
-            // $days = Carbon::createFromDate($year,  date('m', strtotime($month)), 1)->daysInMonth;
-            return $daily22;
-        }
-        return $this->salary_grade_step_amount;
-    }
+    // public function getMonthlySalary($month = null, $year = null)
+    // {
+    //     if ($this->category->category_code == 'COS') {
+    //         return $this->cos_monthly_salary;
+    //     }
+    //     if ($this->category->category_code == "JO") {
+    //         $daily = $this->level->amount;
+    //         // $days = Carbon::createFromDate($year,  date('m', strtotime($month)), 1)->daysInMonth;
+    //         return $daily22;
+    //     }
+    //     return $this->salary_grade_step_amount;
+    // }
 }

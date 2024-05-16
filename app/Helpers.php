@@ -248,10 +248,13 @@ if (!function_exists('attendanceCount')) {
                         'day' => date('d', strtotime($date)) . '-' . Str::substr(date('l', strtotime($date)), 0, 3),
                         'time_in' => $attendance->time_in,
                         'time_in_interval' => $timeInInterval,
+                        'time_in_status' => $attendance->time_in_status,
                         'time_out' => $attendance->time_out,
+                        'time_out_status' => $attendance->time_out_status,
                         'time_out_interval' => $timeOutInterval,
                         'deduction' => $attendance->time_in_deduction + $attendance->time_out_deduction,
                         'manhours' => $manhours,
+                        'total_salary' => $attendance->salary,
                     ];
                     $total_man_hour += $manhours;
                     $total_salary += $attendance->salary;
@@ -306,12 +309,13 @@ if (!function_exists('calculateSalary')) {
         $defaultTimeOut = Carbon::parse($timeOut);
         $formattedDefaultTimeIn = $defaultTimeIn->copy()->format('H:i:s');
         $formattedDefaultTimeOut = $defaultTimeOut->copy()->format('H:i:s');
+
         // Calculate hours worked, handling negative values and exceeding 8 hours
         if ($formattedTimeIn <= $formattedDefaultTimeIn) {
             // early 8am
             if ($formattedTimeout <= $formattedDefaultTimeOut) {
                 // undertime
-                if ($isJO || $employee->data->category->category_code == "COS") {
+                if ($isJO ||  $isCOS) {
                     $status = 'Half-Day';
                 } else {
                     $status = 'Under-time';
@@ -325,7 +329,7 @@ if (!function_exists('calculateSalary')) {
             // lates
             if ($formattedTimeout <= $formattedDefaultTimeOut) {
                 // undertime
-                if ($isJO || $employee->data->category->category_code == "COS") {
+                if ($isJO ||  $isCOS) {
                     $status = 'Half-Day';
                 } else {
                     $status = 'Under-time';
@@ -369,9 +373,12 @@ if (!function_exists('calculateSalary')) {
 
         if (!$isJO && ($status === 'Half-Day' || $status === 'Under-time')) {
             $notWorkedHour = $defaultTimeOut->diffInHours($attendanceTimeOut);
-            $salaryPerHour = $salaryPerHour - $notWorkedHour;
-            $deduction =  $notWorkedHour * .125;
+            $minutes = $defaultTimeOut->diffInMinutes($attendanceTimeOut);
+            $deduction =  $notWorkedHour * getLateByMinutes($minutes);
             $sickLeave = $sickLeave - $deduction;
+            if ($sickLeave > 0) {
+                $salaryPerHour = $salaryPerHour - $notWorkedHour;
+            }
             if ($sickLeave < 0) {
                 $sickLeave = 0;
             }
@@ -379,7 +386,8 @@ if (!function_exists('calculateSalary')) {
 
         // Calculate total salary for the day (applicable only for non-JO employees)
         if (!$isJO) {
-            $totalSalaryForToday = (($salaryPerHour * $hourWorked) < 0) ? 0 : ($salaryPerHour * $hourWorked);
+            $totalSalaryForToday = ($salaryPerHour * $hourWorked);
+            $totalSalaryForToday = ($totalSalaryForToday > 0) ? $totalSalaryForToday : 0;
             if ($attendance->time_in_status === 'Late' || ($status === 'Half-Day' || $status === 'Under-time')) {
                 $totalSalaryForToday = $totalSalaryForToday - ($sickLeave === 0) ? getLateByMinutes($minutesLate) : 0;
                 $employee->data->update(['sick_leave_points' => $sickLeave]);
