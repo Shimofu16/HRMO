@@ -348,6 +348,7 @@ Route::get('/update/attendances/bio', function () {
                         'time_out' => $now_time_out,
                         'hours' => $hours,
                         'salary' => $total_salary_for_today,
+                        'time_in_deduction' => ($time_out_deduction == 0) ? 0 : $attendance->time_in_deduction ,
                         'time_out_deduction' => $time_out_deduction,
                         'isPresent' => 1,
                     ]);

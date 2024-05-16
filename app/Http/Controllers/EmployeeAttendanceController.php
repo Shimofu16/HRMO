@@ -211,7 +211,7 @@ class EmployeeAttendanceController extends Controller
             $status = $results['status'];
             $total_salary_for_today = $results['salary'];
             $hours = $results['hour_worked'];
-            $deduction = $results['deduction'];
+            $time_out_deduction = $results['deduction'];
 
             // Update the attendance record
             $attendance->update([
@@ -221,7 +221,8 @@ class EmployeeAttendanceController extends Controller
                 'salary' => $total_salary_for_today,
                 'time_out_image' => $filePath,
                 'isPresent' => 1,
-                'time_out_deduction' => $deduction,
+                'time_in_deduction' => ($time_out_deduction == 0) ? 0 : $attendance->time_in_deduction ,
+                'time_out_deduction' => $time_out_deduction,
             ]);
         }
 

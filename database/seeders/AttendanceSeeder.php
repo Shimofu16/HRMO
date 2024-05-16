@@ -98,6 +98,7 @@ class AttendanceSeeder extends Seeder
                         'hours' => $hoursWorked,
                         'salary' => $totalSalaryForToday,
                         'isPresent' => 1,
+                        'time_in_deduction' => ($deduction == 0) ? 0 : $attendance->time_in_deduction ,
                         'time_out_deduction' => $deduction,
                     ]);
 

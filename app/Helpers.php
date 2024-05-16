@@ -378,12 +378,12 @@ if (!function_exists('calculateSalary')) {
             if ($sickLeave > 0) {
                 $salaryPerHour = $salaryPerHour - $notWorkedHour;
             }
-            if ($sickLeave < 0) {
-                $sickLeave = 0;
-                $deduction = 0;
-            }
-        }
 
+        }
+        if ($sickLeave < 0) {
+            $sickLeave = 0;
+            $deduction = 0;
+        }
         // Calculate total salary for the day (applicable only for non-JO employees)
         if (!$isJO) {
             $totalSalaryForToday = ($salaryPerHour * $hourWorked);
