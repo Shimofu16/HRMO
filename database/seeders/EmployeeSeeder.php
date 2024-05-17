@@ -2,17 +2,18 @@
 
 namespace Database\Seeders;
 
-use App\Models\Allowance;
+use Faker\Factory;
+use App\Models\Level;
 use App\Models\Category;
+use App\Models\Employee;
+use App\Models\Allowance;
 use App\Models\Deduction;
 use App\Models\Department;
 use App\Models\Designation;
-use App\Models\Employee;
-use App\Models\Level;
 use App\Models\SalaryGrade;
-use Faker\Factory;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class EmployeeSeeder extends Seeder
 {
@@ -24,9 +25,11 @@ class EmployeeSeeder extends Seeder
         $faker = Factory::create();
 
         for ($i = 0; $i < 20; $i++) {
+$employee_number = str_pad($i, 2, '0', STR_PAD_LEFT) . '-' . date('ymd') . '-' . mt_rand(0, 9999);
+
             $gender = $faker->randomElement(['male', 'female']);
             $employee = Employee::create([
-                'employee_number' => $faker->numberBetween(00000, 10000),
+                'employee_number' => $employee_number,
                 'ordinance_number' => $faker->numberBetween(000000, 100000),
                 'first_name' => $faker->firstName($gender),
                 'middle_name' => $faker->lastName($gender),
@@ -40,26 +43,26 @@ class EmployeeSeeder extends Seeder
             $limit = 20833;
             $cos_monthly_salary = 0;
             if ($category->category_code == "JO" || $category->category_code == "COS") {
-                $cos_monthly_salary = ($category->category_code == "COS") ? $faker->numberBetween(20000,40000) : null;
+                $cos_monthly_salary = ($category->category_code == "COS") ? $faker->numberBetween(20000, 40000) : null;
                 if ($cos_monthly_salary > $limit || $level->amount > $limit) {
-                    $holding_tax = $faker->numberBetween(500,2000);
+                    $holding_tax = $faker->numberBetween(500, 2000);
                 }
                 $employee->data()->create([
                     'department_id' => $department->id,
                     'designation_id' => $designation->id,
                     'category_id' => $category->id,
-                    'level_id' =>  ($category->category_code == "COS") ?  null: $level->id,
+                    'level_id' => ($category->category_code == "COS") ?  null : $level->id,
                     'cos_monthly_salary' => $cos_monthly_salary
                 ]);
             }
-            if($category->category_code != "JO") {
+            if ($category->category_code != "JO") {
                 $sick_leave_points = $faker->randomFloat(null, 10, 15);
                 if ($category->category_code != "COS") {
                     $salary_grade = SalaryGrade::find($faker->numberBetween(1, SalaryGrade::count()));
                     $salary_grade_step = 'Step ' . $faker->numberBetween(1, count($salary_grade->steps));
                     foreach ($salary_grade->steps as $key => $salary_grade_steps) {
                         if ($salary_grade_step == $salary_grade_steps['step'] && $salary_grade_steps['amount'] > $limit) {
-                            $holding_tax = $faker->numberBetween(500,2000);
+                            $holding_tax = $faker->numberBetween(500, 2000);
                         }
                     }
                     $employee->data()->create([

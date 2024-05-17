@@ -121,10 +121,8 @@ class Employee extends Model
             foreach ($this->deductions as $deduction) {
                 $amount = $deduction->deduction->deduction_amount;
                 if ($deduction->deduction->deduction_amount_type == 'percentage') {
-                    $amount = $amount / 100;
-                    if ($deduction->deduction->deduction_name == 'Phil Health') {
-                        $amount = ($this->data->monthly_salary / 2) * .02;
-                    }
+                    $percentage = $amount / 100;
+                    $amount = ($this->data->monthly_salary / 2) * $percentage;
                 }
                 $totalDeduction += $amount;
             }
@@ -134,10 +132,8 @@ class Employee extends Model
                 if ($range == $deduction->deduction->deduction_range) {
                     $amount = $deduction->deduction->deduction_amount;
                     if ($deduction->deduction->deduction_amount_type == 'percentage') {
-                        $amount = $amount / 100;
-                        if ($deduction->deduction->deduction_name == 'Phil Health') {
-                            $amount = ($this->data->monthly_salary / 2) * .02;
-                        }
+                        $percentage = $amount / 100;
+                        $amount = ($this->data->monthly_salary / 2) * $percentage;
                     }
                     $totalDeduction += $amount;
                 }
@@ -150,7 +146,7 @@ class Employee extends Model
         if ($this->loans) {
             foreach ($this->loans as $key => $loan) {
                 foreach ($loan->ranges as $key => $loan_range) {
-                    if ( $range ==$loan_range) {
+                    if ($range == $loan_range) {
                         $totalDeduction += $loan->amount;
                     }
                 }
@@ -206,20 +202,16 @@ class Employee extends Model
                 if ($range == $deduction->deduction->deduction_range) {
                     $amount = $deduction->deduction->deduction_amount;
                     if ($deduction->deduction->deduction_amount_type == 'percentage') {
-                        $amount = $amount / 100;
-                        if ($deduction->deduction->deduction_name == 'Phil Health') {
-                            $amount = ($this->data->monthly_salary / 2) * .02;
-                        }
+                        $percentage = $amount / 100;
+                        $amount = ($this->data->monthly_salary / 2) * $percentage;
                     }
                     return $amount;
                 }
             } else {
                 $amount = $deduction->deduction->deduction_amount;
                 if ($deduction->deduction->deduction_amount_type == 'percentage') {
-                    $amount = $amount / 100;
-                    if ($deduction->deduction->deduction_name == 'Phil Health') {
-                        $amount = ($this->data->monthly_salary / 2) * .02;
-                    }
+                    $percentage = $amount / 100;
+                    $amount = ($this->data->monthly_salary / 2) * $percentage;
                 }
                 return $amount;
             }

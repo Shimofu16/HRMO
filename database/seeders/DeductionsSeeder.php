@@ -20,10 +20,10 @@ class DeductionsSeeder extends Seeder
         $deduction_ranges = ['1-15', '16-30'];
         $deductions = [
             [
-                'deduction_code' => 'GSIS',
-                'deduction_name' =>  'GSIS',
-                'deduction_amount' => rand(100, 1000),
-                'deduction_amount_type' => 'fixed_amount',
+                'deduction_code' => 'Life & Ret.',
+                'deduction_name' =>  'Life & Retirement benefits',
+                'deduction_amount' => 9,
+                'deduction_amount_type' => 'percentage',
                 'deduction_type' => $deduction_types[array_rand($deduction_types)],
                 'deduction_range' => '1-15',
             ],
