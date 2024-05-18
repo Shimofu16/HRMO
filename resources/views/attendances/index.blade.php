@@ -4,7 +4,8 @@
             Attendance List
         </h1>
     </x-slot>
-
+    @include('attendances._header')
+    
     <div class="p-5 mx-auto mt-8 bg-white rounded-md shadow max-w-7xl">
 
         <div class="flex items-center justify-between mb-3">
@@ -56,10 +57,8 @@
                     <th class="px-4 py-2 text-left border-b">Employee</th>
                     <th class="px-4 py-2 text-left border-b">Time In</th>
                     <th class="px-4 py-2 text-left border-b">Late</th>
-                    <th class="px-4 py-2 text-left border-b">Time In Picture</th>
                     <th class="px-4 py-2 text-left border-b">Status</th>
                     <th class="px-4 py-2 border-b ext-left">Time Out</th>
-                    <th class="px-4 py-2 text-left border-b">Time Out Picture</th>
                     <th class="px-4 py-2 text-left border-b">Status</th>
                     {{-- <th class="px-4 py-2 text-left border-b">Action</th> --}}
                 </tr>
@@ -78,21 +77,11 @@
                                 {{ getLate($attendance->time_in, true) }}
                             @endif
                         </td>
-                        <td class="px-4 py-2 border-b">
-                            <img src="storage/{{ $attendance->time_in_image }}" alt="" loading="lazy"
-                                style="height:70px; width:70px">
-                        </td>
                         <td class="px-4 py-2 border-b">{{ $attendance->time_in_status }}</td>
 
                         <td class="px-4 py-2 border-b">
                             @if ($attendance->time_out)
                                 {{ getInterval($attendance->time_in, false, true) }}
-                            @endif
-                        </td>
-                        <td class="px-4 py-2 border-b">
-                            @if ($attendance->time_out)
-                                <img src="storage/{{ $attendance->time_out_image }}" alt="" loading="lazy"
-                                    style="height:70px; width:70px">
                             @endif
                         </td>
                         <td class="px-4 py-2 border-b">{{ $attendance->time_out_status }}</td>

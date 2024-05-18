@@ -53,6 +53,10 @@ Route::get('/', function () {
 
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
     Route::get('/dashboard/{filter?}', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('employees', EmployeeController::class)->names([
         'create' => 'employees.create',
@@ -237,6 +241,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // employee
     Route::get('/employees/{employee}', [EmployeeController::class, 'show'])->name('employees.show');
+    Route::get('/employees/dtr/{employee}', [EmployeeController::class, 'dtr'])->name('employees.dtr');
+    Route::get('/employees/payslip/{employee}', [EmployeeController::class, 'payslip'])->name('employees.payslip');
     Route::get('/employees/edit/{employee}', [EmployeeController::class, 'edit'])->name('employees.edit');
     Route::get('/employees/{filter_by?}/{filter_id?}', [EmployeeController::class, 'index'])->name('employees.index');
 
@@ -375,11 +381,7 @@ Route::get('/getLoan', function (Request $request) {
 });
 
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+
 Route::get('/test', function () {
     return view('attendances.employees.test');
 });

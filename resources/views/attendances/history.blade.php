@@ -6,7 +6,7 @@
             </h2>
 
     </x-slot>
-
+    @include('attendances._header')
     <div class="p-5 mx-auto mt-8 bg-white rounded-md shadow max-w-7xl">
 
         <div class="flex items-center justify-between mb-3">
@@ -15,10 +15,10 @@
             </div>
             <div class="flex items-center space-x-2">
                 <div class="relative">
-                    <a href="{{ route('attendances-history.index') }}"
+                    {{-- <a href="{{ route('attendances-history.index') }}"
                         class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-800 border border-transparent rounded-md hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                         Back to Attendance History
-                    </a>
+                    </a> --}}
                 </div>
             </div>
         </div>

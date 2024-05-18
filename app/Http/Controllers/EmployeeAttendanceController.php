@@ -44,7 +44,7 @@ class EmployeeAttendanceController extends Controller
         // dd($request->all());
         $request->validate([
             'employee_number' => 'required|exists:employees,employee_number',
-            'image' => 'required',
+            // 'image' => 'required',
             'type' => 'required',
         ]);
 
@@ -52,9 +52,9 @@ class EmployeeAttendanceController extends Controller
         $isTimeIn = $request->input('type')  == 1;
 
         // Process image data
-        $image = $request->input('image');
-        $image_parts = explode(";base64,", $image);
-        $image_base64 = base64_decode(end($image_parts));
+        // $image = $request->input('image');
+        // $image_parts = explode(";base64,", $image);
+        // $image_base64 = base64_decode(end($image_parts));
 
         // Get employee details
         $employee = Employee::with('attendances')
@@ -67,9 +67,9 @@ class EmployeeAttendanceController extends Controller
         }
 
         // Generate file name and path
-        $fileName = uniqid() . ' Time ' . ($isTimeIn ? 'in' : 'out') . '.png';
-        $path = 'uploads/attendance/' . $employee->full_name . '/';
-        $filePath = $path . $fileName;
+        // $fileName = uniqid() . ' Time ' . ($isTimeIn ? 'in' : 'out') . '.png';
+        // $path = 'uploads/attendance/' . $employee->full_name . '/';
+        // $filePath = $path . $fileName;
 
 
         // Check timing conditions
@@ -92,7 +92,7 @@ class EmployeeAttendanceController extends Controller
             }
 
             // Take attendance for time in and record the details
-            $this->takeAttendance($isTimeIn, $image_base64, $employee, $filePath);
+            $this->takeAttendance($isTimeIn, $employee);
 
             // Redirect with success message
             return redirect()->back()->with('success', 'Attendance recorded successfully!');
@@ -123,7 +123,7 @@ class EmployeeAttendanceController extends Controller
             }
 
             // Update attendance for time out and record the details
-            $this->takeAttendance($isTimeIn, $image_base64, $employee, $filePath);
+            $this->takeAttendance($isTimeIn, $employee);
 
             // Redirect with success message
             return redirect()->back()->with('success', 'Attendance Updated successfully!');
@@ -161,7 +161,7 @@ class EmployeeAttendanceController extends Controller
     {
         //
     }
-    private function takeAttendance($isTimeIn, $image, $employee, $filePath)
+    private function takeAttendance($isTimeIn, $employee)
     {
         $status = '';
         $timezone = 'Asia/Manila'; // Set the timezone to the Philippines
@@ -199,7 +199,6 @@ class EmployeeAttendanceController extends Controller
                 'employee_id' => $employee->id,
                 'time_in_status' => $status,
                 'time_in' => $now,
-                'time_in_image' => $filePath,
                 'time_in_deduction' => $deduction,
             ]);
         } else {
@@ -219,14 +218,13 @@ class EmployeeAttendanceController extends Controller
                 'time_out' => $now,
                 'hours' => $hours,
                 'salary' => $total_salary_for_today,
-                'time_out_image' => $filePath,
                 'isPresent' => 1,
                 'time_out_deduction' => $time_out_deduction,
             ]);
         }
 
         // Save the image using Laravel's Storage facade
-        Storage::disk('public')->put($filePath, $image);
+        // Storage::disk('public')->put($filePath, $image);
         return $status;
     }
     private function calculateSalary($salaryGrade, $employee, $attendance, $timeIn, $timeOut, $currentTime, $isJO)

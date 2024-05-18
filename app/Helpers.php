@@ -133,48 +133,33 @@ if (!function_exists('getInterval')) {
         $time = Carbon::parse(date('H:i:s', strtotime($time)));
         // dd($time);
         if ($isTimeIn) {
-            if ($time->between(Carbon::parse('6:00:00'), Carbon::parse('8:10:00'))) {
+            if ($time->between(Carbon::parse('6:00:00'), Carbon::parse('8:00:00'))) {
                 $interval = Carbon::parse('8:00:00');
-            } elseif ($time->between(Carbon::parse('8:11:00'), Carbon::parse('8:40:00'))) {
-                $interval = Carbon::parse('8:30:00');
-            } elseif ($time->between(Carbon::parse('8:41:00'), Carbon::parse('9:10:00'))) {
+            } elseif ($time->between(Carbon::parse('8:01:00'), Carbon::parse('9:00:00'))) {
                 $interval = Carbon::parse('9:00:00');
-            } elseif ($time->between(Carbon::parse('9:11:00'), Carbon::parse('9:40:00'))) {
-                $interval = Carbon::parse('9:30:00');
-            } elseif ($time->between(Carbon::parse('9:41:00'), Carbon::parse('10:10:00'))) {
+            } elseif ($time->between(Carbon::parse('9:01:00'), Carbon::parse('10:00:00'))) {
                 $interval = Carbon::parse('10:00:00');
-            } elseif ($time->between(Carbon::parse('10:11:00'), Carbon::parse('10:40:00'))) {
-                $interval = Carbon::parse('10:30:00');
-            } elseif ($time->between(Carbon::parse('10:41:00'), Carbon::parse('11:10:00'))) {
+            } elseif ($time->between(Carbon::parse('10:01:00'), Carbon::parse('11:00:00'))) {
                 $interval = Carbon::parse('11:00:00');
-            } elseif ($time->between(Carbon::parse('11:11:00'), Carbon::parse('11:40:00'))) {
-                $interval = Carbon::parse('11:30:00');
+            } elseif ($time->between(Carbon::parse('11:01:00'), Carbon::parse('12:00:00'))) {
+                $interval = Carbon::parse('12:00:00');
             } else {
                 $interval = Carbon::parse('12:00:00');
             }
         } else {
-            if ($time->between(Carbon::parse('13:00:00'), Carbon::parse('13:10:00'))) {
-                $interval = Carbon::parse('13:00:00');
-            } elseif ($time->between(Carbon::parse('13:11:00'), Carbon::parse('13:40:00'))) {
-                $interval = Carbon::parse('13:30:00');
-            } elseif ($time->between(Carbon::parse('13:41:00'), Carbon::parse('14:10:00'))) {
+            if ($time->between(Carbon::parse('13:00:00'), Carbon::parse('14:00:00'))) {
                 $interval = Carbon::parse('14:00:00');
-            } elseif ($time->between(Carbon::parse('14:11:00'), Carbon::parse('14:40:00'))) {
-                $interval = Carbon::parse('14:30:00');
-            } elseif ($time->between(Carbon::parse('14:41:00'), Carbon::parse('15:10:00'))) {
+            } elseif ($time->between(Carbon::parse('14:01:00'), Carbon::parse('15:00:00'))) {
                 $interval = Carbon::parse('15:00:00');
-            } elseif ($time->between(Carbon::parse('15:11:00'), Carbon::parse('15:40:00'))) {
-                $interval = Carbon::parse('15:30:00');
-            } elseif ($time->between(Carbon::parse('15:41:00'), Carbon::parse('16:10:00'))) {
+            } elseif ($time->between(Carbon::parse('15:01:00'), Carbon::parse('16:00:00'))) {
                 $interval = Carbon::parse('16:00:00');
-            } elseif ($time->between(Carbon::parse('16:11:00'), Carbon::parse('16:40:00'))) {
-                $interval = Carbon::parse('16:30:00');
-            } elseif ($time->between(Carbon::parse('16:41:00'), Carbon::parse('17:10:00'))) {
+            } elseif ($time->between(Carbon::parse('16:01:00'), Carbon::parse('17:00:00'))) {
                 $interval = Carbon::parse('17:00:00');
             } else {
                 $interval = Carbon::parse('17:00:00');
             }
         }
+
 
         if ($isFormatted) {
             return $interval->format('h:i:s A');
@@ -184,10 +169,10 @@ if (!function_exists('getInterval')) {
 }
 if (!function_exists('attendanceCount')) {
 
-    function attendanceCount($employee, $payroll, $from, $to)
+    function attendanceCount($employee, $date, $from, $to)
     {
-        $month = date('m', strtotime($payroll['month']));
-        $year = date('Y', strtotime($payroll['year']));
+        $month = date('m', strtotime($date));
+        $year = date('Y', strtotime($date));
         $lastDayOfTheMonth = $to;
         if (!checkdate($month, $to, $year)) {
             $lastDayOfTheMonth = date('t', mktime(0, 0, 0, $month, 1, $year)); // get last day of the month
@@ -199,29 +184,28 @@ if (!function_exists('attendanceCount')) {
         $absent = 0;
         $late = 0;
         $underTime = 0;
+        $halfday = 0;
         $attendances = [];
 
         $loopStart = ($to == 15) ? 1 : 16;
         $loopEnd = ($to == 15) ? 15 : $lastDayOfTheMonth;
 
-        $from = sprintf('%04d-%02d-%02d', $year, $month, $from);
-        // $to = sprintf('%04d-%02d-%02d', $year, $month, $to);
-        // $from = sprintf('%04d-%02d-%02d', $year, $month, $from);
-        $to = sprintf('%04d-%02d-%02d', $year, $month, $loopEnd);
+        $from = Carbon::parse(sprintf('%04d-%02d-%02d', $year, $month, $from))->format('Y-m-d');
+        $to = Carbon::parse(sprintf('%04d-%02d-%02d', $year, $month, $loopEnd))->format('Y-m-d');
+        // dd($date, $month, $year, $from, $to);
 
 
-        $from = Carbon::parse($from)->format('Y-m-d');
-        $to = Carbon::parse($to)->format('Y-m-d');
 
         for ($i = $loopStart; $i <= $loopEnd; $i++) {
             $day = str_pad($i, 2, '0', STR_PAD_LEFT);
-            $date = Carbon::parse(sprintf('%04d-%02d-%02d', $year, $month, $day))->format('Y-m-d');
+            $date = Carbon::parse(sprintf('%04d-%02d-%02d', $year, $month, $day));
             $attendance = $employee->attendances()
                 ->whereDate('time_in', $date)
                 ->where('isPresent', 1)
                 ->first();
             // Consider weekends and employee category
-            $isWeekend = (Carbon::parse($payroll['month'] . '-' . $day))->isWeekend();
+            $isWeekend = $date->isWeekend();
+            $date = $date->format('Y-m-d');
             if ($attendance) {
 
                 $manhours = $attendance->hours;
@@ -236,10 +220,14 @@ if (!function_exists('attendanceCount')) {
                         'time_out' => '-----',
                         'time_out_interval' => '-----',
                         'manhours' => 0, // No manhours for weekends (except JO)
+                        'color' => '',
                     ];
                 } else {
                     if ($attendance->time_in_status == 'Late') {
                         $late++;
+                    }
+                    if ($attendance->time_in_status == 'Half-Day' || $attendance->time_out_status == 'Half-Day') {
+                        $halfday++;
                     }
                     if ($attendance->time_out_status == 'Under-time') {
                         $underTime++;
@@ -255,6 +243,7 @@ if (!function_exists('attendanceCount')) {
                         'deduction' => $attendance->time_in_deduction + $attendance->time_out_deduction,
                         'manhours' => $manhours,
                         'total_salary' => $attendance->salary,
+                        'color' => getColor($attendance->type),
                     ];
                     $total_man_hour += $manhours;
                     $total_salary += $attendance->salary;
@@ -272,6 +261,7 @@ if (!function_exists('attendanceCount')) {
                     'time_out' => '',
                     'time_out_interval' => '',
                     'manhours' => '',
+                    'color' => '',
                 ];
             }
         }
@@ -281,6 +271,7 @@ if (!function_exists('attendanceCount')) {
             'absent' => $absent,
             'late' => $late,
             'under_time' => $underTime,
+            'halfday' => $halfday,
             'total_man_hour' => $total_man_hour,
             'total_salary' => $total_salary,
             'attendances' => $attendances,
@@ -456,6 +447,47 @@ if (!function_exists('getLateByMinutes')) {
         }
 
         return $equivalent;
+    }
+}
+if (!function_exists('getDatesBetween')) {
+
+    function getDatesBetween($startDate, $endDate, $returnDates)
+    {
+        $dates = [];
+        $currentDate = strtotime($startDate);
+        $days = 0;
+        while ($currentDate <= strtotime($endDate)) {
+            $dayOfWeek = date('w', $currentDate); // Get the day of the week (0 for Sunday)
+
+            // Skip Saturdays (dayOfWeek == 6) and Sundays (dayOfWeek == 0)
+            if ($dayOfWeek != 6 && $dayOfWeek != 0) {
+                $dates[] = date('Y-m-d', $currentDate);
+                $days++;
+            }
+
+            $currentDate = strtotime('+1 day', $currentDate);
+        }
+        if ($returnDates) {
+            return  $dates;
+        }
+        return  $days;
+    }
+}
+if (!function_exists('getColor')) {
+
+    function getColor($type)
+    {
+        $colors = [
+            'seminar' => '#055100',
+            'travel_order' => '#db1d8e',
+            'maternity_leave' => '#000baa',
+            'vacation_leave' => '#360723',
+            'sick_leave' => '#a00',
+            'force_leave' => '#a42c00',
+        ];
+
+        // Return the color associated with the type, or a default color if not found
+        return array_key_exists($type, $colors) ? $colors[$type] : ''; // Default gray
     }
 }
 if (!function_exists('getTotalSalaryBy')) {

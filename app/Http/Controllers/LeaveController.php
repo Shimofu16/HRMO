@@ -77,7 +77,7 @@ class LeaveController extends Controller
             if ($request->status == 'accepted') {
                 $leave_request->employee->data->update(['sick_leave_points' => ($leave_request->employee->data->sick_leave_points - (1.25 * $leave_request->days))]);
 
-                $this->takeAttendance($leave_request->employee, $this->getDatesBetween($leave_request->start, $leave_request->end));
+                $this->takeAttendance($leave_request, getDatesBetween($leave_request->start, $leave_request->end, true));
             }
             $leave_request->update(['status' => $request->status]);
             return redirect()->route('leave-requests.index', ['status' => $request->status])->with('success', 'Successfully updated leave request.');
@@ -85,47 +85,41 @@ class LeaveController extends Controller
             return back()->with('error', $th->getMessage());
         }
     }
-    function getDatesBetween($startDate, $endDate)
+
+
+
+
+    public function takeAttendance($leave_request, $dates)
     {
-        $dates = [];
-        $currentDate = strtotime($startDate);
-
-        while ($currentDate <= strtotime($endDate)) {
-            $dates[] = date('Y-m-d', $currentDate);
-            $currentDate = strtotime('+1 day', $currentDate);
-        }
-
-        return $dates;
-    }
-
-
-    public function takeAttendance($employee, $dates)
-    {
-        $salary_grade = $employee->data->monthly_salary;
-        $salary = $this->calculateSalary($salary_grade, $employee->data->category->category_code == "JO");
+        $salary_grade = $leave_request->employee->data->monthly_salary;
+        $salary = $this->calculateSalary($salary_grade, $leave_request->employee->data->category);
 
         foreach ($dates as $key => $date) {
             $timeIn = $date . ' 08:00:00'; // Combine date with time in
             $timeOut = $date . ' 17:00:00'; // Combine date with time out
             Attendance::create([
-                'employee_id' => $employee->id,
+                'employee_id' => $leave_request->employee->id,
                 'time_in_status' => 'On-time',
                 'time_in' => $timeIn,
                 'time_out_status' => 'Time-out',
                 'time_out' => $timeOut,
                 'hours' => 8,
                 'salary' =>   $salary,
+                'type' =>   $leave_request->type,
                 'isPresent' => 1,
             ]);
         }
     }
-    public function calculateSalary($salaryGrade, $isJO)
+    public function calculateSalary($salaryGrade, $category)
     {
-        if ($isJO) {
+        if ($category->category_code == "JO") {
             return $salaryGrade;
         }
+        if ($category->category_code == "COS") {
+            return $salaryGrade / 22;
+        }
         $salaryPerHour = ($salaryGrade / 22) / 8;
-        return max(0, $salaryPerHour * 8); // Ensure non-negative
+        return max(0, $salaryPerHour); // Ensure non-negative
     }
     /**
      * Remove the specified resource from storage.

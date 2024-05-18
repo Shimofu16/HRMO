@@ -4,8 +4,8 @@
             Seminar Attendance List
         </h1>
     </x-slot>
+    @include('attendances._header')
 
-    
     <div class=" mx-auto mt-8  max-w-7xl">
         <div class="bg-white  p-5 mx-8 shadow rounded-md">
             <form action="{{ route('seminars.attendance', ['seminar_id' => $seminar->id]) }}" method="POST">
@@ -30,7 +30,7 @@
         </div>
         <div class="bg-white rounded-md shadow mt-8 p-5">
             <div class="flex items-center justify-between mb-3">
-    
+
             </div>
             <table class="min-w-full border data-table">
                 <thead>
@@ -70,4 +70,4 @@
             });
         </script>
     @endpush
-</x-app-layout>  
+</x-app-layout>

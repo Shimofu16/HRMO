@@ -22,9 +22,9 @@
                     <div class="flex flex-col items-center justify-center h-full p-4">
                         <form action="{{ route('employee.attendance.store') }}" method="post" id="attendance">
                             @csrf
-                            <div id="my_camera"></div>
+                            {{-- <div id="my_camera"></div>
                             <div id="results"></div>
-                            <input type="hidden" name="image" class="image-tag">
+                            <input type="hidden" name="image" class="image-tag"> --}}
                             <div class="grid grid-cols-6 gap-6">
                                 <div class="col-span-6 sm:col-span-6">
                                     <label for="employee_number" class="block font-medium text-gray-700">Employee
@@ -62,7 +62,7 @@
         </div>
 
     </div>
-    @if (!$isTodayHoliday)
+    {{-- @if (!$isTodayHoliday)
         <script src="{{ asset('assets/webcam/webcam.min.js') }}"></script>
         <script language="JavaScript">
             Webcam.set({
@@ -89,7 +89,7 @@
                 });
             }
         </script>
-    @endif
+    @endif --}}
     <script>
         function updateTime() {
             const date = new Date();

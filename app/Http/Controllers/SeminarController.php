@@ -38,6 +38,7 @@ class SeminarController extends Controller
     {
         Seminar::create([
             'name' => $request->name,
+            'type' => $request->type,
             'date' => $request->date,
             'departments' => $request->departments
         ]);
@@ -94,16 +95,42 @@ class SeminarController extends Controller
     {
         $seminar = Seminar::find($seminar_id);
         $employees = Employee::find($request->employees);
+
         foreach ($employees as $key => $employee) {
+            $salary_grade = $employee->data->monthly_salary;
+            $salary = $this->calculateSalary($salary_grade, $employee->data->category);
             $employee->seminarAttendances()->create([
                 'seminar_id' => $seminar->id,
-                'salary' => ((($employee->data->salary_grade_step_amount / 2) / 15) / 8)
+                'salary' => $salary
+            ]);
+            $timeIn = date('Y-m-d', strtotime($seminar->date)) . ' 08:00:00'; // Combine date with time in
+            $timeOut = date('Y-m-d', strtotime($seminar->date)) . ' 17:00:00'; // Combine date with time out
+            Attendance::create([
+                'employee_id' => $employee->id,
+                'time_in_status' => 'On-time',
+                'time_in' => $timeIn,
+                'time_out_status' => 'Time-out',
+                'time_out' => $timeOut,
+                'hours' => 8,
+                'salary' =>   $salary,
+                'type' =>   'seminar',
+                'isPresent' => 1,
             ]);
         }
         // $this->takeAttendance($seminar->time_start, $seminar->time_end, $employees, $seminar);
         return back()->with('success', 'Successfully Created Attendance');
     }
-
+    public function calculateSalary($salaryGrade, $category)
+    {
+        if ($category->category_code == "JO") {
+            return $salaryGrade;
+        }
+        if ($category->category_code == "COS") {
+            return $salaryGrade / 22;
+        }
+        $salaryPerHour = ($salaryGrade / 22) / 8;
+        return max(0, $salaryPerHour); // Ensure non-negative
+    }
     public function payslip($employee_id)
     {
         $employee = Employee::withCount('seminarAttendances')->find($employee_id);

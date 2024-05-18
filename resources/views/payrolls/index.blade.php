@@ -69,15 +69,7 @@
                                 $lastDayOfMonth = date('t'); // Get the last day of the current month
                             @endphp
                             <a href="{{ route('payrolls.show', $encoded) }}"
-                                class="text-green-500 hover:text-green-700 mr-3">View Payslip</a>
-                            @php
-                            @endphp
-                            {{-- @if (!($today == 15 || $today == 30 || ($today == 29 && $lastDayOfMonth != 30)))
-                                <button class="text-blue-500 hover:text-blue-700 disabled">
-                                    Generate Payslip
-                                </button>
-                            @else
-                            @endif --}}
+                                class="text-green-500 hover:text-green-700 mr-3">General Payroll</a>
                                 <a href="{{ route('payslips.show', [
                                     'department_id' => $payroll['department_id'],
                                     'payroll' => $encoded,

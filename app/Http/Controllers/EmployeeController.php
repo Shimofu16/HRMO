@@ -229,14 +229,29 @@ class EmployeeController extends Controller
     /**
      * Remove the specified employee from storage.
      */
+    
     public function destroy(Employee $employee)
     {
         $employee->allowances()->delete();
         $employee->deductions()->delete();
+        $employee->attendances()->delete();
 
         $employee->delete();
 
         return redirect()->route('employees.index')
             ->with('success', 'Employee deleted successfully.');
+    }
+
+    public function dtr(Employee $employee)
+    {
+        return view('employees.dtr.index', [
+            'employee' => $employee
+        ]);
+    }
+    public function payslip(Employee $employee)
+    {
+        return view('employees.payslip.index', [
+            'employee' => $employee
+        ]);
     }
 }

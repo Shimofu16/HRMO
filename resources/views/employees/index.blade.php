@@ -1,4 +1,3 @@
-
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
@@ -100,14 +99,18 @@
                             {{ Str::limit($employee->data->designation->designation_code, 20, '...') }}</td>
                         <td class="px-4 py-3 border-b">{{ $employee->data->category->category_code }}</td>
                         <td class="px-4 py-3 border-b flex flex-col">
-                            <a href="{{ route('employees.show', $employee) }}"
-                                class="text-green-500 hover:text-green-700 p-2">View Info.</a>
-                            <form class="inline-block" action="{{ route('employees.destroy', $employee) }}"
-                                method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-500 hover:text-red-700 p-2">Delete</button>
-                            </form>
+                            {{-- <a href="{{ route('employees.show', $employee) }}"></a>
+                                Infofmation
+                            </a> --}}
+                            <a href="{{ route('employees.show', $employee) }}" class="text-green-700 hover:text-white border border-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-green-500 dark:text-green-500 dark:hover:text-white dark:hover:bg-green-600 dark:focus:ring-green-800">
+                                Infofmation
+                            </a>
+                            <a href="{{ route('employees.dtr', $employee) }}" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
+                                DTR
+                            </a>
+                            <a href="{{ route('employees.payslip', $employee) }}" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
+                                Payslip
+                            </a>
                         </td>
                     </tr>
                 @endforeach

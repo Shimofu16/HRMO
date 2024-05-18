@@ -72,7 +72,7 @@ return new class extends Migration
             $table->date('start');
             $table->date('end');
             $table->integer('days');
-            $table->enum('type', ['vacation', 'sick', 'force']);
+            $table->enum('type', ['vacation_leave', 'sick_leave', 'force_leave','maternity_leave']);
             $table->enum('status', ['accepted', 'pending', 'rejected']);
             $table->timestamps();
         });
@@ -81,14 +81,13 @@ return new class extends Migration
             $table->foreignId('employee_id')->constrained('employees', 'id');
             $table->dateTime('time_in')->nullable();
             $table->string('time_in_status')->nullable();
-            $table->string('time_in_image')->nullable();
             $table->double('time_in_deduction')->nullable();
             $table->dateTime('time_out')->nullable();
             $table->string('time_out_status')->nullable();
-            $table->string('time_out_image')->nullable();
             $table->double('time_out_deduction')->nullable();
             $table->double('salary')->nullable();
             $table->bigInteger('hours')->nullable();
+            $table->enum('type', ['attendance', 'seminar','travel_order','maternity_leave', 'vacation_leave', 'sick_leave', 'force_leave'])->default('attendance');
             $table->dateTime('absent_at')->nullable();
             $table->boolean('isPresent')->default(false);
             $table->timestamps();

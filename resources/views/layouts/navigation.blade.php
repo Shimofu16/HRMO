@@ -17,10 +17,10 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </li>
-                <li class="relative group">
-                    <x-nav-link :href="route('attendances.index')" :active="request()->routeIs('attendances.index')">
-                        {{ __('Attendance') }}
-                    </x-nav-link>
+                <x-nav-link :href="route('attendances.index')" :active="request()->routeIs('attendances.index')">
+                    {{ __('Attendance') }}
+                </x-nav-link>
+                {{-- <li class="relative group">
                     <div id="suppliers-dropdown"
                         class="hidden group-hover:block  mt-1 max-h-64 w-100 overflow-auto absolute">
                         <div class="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44">
@@ -42,7 +42,7 @@
                             </ul>
                         </div>
                     </div>
-                </li>
+                </li> --}}
                 <li class="relative group">
                     <x-nav-link :href="route('employees.index')" :active="request()->routeIs('employees.index')">
                         {{ __('Employees') }}

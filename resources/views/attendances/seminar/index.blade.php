@@ -5,7 +5,7 @@
         </h1>
     </x-slot>
 
-
+    @include('attendances._header')
     <div class=" mx-auto mt-8  max-w-7xl">
         <div class="bg-white  p-5 mx-8 shadow rounded-md">
             <form action="{{ route('seminars.store') }}" method="POST">
@@ -13,7 +13,7 @@
                 <div class="grid grid-cols-6 gap-6">
                     <div class="col-span-3 sm:col-span-3">
                         <label for="name" class="block font-medium text-gray-700">
-                            Name</label>
+                            Name of Business</label>
                         <input type="text" name="name" id="name" class="block w-full mt-1 rounded" required>
                     </div>
                     <div class="col-span-3 sm:col-span-3">
@@ -21,7 +21,15 @@
                             Date</label>
                         <input type="date" name="date" id="date" class="block w-full mt-1 rounded" required>
                     </div>
-                    <div class="col-span-3 sm:col-span-6">
+                    <div class="col-span-3 sm:col-span-3">
+                        <label for="type" class="block font-medium text-gray-700">Type</label>
+                        <select name="type" id="type" class="block w-full mt-1 rounded" require>
+                            <option value="">Select type</option>
+                            <option value="seminar">Seminar</option>
+                            <option value="travel_order">Travel Order</option>
+                        </select>
+                    </div>
+                    <div class="col-span-3 sm:col-span-3">
                         <label for="name" class="block font-medium text-gray-700">Departments</label>
                         <select name="departments[]" id="departments" class="block w-full mt-1 rounded" required
                             multiple>
@@ -63,16 +71,15 @@
                                 @if ($seminar->departments[0] == 'All')
                                     All Deparments
                                 @else
-                                @php
-                                    $departments = \App\Models\Department::find($seminar->departments);
-                                @endphp
-                                @foreach ($departments as $department)
-                                    {{ $department->dep_code }}
-                                    @if (!$loop->last)
-                                        ,
-                                    @endif
-                                @endforeach
-
+                                    @php
+                                        $departments = \App\Models\Department::find($seminar->departments);
+                                    @endphp
+                                    @foreach ($departments as $department)
+                                        {{ $department->dep_code }}
+                                        @if (!$loop->last)
+                                            ,
+                                        @endif
+                                    @endforeach
                                 @endif
                             </td>
                             <td class="px-4 py-2 border-b">
