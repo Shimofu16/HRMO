@@ -49,14 +49,14 @@ class Create extends Component
             'start' => $this->start,
             'end' => $this->end,
             'type' => $this->type,
-            'status' => 'pending',
+            'status' => 'accepted',
             'days' => $this->days_leave,
         ]);
         // Create activity
         createActivity('Create Employee Leave Request', 'Create Employee Leave Request for ' . $this->employee->full_name . '.', request()->getClientIp(true));
 
         // Redirect to the index page with a success message
-        return redirect()->route('leave-requests.index', ['status' => 'pending'])->with('success', 'Leave Request created successfully.');
+        return redirect()->route('leave-requests.index', ['status' => 'accepted'])->with('success', 'Leave Request created successfully.');
     }
 
     public function mount()

@@ -103,7 +103,8 @@
                             $totalAllowance = 0;
                             $totalDeduction = 0;
                             $netpay = 0;
-                            $amountEarned =attendanceCount($employee, $payroll, $from,  $to)['total_salary'];
+                            $date = 
+                            $amountEarned =attendanceCount($employee, $payroll['month'],$payroll['year'], $from,  $to)['total_salary'];
                             $monthlySalary = $employee->data->monthly_salary;
                         @endphp
                         <div class="flex flex-col p-2 border border-dark">

@@ -13,7 +13,7 @@
             <a href="{{ route('attendances-history.index') }}">
                 <div class="bg-white px-2 py-5 rounded-md text-center">
                     <h2 class="font-semibold">
-                        Attendance History
+                        Attendance History List
                     </h2>
                 </div>
             </a>
@@ -22,16 +22,16 @@
             <a href="{{ route('seminars.index') }}">
                 <div class="bg-white px-2 py-5 rounded-md text-center">
                     <h2 class="font-semibold">
-                        Official Business
+                        Official Business List
                     </h2>
                 </div>
             </a>
         @endif
         @if (!Request::routeIs('leave-requests.index'))
-            <a href="{{ route('leave-requests.index', ['status' => 'pending']) }}">
+            <a href="{{ route('leave-requests.index', ['status' => 'accepted']) }}">
                 <div class="bg-white px-2 py-5 rounded-md text-center">
                     <h2 class="font-semibold">
-                        Leave Requests
+                        Leave List
                     </h2>
                 </div>
             </a>

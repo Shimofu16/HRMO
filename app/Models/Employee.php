@@ -122,7 +122,7 @@ class Employee extends Model
                 $amount = $deduction->deduction->deduction_amount;
                 if ($deduction->deduction->deduction_amount_type == 'percentage') {
                     $percentage = $amount / 100;
-                    $amount = ($this->data->monthly_salary / 2) * $percentage;
+                    $amount = $this->data->monthly_salary * $percentage;
                 }
                 $totalDeduction += $amount;
             }
@@ -133,7 +133,7 @@ class Employee extends Model
                     $amount = $deduction->deduction->deduction_amount;
                     if ($deduction->deduction->deduction_amount_type == 'percentage') {
                         $percentage = $amount / 100;
-                        $amount = ($this->data->monthly_salary / 2) * $percentage;
+                        $amount = $this->data->monthly_salary * $percentage;
                     }
                     $totalDeduction += $amount;
                 }
@@ -203,7 +203,7 @@ class Employee extends Model
                     $amount = $deduction->deduction->deduction_amount;
                     if ($deduction->deduction->deduction_amount_type == 'percentage') {
                         $percentage = $amount / 100;
-                        $amount = ($this->data->monthly_salary / 2) * $percentage;
+                        $amount = $this->data->monthly_salary * $percentage;
                     }
                     return $amount;
                 }
@@ -211,7 +211,7 @@ class Employee extends Model
                 $amount = $deduction->deduction->deduction_amount;
                 if ($deduction->deduction->deduction_amount_type == 'percentage') {
                     $percentage = $amount / 100;
-                    $amount = ($this->data->monthly_salary / 2) * $percentage;
+                    $amount = $this->data->monthly_salary * $percentage;
                 }
                 return $amount;
             }

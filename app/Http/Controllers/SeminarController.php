@@ -113,7 +113,7 @@ class SeminarController extends Controller
                 'time_out' => $timeOut,
                 'hours' => 8,
                 'salary' =>   $salary,
-                'type' =>   'seminar',
+                'type' =>   $seminar->type,
                 'isPresent' => 1,
             ]);
         }

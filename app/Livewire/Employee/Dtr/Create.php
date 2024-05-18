@@ -29,7 +29,7 @@ class Create extends Component
             $dates = explode('-', $value);
             $from = $dates[0];
             $to = $dates[1];
-            $data = attendanceCount($this->employee, $this->selected_month, $from, $to);
+            $data = attendanceCount($this->employee, $this->selected_month, now()->format('Y'), $from, $to);
             // dd($data);
             $this->present = $data['present'];
             $this->absent = $data['absent'];
@@ -48,7 +48,7 @@ class Create extends Component
             $to = $dates[1];
 
 
-            $data = attendanceCount($this->employee, $this->selected_month, $from, $to);
+            $data = attendanceCount($this->employee, $this->selected_month, now()->format('Y'), $from, $to);
             $this->present = $data['present'];
             $this->absent = $data['absent'];
             $this->late = $data['late'];

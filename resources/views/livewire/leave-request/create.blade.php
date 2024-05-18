@@ -52,7 +52,7 @@
                             <option value="" selected>--Please select here--</option>
                             @foreach ($types as $type)
                                 <option value="{{ $type }}" wire:key='{{ $type }}'>
-                                    {{ Str::ucfirst($type) }}
+                                    {{ Str::ucfirst(Str::replaceFirst('_', ' ', $type)) }}
                                 </option>
                             @endforeach
                         </select>

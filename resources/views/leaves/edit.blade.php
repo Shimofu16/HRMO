@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Update Leave Request
+            Update Leave
         </h2>
     </x-slot>
 
@@ -13,7 +13,7 @@
                     @method('PUT')
                     <div class="shadow overflow-hidden sm:rounded-md">
                         <div class="px-4 py-5 bg-white sm:p-6">
-                            
+
                             <div class="grid grid-cols-12 gap-6 mb-3">
                                 <div class="col-span-6 sm:col-span-6">
                                     <h4 class="text-md">Leave Request</h4>
@@ -45,7 +45,7 @@
                         </div>
                     </div>
                 </form>
-                
+
             </div>
         </div>
     </div>

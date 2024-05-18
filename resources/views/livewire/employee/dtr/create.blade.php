@@ -1,7 +1,23 @@
 <div>
     <div class="py-12">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 flex justify-between items-center">
-            <div></div>
+            <div>
+                <div class="grid grid-cols-{{ count(getColor(null, true)) }} gap-1 mt-4 px-3">
+                    @foreach (getColor(null, true) as $name => $color)
+                        <a href="#">
+                            <div style="background-color: {{ $color }}" class="text-white px-2 py-5 rounded-md flex justify-center items-center h-full">
+                                <h4 class="font-semibold text-sm">
+                                    {{ Str::ucfirst(Str::replaceFirst('_', ' ', $name)) }}
+                                </h4>
+                            </div>
+                        </a>
+
+                    @endforeach
+
+
+
+                </div>
+            </div>
             <div class="flex">
                 <div class="mr-2">
                     <label for="selected_month" class="block font-medium text-gray-700">Month</label>

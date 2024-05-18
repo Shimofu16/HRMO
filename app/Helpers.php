@@ -169,10 +169,10 @@ if (!function_exists('getInterval')) {
 }
 if (!function_exists('attendanceCount')) {
 
-    function attendanceCount($employee, $date, $from, $to)
+    function attendanceCount($employee, $month, $year, $from, $to)
     {
-        $month = date('m', strtotime($date));
-        $year = date('Y', strtotime($date));
+        $month = date('m', strtotime($month));
+        $year = date('Y', strtotime($year));
         $lastDayOfTheMonth = $to;
         if (!checkdate($month, $to, $year)) {
             $lastDayOfTheMonth = date('t', mktime(0, 0, 0, $month, 1, $year)); // get last day of the month
@@ -475,7 +475,7 @@ if (!function_exists('getDatesBetween')) {
 }
 if (!function_exists('getColor')) {
 
-    function getColor($type)
+    function getColor($type = '', $returnAllColors = false)
     {
         $colors = [
             'seminar' => '#055100',
@@ -486,6 +486,9 @@ if (!function_exists('getColor')) {
             'force_leave' => '#a42c00',
         ];
 
+        if ($returnAllColors) {
+            return $colors;
+        }
         // Return the color associated with the type, or a default color if not found
         return array_key_exists($type, $colors) ? $colors[$type] : ''; // Default gray
     }

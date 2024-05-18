@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h1 class="text-xl font-semibold leading-tight text-gray-800">
-            Travel Order
+            Official Business List
         </h1>
     </x-slot>
 

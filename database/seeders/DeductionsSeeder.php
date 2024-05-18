@@ -38,7 +38,7 @@ class DeductionsSeeder extends Seeder
             [
                 'deduction_code' => 'Phil Health',
                 'deduction_name' =>  'Phil Health',
-                'deduction_amount' => 2,
+                'deduction_amount' => 2.5,
                 'deduction_amount_type' => 'percentage',
                 'deduction_type' => $deduction_types[array_rand($deduction_types)],
                 'deduction_range' => '1-15',
