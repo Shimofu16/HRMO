@@ -68,8 +68,8 @@
                                 $today = date('j'); // Get today's date without leading zeros
                                 $lastDayOfMonth = date('t'); // Get the last day of the current month
                             @endphp
-                            <a href="{{ route('payrolls.show', $encoded) }}"
-                                class="text-green-500 hover:text-green-700 mr-3">General Payroll</a>
+                            <a href="{{ route('payrolls.general-payslip', $encoded) }}"
+                                class="text-green-500 hover:text-green-700 mr-3">General Payslip</a>
                                 <a href="{{ route('payslips.show', [
                                     'department_id' => $payroll['department_id'],
                                     'payroll' => $encoded,

@@ -30,11 +30,11 @@ class PayrollController extends Controller
             // get all the months in attendance and sort it
             // Get all unique months from the time_in column and sort them
             $months = Attendance::selectRaw('MONTH(time_in) as month, MIN(time_in) as earliest_time_in')
-    ->where('isPresent', 1)
-    ->whereYear('time_in', now()->format('Y'))
-    ->groupByRaw('MONTH(time_in)')
-    ->orderByRaw('MONTH(time_in)')
-    ->get();
+                    ->where('isPresent', 1)
+                    ->whereYear('time_in', now()->format('Y'))
+                    ->groupByRaw('MONTH(time_in)')
+                    ->orderByRaw('MONTH(time_in)')
+                    ->get();
 
 
 
@@ -123,29 +123,55 @@ class PayrollController extends Controller
         // Pass the payroll record to the view
         return view('payrolls.show', compact('payroll', 'employees'));
     }
-    public function dtr($id, $payroll)
+    // public function dtr($id, $payroll)
+    // {
+    //     $payroll = json_decode(urldecode($payroll), true);
+    //     $dates = explode('-', $payroll['date_from_to']);
+    //     $from = $dates[0];
+    //     $to = $dates[1];
+
+    //     $employee = Employee::find($id);
+
+    //     $data = attendanceCount($employee, $payroll, $from, $to);
+
+    //     // Pass the payroll record to the view
+    //     return view(
+    //         'payrolls.dtr',
+    //         [
+    //             'employee' => $employee,
+    //             'payroll' => $payroll,
+    //             'present' => $data['present'],
+    //             'absent' => $data['absent'],
+    //             'late' => $data['late'],
+    //             'under_time' => $data['under_time'],
+    //             'total_man_hour' => $data['total_man_hour'],
+    //             'attendances' => $data['attendances'],
+    //         ]
+    //     );
+    // }
+    public function generalPayslip($payroll)
     {
         $payroll = json_decode(urldecode($payroll), true);
         $dates = explode('-', $payroll['date_from_to']);
         $from = $dates[0];
         $to = $dates[1];
+        $department = Department::find($payroll['department_id']);
 
-        $employee = Employee::find($id);
+        $filename = "General Payroll - {$payroll['department']}";
 
-        $data = attendanceCount($employee, $payroll, $from, $to);
+        $dateTitle = "{$payroll['month']} {$payroll['date_from_to']}, {$payroll['year']}";
+        // dd($payroll);
 
         // Pass the payroll record to the view
         return view(
-            'payrolls.dtr',
+            'payrolls.general-payslip.index',
             [
-                'employee' => $employee,
-                'payroll' => $payroll,
-                'present' => $data['present'],
-                'absent' => $data['absent'],
-                'late' => $data['late'],
-                'under_time' => $data['under_time'],
-                'total_man_hour' => $data['total_man_hour'],
-                'attendances' => $data['attendances'],
+                'filename' => $filename,
+                'dateTitle' => $dateTitle,
+                'department' => $department,
+                'employees' => Employee::whereHas('data', function($query) use ($payroll){
+                    $query->where('department_id', $payroll['department_id']);
+                })->get(),
             ]
         );
     }

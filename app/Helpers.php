@@ -678,3 +678,50 @@ if (!function_exists('getTotalSalaryDepartment')) {
         return $totalSalary;
     }
 }
+if (!function_exists('computeAnnualTaxableCompensation')) {
+
+    function computeAnnualTaxableCompensation($monthly_salary, $deductions)
+    {
+        $annualTaxableCompensation = 0;
+        $AnnualContribution = 0;
+
+        $AnnualContribution = $deductions * 12;
+        //((MS * 12) + Taxable Compensation) - total deductions
+        $annualTaxableCompensation = (($monthly_salary * 12) + compute13thMonthPay($monthly_salary)) - $AnnualContribution;
+
+        return $annualTaxableCompensation;
+    }
+}
+if (!function_exists('compute13thMonthPay')) {
+
+    function compute13thMonthPay($monthly_salary)
+    {
+        $thirteenMonthSalary = 0;
+        $fixedAmount = 90000;
+
+        $thirteenMonthSalary = ($monthly_salary * 2) -  $fixedAmount;
+
+
+        return $thirteenMonthSalary;
+    }
+}
+if (!function_exists('computeTaxableCompensation')) {
+
+    function computeTaxableCompensation($annualTaxableCompensation)
+    {
+        if ($annualTaxableCompensation <= 250000) {
+            $taxRate = 0;
+        } else if ($annualTaxableCompensation <= 400000) {
+            $taxRate = 0.15 * ($annualTaxableCompensation - 250000);
+        } else if ($annualTaxableCompensation <= 800000) {
+            $taxRate = 22500 + (0.20 * ($annualTaxableCompensation - 400000));
+        } else if ($annualTaxableCompensation <= 2000000) {
+            $taxRate = 102500 + (0.25 * ($annualTaxableCompensation - 800000));
+        } else if ($annualTaxableCompensation <= 8000000) {
+            $taxRate = 402500 + (0.30 * ($annualTaxableCompensation - 2000000));
+        } else {
+            $taxRate = 2202500 + (0.35 * ($annualTaxableCompensation - 8000000));
+        }
+        return $taxRate;
+    }
+}

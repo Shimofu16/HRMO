@@ -24,6 +24,7 @@ use App\Http\Controllers\PayslipController;
 use App\Http\Controllers\SalaryGradeStepController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SeminarController;
+use App\Http\Controllers\WithHoldingTaxController;
 use App\Models\Allowance;
 use App\Models\Attendance;
 use App\Models\Employee;
@@ -56,7 +57,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    
+
     Route::get('/dashboard/{filter?}', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('employees', EmployeeController::class)->names([
         'create' => 'employees.create',
@@ -86,7 +87,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('payrolls')->controller(PayrollController::class)->name('payrolls.')->group(function () {
         Route::get('/{department_id?}',  'index')->name('index');
         Route::get('/show/{payroll}',  'show')->name('show');
-        Route::get('/dtr/{id}/{payroll}',  'dtr')->name('dtr');
+        Route::get('/general-payslip/{payroll}',  'generalPayslip')->name('general-payslip');
     });
     // Route::resource('payrolls', PayrollController::class)->names([
     //     'create' => 'payrolls.create',
@@ -238,14 +239,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/attendances-history', [AttendanceController::class, 'history'])->name('attendances-history.index');
     Route::get('/attendances-history/{date}', [AttendanceController::class, 'historyShow'])->name('attendances-history.show');
 
+    Route::get('/with-holding-taxes', [WithHoldingTaxController::class, 'index'])->name('with-holding-taxes.index');
 
     // employee
+
     Route::get('/employees/{employee}', [EmployeeController::class, 'show'])->name('employees.show');
     Route::get('/employees/dtr/{employee}', [EmployeeController::class, 'dtr'])->name('employees.dtr');
     Route::get('/employees/payslip/{employee}', [EmployeeController::class, 'payslip'])->name('employees.payslip');
+    Route::get('/employees/general-payslip/{employee}', [EmployeeController::class, 'payslip'])->name('employees.general-payslip');
     Route::get('/employees/edit/{employee}', [EmployeeController::class, 'edit'])->name('employees.edit');
     Route::get('/employees/{filter_by?}/{filter_id?}', [EmployeeController::class, 'index'])->name('employees.index');
-
+    //with holding taxes
 
     // Seminar
     Route::prefix('seminars')->name('seminars.')->controller(SeminarController::class)->group(function () {

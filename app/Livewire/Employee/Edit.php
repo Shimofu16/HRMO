@@ -144,7 +144,7 @@ class Edit extends Component
                 'category_id' => $this->category_id,
                 'level_id' => $this->level_id,
                 'cos_monthly_salary' => ($this->isCOSSelected) ? $this->cos_monthly_salary : null,
-                'holding_tax' => ($this->isCOSSelected) ? (($this->holding_tax) ? $this->holding_tax : null) : null,
+                'has_holding_tax' => $this->isWithHoldingTax,
             ]);
         } else {
             $this->employee->data()->update([
@@ -154,7 +154,7 @@ class Edit extends Component
                 'salary_grade_id' => $this->salary_grade_id,
                 'salary_grade_step' => $this->salary_grade_step,
                 // 'sick_leave_points' => $this->sick_leave_points,
-                'holding_tax' => ($this->holding_tax) ? $this->holding_tax : null,
+                'has_holding_tax' => $this->isWithHoldingTax,
             ]);
         }
 

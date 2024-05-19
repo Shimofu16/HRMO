@@ -55,7 +55,7 @@ return new class extends Migration
             $table->foreignId('level_id')->nullable()->constrained('levels', 'id');
             $table->string('salary_grade_step')->nullable();
             $table->double('sick_leave_points')->nullable();
-            $table->double('holding_tax')->nullable();
+            $table->boolean('has_holding_tax')->default(false);
             $table->double('cos_monthly_salary')->nullable();
             $table->timestamps();
         });

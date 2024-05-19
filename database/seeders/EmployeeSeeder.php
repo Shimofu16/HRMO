@@ -25,12 +25,12 @@ class EmployeeSeeder extends Seeder
         $faker = Factory::create();
 
         for ($i = 0; $i < 20; $i++) {
-$employee_number = str_pad($i, 2, '0', STR_PAD_LEFT) . '-' . date('ymd') . '-' . mt_rand(0, 9999);
+            $employee_number = str_pad($i, 2, '0', STR_PAD_LEFT) . '-' . date('ymd') . '-' . mt_rand(0, 9999);
 
             $gender = $faker->randomElement(['male', 'female']);
             $employee = Employee::create([
                 'employee_number' => $employee_number,
-                'ordinance_number' => str_pad($faker->numberBetween(00, 99), 2, '0', STR_PAD_LEFT) .'-'. Str::ucfirst($faker->randomLetter()),
+                'ordinance_number' => str_pad($faker->numberBetween(00, 99), 2, '0', STR_PAD_LEFT) . '-' . Str::ucfirst($faker->randomLetter()),
                 'first_name' => $faker->firstName($gender),
                 'middle_name' => $faker->lastName($gender),
                 'last_name' => $faker->lastName($gender),
@@ -39,42 +39,41 @@ $employee_number = str_pad($i, 2, '0', STR_PAD_LEFT) . '-' . date('ymd') . '-' .
             $department = Department::find($faker->numberBetween(1, Department::count()));
             $designation = Designation::find($faker->numberBetween(1, Designation::count()));
             $level = Level::find($faker->numberBetween(1, Level::count()));
-            $holding_tax = null;
+            $has_holding_tax = false;
             $limit = 20833;
             $cos_monthly_salary = 0;
             if ($category->category_code == "JO" || $category->category_code == "COS") {
                 $cos_monthly_salary = ($category->category_code == "COS") ? $faker->numberBetween(20000, 40000) : null;
                 if ($cos_monthly_salary > $limit || $level->amount > $limit) {
-                    $holding_tax = $faker->numberBetween(500, 2000);
+                    $has_holding_tax = true;
                 }
                 $employee->data()->create([
                     'department_id' => $department->id,
                     'designation_id' => $designation->id,
                     'category_id' => $category->id,
                     'level_id' => ($category->category_code == "COS") ?  null : $level->id,
-                    'cos_monthly_salary' => $cos_monthly_salary
+                    'cos_monthly_salary' => $cos_monthly_salary,
+                    'has_holding_tax' =>  $has_holding_tax,
                 ]);
             }
-            if ($category->category_code != "JO") {
+            if ($category->category_code != "JO" && $category->category_code != "COS") {
                 $sick_leave_points = $faker->randomFloat(null, 10, 15);
-                if ($category->category_code != "COS") {
-                    $salary_grade = SalaryGrade::find($faker->numberBetween(1, SalaryGrade::count()));
-                    $salary_grade_step = 'Step ' . $faker->numberBetween(1, count($salary_grade->steps));
-                    foreach ($salary_grade->steps as $key => $salary_grade_steps) {
-                        if ($salary_grade_step == $salary_grade_steps['step'] && $salary_grade_steps['amount'] > $limit) {
-                            $holding_tax = $faker->numberBetween(500, 2000);
-                        }
+                $salary_grade = SalaryGrade::find($faker->numberBetween(1, SalaryGrade::count()));
+                $salary_grade_step = 'Step ' . $faker->numberBetween(1, count($salary_grade->steps));
+                foreach ($salary_grade->steps as $key => $salary_grade_steps) {
+                    if ($salary_grade_step == $salary_grade_steps['step'] && $salary_grade_steps['amount'] > $limit) {
+                        $has_holding_tax = true;
                     }
-                    $employee->data()->create([
-                        'department_id' => $department->id,
-                        'designation_id' => $designation->id,
-                        'category_id' => $category->id,
-                        'salary_grade_id' => $salary_grade->id,
-                        'salary_grade_step' => $salary_grade_step,
-                        'sick_leave_points' => $sick_leave_points,
-                        'holding_tax' => ($holding_tax) ?? $holding_tax,
-                    ]);
                 }
+                $employee->data()->create([
+                    'department_id' => $department->id,
+                    'designation_id' => $designation->id,
+                    'category_id' => $category->id,
+                    'salary_grade_id' => $salary_grade->id,
+                    'salary_grade_step' => $salary_grade_step,
+                    'sick_leave_points' => $sick_leave_points,
+                    'has_holding_tax' =>  $has_holding_tax,
+                ]);
 
                 // Generate a random number of allowances to select (between 1 and the total number)
                 $numAllowances = $faker->numberBetween(1, Allowance::count());
