@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Allowance;
 use App\Models\Attendance;
+use App\Models\Deduction;
 use App\Models\Payroll;
 use App\Models\Department;
 use App\Models\Employee;
+use App\Models\Loan;
 use App\Models\SalaryGrade;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -160,6 +162,8 @@ class PayrollController extends Controller
         $filename = "General Payroll - {$payroll['department']}";
 
         $dateTitle = "{$payroll['month']} {$payroll['date_from_to']}, {$payroll['year']}";
+        // $allowances = Allowance::whereJsonContains('allowance_ranges', $payroll['date_from_to'])->get();
+        // $deductions = Deduction::where('deduction_range', $payroll['date_from_to'])->get();
         // dd($payroll);
 
         // Pass the payroll record to the view
@@ -168,7 +172,12 @@ class PayrollController extends Controller
             [
                 'filename' => $filename,
                 'dateTitle' => $dateTitle,
+                'payroll' => $payroll,
+                'from' => $from,
+                'to' => $to,
                 'department' => $department,
+                'loans' => Loan::all(),
+                'deductions' => Deduction::all(),
                 'employees' => Employee::whereHas('data', function($query) use ($payroll){
                     $query->where('department_id', $payroll['department_id']);
                 })->get(),

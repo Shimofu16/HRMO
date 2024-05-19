@@ -682,25 +682,23 @@ if (!function_exists('computeAnnualTaxableCompensation')) {
 
     function computeAnnualTaxableCompensation($monthly_salary, $deductions)
     {
-        $annualTaxableCompensation = 0;
-        $AnnualContribution = 0;
-
+        // Calculate the 13th-month pay (if applicable)
+        $thirteenthMonthPay = computeThirteenthMonthPay($monthly_salary);
         $AnnualContribution = $deductions * 12;
-        //((MS * 12) + Taxable Compensation) - total deductions
-        $annualTaxableCompensation = (($monthly_salary * 12) + compute13thMonthPay($monthly_salary)) - $AnnualContribution;
+        //((MS * 12) + thirteenth month pay) - total deductions
+        $annualTaxableCompensation = (($monthly_salary * 12) + $thirteenthMonthPay) - $AnnualContribution;
 
         return $annualTaxableCompensation;
     }
 }
-if (!function_exists('compute13thMonthPay')) {
+if (!function_exists('computeThirteenthMonthPay')) {
 
-    function compute13thMonthPay($monthly_salary)
+    function computeThirteenthMonthPay($monthlySalary)
     {
         $thirteenMonthSalary = 0;
         $fixedAmount = 90000;
-
-        $thirteenMonthSalary = ($monthly_salary * 2) -  $fixedAmount;
-
+        // (MS * 2) - 90k
+        $thirteenMonthSalary = ($monthlySalary * 2) -  $fixedAmount;
 
         return $thirteenMonthSalary;
     }
@@ -709,8 +707,10 @@ if (!function_exists('computeTaxableCompensation')) {
 
     function computeTaxableCompensation($annualTaxableCompensation)
     {
+        // below 250k
         if ($annualTaxableCompensation <= 250000) {
             $taxRate = 0;
+            //250k pataas hanggang 400k
         } else if ($annualTaxableCompensation <= 400000) {
             $taxRate = 0.15 * ($annualTaxableCompensation - 250000);
         } else if ($annualTaxableCompensation <= 800000) {
@@ -723,5 +723,15 @@ if (!function_exists('computeTaxableCompensation')) {
             $taxRate = 2202500 + (0.35 * ($annualTaxableCompensation - 8000000));
         }
         return $taxRate;
+    }
+}
+if (!function_exists('computeHoldingTax')) {
+
+    function computeHoldingTax($monthlySalary, $deductions)
+    {
+        $annualTaxableCompensation = computeAnnualTaxableCompensation($monthlySalary, $deductions);
+        $annualTaxDue = computeTaxableCompensation($annualTaxableCompensation);
+        // dd(($annualTaxDue / 12) / 2, $annualTaxDue, $annualTaxableCompensation, $monthlySalary, $deductions);
+        return ($annualTaxDue / 12) / 2;
     }
 }

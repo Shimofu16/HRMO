@@ -33,16 +33,16 @@ class PayslipController extends Controller
         $from = Carbon::create(date('Y'), date('m'), $filter[0]);
         $day = $filter[1];
         // convert month to number
-        $month = Carbon::parse($payroll['month'])->month;
+        $month = Carbon::parse($payroll['month']);
         $year = $payroll['year'];
 
-        if (!checkdate($month, $day, $year)) {
-            $to = date('t', mktime(0, 0, 0, $month, 1, $year)); // get last day of the month
+        if (!checkdate(date('m', strtotime($month)), $day, $year)) {
+            $to = date('t', mktime(0, 0, 0, date('m', strtotime($month)), 1, $year)); // get last day of the month
         }
 
-        $to = Carbon::create($year, $month, $day);
-
-        $period = sprintf("%s %s - %s %s", $payroll['month'], $from->format('d'), $to->format('d'), $year);
+        $to = Carbon::create($year, $month->format('m'), $day);
+        // $formattedMonth = date('F', strtotime($month));
+        $period = "{$month->format('F')} {$payroll['date_from_to']}, {$year}";
 
         createActivity('Create Payslip', 'Generate Payslip for ' . $department->dep_code, request()->getClientIp(true));
 

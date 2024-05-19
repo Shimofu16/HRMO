@@ -140,16 +140,6 @@
                     <input type="file" name="employee_photo" id="employee_photo" wire:model='employee_photo'
                         class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" required>
                 </div>
-                @if ($isCOSSelected && $isWithHoldingTax)
-                <div class="col-span-6 sm:col-span-2">
-                    <div class="col-span-6 sm:col-span-2">
-                        <label for="holding_tax" class="block font-medium text-gray-700">With Hodling Tax
-                        </label>
-                        <input type="number" name="holding_tax" id="duration" step="0.01"
-                            class="block w-full mt-1 rounded form-input" wire:model="holding_tax">
-                    </div>
-                </div>
-                @endif
             </div>
         </div>
         @if (!$isJOSelected && !$isCOSSelected)
@@ -234,16 +224,6 @@
                             </select>
                         </div>
                     </div>
-                    @if ($isWithHoldingTax)
-                        <div class="col-span-6 sm:col-span-2">
-                            <div class="col-span-6 sm:col-span-2">
-                                <label for="holding_tax" class="block font-medium text-gray-700">With Hodling Tax
-                                </label>
-                                <input type="number" name="holding_tax" id="duration" step="0.01"
-                                    class="block w-full mt-1 rounded form-input" wire:model="holding_tax">
-                            </div>
-                        </div>
-                    @endif
                 </div>
                 @if ($selected_loans)
                     @foreach ($selected_loans as $selected_loan)
