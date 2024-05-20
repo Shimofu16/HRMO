@@ -16,7 +16,7 @@
                 <div class="relative">
                     {{-- reset button --}}
                     <a href="{{ route('payrolls.index') }}"
-                        class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                        class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-800 border border-transparent rounded-md hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                         Reset
                     </a>
 
@@ -25,7 +25,7 @@
                     <x-dropdown align="left" width="w-full">
                         <x-slot name="trigger">
                             <button
-                                class="w-full bg-white border border-gray-300 px-4 py-2 rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300 text-left">
+                                class="w-full px-4 py-2 text-left bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300">
                                 Select a Department
                             </button>
                         </x-slot>
@@ -69,7 +69,7 @@
                                 $lastDayOfMonth = date('t'); // Get the last day of the current month
                             @endphp
                             <a href="{{ route('payrolls.general-payslip', $encoded) }}"
-                                class="text-green-500 hover:text-green-700 mr-3">General Payslip</a>
+                                class="mr-3 text-green-500 hover:text-green-700">General Payroll</a>
                                 <a href="{{ route('payslips.show', [
                                     'department_id' => $payroll['department_id'],
                                     'payroll' => $encoded,

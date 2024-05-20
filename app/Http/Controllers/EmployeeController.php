@@ -229,7 +229,7 @@ class EmployeeController extends Controller
     /**
      * Remove the specified employee from storage.
      */
-    
+
     public function destroy(Employee $employee)
     {
         $employee->allowances()->delete();
@@ -251,7 +251,8 @@ class EmployeeController extends Controller
     public function payslip(Employee $employee)
     {
         return view('employees.payslip.index', [
-            'employee' => $employee
+            'employee' => $employee,
+            'file_name' => "{$employee->full_name} - Payslip",
         ]);
     }
 }

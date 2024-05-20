@@ -12,6 +12,9 @@ class AllowanceCategory extends Model
     protected $fillable = [
         'allowance_id',
         'category_id',
+        'department_id',
+        'type',
+        'amount',
     ];
 
     public function allowance()
@@ -21,5 +24,9 @@ class AllowanceCategory extends Model
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id');
+    }
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\LeaveRequest;
 
+use App\Models\Attendance;
 use App\Models\Employee;
 use App\Models\EmployeeLeaveRequest;
 use Carbon\Carbon;
@@ -44,7 +45,7 @@ class Create extends Component
 
     public  function save()
     {
-        EmployeeLeaveRequest::create([
+       $leave_request = EmployeeLeaveRequest::create([
             'employee_id' => $this->employee_id,
             'start' => $this->start,
             'end' => $this->end,
@@ -52,13 +53,46 @@ class Create extends Component
             'status' => 'accepted',
             'days' => $this->days_leave,
         ]);
+        $this->takeAttendance($leave_request, getDatesBetween($leave_request->start, $leave_request->end, true));
+        $leave_request->employee->data->update(['sick_leave_points' => ($leave_request->employee->data->sick_leave_points - (1.25 * $leave_request->days))]);
         // Create activity
         createActivity('Create Employee Leave Request', 'Create Employee Leave Request for ' . $this->employee->full_name . '.', request()->getClientIp(true));
 
         // Redirect to the index page with a success message
         return redirect()->route('leave-requests.index', ['status' => 'accepted'])->with('success', 'Leave Request created successfully.');
     }
+    public function takeAttendance($leave_request, $dates)
+    {
+        $salary_grade = $leave_request->employee->data->monthly_salary;
+        $salary = $this->calculateSalary($salary_grade, $leave_request->employee->data->category);
 
+        foreach ($dates as $key => $date) {
+            $timeIn = $date . ' 08:00:00'; // Combine date with time in
+            $timeOut = $date . ' 17:00:00'; // Combine date with time out
+            Attendance::create([
+                'employee_id' => $leave_request->employee->id,
+                'time_in_status' => 'On-time',
+                'time_in' => $timeIn,
+                'time_out_status' => 'Time-out',
+                'time_out' => $timeOut,
+                'hours' => 8,
+                'salary' =>   $salary,
+                'type' =>   $leave_request->type,
+                'isPresent' => 1,
+            ]);
+        }
+    }
+    public function calculateSalary($salaryGrade, $category)
+    {
+        if ($category->category_code == "JO") {
+            return $salaryGrade;
+        }
+        if ($category->category_code == "COS") {
+            return $salaryGrade / 22;
+        }
+        $salaryPerHour = ($salaryGrade / 22) / 8;
+        return max(0, $salaryPerHour); // Ensure non-negative
+    }
     public function mount()
     {
         $this->employees = Employee::all();

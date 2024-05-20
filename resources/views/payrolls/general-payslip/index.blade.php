@@ -95,23 +95,24 @@
             </div>
         </div>
         <div id="element-to-print" class="overflow-x-auto">
-            <div class="border-2 rounded w-full">
-                <div class="header flex flex-col">
-                    <div class="flex justify-between items-center ">
+            <div class="w-full border-2 rounded">
+                <div class="flex flex-col header">
+                    <div class="flex items-center justify-between ">
                         <div></div>
                         <div>
-                            <h1 class="text-center text-xl font-semibold  mb-2">GENERAL PAYROLL</h1>
-                            <h3 class="text-center text-sm font-semibold mb-0">Municipal of CALAUAN</h3>
-                            <h5 class="text-center text-xl font-semibold mb-0">Province of LAGUNA</h5>
-                            <h3 class="text-center text-sm font-semibold mb-0">{{ $department->dep_name }}</h3>
-                            <h5 class="text-center text-xl font-semibold mb-0">{{ $dateTitle }}</h5>
+                            <h1 class="mb-2 text-xl font-semibold text-center">GENERAL PAYROLL</h1>
+                            <h3 class="mb-0 text-sm font-semibold text-center">Municipal of CALAUAN</h3>
+                            <h5 class="mb-0 text-xl font-semibold text-center">Province of LAGUNA</h5>
+                            <h3 class="mb-0 text-sm font-semibold text-center">{{ $department->dep_name }}</h3>
+                            <h5 class="mb-0 text-xl font-semibold text-center">{{ $dateTitle }}</h5>
                         </div>
                         <div></div>
                     </div>
-                    <h1 class="text-xs px-3">We acknowledge receipt of the sum shown opposite our name  as full compensation for services rendered for the period stated:</h1>
+                    <h1 class="px-3 text-xs">We acknowledge receipt of the sum shown opposite our name as full
+                        compensation for services rendered for the period stated:</h1>
                 </div>
                 <div class="body">
-                    <table class="table table-bordered w-full" style="width: 100%; table-layout: fixed;">
+                    <table class="table w-full table-bordered" style="width: 100%; table-layout: fixed;">
                         <thead>
                             <tr style="height: 15px;" class="border-top-2 ">
                                 <th class="border-right-2" style="width: 40px;">
@@ -156,7 +157,7 @@
                                     @else
                                         <th class=" border-bottom-2">
                                             @if ($middle == $i)
-                                                <h1 class="text-center text-xs">DEDUCTIONS</h1>
+                                                <h1 class="text-xs text-center">DEDUCTIONS</h1>
                                             @endif
                                         </th>
                                     @endif
@@ -180,34 +181,34 @@
                             <tr style="height: 15px;" class="">
                                 <th class="border-right-2">No.</th>
                                 <th class="py-5 px-30 border-right-2" colspan="3">
-                                    <h1 class="text-center text-xs">Name</h1>
+                                    <h1 class="text-xs text-center">Name</h1>
                                 </th>
                                 <th class="border-right-2">
-                                    <h1 class="text-center text-xs">Position</h1>
+                                    <h1 class="text-xs text-center">Position</h1>
                                 </th>
                                 <th class="border-right-2">
-                                    <h1 class="text-center text-xs">Monthly Salary</h1>
+                                    <h1 class="text-xs text-center">Monthly Salary</h1>
                                 </th>
                                 <th class="border-right-2">
-                                    <h1 class="text-center text-xs">Allowance</h1>
+                                    <h1 class="text-xs text-center">Allowance</h1>
                                 </th>
                                 <th class="border-right-2">
-                                    <h1 class="text-center text-xs">Amount Earned</h1>
+                                    <h1 class="text-xs text-center">Amount Earned</h1>
                                 </th>
                                 <th class="border-right-2">
-                                    <h1 class="text-center text-xs">Adjustment</h1>
+                                    <h1 class="text-xs text-center">Adjustment</h1>
                                 </th>
                                 <th class="border-right-2" colspan="{{ $deductions->count() + 1 }}">
-                                    <h1 class="text-center text-xs">Contribution P/S</h1>
+                                    <h1 class="text-xs text-center">Contribution P/S</h1>
                                 </th>
                                 <th class="border-right-2" colspan="{{ $loans->count() }}">
-                                    <h1 class="text-center text-xs">Loan</h1>
+                                    <h1 class="text-xs text-center">Loan</h1>
                                 </th>
                                 <th class="border-right-2" colspan="4">
-                                    <h1 class="text-center text-xs">Government Share</h1>
+                                    <h1 class="text-xs text-center">Government Share</h1>
                                 </th>
                                 <th class="">
-                                    <h1 class="text-center text-xs">NET AMOUNT RECEIVED</h1>
+                                    <h1 class="text-xs text-center">NET AMOUNT RECEIVED</h1>
                                 </th>
                             </tr>
                             <tr style="height: 10px;" class="border-bottom-2">
@@ -239,16 +240,16 @@
 
                                 </th>
                                 <th class="border-right-2 border-top-2">
-                                    <h1 class="text-center text-xs">W/H Tax</h1>
+                                    <h1 class="text-xs text-center">W/H Tax</h1>
                                 </th>
                                 @foreach ($deductions as $deduction)
                                     <th class="border-right-2 border-top-2">
-                                        <h1 class="text-center text-xs">{{ $deduction->deduction_code }}</h1>
+                                        <h1 class="text-xs text-center">{{ $deduction->deduction_code }}</h1>
                                     </th>
                                 @endforeach
                                 @foreach ($loans as $loan)
                                     <th class="border-right-2 border-top-2">
-                                        <h1 class="text-center text-xs">{{ $loan->name }}</h1>
+                                        <h1 class="text-xs text-center">{{ $loan->name }}</h1>
                                     </th>
                                 @endforeach
                                 <th class="border-right-2 border-top-2">
@@ -270,7 +271,7 @@
                         </thead>
                         <tbody>
                             @php
-                             
+
                                 $total_contributions = 0;
                                 $total_amount_earned = 0;
                                 $total_tax;
@@ -311,21 +312,21 @@
                                 @endphp
 
                                 <tr>
-                                    <td class="border-right-2 border-bottom-2 text-center">{{ $loop->iteration }}</td>
-                                    <td colspan="3" class="border-right-2 border-bottom-2 pl-2">
+                                    <td class="text-center border-right-2 border-bottom-2">{{ $loop->iteration }}</td>
+                                    <td colspan="3" class="pl-2 border-right-2 border-bottom-2">
                                         {{ $employee->full_name }}</td>
-                                    <td class="border-right-2 border-bottom-2 pl-2">
+                                    <td class="pl-2 border-right-2 border-bottom-2">
                                         {{ $employee->data->designation->designation_name }}</td>
-                                    <td class="border-right-2 border-bottom-2 pl-2">
+                                    <td class="pl-2 border-right-2 border-bottom-2">
                                         {{ number_format($sub_total_montly_salary[$employee->id], 2) }}</td>
-                                    <td class="border-right-2 border-bottom-2 pl-2">
+                                    <td class="pl-2 border-right-2 border-bottom-2">
                                         {{ number_format($sub_total_allowances[$employee->id], 2) }}
                                     </td>
-                                    <td class="border-right-2 border-bottom-2 pl-2">
+                                    <td class="pl-2 border-right-2 border-bottom-2">
                                         {{ number_format($sub_total_amount_earned[$employee->id], 2) }}
                                     </td>
-                                    <td class="border-right-2 border-bottom-2 pl-2"> </td>
-                                    <td class="border-right-2 border-bottom-2 pl-2">
+                                    <td class="pl-2 border-right-2 border-bottom-2"> </td>
+                                    <td class="pl-2 border-right-2 border-bottom-2">
                                         @if ($employee->data->has_holding_tax)
                                             @php
                                                 $sub_total_holding_tax[$employee->id] = computeHoldingTax(
@@ -343,11 +344,11 @@
                                                     $deduction->id
                                                 ] = $employee->getDeduction($deduction->id, $payroll['date_from_to']);
                                             @endphp
-                                            <td class="border-right-2 border-bottom-2 pl-2">
+                                            <td class="pl-2 border-right-2 border-bottom-2">
                                                 {{ number_format($employee->getDeduction($deduction->id, $payroll['date_from_to']), 2) }}
                                             </td>
                                         @else
-                                            <td class="border-right-2 border-bottom-2 pl-2"> </td>
+                                            <td class="pl-2 border-right-2 border-bottom-2"> </td>
                                         @endif
                                     @endforeach
                                     @foreach ($loans as $loan)
@@ -358,47 +359,53 @@
                                                     $payroll['date_from_to'],
                                                 );
                                             @endphp
-                                            <td class="border-right-2 border-bottom-2 pl-2">
+                                            <td class="pl-2 border-right-2 border-bottom-2">
                                                 {{ number_format($employee->getLoan($loan->id, $payroll['date_from_to']), 2) }}
                                             </td>
                                         @else
-                                            <td class="border-right-2 border-bottom-2 pl-2"> </td>
+                                            <td class="pl-2 border-right-2 border-bottom-2"> </td>
                                         @endif
                                     @endforeach
-                                    <td class="border-right-2 border-bottom-2 pl-2">
+                                    <td class="pl-2 border-right-2 border-bottom-2">
                                         {{ number_format($sub_total_montly_salary[$employee->id] * 0.12, 2) }}</td>
-                                    <td class="border-right-2 border-bottom-2 pl-2">
+                                    <td class="pl-2 border-right-2 border-bottom-2">
                                         {{ number_format($sub_total_montly_salary[$employee->id] * 0.025, 2) }}</td>
-                                    <td class="border-right-2 border-bottom-2 pl-2">200.00</td>
-                                    <td class="border-right-2 border-bottom-2 pl-2">100.00</td>
+                                    <td class="pl-2 border-right-2 border-bottom-2">200.00</td>
+                                    <td class="pl-2 border-right-2 border-bottom-2">100.00</td>
                                     @php
-                                    $total_deductions_for_nar = 0;
-                                    $total_allowances_for_nar = 0;
-                                    foreach ($deductions as $deduction) {
+                                        $total_deductions_for_nar = 0;
+                                        $total_allowances_for_nar = 0;
+                                        $total_amount_earned_for_nar[$employee->id] = 0;
+                                        foreach ($deductions as $deduction) {
+                                            $total_deductions_for_nar =
+                                                $total_deductions_for_nar +
+                                                $sub_total_dedcutions[$employee->id][$deduction->id];
+                                        }
+                                        foreach ($loans as $loan) {
+                                            $total_deductions_for_nar =
+                                                $total_deductions_for_nar + $sub_total_loans[$employee->id][$loan->id];
+                                        }
+
                                         $total_deductions_for_nar =
-                                            $total_deductions_for_nar +
-                                            $sub_total_dedcutions[$employee->id][$deduction->id];
-                                    }
-                                    foreach ($loans as $loan) {
+                                            $total_deductions_for_nar + $employee->data->monthly_salary * 0.12;
                                         $total_deductions_for_nar =
-                                            $total_deductions_for_nar + $sub_total_loans[$employee->id][$loan->id];
-                                    }
-                                    $total_amount_earned =
-                                   
-                                    $total_deductions_for_nar = $total_deductions_for_nar + ($employee->data->monthly_salary * 0.12);
-                                    $total_deductions_for_nar = $total_deductions_for_nar + ($employee->data->monthly_salary * 0.025);
-                                    $total_deductions_for_nar = $total_deductions_for_nar + 300;
-                                    $total_allowances_for_nar = $sub_total_allowances[$employee->id] + $sub_total_amount_earned[$employee->id];
-                                    $sub_total_net_amount_recieved[$employee->id] = $total_allowances_for_nar - $total_deductions_for_nar;
-                                @endphp
-                                    <td class="border-right-2 border-bottom-2 pl-2">{{ number_format($sub_total_net_amount_recieved[$employee->id], 2) }}</td>
+                                            $total_deductions_for_nar + $employee->data->monthly_salary * 0.025;
+                                        $total_deductions_for_nar = $total_deductions_for_nar + 300;
+                                        $total_allowances_for_nar =
+                                            $sub_total_allowances[$employee->id] +
+                                            $sub_total_amount_earned[$employee->id];
+                                        $total_amount_earned_for_nar[$employee->id] =
+                                            $total_allowances_for_nar - $total_deductions_for_nar;
+                                    @endphp
+                                    <td class="pl-2 border-right-2 border-bottom-2">
+                                        {{ number_format($total_amount_earned_for_nar[$employee->id], 2) }}</td>
                                     <!-- Other empty cells -->
                                 </tr>
                             @endforeach
                         </tbody>
                         <tfoot>
                             @php
-                               $total_net_amount_recieved = 0;
+                                $total_net_amount_recieved = 0;
                                 $total_holding_tax = 0;
                                 $total_gsis = 0;
                                 $total_medicare = 0;
@@ -417,9 +424,10 @@
                                     $total_amount_earned =
                                         $total_amount_earned + $sub_total_amount_earned[$employee->id];
                                     $total_holding_tax = $total_holding_tax + $sub_total_holding_tax[$employee->id];
-                                    $total_gsis = $total_gsis + ($employee->data->monthly_salary * 0.12);
-                                    $total_medicare = $total_medicare + ($employee->data->monthly_salary * 0.025);
-                                    $total_net_amount_recieved = $total_net_amount_recieved + $sub_total_net_amount_recieved[$employee->id];
+                                    $total_gsis = $total_gsis + $employee->data->monthly_salary * 0.12;
+                                    $total_medicare = $total_medicare + $employee->data->monthly_salary * 0.025;
+                                    $total_net_amount_recieved =
+                                        $total_net_amount_recieved + $total_amount_earned_for_nar[$employee->id];
                                 @endphp
                             @endforeach
 
@@ -429,52 +437,55 @@
                                 </td>
                                 <td colspan="4" class="border-right-2">
 
-                                    <h1 class="text-center text-xs">Sub Total >></h1>
+                                    <h1 class="text-xs text-center">Sub Total >></h1>
                                 </td>
                                 <td class="border-right-2">
-                                    <h1 class="text-center text-xs">{{ number_format($total_montly_salary, 2) }}</h1>
+                                    <h1 class="text-xs text-center">{{ number_format($total_montly_salary, 2) }}</h1>
                                 </td>
                                 <td class="border-right-2">
-                                    <h1 class="text-center text-xs">{{ number_format($total_allowances, 2) }}</h1>
+                                    <h1 class="text-xs text-center">{{ number_format($total_allowances, 2) }}</h1>
                                 </td>
                                 <td class="border-right-2">
-                                    <h1 class="text-center text-xs">{{ number_format($total_amount_earned, 2) }}</h1>
+                                    <h1 class="text-xs text-center">{{ number_format($total_amount_earned, 2) }}</h1>
                                 </td>
                                 <td class="border-right-2">
-                                    {{-- <h1 class="text-center text-xs">{{ number_format($total_holding_tax, 2) }}</h1> --}}
+                                    {{-- <h1 class="text-xs text-center">{{ number_format($total_holding_tax, 2) }}</h1> --}}
                                 </td>
                                 <td class="border-right-2">
-                                    <h1 class="text-center text-xs">{{ number_format($total_holding_tax, 2) }}</h1>
+                                    <h1 class="text-xs text-center">{{ number_format($total_holding_tax, 2) }}</h1>
                                 </td>
                                 {{-- @dd($deductions, $total_dedcutions ,$sub_total_dedcutions) --}}
 
                                 @foreach ($deductions as $deduction)
                                     <td class="border-right-2 ">
-                                        <h1 class="text-center text-xs">
+                                        <h1 class="text-xs text-center">
                                             {{ number_format($total_dedcutions[$deduction->id], 2) }}</h1>
                                     </td>
                                 @endforeach
                                 @foreach ($loans as $loan)
                                     <td class="border-right-2 ">
-                                        <h1 class="text-center text-xs">
+                                        <h1 class="text-xs text-center">
                                             {{ number_format($total_loans[$loan->id], 2) }}
                                         </h1>
                                     </td>
                                 @endforeach
                                 <td class="border-right-2">
-                                    <h1 class="text-center text-xs">{{ number_format($total_gsis,2) }}</h1>
+                                    <h1 class="text-xs text-center">{{ number_format($total_gsis, 2) }}</h1>
                                 </td>
                                 <td class="border-right-2">
-                                    <h1 class="text-center text-xs">{{ number_format($total_medicare,2) }}</h1>
+                                    <h1 class="text-xs text-center">{{ number_format($total_medicare, 2) }}</h1>
                                 </td>
                                 <td class="border-right-2">
-                                    <h1 class="text-center text-xs">{{ number_format(200 * $employees->count(),2) }}</h1>
+                                    <h1 class="text-xs text-center">{{ number_format(200 * $employees->count(), 2) }}
+                                    </h1>
                                 </td>
                                 <td class="border-right-2">
-                                    <h1 class="text-center text-xs">{{ number_format(100 * $employees->count(),2) }}</h1>
+                                    <h1 class="text-xs text-center">{{ number_format(100 * $employees->count(), 2) }}
+                                    </h1>
                                 </td>
                                 <td class="border-right-2">
-                                    <h1 class="text-center text-xs">{{ number_format($total_net_amount_recieved,2) }}</h1>
+                                    <h1 class="text-xs text-center">{{ number_format($total_net_amount_recieved, 2) }}
+                                    </h1>
                                 </td>
                             </tr>
                         </tfoot>

@@ -24,15 +24,15 @@ class DeductionsSeeder extends Seeder
                 'deduction_name' =>  'Life & Retirement benefits',
                 'deduction_amount' => 9,
                 'deduction_amount_type' => 'percentage',
-                'deduction_type' => $deduction_types[array_rand($deduction_types)],
+                'deduction_type' => 'Mandatory',
                 'deduction_range' => '1-15',
             ],
             [
                 'deduction_code' => 'Pag-ibig',
                 'deduction_name' =>  'Pag-ibig',
-                'deduction_amount' => 100,
+                'deduction_amount' => 200,
                 'deduction_amount_type' => 'fixed_amount',
-                'deduction_type' => $deduction_types[array_rand($deduction_types)],
+                'deduction_type' => 'Mandatory',
                 'deduction_range' => '16-31',
             ],
             [
@@ -40,7 +40,7 @@ class DeductionsSeeder extends Seeder
                 'deduction_name' =>  'Phil Health',
                 'deduction_amount' => 2.5,
                 'deduction_amount_type' => 'percentage',
-                'deduction_type' => $deduction_types[array_rand($deduction_types)],
+                'deduction_type' => 'Mandatory',
                 'deduction_range' => '1-15',
             ],
             // [

@@ -151,10 +151,8 @@ if (!function_exists('getInterval')) {
                 $interval = Carbon::parse('14:00:00');
             } elseif ($time->between(Carbon::parse('14:01:00'), Carbon::parse('15:00:00'))) {
                 $interval = Carbon::parse('15:00:00');
-            } elseif ($time->between(Carbon::parse('15:01:00'), Carbon::parse('16:00:00'))) {
+            } elseif ($time->between(Carbon::parse('15:01:00'), Carbon::parse('16:49:00'))) {
                 $interval = Carbon::parse('16:00:00');
-            } elseif ($time->between(Carbon::parse('16:01:00'), Carbon::parse('17:00:00'))) {
-                $interval = Carbon::parse('17:00:00');
             } else {
                 $interval = Carbon::parse('17:00:00');
             }

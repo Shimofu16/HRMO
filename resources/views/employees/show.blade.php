@@ -14,7 +14,7 @@
                 <h1 class="text-2xl font-bold text-center">Actions</h1>
             </div>
             <div class="flex flex-col space-y-2">
-                <a href="{{ route('employees.edit',  $employee) }}"
+                <a href="{{ route('employees.edit', $employee) }}"
                     class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
                     Edit
                 </a>
@@ -58,7 +58,7 @@
                     <h3><strong>Department: </strong>{{ $employee->data->department->dep_name }}</h3>
                     <h3><strong>Designation: </strong>{{ $employee->data->designation->designation_name }}</h3>
                     <h3><strong>Type of Employment: </strong>{{ $employee->data->category->category_name }}</h3>
-                    @if ($employee->data->category->category_code == 'JO' )
+                    @if ($employee->data->category->category_code == 'JO')
                         <h3><strong>Level: </strong> {{ $employee->data->level->name }}</h3>
                     @elseif ($employee->data->category->category_code != 'COS' && $employee->data->category->category_code != 'JO')
                         <h3><strong>Salary Grade: </strong> Salary Grade {{ $employee->data->salary_grade_id }}</h3>
@@ -67,7 +67,8 @@
                     <h3><strong>Monthly Salary: </strong>
                         {{ number_format($employee->data->monthly_salary, 2) }}</h3>
                     @if ($employee->data->category->category_code != 'JO')
-                        <h3><strong>Sick Leave Points: </strong>{{ number_format($employee->data->sick_leave_points, 2) }}</h3>
+                        <h3><strong>Sick Leave Points:
+                            </strong>{{ number_format($employee->data->sick_leave_points, 2) }}</h3>
                     @endif
                 </div>
             </div>
@@ -101,17 +102,21 @@
                             $total_deductions = $employee->computeDeduction();
                         @endphp
                         @forelse ($employee->deductions as $deduction)
-                            <span>{{ $deduction->deduction->deduction_name }} - {{ number_format($employee->getDeduction($deduction->deduction_id, null), 2) }}</span>
+                            <span>{{ $deduction->deduction->deduction_name }} -
+                                {{ number_format($employee->getDeduction($deduction->deduction_id, null), 2) }}</span>
                             <br>
                         @empty
                             <span class="text-center">No Deductions</span>
                         @endforelse
-                        @if ($employee->data->holding_tax)
+
+                        @if ($employee->data->has_holding_tax)
                             @php
-                                $total_deductions = $total_deductions + $employee->data->holding_tax;
+                                $total_deductions =
+                                    $total_deductions +
+                                    computeHoldingTax($employee->data->monthly_salary, $employee->computeDeduction());
                             @endphp
                             <span>With Holding Tax -
-                                {{ number_format($employee->data->holding_tax, 2) }}</span>
+                                {{ number_format(computeHoldingTax($employee->data->monthly_salary, $employee->computeDeduction()), 2) }}</span>
                         @endif
                         <br>
                         <span>Total: {{ number_format($total_deductions, 2) }}</span>
@@ -139,7 +144,7 @@
                         @endphp
                         <h3>
                             <strong>{{ number_format($loan->amount * $ranges, 2) }}</strong>----------
-                            {{ date('m', strtotime($month->earliest_time_in)) }}/{{ ($ranges > 1) ? 30 : 15 ; }}/{{ date('Y', strtotime($month->earliest_time_in)) }}
+                            {{ date('m', strtotime($month->earliest_time_in)) }}/{{ $ranges > 1 ? 30 : 15 }}/{{ date('Y', strtotime($month->earliest_time_in)) }}
                         </h3>
                     @endif
                 @endforeach
