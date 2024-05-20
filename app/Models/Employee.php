@@ -101,9 +101,12 @@ class Employee extends Model
             // Compute allowance for specific dates
             foreach ($this->allowances as $allowance) {
                 foreach ($allowance->allowance->allowance_ranges as $key => $allowance_range) {
-
                     if ($range == $allowance_range) {
-                        $totalAllowance = $totalAllowance + $allowance->allowance->allowance_amount;
+                        if ($allowance->allowance->allowance_code == 'Hazard' || $allowance->allowance->allowance_code == 'Representation' || $allowance->allowance->allowance_code == 'Transportation') {
+                            $totalAllowance = $totalAllowance + $allowance->amount;
+                        } else {
+                            $totalAllowance = $totalAllowance + $allowance->allowance->allowance_amount;
+                        }
                     }
                 }
             }
@@ -188,7 +191,11 @@ class Employee extends Model
         if ($allowance) {
             foreach ($allowance->allowance->allowance_ranges as $key => $allowance_range) {
                 if ($range == $allowance_range) {
-                    return $allowance->allowance->allowance_amount;
+                    if ($allowance->allowance->allowance_code == 'Hazard' || $allowance->allowance->allowance_code == 'Representation' || $allowance->allowance->allowance_code == 'Transportation') {
+                        return $allowance->amount;
+                    } else {
+                        return $allowance->allowance->allowance_amount;
+                    }
                 }
             }
         }

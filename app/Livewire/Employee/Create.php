@@ -57,6 +57,8 @@ class Create extends Component
     public $mandatory_deductions;
     public $non_mandatory_deductions;
     public $cos_monthly_salary;
+    public $rataTypes;
+    public $selected_rata_types;
 
     public $password;
 
@@ -122,9 +124,29 @@ class Create extends Component
             if ($category->category_code == "COS") {
                 $this->isCOSSelected = true;
             }
+            if ($this->department_id) {
+                $department = Department::find($value);
+                $category = Category::find($this->category_id);
+
+                // dd($category,$category->allowances, $this->isJOSelected);
+                $this->allowances = Allowance::with('categories')->whereHas('categories', function ($query) use ($category, $department) {
+                    $query->where('category_id', $category->id)
+                        ->orWhere('department_id', $department->id);
+                })
+                    ->get();
+            }
+        }
+    }
+    public function updatedDepartmentId($value)
+    {
+        if ($value && $this->category_id) {
+            $department = Department::find($value);
+            $category = Category::find($this->category_id);
+
             // dd($category,$category->allowances, $this->isJOSelected);
-            $this->allowances = Allowance::with('categories')->whereHas('categories', function ($query) use ($category) {
-                $query->where('category_id', $category->id);
+            $this->allowances = Allowance::with('categories')->whereHas('categories', function ($query) use ($category, $department) {
+                $query->where('category_id', $category->id)
+                    ->orWhere('department_id', $department->id);
             })
                 ->get();
         }
@@ -180,8 +202,8 @@ class Create extends Component
 
     public function save()
     {
-
-        $file_name = md5($this->employee_photo . microtime()).'.'.$this->employee_photo->extension();
+        // dd($this->allowances);
+        $file_name = md5($this->employee_photo . microtime()) . '.' . $this->employee_photo->extension();
         $this->employee_photo->storeAs('public/photos', $file_name);
 
         // Create a new employee instance
@@ -214,15 +236,44 @@ class Create extends Component
                 'salary_grade_step' => $this->salary_grade_step,
                 'sick_leave_points' => $this->sick_leave_points,
                 'has_holding_tax' => $this->isWithHoldingTax,
+                'type' => $this->rataTypes[$this->selected_rata_types]['type'],
             ]);
-        }
-        if (!$this->isJOSelected && !$this->isCOSSelected) {
-            if ($this->selectedAllowanceIds) {
-                $selectedAllowanceIds = array_keys(array_filter($this->selectedAllowanceIds, 'boolval')); // Get selected IDs
 
-                // Attach selected allowances using their IDs
-                foreach ($selectedAllowanceIds as $selectedAllowanceId) {
-                    $employee->allowances()->create(['allowance_id' => $selectedAllowanceId]);
+            $category = Category::find($this->category_id);
+            $department = Department::find($this->department_id);
+            $salary_grade = SalaryGrade::find($this->salary_grade_id);
+
+            // Attach selected allowances using their IDs
+            foreach ($this->allowances as $allowance) {
+                if ($allowance->allowance_code == "ACA&PER") {
+                    $temp = $allowance->whereHas('categories', function ($query) use ($category) {
+                        $query->where('category_id', $category->id);
+                    })->get();
+                    if ($temp || $department->dep_code == "MHO") {
+                        $employee->allowances()->create(['allowance_id' => $allowance->id]);
+                    }
+                }
+                if ($department->dep_code == "MHO" && $allowance->allowance_code == 'Hazard') {
+                    $employee->allowances()->create([
+                        'allowance_id' => $allowance->id,
+                        'amount' => $this->getHazard($salary_grade->id, $employee->data->salary_grade_step_amount)
+                    ]);
+                }
+                if ($department->dep_code == "MHO" && $allowance->allowance_code == 'Subsistence') {
+                    $employee->allowances()->create([
+                        'allowance_id' => $allowance->id,
+                    ]);
+                }
+                if ($department->dep_code == "MHO" && $allowance->allowance_code == 'Laundry') {
+                    $employee->allowances()->create([
+                        'allowance_id' => $allowance->id,
+                    ]);
+                }
+                if ($allowance->allowance_code == 'Representation' || $allowance->allowance_code == 'Transportation') {
+                    $employee->allowances()->create([
+                        'allowance_id' => $allowance->id,
+                        'amount' => $this->rataTypes[$this->selected_rata_types]['amount']
+                    ]);
                 }
             }
 
@@ -249,6 +300,8 @@ class Create extends Component
                 $employee->loans()->createMany($loansData);
             }
         }
+        if (!$this->isJOSelected && !$this->isCOSSelected) {
+        }
 
 
         // Create activity
@@ -257,7 +310,35 @@ class Create extends Component
         // Redirect to the index page with a success message
         return redirect()->route('employees.index')->with('success', 'Employee created successfully.');
     }
-
+    private function getHazard($salary_grade_id, $salary_grade)
+    {
+        switch ($salary_grade_id) {
+            case 19:
+                return $salary_grade * 0.25;
+            case 20:
+                return $salary_grade * 0.15;
+            case 21:
+                return $salary_grade * 0.13;
+            case 22:
+                return $salary_grade * 0.12;
+            case 23:
+                return $salary_grade * 0.11;
+            case 24:
+                return $salary_grade * 0.10;
+            case 25:
+                return $salary_grade * 0.10;
+            case 26:
+                return $salary_grade * 0.09;
+            case 27:
+                return $salary_grade * 0.08;
+            case 28:
+                return $salary_grade * 0.087;
+            case 29:
+                return $salary_grade * 0.06;
+            case 30:
+                return $salary_grade * 0.05;
+        }
+    }
     public function login()
     {
         $current_password = AdminPassword::first()->password;
@@ -279,6 +360,28 @@ class Create extends Component
         $this->isJOSelected = false;
         $this->isWithHoldingTax = false;
         $this->isAlreadyLogIn = false;
+        $this->rataTypes  = [
+            [
+                'type' => 'OFFICER',
+                'amount' => 6375,
+            ],
+            [
+                'type' => 'HEAD',
+                'amount' => 6375,
+            ],
+            [
+                'type' => 'SB',
+                'amount' => 6375,
+            ],
+            [
+                'type' => 'MAYOR',
+                'amount' => 7650,
+            ],
+            [
+                'type' => 'VICE MAYOR',
+                'amount' => 7650,
+            ],
+        ];
     }
 
     public function render()

@@ -22,7 +22,10 @@ return new class extends Migration
         Schema::create('allowance_categories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('allowance_id')->constrained('allowances');
-            $table->foreignId('category_id')->constrained('categories');
+            $table->foreignId('category_id')->nullable()->constrained('categories');
+            $table->foreignId('department_id')->nullable()->constrained('departments');
+            $table->string('type')->nullable();
+            $table->double('amount')->nullable();
             $table->timestamps();
         });
     }

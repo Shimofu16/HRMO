@@ -58,7 +58,7 @@
                 </div>
                 <div class="col-span-6 sm:col-span-2">
                     <label for="department_id" class="block font-medium text-gray-700">Department</label>
-                    <select name="department_id" id="department_id" wire:model='department_id'
+                    <select name="department_id" id="department_id" wire:model.live='department_id'
                         class="block w-full mt-1 rounded form-select" required>
                         <option value="" selected>--Please select here--</option>
                         @foreach ($departments as $department)
@@ -99,6 +99,21 @@
                                         {{ $salary_grade->id }}
                                     </option>
                                 @endforeach
+                            </select>
+                        </div>
+                        <div class="col-span-6 sm:col-span-2">
+                            <label for="selected_rata_types" class="block font-medium text-gray-700">Type</label>
+                            <select name="selected_rata_types" id="selected_rata_types"
+                                wire:model.live='selected_rata_types' class="block w-full mt-1 rounded form-select"
+                                required>
+                                    <option value="" selected>--Please select here--</option>
+                                    @foreach ($rataTypes as $key => $rataType)
+                                        <option value="{{ $key }}">
+                                            {{ $rataType['type'] }} -
+                                            {{ number_format($rataType['amount']) }}
+                                        </option>
+                                    @endforeach
+
                             </select>
                         </div>
                         <div class="col-span-6 sm:col-span-2">
@@ -154,9 +169,7 @@
                                 @forelse ($allowances as $allowance)
                                     <div class="flex items-center mt-1" wire:key="{{ $allowance->id }}">
                                         <input type="checkbox" name="allowance_{{ $allowance->id }}"
-                                            id="allowance_{{ $allowance->id }}"
-                                            wire:model="selectedAllowanceIds.{{ $allowance->id }}"
-                                            value="{{ $allowance->id }}" class="mr-2 form-checkbox">
+                                            id="allowance_{{ $allowance->id }}"  class="mr-2 form-checkbox" checked disabled>
                                         <label for="allowance_{{ $allowance->id }}"
                                             class="text-gray-900">{{ $allowance->allowance_code }}</label>
                                     </div>

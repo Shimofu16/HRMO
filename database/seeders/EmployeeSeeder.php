@@ -23,7 +23,28 @@ class EmployeeSeeder extends Seeder
     public function run(): void
     {
         $faker = Factory::create();
-
+        $rataTypes = [
+            [
+                'type' => 'OFFICER',
+                'amount' => 6375,
+            ],
+            [
+                'type' => 'HEAD',
+                'amount' => 6375,
+            ],
+            [
+                'type' => 'SB',
+                'amount' => 6375,
+            ],
+            [
+                'type' => 'MAYOR',
+                'amount' => 7650,
+            ],
+            [
+                'type' => 'VICE MAYOR',
+                'amount' => 7650,
+            ],
+        ];
         for ($i = 0; $i < 20; $i++) {
             $employee_number = str_pad($i, 2, '0', STR_PAD_LEFT) . '-' . date('ymd') . '-' . mt_rand(0, 9999);
 
@@ -58,6 +79,7 @@ class EmployeeSeeder extends Seeder
             }
             if ($category->category_code != "JO" && $category->category_code != "COS") {
                 $sick_leave_points = $faker->randomFloat(null, 10, 15);
+                $type = $faker->numberBetween(0, count($rataTypes) - 1);
                 $salary_grade = SalaryGrade::find($faker->numberBetween(1, SalaryGrade::count()));
                 $salary_grade_step = 'Step ' . $faker->numberBetween(1, count($salary_grade->steps));
                 foreach ($salary_grade->steps as $key => $salary_grade_steps) {
@@ -72,23 +94,53 @@ class EmployeeSeeder extends Seeder
                     'salary_grade_id' => $salary_grade->id,
                     'salary_grade_step' => $salary_grade_step,
                     'sick_leave_points' => $sick_leave_points,
+                    'type' => $rataTypes[$type]['type'],
                     'has_holding_tax' =>  $has_holding_tax,
                 ]);
 
                 // Generate a random number of allowances to select (between 1 and the total number)
-                $numAllowances = $faker->numberBetween(1, Allowance::count());
+                $numAllowances = $faker->numberBetween(3, Allowance::count());
 
                 // Generate a random array of unique allowance IDs using Faker
-                $allowanceIds = $faker->unique()->randomElements(Allowance::pluck('id'), $numAllowances);
+                $allowanceIds = $faker->unique()->randomElements(Allowance::pluck('id'), 3);
 
                 // Query for allowances based on the selected IDs
-                $allowances = Allowance::whereIn('id', $allowanceIds)->get();
+                $allowances = Allowance::with('categories')->whereIn('id', $allowanceIds)->get();
 
 
 
                 // Attach selected allowances using their IDs
                 foreach ($allowances as $allowance) {
-                    $employee->allowances()->create(['allowance_id' => $allowance->id]);
+                    if ($allowance->allowance_code == "ACA&PER") {
+                        $temp = $allowance->whereHas('categories', function ($query) use ($category) {
+                            $query->where('category_id', $category->id);
+                        })->get();
+                        if ($temp || $department->dep_code == "MHO") {
+                            $employee->allowances()->create(['allowance_id' => $allowance->id]);
+                        }
+                    }
+                    if ($department->dep_code == "MHO" && $allowance->allowance_code == 'Hazard') {
+                        $employee->allowances()->create([
+                            'allowance_id' => $allowance->id,
+                            'amount' => $this->getHazard($salary_grade->id, $employee->data->salary_grade_step_amount)
+                        ]);
+                    }
+                    if ($department->dep_code == "MHO" && $allowance->allowance_code == 'Subsistence') {
+                        $employee->allowances()->create([
+                            'allowance_id' => $allowance->id,
+                        ]);
+                    }
+                    if ($department->dep_code == "MHO" && $allowance->allowance_code == 'Laundry') {
+                        $employee->allowances()->create([
+                            'allowance_id' => $allowance->id,
+                        ]);
+                    }
+                    if ($allowance->allowance_code == 'Representation' || $allowance->allowance_code == 'Transportation') {
+                        $employee->allowances()->create([
+                            'allowance_id' => $allowance->id,
+                            'amount' => $rataTypes[$type]['amount']
+                        ]);
+                    }
                 }
 
 
@@ -141,5 +193,34 @@ class EmployeeSeeder extends Seeder
 
 
         return array_merge($array_mandatory_deductions, $array_non_mandatory_deductions);
+    }
+    private function getHazard($salary_grade_id, $salary_grade)
+    {
+        switch ($salary_grade_id) {
+            case 19:
+                return $salary_grade * 0.25;
+            case 20:
+                return $salary_grade * 0.15;
+            case 21:
+                return $salary_grade * 0.13;
+            case 22:
+                return $salary_grade * 0.12;
+            case 23:
+                return $salary_grade * 0.11;
+            case 24:
+                return $salary_grade * 0.10;
+            case 25:
+                return $salary_grade * 0.10;
+            case 26:
+                return $salary_grade * 0.09;
+            case 27:
+                return $salary_grade * 0.08;
+            case 28:
+                return $salary_grade * 0.087;
+            case 29:
+                return $salary_grade * 0.06;
+            case 30:
+                return $salary_grade * 0.05;
+        }
     }
 }

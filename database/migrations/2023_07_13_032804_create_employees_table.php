@@ -32,6 +32,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('employee_id')->constrained('employees', 'id');
             $table->foreignId('allowance_id')->constrained('allowances', 'id');
+            $table->double('amount')->nullable();
             $table->timestamps();
         });
         Schema::create('employee_loans', function (Blueprint $table) {
@@ -53,6 +54,7 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained('categories', 'id');
             $table->foreignId('salary_grade_id')->nullable()->constrained('salary_grades', 'id');
             $table->foreignId('level_id')->nullable()->constrained('levels', 'id');
+            $table->string('type')->nullable();
             $table->string('salary_grade_step')->nullable();
             $table->double('sick_leave_points')->nullable();
             $table->boolean('has_holding_tax')->default(false);
