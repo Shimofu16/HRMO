@@ -47,7 +47,8 @@ class UpdateAttendance extends Command
                 $time_in = '';
                 $time_out = '';
                 foreach ($attendances as $key => $attendance) {
-                    if ($attendance->time < '12:00:00') {
+                    $formatted_attendance_time_in = Carbon::parse($attendance->time)->format('H:i:s');
+                    if ($formatted_attendance_time_in < '12:00:00') {
                         $time_in = $attendance->time;
                     } else {
                         $time_out = $attendance->time;

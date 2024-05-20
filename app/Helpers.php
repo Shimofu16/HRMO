@@ -304,7 +304,7 @@ if (!function_exists('calculateSalary')) {
         // Calculate hours worked, handling negative values and exceeding 8 hours
         if ($formattedTimeIn <= $formattedDefaultTimeIn) {
             // early 8am
-            if ($formattedTimeout <= $formattedDefaultTimeOut) {
+            if ($formattedTimeout < $formattedDefaultTimeOut) {
                 // undertime
                 if ($isJO ||  $isCOS) {
                     $status = 'Half-Day';
@@ -318,7 +318,7 @@ if (!function_exists('calculateSalary')) {
             }
         } else {
             // lates
-            if ($formattedTimeout <= $formattedDefaultTimeOut) {
+            if ($formattedTimeout < $formattedDefaultTimeOut) {
                 // undertime
                 if ($isJO ||  $isCOS) {
                     $status = 'Half-Day';
