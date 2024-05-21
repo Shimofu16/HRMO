@@ -236,7 +236,7 @@ class Create extends Component
                 'salary_grade_step' => $this->salary_grade_step,
                 'sick_leave_points' => $this->sick_leave_points,
                 'has_holding_tax' => $this->isWithHoldingTax,
-                'type' => $this->rataTypes[$this->selected_rata_types]['type'],
+                'type' => ($this->selected_rata_types) ?$this->rataTypes[$this->selected_rata_types]['type'] : null,
             ]);
 
             $category = Category::find($this->category_id);
@@ -256,7 +256,7 @@ class Create extends Component
                 if ($department->dep_code == "MHO" && $allowance->allowance_code == 'Hazard') {
                     $employee->allowances()->create([
                         'allowance_id' => $allowance->id,
-                        'amount' => $this->getHazard($salary_grade->id, $employee->data->salary_grade_step_amount)
+                        'amount' => getHazard($salary_grade->id, $employee->data->salary_grade_step_amount)
                     ]);
                 }
                 if ($department->dep_code == "MHO" && $allowance->allowance_code == 'Subsistence') {
@@ -299,8 +299,6 @@ class Create extends Component
                 // Create loans for the employee
                 $employee->loans()->createMany($loansData);
             }
-        }
-        if (!$this->isJOSelected && !$this->isCOSSelected) {
         }
 
 

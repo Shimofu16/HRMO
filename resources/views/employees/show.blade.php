@@ -81,15 +81,25 @@
                     <div class="w-2/4">
                         <h3><strong>Allowances</strong></h3>
                         @php
-                            $total_allowances = $employee->computeAllowance();
+                            $total_allowances = 0;
                         @endphp
-                        @forelse ($employee->allowances as $allowance)
-                            <span>{{ $allowance->allowance->allowance_name }} -
-                                {{ number_format($allowance->allowance->allowance_amount, 2) }}
-                            </span>
-                            <br>
+                        @forelse ($allowances as $allowance)
+                            @if ($employee->getAllowance($allowance->id) != 0)
+                                @php
+                                    $total_allowances =
+                                        $total_allowances +
+                                        $employee->getAllowance(
+                                            $allowance->id,
+                                        );
+                                @endphp
+                                <span>{{ $allowance->allowance_code }} -
+                                    {{ number_format($employee->getAllowance($allowance->id), 2) }}
+                                </span>
+                                <br>
+                            @else
+
+                            @endif
                         @empty
-                            <span class="text-center">No Allowance</span>
                         @endforelse
                         <br>
                         <span>Total Allowance: {{ number_format($total_allowances) }}</span>

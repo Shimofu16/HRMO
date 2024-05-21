@@ -80,6 +80,7 @@ class EmployeeSeeder extends Seeder
             if ($category->category_code != "JO" && $category->category_code != "COS") {
                 $sick_leave_points = $faker->randomFloat(null, 10, 15);
                 $type = $faker->numberBetween(0, count($rataTypes) - 1);
+                $hasType = $faker->numberBetween(0, 1);
                 $salary_grade = SalaryGrade::find($faker->numberBetween(1, SalaryGrade::count()));
                 $salary_grade_step = 'Step ' . $faker->numberBetween(1, count($salary_grade->steps));
                 foreach ($salary_grade->steps as $key => $salary_grade_steps) {
@@ -94,35 +95,28 @@ class EmployeeSeeder extends Seeder
                     'salary_grade_id' => $salary_grade->id,
                     'salary_grade_step' => $salary_grade_step,
                     'sick_leave_points' => $sick_leave_points,
-                    'type' => $rataTypes[$type]['type'],
+                    'type' => ($hasType == 1) ? $rataTypes[$type]['type'] : null,
                     'has_holding_tax' =>  $has_holding_tax,
                 ]);
 
-                // Generate a random number of allowances to select (between 1 and the total number)
-                $numAllowances = $faker->numberBetween(3, Allowance::count());
 
-                // Generate a random array of unique allowance IDs using Faker
-                $allowanceIds = $faker->unique()->randomElements(Allowance::pluck('id'), 3);
 
                 // Query for allowances based on the selected IDs
-                $allowances = Allowance::with('categories')->whereIn('id', $allowanceIds)->get();
+                $allowances = Allowance::with('categories')->get();
 
 
 
                 // Attach selected allowances using their IDs
                 foreach ($allowances as $allowance) {
-                    if ($allowance->allowance_code == "ACA&PER") {
-                        $temp = $allowance->whereHas('categories', function ($query) use ($category) {
-                            $query->where('category_id', $category->id);
-                        })->get();
-                        if ($temp || $department->dep_code == "MHO") {
+                    if ($allowance->allowance_code == "ACA&PERA") {
+                        if (($category->id == 1 || $category->id == 4 || $category->id == 5 || $category->id == 6) || $department->dep_code == "MHO") {
                             $employee->allowances()->create(['allowance_id' => $allowance->id]);
                         }
                     }
                     if ($department->dep_code == "MHO" && $allowance->allowance_code == 'Hazard') {
                         $employee->allowances()->create([
                             'allowance_id' => $allowance->id,
-                            'amount' => $this->getHazard($salary_grade->id, $employee->data->salary_grade_step_amount)
+                            'amount' => getHazard($salary_grade->id, $employee->data->salary_grade_step_amount)
                         ]);
                     }
                     if ($department->dep_code == "MHO" && $allowance->allowance_code == 'Subsistence') {
@@ -135,11 +129,13 @@ class EmployeeSeeder extends Seeder
                             'allowance_id' => $allowance->id,
                         ]);
                     }
-                    if ($allowance->allowance_code == 'Representation' || $allowance->allowance_code == 'Transportation') {
-                        $employee->allowances()->create([
-                            'allowance_id' => $allowance->id,
-                            'amount' => $rataTypes[$type]['amount']
-                        ]);
+                    if ($hasType == 1) {
+                        if ($allowance->allowance_code == 'Representation' || $allowance->allowance_code == 'Transportation') {
+                            $employee->allowances()->create([
+                                'allowance_id' => $allowance->id,
+                                'amount' => $rataTypes[$type]['amount']
+                            ]);
+                        }
                     }
                 }
 
@@ -194,33 +190,5 @@ class EmployeeSeeder extends Seeder
 
         return array_merge($array_mandatory_deductions, $array_non_mandatory_deductions);
     }
-    private function getHazard($salary_grade_id, $salary_grade)
-    {
-        switch ($salary_grade_id) {
-            case 19:
-                return $salary_grade * 0.25;
-            case 20:
-                return $salary_grade * 0.15;
-            case 21:
-                return $salary_grade * 0.13;
-            case 22:
-                return $salary_grade * 0.12;
-            case 23:
-                return $salary_grade * 0.11;
-            case 24:
-                return $salary_grade * 0.10;
-            case 25:
-                return $salary_grade * 0.10;
-            case 26:
-                return $salary_grade * 0.09;
-            case 27:
-                return $salary_grade * 0.08;
-            case 28:
-                return $salary_grade * 0.087;
-            case 29:
-                return $salary_grade * 0.06;
-            case 30:
-                return $salary_grade * 0.05;
-        }
-    }
+
 }

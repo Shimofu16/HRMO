@@ -169,8 +169,9 @@ class EmployeeController extends Controller
     public function show($id)
     {
         $employee = Employee::with('data')->find($id);
+        $allowances = Allowance::all();
         // dd($employee->data->salary_grade_id);
-        return view('employees.show', compact('employee'));
+        return view('employees.show', compact('employee', 'allowances'));
     }
 
 

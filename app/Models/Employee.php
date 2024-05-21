@@ -103,7 +103,12 @@ class Employee extends Model
                 foreach ($allowance->allowance->allowance_ranges as $key => $allowance_range) {
                     if ($range == $allowance_range) {
                         if ($allowance->allowance->allowance_code == 'Hazard' || $allowance->allowance->allowance_code == 'Representation' || $allowance->allowance->allowance_code == 'Transportation') {
-                            $totalAllowance = $totalAllowance + $allowance->amount;
+                            if ($allowance->allowance->allowance_code == 'Hazard') {
+                               $totalAllowance = $totalAllowance + getHazard($this->data->salary_grade_id, $this->data->monthly_salary);
+                            } else {
+                                // dd(getHazard($this->data->salary_grade_id, $this->data->monthly_salary));
+                               $totalAllowance = $totalAllowance + $allowance->amount;
+                            }
                         } else {
                             $totalAllowance = $totalAllowance + $allowance->allowance->allowance_amount;
                         }
@@ -185,21 +190,43 @@ class Employee extends Model
 
         return $totalSalary;
     }
-    public function getAllowance($allowance_id, $range)
+    public function getAllowance($allowance_id, $range  = null)
     {
-        $allowance = $this->allowances()->where('allowance_id', $allowance_id)->first();
-        if ($allowance) {
-            foreach ($allowance->allowance->allowance_ranges as $key => $allowance_range) {
-                if ($range == $allowance_range) {
-                    if ($allowance->allowance->allowance_code == 'Hazard' || $allowance->allowance->allowance_code == 'Representation' || $allowance->allowance->allowance_code == 'Transportation') {
-                        return $allowance->amount;
-                    } else {
-                        return $allowance->allowance->allowance_amount;
+        if ($range) {
+            $allowance = $this->allowances()->where('allowance_id', $allowance_id)->first();
+            if ($allowance) {
+                foreach ($allowance->allowance->allowance_ranges as $key => $allowance_range) {
+                    if ($range == $allowance_range) {
+                        if ($allowance->allowance->allowance_code == 'Hazard' || $allowance->allowance->allowance_code == 'Representation' || $allowance->allowance->allowance_code == 'Transportation') {
+                            if ($allowance->allowance->allowance_code == 'Hazard') {
+                                return getHazard($this->data->salary_grade_id, $this->data->monthly_salary);
+                            } else {
+                                // dd(getHazard($this->data->salary_grade_id, $this->data->monthly_salary));
+                                return $allowance->amount;
+                            }
+                        } else {
+                            return $allowance->allowance->allowance_amount;
+                        }
                     }
                 }
             }
+            return 0;
+        } else {
+            $allowance = $this->allowances()->where('allowance_id', $allowance_id)->first();
+            if ($allowance) {
+                if ($allowance->allowance->allowance_code == 'Hazard' || $allowance->allowance->allowance_code == 'Representation' || $allowance->allowance->allowance_code == 'Transportation') {
+                    if ($allowance->allowance->allowance_code == 'Hazard') {
+                        return getHazard($this->data->salary_grade_id, $this->data->monthly_salary);
+                    } else {
+                        // dd(getHazard($this->data->salary_grade_id, $this->data->monthly_salary));
+                        return $allowance->amount;
+                    }
+                } else {
+                    return $allowance->allowance->allowance_amount;
+                }
+            }
+            return 0;
         }
-        return 0;
     }
     public function getDeduction($deduction_id, $range)
     {
@@ -246,5 +273,34 @@ class Employee extends Model
                 $query->where('deduction_type', $type);
             })
             ->get();
+    }
+    private function getHazard($salary_grade_id, $salary_grade)
+    {
+        switch ($salary_grade_id) {
+            case 19:
+                return $salary_grade * 0.25;
+            case 20:
+                return $salary_grade * 0.15;
+            case 21:
+                return $salary_grade * 0.13;
+            case 22:
+                return $salary_grade * 0.12;
+            case 23:
+                return $salary_grade * 0.11;
+            case 24:
+                return $salary_grade * 0.10;
+            case 25:
+                return $salary_grade * 0.10;
+            case 26:
+                return $salary_grade * 0.09;
+            case 27:
+                return $salary_grade * 0.08;
+            case 28:
+                return $salary_grade * 0.087;
+            case 29:
+                return $salary_grade * 0.06;
+            case 30:
+                return $salary_grade * 0.05;
+        }
     }
 }

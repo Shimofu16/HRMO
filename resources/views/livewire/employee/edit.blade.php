@@ -146,10 +146,7 @@
                                 @forelse ($allowances as $key => $allowance)
                                     <div class="flex items-center mt-1" wire:key="{{ $allowance->id }}">
                                         <input type="checkbox" name="allowance_{{ $allowance->id }}"
-                                            id="allowance_{{ $allowance->id }}"
-                                            wire:model="selectedAllowanceIds.{{ $allowance->id }}"
-                                            value="{{ $allowance->id }}" class="mr-2 form-checkbox"
-                                            {{ isset($selectedAllowanceIds[$allowance->id]) ? 'checked' : '' }}>
+                                            id="allowance_{{ $allowance->id }}"  class="mr-2 form-checkbox" checked disabled>
                                         <label for="allowance_{{ $allowance->id }}"
                                             class="text-gray-900">{{ $allowance->allowance_code }}</label>
                                     </div>
@@ -206,7 +203,7 @@
                             @endforelse
                         </div>
                     </div>
-                    {{-- <div class="col-span-6 sm:col-span-2">
+                    <div class="col-span-6 sm:col-span-2">
                         <div class="col-span-6 sm:col-span-2">
                             <label for="loan_id" class="block font-medium text-gray-700">Loan </label>
                             <select name="loan_id" id="loan_id" wire:model.live='loan_id'
@@ -218,19 +215,9 @@
                                 @endforeach
                             </select>
                         </div>
-                    </div> --}}
-                    @if ($isWithHoldingTax)
-                        <div class="col-span-6 sm:col-span-2">
-                            <div class="col-span-6 sm:col-span-2">
-                                <label for="holding_tax" class="block font-medium text-gray-700">With Hodling Tax
-                                </label>
-                                <input type="number" name="holding_tax" id="duration" step="0.01"
-                                    class="block w-full mt-1 rounded form-input" wire:model="holding_tax">
-                            </div>
-                        </div>
-                    @endif
+                    </div>
                 </div>
-                {{-- @if ($selected_loans)
+                @if ($selected_loans)
                     @foreach ($selected_loans as $selected_loan)
                         <div class="grid grid-cols-6 gap-6 mt-3" wire:key="{{ $selected_loan->id }}">
 
@@ -293,7 +280,7 @@
                             </div>
                         </div>
                     @endforeach
-                @endif --}}
+                @endif
 
 
             </div>

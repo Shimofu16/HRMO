@@ -733,3 +733,38 @@ if (!function_exists('computeHoldingTax')) {
         return ($annualTaxDue / 12) / 2;
     }
 }
+if (!function_exists('getHazard')) {
+
+    function getHazard($salary_grade_id, $salary_grade)
+    {
+        if ($salary_grade_id < 19) {
+            return $salary_grade * 0.25;
+        }
+        switch ($salary_grade_id) {
+            case 19:
+                return $salary_grade * 0.25;
+            case 20:
+                return $salary_grade * 0.15;
+            case 21:
+                return $salary_grade * 0.13;
+            case 22:
+                return $salary_grade * 0.12;
+            case 23:
+                return $salary_grade * 0.11;
+            case 24:
+                return $salary_grade * 0.10;
+            case 25:
+                return $salary_grade * 0.10;
+            case 26:
+                return $salary_grade * 0.09;
+            case 27:
+                return $salary_grade * 0.08;
+            case 28:
+                return $salary_grade * 0.087;
+            case 29:
+                return $salary_grade * 0.06;
+            case 30:
+                return $salary_grade * 0.05;
+        }
+    }
+}

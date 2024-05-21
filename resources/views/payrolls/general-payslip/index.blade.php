@@ -396,6 +396,9 @@
                                             $sub_total_amount_earned[$employee->id];
                                         $total_amount_earned_for_nar[$employee->id] =
                                             $total_allowances_for_nar - $total_deductions_for_nar;
+                                        if ($total_amount_earned_for_nar[$employee->id] < 0) {
+                                            $total_amount_earned_for_nar[$employee->id] = 0;
+                                        }
                                     @endphp
                                     <td class="pl-2 border-right-2 border-bottom-2">
                                         {{ number_format($total_amount_earned_for_nar[$employee->id], 2) }}</td>

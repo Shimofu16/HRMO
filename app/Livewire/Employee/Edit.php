@@ -95,6 +95,7 @@ class Edit extends Component
     public function updatedCategoryId($value)
     {
         $this->isJOSelected = false;
+        $this->isCOSSelected = false;
         if ($value) {
             $category = Category::find($value);
             if ($category->category_code == "JO") {
@@ -103,11 +104,60 @@ class Edit extends Component
             if ($category->category_code == "COS") {
                 $this->isCOSSelected = true;
             }
+            if ($this->department_id) {
+                $department = Department::find($value);
+                $category = Category::find($this->category_id);
+
+                // dd($category,$category->allowances, $this->isJOSelected);
+                $this->allowances = Allowance::with('categories')->whereHas('categories', function ($query) use ($category, $department) {
+                    $query->where('category_id', $category->id)
+                        ->orWhere('department_id', $department->id);
+                })
+                    ->get();
+            }
+        }
+    }
+    public function updatedDepartmentId($value)
+    {
+        if ($value && $this->category_id) {
+            $department = Department::find($value);
+            $category = Category::find($this->category_id);
+
             // dd($category,$category->allowances, $this->isJOSelected);
-            $this->allowances = Allowance::with('categories')->whereHas('categories', function ($query) use ($category) {
-                $query->where('category_id', $category->id);
+            $this->allowances = Allowance::with('categories')->whereHas('categories', function ($query) use ($category, $department) {
+                $query->where('category_id', $category->id)
+                    ->orWhere('department_id', $department->id);
             })
                 ->get();
+        }
+    }
+    public function updateLoans()
+    {
+        // Get selected loan IDs from the array keys
+        $selectedLoanIds = array_keys($this->selected_loans);
+        $loans_from_db_ids = [];
+        foreach ($this->employee->loans as $key => $loan) {
+            $loans_from_db_ids[] = $loan->loan_id;
+        }
+        $selectedLoanIds = array_merge($loans_from_db_ids, $selectedLoanIds);
+        $this->loans = Loan::whereNotIn('id', $loans_from_db_ids)->get();
+    }
+    public function updatedLoanId($value)
+    {
+        if ($value && $this->selected_loans) {
+            if (!array_key_exists($value, $this->selected_loans)) {
+                $this->selected_loans[$value] = Loan::where('id', $value)->first();
+                $this->updateLoans();
+            }
+        } else {
+            $this->selected_loans[$value] = Loan::where('id', $value)->first();
+        }
+    }
+    public function removeLoan($loan_id)
+    {
+        if (array_key_exists($loan_id, $this->selected_loans)) {
+            unset($this->selected_loans[$loan_id]);
+            $this->updateLoans();
         }
     }
     public function login()
@@ -123,7 +173,7 @@ class Edit extends Component
     {
         $file_name = $this->employee->employee_photo;
         if ($this->employee_photo) {
-            $file_name = md5($this->employee_photo . microtime()).'.'.$this->employee_photo->extension();
+            $file_name = md5($this->employee_photo . microtime()) . '.' . $this->employee_photo->extension();
             $this->employee_photo->storeAs('public/photos', $file_name);
         }
 
@@ -159,39 +209,67 @@ class Edit extends Component
         }
 
         if (!$this->isJOSelected) {
-            if ($this->selectedAllowanceIds) {
+            if ($this->allowances) {
                 $this->employee->allowances()->delete();
-
-                $selectedAllowanceIds = array_keys(array_filter($this->selectedAllowanceIds, 'boolval')); // Get selected IDs
-
+                $category = Category::find($this->category_id);
+                $department = Department::find($this->department_id);
+                $salary_grade = SalaryGrade::find($this->salary_grade_id);
                 // Attach selected allowances using their IDs
-                foreach ($selectedAllowanceIds as $selectedAllowanceId) {
-                    $this->employee->allowances()->create(['allowance_id' => $selectedAllowanceId]);
+                foreach ($this->allowances as $allowance) {
+                    if ($allowance->allowance_code == "ACA&PER") {
+                        $temp = $allowance->whereHas('categories', function ($query) use ($category) {
+                            $query->where('category_id', $category->id);
+                        })->get();
+                        if ($temp || $department->dep_code == "MHO") {
+                            $this->employee->allowances()->create(['allowance_id' => $allowance->id]);
+                        }
+                    }
+                    if ($department->dep_code == "MHO" && $allowance->allowance_code == 'Hazard') {
+                        $this->employee->allowances()->create([
+                            'allowance_id' => $allowance->id,
+                            'amount' => getHazard($salary_grade->id, $this->employee->data->salary_grade_step_amount)
+                        ]);
+                    }
+                    if ($department->dep_code == "MHO" && $allowance->allowance_code == 'Subsistence') {
+                        $this->employee->allowances()->create([
+                            'allowance_id' => $allowance->id,
+                        ]);
+                    }
+                    if ($department->dep_code == "MHO" && $allowance->allowance_code == 'Laundry') {
+                        $this->employee->allowances()->create([
+                            'allowance_id' => $allowance->id,
+                        ]);
+                    }
+                    if ($allowance->allowance_code == 'Representation' || $allowance->allowance_code == 'Transportation') {
+                        $this->employee->allowances()->create([
+                            'allowance_id' => $allowance->id,
+                            'amount' => $this->rataTypes[$this->selected_rata_types]['amount']
+                        ]);
+                    }
                 }
             }
             $this->employee->deductions()->delete();
             foreach ($this->getDeductions() as $value) {
                 $this->employee->deductions()->create(['deduction_id' => $value]);
             }
+            if ($this->arraySelectedLoans) {
+                $loansData = [];
 
-            // if ($this->arraySelectedLoans) {
-            //     $loansData = [];
+                foreach ($this->arraySelectedLoans as $loanId => $loanDetails) {
+                    $loanAmount = $loanDetails['amount'];
+                    $loanDuration = $loanDetails['duration'];
+                    $selectedRanges = array_keys(array_filter($loanDetails['range'], 'boolval'));
 
-            //     foreach ($this->arraySelectedLoans as $loanId => $loanDetails) {
-            //         $loanAmount = $loanDetails['amount'];
-            //         $loanDuration = $loanDetails['duration'];
-            //         $selectedRanges = array_keys(array_filter($loanDetails['range'], 'boolval'));
-
-            //         $loansData[] = [
-            //             'loan_id' => $loanId,
-            //             'amount' => $loanAmount,
-            //             'duration' => $loanDuration,
-            //             'ranges' => $selectedRanges,
-            //         ];
-            //     }
-            //     // Create loans for the employee
-            //     $this->employee->loans()->createMany($loansData);
-            // }
+                    $loansData[] = [
+                        'loan_id' => $loanId,
+                        'amount' => $loanAmount,
+                        'duration' => $loanDuration,
+                        'ranges' => $selectedRanges,
+                    ];
+                }
+                // Create loans for the employee
+                $this->employee->loans()->createMany($loansData);
+            }
         }
 
 
@@ -216,7 +294,12 @@ class Edit extends Component
 
     public function mount()
     {
-        $this->loans = Loan::all();
+        $loans_from_db_ids = [];
+        foreach ($this->employee->loans as $key => $loan) {
+            $loans_from_db_ids[] = $loan->loan_id;
+        }
+
+        $this->loans = Loan::whereNotIn('id', $loans_from_db_ids)->get();
         $this->departments = Department::all();
         $this->categories = Category::all();
         $this->designations = Designation::all();
@@ -227,7 +310,7 @@ class Edit extends Component
         // dd($this->employee);
         $this->isJOSelected = $this->employee->data->category->category_code == 'JO';
         $this->isCOSSelected = $this->employee->data->category->category_code == 'COS';
-        $this->isWithHoldingTax = !empty($this->employee->data->holding_tax);
+        $this->isWithHoldingTax = $this->employee->data->has_holding_tax;
         $this->first_name = $this->employee->first_name;
         $this->middle_name = $this->employee->middle_name;
         $this->last_name = $this->employee->last_name;
@@ -243,25 +326,26 @@ class Edit extends Component
             $this->salary_grade_id = $this->employee->data->salary_grade_id;
             $this->salary_grade_steps = SalaryGrade::find($this->employee->data->salary_grade_id)->steps;
             $this->salary_grade_step = $this->employee->data->salary_grade_step;
-              // dd($this->selectedAllowanceIds);
-        $limit = 20833;
-        foreach ($this->salary_grade_steps as $key => $salary_grade_step) {
-            if ($this->employee->data->salary_grade_step == $salary_grade_step['step'] && $salary_grade_step['amount'] > $limit) {
-                $this->isWithHoldingTax = true;
+            // dd($this->selectedAllowanceIds);
+            $limit = 20833;
+            foreach ($this->salary_grade_steps as $key => $salary_grade_step) {
+                if ($this->employee->data->salary_grade_step == $salary_grade_step['step'] && $salary_grade_step['amount'] > $limit) {
+                    $this->isWithHoldingTax = true;
+                }
             }
-        }
-
-
         }
         $this->designation_id = $this->employee->data->designation_id;
         if (!$this->isJOSelected) {
-            $this->allowances = Allowance::with('categories')->whereHas('categories', function ($query) {
-                $query->where('category_id', $this->employee->data->category_id);
-            })
-                ->get();
+            if ($this->department_id && $this->category_id) {
+                $department = Department::find($this->department_id);
+                $category = Category::find($this->category_id);
 
-            foreach ($this->employee->allowances as $key => $allowance) {
-                $this->selectedAllowanceIds[$allowance->allowance->id] = $allowance->allowance->id;
+                // dd($category,$category->allowances, $this->isJOSelected);
+                $this->allowances = Allowance::with('categories')->whereHas('categories', function ($query) use ($category, $department) {
+                    $query->where('category_id', $category->id)
+                        ->orWhere('department_id', $department->id);
+                })
+                    ->get();
             }
             foreach ($this->employee->deductions as $key => $deduction) {
                 if ($deduction->deduction->deduction_type == 'Non-Mandatory') {
@@ -270,8 +354,6 @@ class Edit extends Component
             }
         }
 
-
-        $this->holding_tax = $this->employee->data->holding_tax;
 
         $this->isAlreadyLogIn = false;
     }
