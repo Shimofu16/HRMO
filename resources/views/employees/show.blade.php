@@ -144,18 +144,21 @@
                     $total_amount_paid = 0;
                     $loan_balance = 0;
                     $ranges = count($loan->ranges);
+                    $duration =
                     $total_loan = $loan->amount * $loan->duration;
                 @endphp
                 <h2 class="mb-1"><strong>{{ $loan->loan->name }} - {{ number_format($total_loan, 2) }}</strong></h2>
                 @foreach (getMonthsFromAttendance($employee) as $month)
-                    @if ($total_amount_paid <= $total_loan)
-                        @php
-                            $total_amount_paid = $total_amount_paid + $loan->amount * $ranges;
-                        @endphp
-                        <h3>
-                            <strong>{{ number_format($loan->amount * $ranges, 2) }}</strong>----------
-                            {{ date('m', strtotime($month->earliest_time_in)) }}/{{ $ranges > 1 ? 30 : 15 }}/{{ date('Y', strtotime($month->earliest_time_in)) }}
-                        </h3>
+                    @if (isBetweenDatesOfLoan($loan,$month->earliest_time_in))
+                        @if ($total_amount_paid <= $total_loan)
+                            @php
+                                $total_amount_paid = $total_amount_paid + $loan->amount * $ranges;
+                            @endphp
+                            <h3>
+                                <strong>{{ number_format($loan->amount * $ranges, 2) }}</strong>----------
+                                {{ date('m', strtotime($month->earliest_time_in)) }}/{{ $ranges > 1 ? 30 : 15 }}/{{ date('Y', strtotime($month->earliest_time_in)) }}
+                            </h3>
+                        @endif
                     @endif
                 @endforeach
                 @php

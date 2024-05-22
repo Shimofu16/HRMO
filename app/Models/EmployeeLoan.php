@@ -15,6 +15,8 @@ class EmployeeLoan extends Model
         'loan_id',
         'amount',
         'deduction',
+        'start_date',
+        'end_date',
         'duration',
         'ranges',
     ];

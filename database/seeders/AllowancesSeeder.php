@@ -93,11 +93,12 @@ class AllowancesSeeder extends Seeder
             if ($allowance['allowance_code'] != 'Representation' && $allowance['allowance_code'] != 'Transportation') {
                 $allowance->categories()->create(['department_id' => 4]);
             }
-            if ($allowance['allowance_code'] == 'ACA&PERA' || $allowance['allowance_code'] == 'Hazard') {
+            if ($allowance['allowance_code'] == 'ACA&PERA') {
                 $allowance->categories()->create(['category_id' => 1]);
                 $allowance->categories()->create(['category_id' => 4]);
                 $allowance->categories()->create(['category_id' => 5]);
                 $allowance->categories()->create(['category_id' => 6]);
+                $allowance->categories()->create(['department_id' => 4]);
             }
         }
     }

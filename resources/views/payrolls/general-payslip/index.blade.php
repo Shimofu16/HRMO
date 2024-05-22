@@ -352,15 +352,16 @@
                                         @endif
                                     @endforeach
                                     @foreach ($loans as $loan)
-                                        @if ($employee->getLoan($loan->id, $payroll['date_from_to']) != 0)
+                                        @if ($employee->getLoan($loan->id, $payroll['date_from_to'], $payroll['date']) != 0)
                                             @php
                                                 $sub_total_loans[$employee->id][$loan->id] = $employee->getLoan(
                                                     $loan->id,
                                                     $payroll['date_from_to'],
+                                                    $payroll['date']
                                                 );
                                             @endphp
                                             <td class="pl-2 border-right-2 border-bottom-2">
-                                                {{ number_format($employee->getLoan($loan->id, $payroll['date_from_to']), 2) }}
+                                                {{ number_format($employee->getLoan($loan->id, $payroll['date_from_to'],$payroll['date']), 2) }}
                                             </td>
                                         @else
                                             <td class="pl-2 border-right-2 border-bottom-2"> </td>
@@ -385,12 +386,13 @@
                                             $total_deductions_for_nar =
                                                 $total_deductions_for_nar + $sub_total_loans[$employee->id][$loan->id];
                                         }
-
                                         $total_deductions_for_nar =
-                                            $total_deductions_for_nar + $employee->data->monthly_salary * 0.12;
-                                        $total_deductions_for_nar =
-                                            $total_deductions_for_nar + $employee->data->monthly_salary * 0.025;
-                                        $total_deductions_for_nar = $total_deductions_for_nar + 300;
+                                                $total_deductions_for_nar +$sub_total_holding_tax[$employee->id];
+                                        // $total_deductions_for_nar =
+                                        //     $total_deductions_for_nar + $employee->data->monthly_salary * 0.12;
+                                        // $total_deductions_for_nar =
+                                        //     $total_deductions_for_nar + $employee->data->monthly_salary * 0.025;
+                                        // $total_deductions_for_nar = $total_deductions_for_nar + 300;
                                         $total_allowances_for_nar =
                                             $sub_total_allowances[$employee->id] +
                                             $sub_total_amount_earned[$employee->id];

@@ -104,10 +104,10 @@ class Employee extends Model
                     if ($range == $allowance_range) {
                         if ($allowance->allowance->allowance_code == 'Hazard' || $allowance->allowance->allowance_code == 'Representation' || $allowance->allowance->allowance_code == 'Transportation') {
                             if ($allowance->allowance->allowance_code == 'Hazard') {
-                               $totalAllowance = $totalAllowance + getHazard($this->data->salary_grade_id, $this->data->monthly_salary);
+                                $totalAllowance = $totalAllowance + getHazard($this->data->salary_grade_id, $this->data->monthly_salary);
                             } else {
                                 // dd(getHazard($this->data->salary_grade_id, $this->data->monthly_salary));
-                               $totalAllowance = $totalAllowance + $allowance->amount;
+                                $totalAllowance = $totalAllowance + $allowance->amount;
                             }
                         } else {
                             $totalAllowance = $totalAllowance + $allowance->allowance->allowance_amount;
@@ -252,13 +252,16 @@ class Employee extends Model
         }
         return 0;
     }
-    public function getLoan($loan_id, $range)
+    public function getLoan($loan_id, $range, $date)
     {
         $loan = $this->loans()->where('loan_id', $loan_id)->first();
 
         if ($loan) {
+            $current_date = Carbon::parse($date);
+            $start_date = Carbon::parse($loan->start_date);
+            $end_date = Carbon::parse($loan->end_date);
             foreach ($loan->ranges as $key => $ranges) {
-                if ($ranges == $range) {
+                if ($ranges == $range && $current_date->between($start_date, $end_date)) {
                     return $loan->amount;
                 }
             }

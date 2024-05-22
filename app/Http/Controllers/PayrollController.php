@@ -79,6 +79,7 @@ class PayrollController extends Controller
                             'month' => date('F', strtotime($month->earliest_time_in)),
                             'year' => date('Y', strtotime($month->earliest_time_in)),
                             'date_from_to' => $itemDay,
+                            'date' => $month->earliest_time_in,
                         ];
                     }
                 }

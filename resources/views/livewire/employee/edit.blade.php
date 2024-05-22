@@ -21,8 +21,6 @@
                     <input type="text" name="last_name" id="last_name" wire:model='last_name'
                         class="block w-full mt-1 rounded" required>
                 </div>
-
-
                 <div class="col-span-6 sm:col-span-2">
                     <label for="category_id" class="block font-medium text-gray-700">Type of Employment</label>
                     <select name="category_id" id="category_id" wire:model.live='category_id'
@@ -220,7 +218,6 @@
                 @if ($selected_loans)
                     @foreach ($selected_loans as $selected_loan)
                         <div class="grid grid-cols-6 gap-6 mt-3" wire:key="{{ $selected_loan->id }}">
-
                             <div class="col-span-3 sm:col-span-2">
                                 <input type="text" name="selected_loan_ids[]"
                                     value="{{ $selected_loan->id }}" hidden>
@@ -237,21 +234,34 @@
                                 </div>
                             </div>
                             <div class="col-span-3 sm:col-span-2">
-                                <div>
-                                    <label for="duration" class="block font-medium text-gray-700">
-                                        Duration (Months)
-                                    </label>
-                                    <div class="flex">
-                                        <input type="number" name="durations[]" id="duration" step="0.01"
-                                            class="block w-full mt-1 rounded form-input"
-                                            wire:model="arraySelectedLoans.{{ $selected_loan->id }}.duration">
+                                <div class="col-span-3 sm:col-span-2">
+                                    <div>
+                                        <label for="start_date" class="block font-medium text-gray-700">
+                                            Start Date
+                                        </label>
+                                        <div class="flex">
+                                            <input type="date" name="start_dates[]" id="start_date"
+                                                class="block w-full mt-1 rounded form-input"
+                                                wire:model="arraySelectedLoans.{{ $selected_loan->id }}.start_date">
+                                        </div>
+                                    </div>
+                                </div><div class="col-span-3 sm:col-span-2">
+                                    <div>
+                                        <label for="end_date" class="block font-medium text-gray-700">
+                                            End Date
+                                        </label>
+                                        <div class="flex">
+                                            <input type="date" name="end_dates[]" id="end_date"
+                                                class="block w-full mt-1 rounded form-input"
+                                                wire:model="arraySelectedLoans.{{ $selected_loan->id }}.end_date">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-span-3 sm:col-span-2">
                                 <h4 class="text-sm">Range </h4>
                                 <div class="flex mt-1">
-                                    <div class="flex flex-col space-y-2  w-1/2">
+                                    <div class="flex flex-col w-1/2 space-y-2">
                                         <div class="w-1/2 px-2">
                                             <input type="checkbox" name="1-15_{{ $selected_loan->id }}"
                                                 id="1-15_{{ $selected_loan->id }}" value="1-15"
@@ -271,7 +281,7 @@
                                     </div>
                                     <div>
                                         <button type="button" wire:click='removeLoan({{ $selected_loan->id }})'
-                                            class="bg-red-500 text-white font-bold py-2 px-4 rounded shadow hover:bg-red-700">
+                                            class="px-4 py-2 font-bold text-white bg-red-500 rounded shadow hover:bg-red-700">
                                             X
                                         </button>
 
@@ -281,8 +291,6 @@
                         </div>
                     @endforeach
                 @endif
-
-
             </div>
         @endif
 

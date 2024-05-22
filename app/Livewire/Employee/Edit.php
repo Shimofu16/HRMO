@@ -12,6 +12,7 @@ use App\Models\Employee;
 use App\Models\Level;
 use App\Models\Loan;
 use App\Models\SalaryGrade;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
 
@@ -257,13 +258,17 @@ class Edit extends Component
 
                 foreach ($this->arraySelectedLoans as $loanId => $loanDetails) {
                     $loanAmount = $loanDetails['amount'];
-                    $loanDuration = $loanDetails['duration'];
+                    $startDate = $loanDetails['start_date'];
+                    $endDate = $loanDetails['end_date'];
+                    $duration = Carbon::parse($loanDetails['start_date'])->diffInMonths(Carbon::parse($loanDetails['end_date']));
                     $selectedRanges = array_keys(array_filter($loanDetails['range'], 'boolval'));
 
                     $loansData[] = [
                         'loan_id' => $loanId,
                         'amount' => $loanAmount,
-                        'duration' => $loanDuration,
+                        'start_date' => $startDate,
+                        'end_date' => $endDate,
+                        'duration' => $duration,
                         'ranges' => $selectedRanges,
                     ];
                 }

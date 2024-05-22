@@ -342,7 +342,7 @@
             const employeesPerCategory = {!! json_encode($employeesPerCategory) !!};
 
             generatePieChart('#employeesPerDepartment', 'Employees per Department', employeesPerDepartment);
-            generatePieChart('#employeesPerCategory', 'Employees per Department', employeesPerCategory);
+            generatePieChart('#employeesPerCategory', 'Employees per Category', employeesPerCategory);
         });
     </script>
 

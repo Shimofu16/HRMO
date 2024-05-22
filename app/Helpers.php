@@ -733,6 +733,7 @@ if (!function_exists('computeHoldingTax')) {
         return ($annualTaxDue / 12) / 2;
     }
 }
+
 if (!function_exists('getHazard')) {
 
     function getHazard($salary_grade_id, $salary_grade)
@@ -766,5 +767,15 @@ if (!function_exists('getHazard')) {
             case 30:
                 return $salary_grade * 0.05;
         }
+    }
+}
+if (!function_exists('isBetweenDatesOfLoan')) {
+
+    function isBetweenDatesOfLoan($loan, $date)
+    {
+        $start_date = Carbon::parse($loan->start_date);
+        $end_date = Carbon::parse($loan->end_date);
+        $date = Carbon::parse($date);
+        return $date->between($start_date, $end_date);
     }
 }

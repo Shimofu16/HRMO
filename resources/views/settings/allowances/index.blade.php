@@ -54,7 +54,7 @@
                  <div class="col-span-6 sm:col-span-3">
                     <label for="rata_types" class="block font-medium text-gray-700">RA/TA Type</label>
                     <select name="rata_types[]" id="rata_types" class="block w-full mt-1 rounded form-select"
-                        multiple="multiple" required>
+                        multiple="multiple">
                         @foreach ($rataTypes as $key => $rataType)
                             <option value="{{ $key }}">{{ $rataType['type'] }} - {{ $rataType['amount'] }}</option>
                         @endforeach

@@ -39,11 +39,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('employee_id')->constrained('employees', 'id');
             $table->foreignId('loan_id')->constrained('loans', 'id');
-
             $table->double('amount');
             $table->json('ranges');
             $table->double('deduction')->nullable();
-            $table->double('duration')->nullable();
+            $table->bigInteger('duration');
+            $table->date('start_date');
+            $table->date('end_date');
             $table->timestamps();
         });
         Schema::create('employee_data', function (Blueprint $table) {

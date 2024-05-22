@@ -102,10 +102,9 @@
                             </select>
                         </div>
                         <div class="col-span-6 sm:col-span-2">
-                            <label for="selected_rata_types" class="block font-medium text-gray-700">Type</label>
+                            <label for="selected_rata_types" class="block font-medium text-gray-700">RA/TA Type</label>
                             <select name="selected_rata_types" id="selected_rata_types"
-                                wire:model.live='selected_rata_types' class="block w-full mt-1 rounded form-select"
-                                required>
+                                wire:model.live='selected_rata_types' class="block w-full mt-1 rounded form-select">
                                     <option value="" selected>--Please select here--</option>
                                     @foreach ($rataTypes as $key => $rataType)
                                         <option value="{{ $key }}">
@@ -181,8 +180,6 @@
                             @endif
                         </div>
                     </div>
-
-
                     <div class="col-span-6 sm:col-span-2">
                         <label class="block font-medium text-gray-700">Contribution</label>
                         <div class="flex flex-wrap">
@@ -241,7 +238,6 @@
                 @if ($selected_loans)
                     @foreach ($selected_loans as $selected_loan)
                         <div class="grid grid-cols-6 gap-6 mt-3" wire:key="{{ $selected_loan->id }}">
-
                             <div class="col-span-3 sm:col-span-2">
                                 <input type="text" name="selected_loan_ids[]"
                                     value="{{ $selected_loan->id }}" hidden>
@@ -258,14 +254,27 @@
                                 </div>
                             </div>
                             <div class="col-span-3 sm:col-span-2">
-                                <div>
-                                    <label for="duration" class="block font-medium text-gray-700">
-                                        Duration (Months)
-                                    </label>
-                                    <div class="flex">
-                                        <input type="number" name="durations[]" id="duration" step="0.01"
-                                            class="block w-full mt-1 rounded form-input"
-                                            wire:model="arraySelectedLoans.{{ $selected_loan->id }}.duration">
+                                <div class="col-span-3 sm:col-span-2">
+                                    <div>
+                                        <label for="start_date" class="block font-medium text-gray-700">
+                                            Start Date
+                                        </label>
+                                        <div class="flex">
+                                            <input type="date" name="start_dates[]" id="start_date"
+                                                class="block w-full mt-1 rounded form-input"
+                                                wire:model="arraySelectedLoans.{{ $selected_loan->id }}.start_date">
+                                        </div>
+                                    </div>
+                                </div><div class="col-span-3 sm:col-span-2">
+                                    <div>
+                                        <label for="end_date" class="block font-medium text-gray-700">
+                                            End Date
+                                        </label>
+                                        <div class="flex">
+                                            <input type="date" name="end_dates[]" id="end_date"
+                                                class="block w-full mt-1 rounded form-input"
+                                                wire:model="arraySelectedLoans.{{ $selected_loan->id }}.end_date">
+                                        </div>
                                     </div>
                                 </div>
                             </div>

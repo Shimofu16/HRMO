@@ -11,6 +11,7 @@ use App\Models\Deduction;
 use App\Models\Department;
 use App\Models\Designation;
 use App\Models\SalaryGrade;
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -152,18 +153,23 @@ class EmployeeSeeder extends Seeder
                     ],
                     2 => [ // Loan ID as key
                         'amount' => 500,
-                        'duration' => 12,
+                        'start_date' => 12,
+                        'end_date' => 12,
                         'range' => ['1-15', '16-31'], // Sample loan range selection
                     ],
                 ];
-
                 $loansData = [];
 
                 foreach ($loanDetails as $loanId => $loanDetails) {
+                    $start_date = Carbon::now()->subMonths($faker->numberBetween(2,3));
+                    $end_date = Carbon::now()->addMonths(3);
+                    $duration = $start_date->diffInMonths(Carbon::parse($end_date));
                     $loansData[] = [
                         'loan_id' => $loanId,
                         'amount' => $loanDetails['amount'],
-                        'duration' => $loanDetails['duration'],
+                        'start_date' => $start_date->format('Y-m-d'),
+                        'end_date' => $end_date->format('Y-m-d'),
+                        'duration' => $duration,
                         'ranges' => $loanDetails['range'],
                     ];
                 }

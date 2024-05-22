@@ -283,14 +283,14 @@
                                         </td>
                                         <td><span class="text-[10px]"></span></td>
                                         <td class="text-[10px] text-center">
-                                            @if ($employee->getLoan($loan->id, $payroll['date_from_to']) != 0)
+                                            @if ($employee->getLoan($loan->id, $payroll['date_from_to'], $payroll['date']) != 0)
                                                 @php
                                                     $totalDeduction =
                                                         $totalDeduction +
-                                                        $employee->getLoan($loan->id, $payroll['date_from_to']);
+                                                        $employee->getLoan($loan->id, $payroll['date_from_to'], $payroll['date']);
                                                 @endphp
                                                 <span>
-                                                    {{ number_format($employee->getLoan($loan->id, $payroll['date_from_to']), 2) }}
+                                                    {{ number_format($employee->getLoan($loan->id, $payroll['date_from_to'], $payroll['date']), 2) }}
                                                 </span>
                                             @else
                                                 <span class="text-center">
