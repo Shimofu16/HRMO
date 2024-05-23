@@ -15,22 +15,27 @@ class Create extends Component
     public $allowances;
     public $deductions;
     public $loans;
+    public $month;
+    public $months;
     public $year;
     public $years;
     public $file_name;
 
-    public function updatedYear($value){
+    public function updatedYear($value)
+    {
         if ($value) {
             // dd($value);
-            $months = Attendance::selectRaw('MONTH(time_in) as month, MIN(time_in) as earliest_time_in')
-                ->where('employee_id', $this->employee->id)
-                ->where('isPresent', 1)
-                ->whereYear('time_in', now()->format('Y'))
-                ->groupByRaw('MONTH(time_in)')
-                ->orderByRaw('MONTH(time_in)')
-                ->get();
-            $this->payrolls = $this->getPayroll($months);
+            $this->payrolls = $this->getPayroll();
         }
+        $this->year = null;
+    }
+    public function updatedMonth($value)
+    {
+        if ($value) {
+            // dd($value);
+            $this->payrolls = $this->getPayroll();
+        }
+        $this->month = null;
     }
 
     private function getYears($months)
@@ -46,26 +51,48 @@ class Create extends Component
         }
         return $years;
     }
-    private function getPayroll($months)
+    private function getMonths($months)
+    {
+        $formatted = [];
+
+        foreach ($months as $month) {
+            $uniqueKey = date('F', strtotime($month->earliest_time_in));
+            // Only create a new payroll record if it doesn't exist
+            if (!isset($formatted[$uniqueKey])) {
+                $formatted[$uniqueKey] = date('F', strtotime($month->earliest_time_in));
+            }
+        }
+        return $formatted;
+    }
+    private function getPayroll()
     {
         $payrolls = [];
+        $months = Attendance::query()->selectRaw('MONTH(time_in) as month, MIN(time_in) as earliest_time_in')
+            ->where('employee_id', $this->employee->id)
+            ->where('isPresent', 1)
+            ->groupByRaw('MONTH(time_in)')
+            ->orderByRaw('MONTH(time_in)');
+            if ($this->month) {
+                $months->whereMonth('time_in', date('m', strtotime($this->month)));
+            }
+            if ($this->year) {
+                $months->whereYear('time_in', date('Y', strtotime($this->year)));
+            }
         $fromTo = ['1-15', '16-31'];
-        foreach ($months as $month) {
-                if ($this->year == date('Y', strtotime($month->earliest_time_in))) {
-                    foreach ($fromTo as $itemDay) {
-                        // Create a unique key for the payroll record
-                        $uniqueKey = "{$month->month}_{$itemDay}";
+        foreach ($months->get() as $month) {
+                foreach ($fromTo as $itemDay) {
+                    // Create a unique key for the payroll record
+                    $uniqueKey = "{$month->month}_{$itemDay}";
 
-                        // Only create a new payroll record if it doesn't exist
-                        if (!isset($payrolls[$uniqueKey])) {
-                            $payrolls[$uniqueKey] = [
-                                'key' => $uniqueKey,
-                                'month' => date('F', strtotime($month->earliest_time_in)),
-                                'year' => date('Y', strtotime($month->earliest_time_in)),
-                                'date_from_to' => $itemDay,
-                                'date' => $month->earliest_time_in,
-                            ];
-                        }
+                    // Only create a new payroll record if it doesn't exist
+                    if (!isset($payrolls[$uniqueKey])) {
+                        $payrolls[$uniqueKey] = [
+                            'key' => $uniqueKey,
+                            'month' => date('F', strtotime($month->earliest_time_in)),
+                            'year' => date('Y', strtotime($month->earliest_time_in)),
+                            'date_from_to' => $itemDay,
+                            'date' => $month->earliest_time_in,
+                        ];
                     }
                 }
         }
@@ -76,12 +103,13 @@ class Create extends Component
         $months = Attendance::selectRaw('MONTH(time_in) as month, MIN(time_in) as earliest_time_in')
             ->where('employee_id', $this->employee->id)
             ->where('isPresent', 1)
-            ->whereYear('time_in', now()->format('Y'))
             ->groupByRaw('MONTH(time_in)')
             ->orderByRaw('MONTH(time_in)')
             ->get();
-        $this->payrolls = $this->getPayroll($months);
+        $this->payrolls = collect();
         $this->years = $this->getYears($months);
+        $this->months = $this->getMonths($months);
+        // dd( $this->months);
         $this->allowances = Allowance::all();
         $this->deductions = Deduction::all();
         $this->loans = Loan::all();

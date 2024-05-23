@@ -22,6 +22,14 @@ class Create extends Component
     public int $days = 0;
     public int $days_leave = 0;
 
+    protected $rules = [
+        'start' => 'required|after:today',
+        'end' => 'required|after:start',
+    ];
+    protected $validationAttributes = [
+        'start' => 'Start Date',
+        'end' => 'End Date',
+    ];
     public function updatedEmployeeId($value)
     {
         $this->employee = Employee::find($value);
@@ -45,21 +53,30 @@ class Create extends Component
 
     public  function save()
     {
-       $leave_request = EmployeeLeaveRequest::create([
-            'employee_id' => $this->employee_id,
-            'start' => $this->start,
-            'end' => $this->end,
-            'type' => $this->type,
-            'status' => 'accepted',
-            'days' => $this->days_leave,
-        ]);
-        $this->takeAttendance($leave_request, getDatesBetween($leave_request->start, $leave_request->end, true));
-        $leave_request->employee->data->update(['sick_leave_points' => ($leave_request->employee->data->sick_leave_points - (1.25 * $leave_request->days))]);
-        // Create activity
-        createActivity('Create Employee Leave Request', 'Create Employee Leave Request for ' . $this->employee->full_name . '.', request()->getClientIp(true));
+        try {
+            $this->validate();
+            if ($this->checkIfEmployeeAlreadyAttendance()) {
+                return session()->flash('error', 'Cannot add leave, employee already have an attendance record. Please try submitting leave for a different date.');
+            }
+            $leave_request = EmployeeLeaveRequest::create([
+                'employee_id' => $this->employee_id,
+                'start' => $this->start,
+                'end' => $this->end,
+                'type' => $this->type,
+                'status' => 'accepted',
+                'days' => $this->days_leave,
+            ]);
 
-        // Redirect to the index page with a success message
-        return redirect()->route('leave-requests.index', ['status' => 'accepted'])->with('success', 'Leave Request created successfully.');
+            $this->takeAttendance($leave_request, getDatesBetween($leave_request->start, $leave_request->end, true));
+            $leave_request->employee->data->update(['sick_leave_points' => ($leave_request->employee->data->sick_leave_points - (1.25 * $leave_request->days))]);
+            // Create activity
+            createActivity('Create Employee Leave Request', 'Create Employee Leave Request for ' . $this->employee->full_name . '.', request()->getClientIp(true));
+
+            // Redirect to the index page with a success message
+            return redirect()->route('leave-requests.index', ['status' => 'accepted'])->with('success', 'Leave Request created successfully.');
+        } catch (\Throwable $th) {
+            return session()->flash('error', $th->getMessage());
+        }
     }
     public function takeAttendance($leave_request, $dates)
     {
@@ -92,6 +109,17 @@ class Create extends Component
         }
         $salaryPerHour = ($salaryGrade / 22) / 8;
         return max(0, $salaryPerHour); // Ensure non-negative
+    }
+    public function checkIfEmployeeAlreadyAttendance()
+    {
+        $dates = getDatesBetween($this->start, $this->end, true);
+        foreach ($dates as $key => $date) {
+            $attendance = Attendance::whereDate('time_in', $date)->first();
+            if ($attendance) {
+                return true;
+            }
+        }
+        return false;
     }
     public function mount()
     {

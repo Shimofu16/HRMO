@@ -14,6 +14,11 @@
                 <h1 class="text-2xl font-bold text-center">Actions</h1>
             </div>
             <div class="flex flex-col space-y-2">
+                <button type="button"
+                class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
+                    onclick="generatePDF('{{ $employee->full_name }}')">
+                    Download to PDF
+                </button>
                 <a href="{{ route('employees.edit', $employee) }}"
                     class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
                     Edit
@@ -41,15 +46,12 @@
                 </a>
             </div>
         </div>
-        <div class="w-3/4 p-5 bg-white rounded-md shadow">
+        <div class="w-3/4 p-5 bg-white rounded-md shadow" id="element-to-print">
             <div class="mb-3 border-b border-gray-100">
                 <h1 class="text-2xl font-bold">Personal Information</h1>
             </div>
-            <div class="flex">
-                <div class="mr-3">
-                    <img src="{{ asset('storage/photos/' . $employee->employee_photo) }}" class="rounded"
-                        style="height: 170px; width: 170px;">
-                </div>
+            <div class="flex justify-between">
+                
                 <div>
                     <h3><strong>Employee No.: </strong>{{ $employee->employee_number }}</h3>
                     <h3><strong>Ordinance Item No.: </strong>{{ $employee->ordinance_number }}</h3>
@@ -70,6 +72,10 @@
                         <h3><strong>Sick Leave Points:
                             </strong>{{ number_format($employee->data->sick_leave_points, 2) }}</h3>
                     @endif
+                </div>
+                <div class="mr-3">
+                    <img src="{{ asset('storage/photos/' . $employee->employee_photo) }}" class="rounded"
+                        style="height: 170px; width: 170px;">
                 </div>
             </div>
 
@@ -133,44 +139,72 @@
                     </div>
                 @endif
             @endif
-
-            <div class="my-3 border-b border-gray-100">
-                <h1 class="text-2xl font-bold">Other Information</h1>
-            </div>
-            @foreach ($employee->loans as $loan)
-                @php
-                    $balnce = 0;
-                    $total_loan = 0;
-                    $total_amount_paid = 0;
-                    $loan_balance = 0;
-                    $ranges = count($loan->ranges);
-                    $duration =
-                    $total_loan = $loan->amount * $loan->duration;
-                @endphp
-                <h2 class="mb-1"><strong>{{ $loan->loan->name }} - {{ number_format($total_loan, 2) }}</strong></h2>
-                @foreach (getMonthsFromAttendance($employee) as $month)
-                    @if (isBetweenDatesOfLoan($loan,$month->earliest_time_in))
-                        @if ($total_amount_paid <= $total_loan)
-                            @php
-                                $total_amount_paid = $total_amount_paid + $loan->amount * $ranges;
-                            @endphp
-                            <h3>
-                                <strong>{{ number_format($loan->amount * $ranges, 2) }}</strong>----------
-                                {{ date('m', strtotime($month->earliest_time_in)) }}/{{ $ranges > 1 ? 30 : 15 }}/{{ date('Y', strtotime($month->earliest_time_in)) }}
-                            </h3>
+                @if (count($employee->loans ) > 0)
+                <div class="my-3 border-b border-gray-100">
+                    <h1 class="text-2xl font-bold">Other Information</h1>
+                </div>
+                @foreach ($employee->loans as $loan)
+                    @php
+                        $balnce = 0;
+                        $total_loan = 0;
+                        $total_amount_paid = 0;
+                        $loan_balance = 0;
+                        $ranges = count($loan->ranges);
+                        $duration =
+                        $total_loan = $loan->amount * $loan->duration;
+                    @endphp
+                    <h2 class="mb-1"><strong>{{ $loan->loan->name }} - {{ number_format($total_loan, 2) }}</strong></h2>
+                    @foreach (getMonthsFromAttendance($employee) as $month)
+                        @if (isBetweenDatesOfLoan($loan,$month->earliest_time_in))
+                            @if ($total_amount_paid <= $total_loan)
+                                @php
+                                    $total_amount_paid = $total_amount_paid + $loan->amount * $ranges;
+                                @endphp
+                                <h3>
+                                    <strong>{{ number_format($loan->amount * $ranges, 2) }}</strong>----------
+                                    {{ date('m', strtotime($month->earliest_time_in)) }}/{{ $ranges > 1 ? 30 : 15 }}/{{ date('Y', strtotime($month->earliest_time_in)) }}
+                                </h3>
+                            @endif
                         @endif
-                    @endif
+                    @endforeach
+                    @php
+                        $balance = $total_loan - $total_amount_paid;
+                        if ($balance < 0) {
+                            $balance = 0;
+                        }
+                    @endphp
+                    <h3 class="mb-3"><strong>Balance: {{ number_format($balance, 2) }}</strong></h3>
                 @endforeach
-                @php
-                    $balance = $total_loan - $total_amount_paid;
-                    if ($balance < 0) {
-                        $balance = 0;
-                    }
-                @endphp
-                <h3 class="mb-3"><strong>Balance: {{ number_format($balance, 2) }}</strong></h3>
-            @endforeach
+                    
+                @endif      
         </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"
+        integrity="sha512-YcsIPGdhPK4P/uRW6/sruonlYj+Q7UHWeKfTAkBW+g83NKM+jMJFJ4iAPfSnVp7BKD4dKMHmVSvICUbE/V1sSw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        function generatePDF(filename) {
+            console.log(filename);
+            var element = document.getElementById('element-to-print');
+            var opt = {
+                margin: .2,
+                filename: filename + '.pdf',
+                image: {
+                    type: 'jpeg',
+                    quality: 0.98
+                },
+                html2canvas: {
+                    scale: 2
+                },
+                jsPDF: {
+                    unit: 'in',
+                    format: 'a4',
+                    orientation: 'portrait'
+                }
+            };
 
-
+            // New Promise-based usage:
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
     </div>
 </x-app-layout>

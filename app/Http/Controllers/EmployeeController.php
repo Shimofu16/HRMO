@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\EmployeesExport;
 use App\Models\Employee;
 use App\Models\Department;
 use App\Models\Category;
@@ -15,7 +16,7 @@ use App\Models\EmployeeSickLeave;
 use App\Models\Loan;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
-
+use Maatwebsite\Excel\Facades\Excel;
 
 class EmployeeController extends Controller
 {
@@ -255,5 +256,9 @@ class EmployeeController extends Controller
             'employee' => $employee,
             'file_name' => "{$employee->full_name} - Payslip",
         ]);
+    }
+    public function excel()
+    {
+        return Excel::download(new EmployeesExport, 'employee-masterlist.xlsx');
     }
 }

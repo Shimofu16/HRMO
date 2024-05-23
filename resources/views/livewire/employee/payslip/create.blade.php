@@ -11,6 +11,15 @@
                         @endforeach
                     </select>
                 </div>
+                <div class="col-span-6">
+                    <label for="month" class="block font-medium text-gray-700">Month</label>
+                    <select name="month" id="month" class="block w-full mt-1 rounded form-select" wire:model.live='month'>
+                        <option value="">Please Select Here</option>
+                        @foreach ($months as $month)
+                            <option value="{{ $month }}">{{ $month }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
         </div>
     </div>

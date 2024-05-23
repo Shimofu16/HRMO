@@ -53,10 +53,14 @@ class SeminarController extends Controller
         $seminar = Seminar::find($seminar_id);
         $attendances = $seminar->attendances()->get();
         $employees = Employee::query()
-            ->with('seminarAttendances')
+            ->with('seminarAttendances', 'attendances')
             ->whereDoesntHave('seminarAttendances', function ($query) use ($seminar) {
                 $query
                     ->whereDate('created_at', $seminar->date);
+            })
+            ->whereDoesntHave('attendances', function ($query) use ($seminar) {
+                $query
+                    ->whereDate('time_in', $seminar->date);
             });
         if ($seminar->departments[0] != 'All') {
             $employees->whereHas('data', function ($query) use ($seminar) {

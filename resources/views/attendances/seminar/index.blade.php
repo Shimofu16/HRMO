@@ -33,7 +33,6 @@
                         <label for="name" class="block font-medium text-gray-700">Departments</label>
                         <select name="departments[]" id="departments" class="block w-full mt-1 rounded" required
                             multiple>
-                            <option value="All">All Departments</option>
                             @foreach ($departments as $key => $department)
                                 <option value="{{ $department->id }}">{{ $department->dep_name }}</option>
                             @endforeach

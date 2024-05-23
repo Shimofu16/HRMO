@@ -242,13 +242,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/with-holding-taxes', [WithHoldingTaxController::class, 'index'])->name('with-holding-taxes.index');
 
     // employee
+    Route::group(['prefix' => 'employees'], function () {
+        // ... other routes
+        Route::get('', [EmployeeController::class, 'index'])->name('employees.index');
+        Route::get('/{employee}', [EmployeeController::class, 'show'])->name('employees.show');
+        Route::get('/dtr/{employee}', [EmployeeController::class, 'dtr'])->name('employees.dtr');
+        Route::get('/payslip/{employee}', [EmployeeController::class, 'payslip'])->name('employees.payslip');
+        Route::get('/general-payslip/{employee}', [EmployeeController::class, 'payslip'])->name('employees.general-payslip');
+        Route::get('/edit/{employee}', [EmployeeController::class, 'edit'])->name('employees.edit');
+        Route::get('/export/excel', [EmployeeController::class, 'excel'])->name('employees.excel');
+    });
 
-    Route::get('/employees/{employee}', [EmployeeController::class, 'show'])->name('employees.show');
-    Route::get('/employees/dtr/{employee}', [EmployeeController::class, 'dtr'])->name('employees.dtr');
-    Route::get('/employees/payslip/{employee}', [EmployeeController::class, 'payslip'])->name('employees.payslip');
-    Route::get('/employees/general-payslip/{employee}', [EmployeeController::class, 'payslip'])->name('employees.general-payslip');
-    Route::get('/employees/edit/{employee}', [EmployeeController::class, 'edit'])->name('employees.edit');
-    Route::get('/employees/{filter_by?}/{filter_id?}', [EmployeeController::class, 'index'])->name('employees.index');
     //with holding taxes
 
     // Seminar

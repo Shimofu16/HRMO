@@ -119,12 +119,10 @@
                                 @if ($debugMode)
                                     <th class="px-4 py-2 border-b text-start">Time In status</th>
                                 @endif
-                                <th class="px-4 py-2 border-b text-start">Interval</th>
                                 <th class="px-4 py-2 border-b text-start">Time Out</th>
                                 @if ($debugMode)
                                     <th class="px-4 py-2 border-b text-start">Time Out status</th>
                                 @endif
-                                <th class="px-4 py-2 border-b text-start">Interval</th>
                                 <th class="px-4 py-2 border-b text-start">Deduction</th>
                                 @if ($debugMode)
                                     <th class="px-4 py-2 border-b text-start">Salary</th>
@@ -144,9 +142,7 @@
                                             {{ $attendance['time_in_status'] ?? '---------' }}
                                         </td>
                                     @endif
-                                    <td class="px-4 py-2 border-b">
-                                        {{ $attendance['time_in_interval'] ? date('h:i A', strtotime($attendance['time_in_interval'])) : '---------' }}
-                                    </td>
+                            
                                     <td class="px-4 py-2 border-b">
                                         {{ $attendance['time_out'] ? date('h:i A', strtotime($attendance['time_out'])) : '---------' }}
                                     </td>
@@ -155,9 +151,6 @@
                                             {{ $attendance['time_out_status'] ?? '---------' }}
                                         </td>
                                     @endif
-                                    <td class="px-4 py-2 border-b">
-                                        {{ $attendance['time_out_interval'] ? date('h:i A', strtotime($attendance['time_out_interval'])) : '---------' }}
-                                    </td>
                                     <td class="px-4 py-2 border-b">{{ $attendance['deduction'] ?? '---------' }}</td>
                                     @if ($debugMode)
                                         <td class="px-4 py-2 border-b">

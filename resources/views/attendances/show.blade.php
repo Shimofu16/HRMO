@@ -41,7 +41,7 @@
                         <td class="px-4 py-2 border-b">{{ $loop->iteration }}</td>
                         <td class="px-4 py-2 border-b">{{ $attendance->employee->full_name }}</td>
                         <td class="px-4 py-2 border-b">
-                            {{ getInterval($attendance->time_in, true, true) }}
+                            {{ date('H:i A', strtotime($attendance->time_in)) }}
                         </td>
                         <td class="px-4 py-2 border-b">
                             {{-- check if late --}}
@@ -53,7 +53,7 @@
 
                         <td class="px-4 py-2 border-b">
                             @if ($attendance->time_out)
-                            {{ getInterval($attendance->time_out, false, true) }}
+                                {{ date('H:i A', strtotime($attendance->time_out)) }}
                             @endif
                         </td>
                         <td class="px-4 py-2 border-b">{{ $attendance->time_out_status }}</td>
