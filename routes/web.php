@@ -12,6 +12,7 @@ use App\Http\Controllers\SalaryGradeController;
 use App\Http\Controllers\AllowanceController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\BackupController;
+use App\Http\Controllers\CreateAttendanceController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeductionController;
 use App\Http\Controllers\EmployeeAttendanceController;
@@ -234,6 +235,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Attendance
     Route::get('attendances/{filter_by?}/{filter_id?}', [AttendanceController::class, 'index'])->name('attendances.index');
+    // Attendance
+    Route::get('/create/attendances/manually', [CreateAttendanceController::class, 'create'])->name('create.attendances.manually');
+    Route::post('/create/attendances/manually', [CreateAttendanceController::class, 'store'])->name('store.attendances.manually');
 
     // Attendance History
     Route::get('/attendances-history', [AttendanceController::class, 'history'])->name('attendances-history.index');

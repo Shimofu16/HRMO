@@ -18,6 +18,15 @@
                 </div>
             </a>
         @endif
+        @if (!Request::routeIs('create.attendances.manually'))
+            <a href="{{ route('create.attendances.manually') }}">
+                <div class="bg-white px-2 py-5 rounded-md text-center">
+                    <h2 class="font-semibold">
+                        Create Attendance
+                    </h2>
+                </div>
+            </a>
+        @endif
         @if (!Request::routeIs('seminars.index'))
             <a href="{{ route('seminars.index') }}">
                 <div class="bg-white px-2 py-5 rounded-md text-center">
