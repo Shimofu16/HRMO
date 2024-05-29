@@ -174,6 +174,9 @@
                                 <th class=" border-bottom-2 border-right-2">
 
                                 </th>
+                                <th class="border-right-2">
+
+                                </th>
                                 <th class="">
 
                                 </th>
@@ -207,8 +210,11 @@
                                 <th class="border-right-2" colspan="4">
                                     <h1 class="text-xs text-center">Government Share</h1>
                                 </th>
+                                <th class="border-right-2">
+                                    <h1 class="text-xs text-center ">NET AMOUNT RECEIVED</h1>
+                                </th>
                                 <th class="">
-                                    <h1 class="text-xs text-center">NET AMOUNT RECEIVED</h1>
+                                    <h1 class="text-xs text-center">SIGNATURE</h1>
                                 </th>
                             </tr>
                             <tr style="height: 10px;" class="border-bottom-2">
@@ -263,6 +269,9 @@
                                 </th>
                                 <th class="border-right-2 border-top-2">
                                     S. Ins.
+                                </th>
+                                <th class="border-right-2">
+
                                 </th>
                                 <th class="">
 

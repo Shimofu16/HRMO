@@ -269,6 +269,37 @@
                             </tr>
 
                         </tbody>
+                        <tfoot>
+                            <tr >
+                                <td>
+                                    <span class="text-[10px]">&nbsp;</span>
+                                </td>
+                                <td>
+                                    <span class="text-[10px]">&nbsp;</span>
+                                </td>
+                                <td>
+                                    <span class="text-[10px]">&nbsp;</span>
+                                </td>
+                                <td>
+                                    <span class="text-[10px]">&nbsp;</span>
+                                </td>
+                            </tr>
+                            <tr >
+                                <td>
+                                    <span class="text-[10px]">&nbsp;</span>
+                                </td>
+                                <td>
+                                    <span class="text-[10px]">&nbsp;</span>
+                                </td>
+                                <td>
+                                    <span class="text-[10px]">&nbsp;</span>
+                                </td>
+                                <td>
+                                    <span
+                                        class="text-[10px] font-bold  border-t border-gray-500 mt-[10px]">&nbsp;&nbsp;&nbsp;SIGNATURE&nbsp;&nbsp;&nbsp;</span>
+                                </td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
