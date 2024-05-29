@@ -697,7 +697,9 @@ if (!function_exists('computeThirteenthMonthPay')) {
         $fixedAmount = 90000;
         // (MS * 2) - 90k
         $thirteenMonthSalary = ($monthlySalary * 2) -  $fixedAmount;
-
+if($thirteenMonthSalary<0) {
+return 0;
+}
         return $thirteenMonthSalary;
     }
 }
