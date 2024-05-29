@@ -10,6 +10,7 @@ use App\Models\Department;
 use App\Models\Employee;
 use App\Models\Loan;
 use App\Models\SalaryGrade;
+use App\Models\Signature;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -179,6 +180,7 @@ class PayrollController extends Controller
                 'department' => $department,
                 'loans' => Loan::all(),
                 'deductions' => Deduction::all(),
+                'signatures' => Signature::all(),
                 'employees' => Employee::whereHas('data', function($query) use ($payroll){
                     $query->where('department_id', $payroll['department_id']);
                 })->get(),

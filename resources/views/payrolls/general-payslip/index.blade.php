@@ -69,7 +69,9 @@
             border-bottom-width: 2px;
             border-color: rgb(31 41 55 / 1)
         }
-
+        .border-t {
+            border-top: 1px solid #1a1a1a !important;
+        }
         /* .px-30{
             padding: 0 30px;
         } */
@@ -445,7 +447,7 @@
                                 @endphp
                             @endforeach
 
-                            <tr>
+                            <tr class="border-bottom-2">
                                 <td class="border-right-2">
 
                                 </td>
@@ -504,7 +506,16 @@
                             </tr>
                         </tfoot>
                     </table>
-
+                </div>
+                <div class="foot py-5 px-3">
+                    <div class="flex justify-center items-center mx-5 mt-5 pt-4">
+                        @foreach ($signatures as $signature)
+                            <div class="text-center px-5 mx-5">
+                                <h1>{{ $signature->name }}</h1>
+                                <h1 class="border-t">{{ $signature->position }}</h1>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
 

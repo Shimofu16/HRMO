@@ -25,6 +25,7 @@ use App\Http\Controllers\PayslipController;
 use App\Http\Controllers\SalaryGradeStepController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SeminarController;
+use App\Http\Controllers\SignatureController;
 use App\Http\Controllers\WithHoldingTaxController;
 use App\Models\Allowance;
 use App\Models\Attendance;
@@ -266,6 +267,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/{seminar_id}', 'show')->name('show');
         Route::post('/store', 'store')->name('store');
         Route::post('/{seminar_id}/attendance', 'attendance')->name('attendance');
+    });
+    Route::prefix('signatures')->name('signatures.')->controller(SignatureController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/store', 'store')->name('store');
+        Route::delete('/delete/{signature}', 'destroy')->name('destroy');
     });
 
     // Activity Log
