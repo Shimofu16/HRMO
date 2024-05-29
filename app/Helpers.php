@@ -720,6 +720,9 @@ if (!function_exists('computeTaxableCompensation')) {
         } else {
             $taxRate = 2202500 + (0.35 * ($annualTaxableCompensation - 8000000));
         }
+ if($taxRate<0) {
+return 0;
+}
         return $taxRate;
     }
 }
