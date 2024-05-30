@@ -5,7 +5,7 @@
         </h1>
     </x-slot>
     @include('attendances._header')
-    
+
     <div class="p-5 mx-auto mt-8 bg-white rounded-md shadow max-w-7xl">
 
         <div class="flex items-center justify-between mb-3">
@@ -69,7 +69,7 @@
                         <td class="px-4 py-2 border-b">{{ $loop->iteration }}</td>
                         <td class="px-4 py-2 border-b">{{ $attendance->employee->full_name }}</td>
                         <td class="px-4 py-2 border-b">
-                            {{ date('H:i A', strtotime($attendance->time_in)) }}
+                            {{ date('h:i A', strtotime($attendance->time_in)) }}
                         </td>
                         <td class="px-4 py-2 border-b">
                             {{-- check if late --}}
@@ -81,7 +81,7 @@
 
                         <td class="px-4 py-2 border-b">
                             @if ($attendance->time_out)
-                                {{ date('H:i A', strtotime($attendance->time_out)) }}
+                                {{ date('h:i A', strtotime($attendance->time_out)) }}
                             @endif
                         </td>
                         <td class="px-4 py-2 border-b">{{ $attendance->time_out_status }}</td>

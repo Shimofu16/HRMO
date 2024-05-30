@@ -685,7 +685,9 @@ if (!function_exists('computeAnnualTaxableCompensation')) {
         $AnnualContribution = $deductions * 12;
         //((MS * 12) + thirteenth month pay) - total deductions
         $annualTaxableCompensation = (($monthly_salary * 12) + $thirteenthMonthPay) - $AnnualContribution;
-
+        if ($annualTaxableCompensation < 0) {
+            return 0;
+        }
         return $annualTaxableCompensation;
     }
 }
@@ -697,9 +699,9 @@ if (!function_exists('computeThirteenthMonthPay')) {
         $fixedAmount = 90000;
         // (MS * 2) - 90k
         $thirteenMonthSalary = ($monthlySalary * 2) -  $fixedAmount;
-if($thirteenMonthSalary<0) {
-return 0;
-}
+        if ($thirteenMonthSalary < 0) {
+            return 0;
+        }
         return $thirteenMonthSalary;
     }
 }
@@ -722,9 +724,9 @@ if (!function_exists('computeTaxableCompensation')) {
         } else {
             $taxRate = 2202500 + (0.35 * ($annualTaxableCompensation - 8000000));
         }
- if($taxRate<0) {
-return 0;
-}
+        if ($taxRate < 0) {
+            return 0;
+        }
         return $taxRate;
     }
 }
