@@ -187,7 +187,12 @@ class Edit extends Component
         ]);
 
         // Handle employee data
-
+        if ($this->employee->data->category_id != $this->category_id) {
+            $this->employee->promotions()->create([
+                'old_category_id' => $this->employee->data->category_id,
+                'new_category_id'=> $this->category_id
+            ]);
+        }
         if ($this->isJOSelected || $this->isCOSSelected) {
             $this->employee->data()->update([
                 'department_id' => $this->department_id,

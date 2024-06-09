@@ -14,8 +14,12 @@ return new class extends Migration
         Schema::create('seminars', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('location');
+            $table->longText('reason');
+            $table->string('letter');
             $table->enum('type',['seminar', 'travel_order']);
-            $table->date('date');
+            $table->date('start_date');
+            $table->date('end_date');
             $table->json('departments');
             $table->timestamps();
         });

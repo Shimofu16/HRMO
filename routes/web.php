@@ -87,8 +87,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Payrolls
     Route::prefix('payrolls')->controller(PayrollController::class)->name('payrolls.')->group(function () {
-        Route::get('/{department_id?}',  'index')->name('index');
-        Route::get('/show/{payroll}',  'show')->name('show');
+        Route::get('/',  'index')->name('index');
+        Route::get('/show/{department}',  'show')->name('show');
+        Route::get('/payslip/{department}/{payroll}',  'payslip')->name('payslip');
         Route::get('/general-payslip/{payroll}',  'generalPayslip')->name('general-payslip');
     });
     // Route::resource('payrolls', PayrollController::class)->names([
@@ -230,9 +231,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Schedule Grade List Routes
     Route::get('/schedules-index/employees', [ScheduleController::class, 'index'])->name('schedules-index.employees');
 
-    // Payslip List Routes
-    Route::get('/payslips', [PayslipController::class, 'index'])->name('payslips-index.index');
-    Route::get('/payslips/{department_id}/{payroll}', [PayslipController::class, 'show'])->name('payslips.show');
+
 
     // Attendance
     Route::get('attendances/{filter_by?}/{filter_id?}', [AttendanceController::class, 'index'])->name('attendances.index');
@@ -248,10 +247,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // employee
     Route::group(['prefix' => 'employees'], function () {
-        // ... other routes
         Route::get('', [EmployeeController::class, 'index'])->name('employees.index');
         Route::get('/{employee}', [EmployeeController::class, 'show'])->name('employees.show');
         Route::get('/dtr/{employee}', [EmployeeController::class, 'dtr'])->name('employees.dtr');
+        Route::get('/pds/{employee}', [EmployeeController::class, 'downloadPds'])->name('employees.pds');
+        Route::post('/upload/pds/{employee}', [EmployeeController::class, 'uploadPds'])->name('employees.upload.pds');
         Route::get('/payslip/{employee}', [EmployeeController::class, 'payslip'])->name('employees.payslip');
         Route::get('/general-payslip/{employee}', [EmployeeController::class, 'payslip'])->name('employees.general-payslip');
         Route::get('/edit/{employee}', [EmployeeController::class, 'edit'])->name('employees.edit');
@@ -263,8 +263,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Seminar
     Route::prefix('seminars')->name('seminars.')->controller(SeminarController::class)->group(function () {
         Route::get('/', 'index')->name('index');
-        Route::get('/payslip/{employee_id}', 'payslip')->name('payslip');
+        Route::get('/create', 'create')->name('create');
         Route::get('/{seminar_id}', 'show')->name('show');
+        Route::get('/download/{seminar_id}', 'download')->name('download');
+        Route::get('/payslip/{employee_id}', 'payslip')->name('payslip');
         Route::post('/store', 'store')->name('store');
         Route::post('/{seminar_id}/attendance', 'attendance')->name('attendance');
     });

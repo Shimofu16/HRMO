@@ -38,6 +38,13 @@ class Employee extends Model
     {
         return $this->hasMany(Attendance::class, 'employee_id');
     }
+    /**
+     * Get the category associated with the employee.
+     */
+    public function promotions()
+    {
+        return $this->hasMany(EmployeePromotion::class, 'employee_id');
+    }
 
     /**
      * Get the category associated with the employee.

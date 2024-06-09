@@ -19,39 +19,16 @@ class PayrollController extends Controller
     /**
      * Display a listing of payroll records.
      */
-    public function index($department_id = null)
+    public function index()
     {
         try {
-            // Retrieve all payroll records from the database
-            // get all the departments
-            $employee_departments = Department::query()->whereHas('employees')->distinct('dep_name');
-            if ($department_id) {
-                $employee_departments->where('id', $department_id);
-            }
-            $employee_departments = $employee_departments->get();
-
-            // get all the months in attendance and sort it
-            // Get all unique months from the time_in column and sort them
-            $months = Attendance::selectRaw('MONTH(time_in) as month, MIN(time_in) as earliest_time_in')
-                    ->where('isPresent', 1)
-                    ->whereYear('time_in', now()->format('Y'))
-                    ->groupByRaw('MONTH(time_in)')
-                    ->orderByRaw('MONTH(time_in)')
-                    ->get();
-
-
-
-
-
-
-            $payrolls = $this->getPayroll($employee_departments, $months);
             // dd($months, $payrolls);
             $departments = Department::all();
             // Other code to retrieve the payrolls
 
             // Pass the payroll records to the view
             // dd($payrolls);
-            return view('payrolls.index', compact('departments', 'payrolls'));
+            return view('payrolls.index', compact('departments'));
         } catch (\Throwable $th) {
             dd($th->getMessage());
         }
@@ -60,29 +37,26 @@ class PayrollController extends Controller
     /**
      * Show the form for creating a new payroll record.
      */
-    private function getPayroll($departments, $months)
+    private function getPayroll($department, $months)
     {
         $payrolls = [];
         $fromTo = ['1-15', '16-31'];
+        foreach ($months as $month) {
+            foreach ($fromTo as $itemDay) {
 
-        foreach ($departments as $department) {
-            foreach ($months as $month) {
-                foreach ($fromTo as $itemDay) {
+                // Create a unique key for the payroll record
+                $uniqueKey = "{$department->id}_{$month->month}_{$itemDay}";
 
-                    // Create a unique key for the payroll record
-                    $uniqueKey = "{$department->id}_{$month->month}_{$itemDay}";
-
-                    // Only create a new payroll record if it doesn't exist
-                    if (!isset($payrolls[$uniqueKey])) {
-                        $payrolls[$uniqueKey] = [
-                            'department_id' => $department->id,
-                            'department' => $department->dep_name,
-                            'month' => date('F', strtotime($month->earliest_time_in)),
-                            'year' => date('Y', strtotime($month->earliest_time_in)),
-                            'date_from_to' => $itemDay,
-                            'date' => $month->earliest_time_in,
-                        ];
-                    }
+                // Only create a new payroll record if it doesn't exist
+                if (!isset($payrolls[$uniqueKey])) {
+                    $payrolls[$uniqueKey] = [
+                        'department_id' => $department->id,
+                        'department' => $department->dep_name,
+                        'month' => date('F', strtotime($month->earliest_time_in)),
+                        'year' => date('Y', strtotime($month->earliest_time_in)),
+                        'date_from_to' => $itemDay,
+                        'date' => $month->earliest_time_in,
+                    ];
                 }
             }
         }
@@ -115,17 +89,19 @@ class PayrollController extends Controller
     /**
      * Display the specified payroll record.
      */
-    public function show($payroll)
+    public function show(Department $department)
     {
-        $payroll = json_decode(urldecode($payroll), true);
-        $employees = Employee::with('data')
-            ->whereHas('data', function ($query) use ($payroll) {
-                $query->where('department_id', $payroll['department_id']);
-            })
+
+        $months = Attendance::selectRaw('MONTH(time_in) as month, MIN(time_in) as earliest_time_in')
+            ->where('isPresent', 1)
+            ->whereYear('time_in', now()->format('Y'))
+            ->groupByRaw('MONTH(time_in)')
+            ->orderByRaw('MONTH(time_in)')
             ->get();
 
+        $payrolls = $this->getPayroll($department, $months);
         // Pass the payroll record to the view
-        return view('payrolls.show', compact('payroll', 'employees'));
+        return view('payrolls.show', compact('payrolls', 'department'));
     }
     // public function dtr($id, $payroll)
     // {
@@ -181,7 +157,7 @@ class PayrollController extends Controller
                 'loans' => Loan::all(),
                 'deductions' => Deduction::all(),
                 'signatures' => Signature::all(),
-                'employees' => Employee::whereHas('data', function($query) use ($payroll){
+                'employees' => Employee::whereHas('data', function ($query) use ($payroll) {
                     $query->where('department_id', $payroll['department_id']);
                 })->get(),
             ]
@@ -225,9 +201,54 @@ class PayrollController extends Controller
             ->with('success', 'Payroll record deleted successfully.');
     }
 
-    public function generateSlip(Payroll $payroll)
+    public function payslip(Department $department, $payroll)
     {
-        // Pass the payroll record to the view
-        return view('payrolls.generateSlip', compact('payroll'));
+        $payroll = json_decode(urldecode($payroll), true);
+        $employees = Employee::with('data')->whereHas('data', function ($query) use ($department) {
+            $query->where('department_id', $department->id);
+        })
+            ->get();
+
+        // seperate the filter 1-15
+        $filter = explode('-', $payroll['date_from_to']);
+        $from = Carbon::create(date('Y'), date('m'), $filter[0]);
+        $day = $filter[1];
+        // convert month to number
+        $month = Carbon::parse($payroll['month']);
+        $year = $payroll['year'];
+
+        if (!checkdate(date('m', strtotime($month)), $day, $year)) {
+            $to = date('t', mktime(0, 0, 0, date('m', strtotime($month)), 1, $year)); // get last day of the month
+        }
+
+        $to = Carbon::create($year, $month->format('m'), $day);
+        // $formattedMonth = date('F', strtotime($month));
+        $period = "{$month->format('F')} {$payroll['date_from_to']}, {$year}";
+
+        createActivity('Create Payslip', 'Generate Payslip for ' . $department->dep_code, request()->getClientIp(true));
+
+        $file_name = $department->dep_code . '-Payslip-' . $from->format('m-d-Y') . '-' . $to->format('m-d-Y') . '.pdf';
+        return view('downloads.payslips', [
+            'department'  => $department,
+            'employees' => $employees,
+            'period' => $period,
+            'payroll' => $payroll,
+            'from' => $filter[0],
+            'to' => $filter[1],
+            'file_name' => $file_name,
+            'allowances' => Allowance::all(),
+            'deductions' => Deduction::all(),
+            'loans' => Loan::all(),
+        ]);
+        // $pdf = PDF::loadView('downloads.payslips', [
+        //     'department'  => $department,
+        //     'employees' => $employees,
+        //     'filter' => $filter,
+        //     'payroll' => $payroll,
+        // ])
+        // ->setPaper('a4', 'landscape');
+
+        // return $pdf
+        //     ->stream($file_name);
     }
 }

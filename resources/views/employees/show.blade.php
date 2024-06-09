@@ -7,7 +7,7 @@
 
     </x-slot>
     <style>
-          .page-break {
+        .page-break {
             page-break-before: always;
         }
     </style>
@@ -20,14 +20,35 @@
             <div class="flex flex-col space-y-2">
                 <button type="button"
                     class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
-                    onclick="generatePDF('{{ $employee->full_name }} - Information')">
+                    onclick="generatePDF('{{ $employee->full_name }} - Information', 'employeeData')">
                     Download to PDF
+                </button>
+                @if ($employee->data->pds)
+                    <a href="{{ route('employees.pds', $employee) }}"
+                        class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
+                        Download to PDS
+                    </a>
+                @else
+                    <button type="button"
+                        class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
+                        onclick="window.dispatchEvent(new CustomEvent('open-modal', { detail: 'uploadPdsModal' }))">
+                        Upload PDS
+                    </button>
+                @endif
+                <button type="button"
+                    class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
+                    onclick="window.dispatchEvent(new CustomEvent('open-modal', { detail: 'leaveRequests' }))">
+                    Leave Requests
+                </button>
+                <button type="button"
+                    class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
+                    onclick="window.dispatchEvent(new CustomEvent('open-modal', { detail: 'promotionHistory' }))">
+                    Promotion History
                 </button>
                 <a href="{{ route('employees.edit', $employee) }}"
                     class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
                     Edit
                 </a>
-
                 <form class="flex flex-col" action="{{ route('employees.destroy', $employee) }}" method="POST">
                     @csrf
                     @method('DELETE')
@@ -49,8 +70,126 @@
                     Back to Employee List
                 </a>
             </div>
+            <x-modal name="uploadPdsModal" maxWidth="lg" headerTitle="Upload PDS">
+                <form action="{{ route('employees.upload.pds', $employee) }}" method="POST"
+                    enctype="multipart/form-data">
+                    @csrf
+                    <!-- Modal body -->
+                    <div class="p-4 md:p-5 space-y-4">
+                        <div class="grid grid-cols-12 gap-6 mb-3">
+                            <div class="col-span-6">
+                                <label for="pds" class="block font-medium text-gray-700">
+                                    Personal Data Sheet
+                                </label>
+                                <input type="file" name="pds" id="pds"
+                                    class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                                    required>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal footer -->
+                    <div
+                        class="flex justify-end items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                        <button data-modal-hide="default-modal" type="submit"
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            Upload
+                        </button>
+                        <button type="button" x-on:click="$dispatch('close')"
+                            class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Close</button>
+                    </div>
+                </form>
+            </x-modal>
+            <x-modal name="promotionHistory" headerTitle="Promotion History">
+                <!-- Modal body -->
+                <div class="p-4 md:p-5 space-y-4">
+                    <table class="min-w-full border">
+                        <thead>
+                            <tr>
+                                <th class="px-4 py-4 text-left border-b">#</th>
+                                <th class="px-4 py-4 text-left border-b">Old Category</th>
+                                <th class="px-4 py-4 text-left border-b">New Category</th>
+                                <th class="px-4 py-4 text-left border-b">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($employee->promotions as $promotion)
+                                <tr>
+                                    <td class="px-4 py-3 border-b">
+                                        {{ $loop->iteration }}
+                                    </td>
+                                    <td class="px-4 py-3 border-b">
+                                        {{ $promotion->old->category_name }}
+                                    </td>
+                                    <td class="px-4 py-3 border-b">
+                                        {{ $promotion->new->category_name }}
+                                    </td>
+                                    <td class="px-4 py-3 border-b">
+                                        {{ date('F d, Y', strtotime($promotion->created_at)) }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Modal footer -->
+                <div
+                    class="flex justify-end items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+
+                    <button type="button" x-on:click="$dispatch('close')"
+                        class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Close</button>
+                </div>
+            </x-modal>
+            <x-modal name="leaveRequests" headerTitle="Leave Requests">
+                <!-- Modal body -->
+                <div class="p-4 md:p-5 space-y-4" id="leaveRequestsPdf">
+                    <h1 class="text-xl font-bold hide" id="employee-name">Employee: {{ $employee->full_name }}</h1>
+                    <h1 class="text-xl font-bold hide" id="employee-number">Employee #: {{ $employee->employee_number }}</h1>
+                    <div class="flex justify-between items-center">
+                    </div>
+                    <table class="min-w-full border">
+                        <thead>
+                            <tr>
+                                <th class="px-2 py-4 text-left border-b">#</th>
+                                <th class="px-2 py-4 text-left border-b">Date</th>
+                                <th class="px-2 py-4 text-left border-b">Days Leave</th>
+                                <th class="px-2 py-4 text-left border-b">Points</th>
+                                <th class="px-2 py-4 text-left border-b">Deducted Points</th>
+                                <th class="px-2 py-4 text-left border-b">Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($employee->leaveRequests as $leave_request)
+                                <tr>
+                                    <td class="px-2 py-2 border-b">{{ $loop->iteration }}</td>
+                                    <td class="px-2 py-2 border-b">
+                                        {{ date('M, d Y', strtotime($leave_request->start)) }} to
+                                        {{ date('M, d Y', strtotime($leave_request->end)) }}
+                                    </td>
+                                    <td class="px-2 py-2 border-b">{{ $leave_request->days }}</td>
+                                    <td class="px-2 py-2 border-b">{{ number_format($leave_request->points, 2) }}</td>
+                                    <td class="px-2 py-2 border-b">{{ number_format($leave_request->deducted_points, 2) }}</td>
+                                    <td class="px-2 py-2 border-b">
+                                        {{ Str::ucfirst(Str::replaceFirst('_', ' ', $leave_request->type)) }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Modal footer -->
+                <div
+                    class="flex justify-end items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                    <button  type="button"
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                            onclick="generatePDF('{{ $employee->full_name }} - leave requests', 'leaveRequestsPdf')">
+                            Download
+                        </button>
+                    <button type="button" x-on:click="$dispatch('close')"
+                        class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Close</button>
+                </div>
+            </x-modal>
         </div>
-        <div class="w-3/4 p-5 bg-white rounded-md shadow" id="element-to-print">
+        <div class="w-3/4 p-5 bg-white rounded-md shadow" id="employeeData">
             <div class="mb-3 border-b border-gray-100">
                 <h1 class="text-2xl font-bold">Personal Information</h1>
             </div>
@@ -164,7 +303,8 @@
                                         <td class="px-4 py-3 border-b">
                                             {{ $loop->iteration }}
                                         </td>
-                                        <td class="px-4 py-3 border-b">{{ $allowance->allowance->allowance_code }}</td>
+                                        <td class="px-4 py-3 border-b">{{ $allowance->allowance->allowance_code }}
+                                        </td>
                                         <td class="px-4 py-3 border-b">
                                             {{ number_format($employee->getAllowance($allowance->id), 2) }}
                                         </td>
@@ -185,7 +325,7 @@
             @endif
             <div class="page-break"></div> <!-- Page break for printing -->
             @if (count($employee->loans) > 0)
-            <h3><strong>Loans</strong></h3>
+                <h3><strong>Loans</strong></h3>
                 @foreach ($employee->loans as $loan)
                     @php
                         $balnce = 0;
@@ -248,9 +388,17 @@
             integrity="sha512-YcsIPGdhPK4P/uRW6/sruonlYj+Q7UHWeKfTAkBW+g83NKM+jMJFJ4iAPfSnVp7BKD4dKMHmVSvICUbE/V1sSw=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script>
-            function generatePDF(filename) {
+            // var employee_name document.getElementById('employee-name');
+            // var employee_number document.getElementById('employee-number');
+            // employee_name.hide();
+            // employee_number.hide();
+            function generatePDF(filename, elementId) {
+                // if (employee_name.is(":hidden") && employee_number.is(":hidden")) {
+                //     employee_name.show();
+                //     employee_number.show();
+                // }
                 console.log(filename);
-                var element = document.getElementById('element-to-print');
+                var element = document.getElementById(elementId);
                 var opt = {
                     margin: .2,
                     filename: filename + '.pdf',

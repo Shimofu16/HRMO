@@ -13,8 +13,7 @@
 
             </div>
             <div class="flex items-center space-x-2">
-                <div class="relative">
-                    {{-- reset button --}}
+                {{-- <div class="relative">
                     <a href="{{ route('payrolls.index') }}"
                         class="inline-flex items-center px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-800 border border-transparent rounded-md hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                         Reset
@@ -40,7 +39,7 @@
                             @endforeach
                         </x-slot>
                     </x-dropdown>
-                </div>
+                </div> --}}
             </div>
         </div>
         <table class="min-w-full border data-table">
@@ -48,33 +47,20 @@
                 <tr>
                     <th class="px-4 py-2 text-left border-b">#</th>
                     <th class="px-4 py-2 text-left border-b">Department</th>
-                    <th class="px-4 py-2 text-left border-b">Month</th>
+                    {{-- <th class="px-4 py-2 text-left border-b">Month</th>
                     <th class="px-4 py-2 text-left border-b">Year</th>
-                    <th class="px-4 py-2 text-left border-b">Date From To</th>
+                    <th class="px-4 py-2 text-left border-b">Date From To</th> --}}
                     <th class="px-4 py-2 text-center border-b">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($payrolls as $payroll)
+                @foreach ($departments as $department)
                     <tr>
                         <td class="px-4 py-2 border-b">{{ $loop->iteration }}</td>
-                        <td class="px-4 py-2 border-b">{{ $payroll['department'] }}</td>
-                        <td class="px-4 py-2 border-b">{{ $payroll['month'] }}</td>
-                        <td class="px-4 py-2 border-b">{{ $payroll['year'] }}</td>
-                        <td class="px-4 py-2 border-b">{{ $payroll['date_from_to'] }}</td>
+                        <td class="px-4 py-2 border-b">{{ $department->dep_name }}</td>
                         <td class="px-4 py-2 border-b">
-                            @php
-                                $encoded = urlencode(json_encode($payroll));
-                                $today = date('j'); // Get today's date without leading zeros
-                                $lastDayOfMonth = date('t'); // Get the last day of the current month
-                            @endphp
-                            <a href="{{ route('payrolls.general-payslip', $encoded) }}"
-                                class="mr-3 text-green-500 hover:text-green-700">General Payroll</a>
-                                <a href="{{ route('payslips.show', [
-                                    'department_id' => $payroll['department_id'],
-                                    'payroll' => $encoded,
-                                ]) }}"
-                                    class="text-blue-500 hover:text-blue-700 ">Generate Payslip</a>
+                            <a href="{{ route('payrolls.show', $department) }}"
+                                class="mr-3 text-blue-500 hover:text-blue-700">View</a>
                         </td>
                     </tr>
                 @endforeach

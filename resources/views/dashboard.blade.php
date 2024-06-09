@@ -283,6 +283,7 @@
         function generatePieChart(selector, label, data) {
             const dataLength = data.length;
             const backgroundColors = colors.slice(0, dataLength);
+
             new Chart(document.querySelector(selector), {
                 type: 'pie',
                 data: {
@@ -297,16 +298,32 @@
                 options: {
                     plugins: {
                         legend: {
-                            position: 'right' // Position the legend to the right
+                            position: 'right', // Position the legend to the right
+                            display: true
+                        },
+                        datalabels: {
+                            formatter: (value, context) => {
+                                return value; // Display the count number
+                            },
+                            color: '#fff', // Set color of the datalabels
+                            font: {
+                                weight: 'bold'
+                            }
+                        },
+                        tooltip: {
+                            enabled: true // Disable tooltips
                         }
                     },
                     responsive: true, // Make the chart responsive
                     maintainAspectRatio: false, // Don't maintain aspect ratio
                     width: '100%', // Set width of the chart
                     height: '100%' // Set height of the chart
-                }
+                },
+
             });
         }
+
+
 
 
 

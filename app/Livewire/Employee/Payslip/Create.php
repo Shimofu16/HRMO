@@ -25,9 +25,10 @@ class Create extends Component
     {
         if ($value) {
             // dd($value);
+            $this->month = null;
             $this->payrolls = $this->getPayroll();
         }
-        $this->year = null;
+        // $this->year = null;
     }
     public function updatedMonth($value)
     {
@@ -35,7 +36,7 @@ class Create extends Component
             // dd($value);
             $this->payrolls = $this->getPayroll();
         }
-        $this->month = null;
+        // $this->month = null;
     }
 
     private function getYears($months)

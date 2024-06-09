@@ -261,4 +261,26 @@ class EmployeeController extends Controller
     {
         return Excel::download(new EmployeesExport, 'employee-masterlist.xlsx');
     }
+    public function uploadPds(Request $request, Employee $employee)
+    {
+        try {
+            $request->validate([
+                'pds' => 'required|file|mimes:pdf,docx',
+            ]);
+            $file_name = md5($request->pds . microtime()) . '.' . $request->pds->extension();
+            $request->pds->storeAs('public/pds', $file_name);
+            $employee->data->update([
+                'pds' => $file_name
+            ]);
+            return back()->with('success', 'Personal data sheet uploaded successfully. ');
+        } catch (\Throwable $th) {
+            return back()->with('error', $th->getMessage());
+        }
+    }
+    public function downloadPds(Employee $employee)
+    {
+
+        $filePath = storage_path('app/public/pds/' . $employee->data->pds);
+        return response()->download($filePath);
+    }
 }

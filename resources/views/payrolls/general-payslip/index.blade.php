@@ -103,9 +103,9 @@
                         <div></div>
                         <div>
                             <h1 class="mb-2 text-xl font-semibold text-center">GENERAL PAYROLL</h1>
-                            <h3 class="mb-0 text-sm font-semibold text-center">Municipal of CALAUAN</h3>
+                            <h3 class="mb-0 text-xl font-semibold text-center">Municipal of CALAUAN</h3>
                             <h5 class="mb-0 text-xl font-semibold text-center">Province of LAGUNA</h5>
-                            <h3 class="mb-0 text-sm font-semibold text-center">{{ $department->dep_name }}</h3>
+                            <h3 class="mb-0 text-xl font-semibold text-center">{{ $department->dep_name }}</h3>
                             <h5 class="mb-0 text-xl font-semibold text-center">{{ $dateTitle }}</h5>
                         </div>
                         <div></div>

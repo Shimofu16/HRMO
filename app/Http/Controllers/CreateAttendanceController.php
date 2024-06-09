@@ -96,6 +96,7 @@ class CreateAttendanceController extends Controller
                 'time_out_deduction' => $time_out_deduction,
                 'isPresent' => 1,
             ]);
+            createActivity('Create Attendance', 'Created Attendance for employee ' .  $employee->full_name . '.', request()->getClientIp(true));
             return back()->with('success', 'Successfully created attendance');
         } catch (\Throwable $th) {
             return back()->with('error', $th->getMessage());

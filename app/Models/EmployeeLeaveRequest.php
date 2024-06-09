@@ -8,14 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class EmployeeLeaveRequest extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        'employee_id',
-        'start',
-        'end',
-        'days',
-        'type',
-        'status',
-    ];
+    protected $guarded = [];
 
     public function employee()
     {

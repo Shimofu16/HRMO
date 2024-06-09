@@ -34,6 +34,9 @@ class Create extends Component
     {
         $this->employee = Employee::find($value);
         $this->points = ($this->employee->data->sick_leave_points) ? $this->employee->data->sick_leave_points : 0;
+        if ($this->points <= 0) {
+            return session()->flash('error', "Employee:" . $this->employee->full_name . " doesn`t have leave points");
+        }
 
         // calculate the total days based on points
         $this->days =  $this->points /  $this->points_per_day;
@@ -55,6 +58,12 @@ class Create extends Component
     {
         try {
             $this->validate();
+            if ($this->points <= 0) {
+                return session()->flash('error', "Employee:" . $this->employee->full_name . " doesn`t have leave points");
+            }
+            if ($this->days_leave >= $this->days && $this->days_leave != $this->days) {
+                return session()->flash('error', 'The number of days exceeds the allowed limit.');
+            }
             if ($this->checkIfEmployeeAlreadyAttendance()) {
                 return session()->flash('error', 'Cannot add leave, employee already have an attendance record. Please try submitting leave for a different date.');
             }
@@ -64,11 +73,13 @@ class Create extends Component
                 'end' => $this->end,
                 'type' => $this->type,
                 'status' => 'accepted',
+                'points' => $this->points - ($this->points_per_day * $this->days_leave),
+                'deducted_points' => $this->points_per_day * $this->days_leave,
                 'days' => $this->days_leave,
             ]);
 
             $this->takeAttendance($leave_request, getDatesBetween($leave_request->start, $leave_request->end, true));
-            $leave_request->employee->data->update(['sick_leave_points' => ($leave_request->employee->data->sick_leave_points - (1.25 * $leave_request->days))]);
+            $leave_request->employee->data->update(['sick_leave_points' => ($leave_request->employee->data->sick_leave_points - ($this->points_per_day * $leave_request->days))]);
             // Create activity
             createActivity('Create Employee Leave Request', 'Create Employee Leave Request for ' . $this->employee->full_name . '.', request()->getClientIp(true));
 

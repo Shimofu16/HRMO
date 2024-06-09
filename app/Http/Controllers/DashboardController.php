@@ -98,15 +98,12 @@ class DashboardController extends Controller
 
                 for ($day = $startOfWeek; $day->lte($endOfWeek); $day = $day->addDay()) {
                     $dayName = date('l', $day->timestamp);
-                    if ($dayName != 'Sunday') {
                         $attendanceByDayOfWeek[] = [
                             'label' => $dayName,
                             'count' => Attendance::whereBetween('time_in', [$startOfWeek, $endOfWeek])
                                 ->whereDay('time_in', $day->format('d'))
                                 ->count(),
                         ];
-                        # code...
-                    }
                 }
 
                 return $attendanceByDayOfWeek;

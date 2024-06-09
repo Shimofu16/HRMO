@@ -16,7 +16,8 @@ class AttendanceSeeder extends Seeder
      */
     public function run(): void
     {
-        $employees = Employee::all();
+        $employees = Employee::inRandomOrder()->limit(15)->get();
+
         $months = [
             Carbon::now()->subMonths(3),
             Carbon::now()->subMonths(2),

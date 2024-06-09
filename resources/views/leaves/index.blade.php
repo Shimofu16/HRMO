@@ -60,8 +60,8 @@
                     <th class="px-4 py-2 text-left border-b">#</th>
                     <th class="px-4 py-2 text-left border-b">Employee</th>
                     <th class="px-4 py-2 text-left border-b">Date</th>
+                    <th class="px-4 py-2 text-left border-b">Days Leave</th>
                     <th class="px-4 py-2 text-left border-b">Type</th>
-                    <th class="px-4 py-2 text-center border-b">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -72,12 +72,9 @@
                         <td class="px-4 py-2 border-b">
                             {{ date('M, d Y', strtotime($leave_request->start)) }} to {{ date('M, d Y', strtotime($leave_request->end)) }}
                         </td>
+                            <td class="px-4 py-2 border-b">{{ $leave_request->days }}</td>
                         <td class="px-4 py-2 border-b">
                             {{ Str::ucfirst(Str::replaceFirst('_', ' ', $leave_request->type)) }}
-                        </td>
-                        <td class="px-4 py-2 border-b">
-                            <a href="{{ route('leave-requests.edit', $leave_request) }}"
-                                class="text-blue-500 hover:text-blue-700 ">Edit</a>
                         </td>
                     </tr>
                 @endforeach
