@@ -17,8 +17,8 @@ class Create extends Component
     public  $start;
     public  $end;
     public $type;
-    public float $points = 0;
-    public float $points_per_day = 1.25;
+    public int $points = 0;
+    public float $points_per_day = 1;
     public int $days = 0;
     public int $days_leave = 0;
 
@@ -39,7 +39,7 @@ class Create extends Component
         }
 
         // calculate the total days based on points
-        $this->days =  $this->points /  $this->points_per_day;
+        $this->days =  $this->points;
     }
     public function updatedEnd($value)
     {
@@ -73,8 +73,8 @@ class Create extends Component
                 'end' => $this->end,
                 'type' => $this->type,
                 'status' => 'accepted',
-                'points' => $this->points - ($this->points_per_day * $this->days_leave),
-                'deducted_points' => $this->points_per_day * $this->days_leave,
+                'points' => $this->points - $this->days_leave,
+                'deducted_points' => $this->days_leave,
                 'days' => $this->days_leave,
             ]);
 

@@ -81,7 +81,7 @@ class HolidayController extends Controller
     {
 
         createActivity('Delete Holiday', 'Holiday ' . $holiday->name . ' delete successfully.', request()->getClientIp(true));
-        $holiday->delete;
+        $holiday->delete();
         return redirect()->back()->with('success', 'Holiday delete successfully.');
     }
 }
