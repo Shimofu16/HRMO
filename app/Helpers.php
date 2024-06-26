@@ -167,7 +167,7 @@ if (!function_exists('getInterval')) {
 }
 if (!function_exists('attendanceCount')) {
 
-    function attendanceCount($employee, $month, $year, $from, $to, $isMonthly)
+    function attendanceCount($employee, $month, $year, $from, $to, $isMonthly = false)
 {
     $month = date('m', strtotime($month));
     $year = date('Y', strtotime($year));
