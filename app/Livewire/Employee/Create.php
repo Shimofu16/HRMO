@@ -17,6 +17,7 @@ use App\Models\SalaryGradeStep;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Livewire\WithFileUploads;
+use App\Rules\isCharacters;
 
 class Create extends Component
 {
@@ -183,9 +184,12 @@ class Create extends Component
     private function validateData()
     {
         $this->validate([
-            'photo' => 'image|max:1024',
+            'employee_photo' => 'image|max:1024',
             'employee_number' => ['required', 'unique:employees,employee_number'],
             'ordinance_number' => ['required', 'unique:employees,ordinance_number'],
+            'first_name' => ['required', new isCharacters],
+            'middle_name' => ['nullable', new isCharacters],
+            'last_name' => ['required', new isCharacters],
         ]);
     }
     private function getDeductions()
@@ -203,6 +207,7 @@ class Create extends Component
 
     public function save()
     {
+        $this->validateData();
         // dd($this->allowances);
         $file_name = md5($this->employee_photo . microtime()) . '.' . $this->employee_photo->extension();
         $this->employee_photo->storeAs('public/photos', $file_name);
@@ -237,7 +242,7 @@ class Create extends Component
                 'salary_grade_step' => $this->salary_grade_step,
                 'sick_leave_points' => $this->sick_leave_points,
                 'has_holding_tax' => $this->isWithHoldingTax,
-                'type' => ($this->selected_rata_types) ?$this->rataTypes[$this->selected_rata_types]['type'] : null,
+                'type' => ($this->selected_rata_types) ? $this->rataTypes[$this->selected_rata_types]['type'] : null,
             ]);
 
             $category = Category::find($this->category_id);

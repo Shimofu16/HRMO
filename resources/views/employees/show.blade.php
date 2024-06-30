@@ -23,18 +23,15 @@
                     onclick="generatePDF('{{ $employee->full_name }} - Information', 'employeeData')">
                     Download to PDF
                 </button>
-                @if ($employee->data->pds)
-                    <a href="{{ route('employees.pds', $employee) }}"
-                        class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
-                        Download to PDS
-                    </a>
-                @else
-                    <button type="button"
-                        class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
-                        onclick="window.dispatchEvent(new CustomEvent('open-modal', { detail: 'uploadPdsModal' }))">
+                <button type="button"
+                    class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
+                    onclick="window.dispatchEvent(new CustomEvent('open-modal', { detail: 'uploadPdsModal' }))">
+                    @if ($employee->data->pds)
+                        Personal Data Sheet
+                    @else
                         Upload PDS
-                    </button>
-                @endif
+                    @endif
+                </button>
                 <button type="button"
                     class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
                     onclick="window.dispatchEvent(new CustomEvent('open-modal', { detail: 'leaveRequests' }))">
@@ -71,6 +68,7 @@
                 </a>
             </div>
             <x-modal name="uploadPdsModal" maxWidth="lg" headerTitle="Upload PDS">
+
                 <form action="{{ route('employees.upload.pds', $employee) }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf
@@ -94,8 +92,18 @@
                             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                             Upload
                         </button>
-                        <button type="button" x-on:click="$dispatch('close')"
-                            class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Close</button>
+                        @if ($employee->data->pds)
+
+                            <a href="{{ route('employees.pds', $employee) }}"
+                                class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                                Download PDS
+                            </a>
+                        @else
+                            <button type="button" x-on:click="$dispatch('close')"
+                                class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                                Close
+                            </button>
+                        @endif
                     </div>
                 </form>
             </x-modal>
@@ -143,7 +151,9 @@
                 <!-- Modal body -->
                 <div class="p-4 md:p-5 space-y-4" id="leaveRequestsPdf">
                     <h1 class="text-xl font-bold hide" id="employee-name">Employee: {{ $employee->full_name }}</h1>
-                    <h1 class="text-xl font-bold hide" id="employee-number">Employee #: {{ $employee->employee_number }}</h1>
+                    <h1 class="text-xl font-bold hide" id="employee-number">Employee #:
+                        {{ $employee->employee_number }}
+                    </h1>
                     <div class="flex justify-between items-center">
                     </div>
                     <table class="min-w-full border">
@@ -167,7 +177,9 @@
                                     </td>
                                     <td class="px-2 py-2 border-b">{{ $leave_request->days }}</td>
                                     <td class="px-2 py-2 border-b">{{ number_format($leave_request->points, 2) }}</td>
-                                    <td class="px-2 py-2 border-b">{{ number_format($leave_request->deducted_points, 2) }}</td>
+                                    <td class="px-2 py-2 border-b">
+                                        {{ number_format($leave_request->deducted_points, 2) }}
+                                    </td>
                                     <td class="px-2 py-2 border-b">
                                         {{ Str::ucfirst(Str::replaceFirst('_', ' ', $leave_request->type)) }}
                                     </td>
@@ -179,11 +191,11 @@
                 <!-- Modal footer -->
                 <div
                     class="flex justify-end items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                    <button  type="button"
-                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                            onclick="generatePDF('{{ $employee->full_name }} - leave requests', 'leaveRequestsPdf')">
-                            Download
-                        </button>
+                    <button type="button"
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        onclick="generatePDF('{{ $employee->full_name }} - leave requests', 'leaveRequestsPdf')">
+                        Download
+                    </button>
                     <button type="button" x-on:click="$dispatch('close')"
                         class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Close</button>
                 </div>
@@ -352,8 +364,7 @@
                             @foreach (getMonthsFromAttendance($employee) as $month)
                                 @if (isBetweenDatesOfLoan($loan, $month->earliest_time_in))
                                     @if ($total_amount_paid <= $total_loan)
-                                        @php
-                                            $total_amount_paid = $total_amount_paid + $loan->amount * $ranges;
+                                        @php$total_amount_paid = $total_amount_paid + $loan->amount * $ranges;
                                         @endphp
                                         <tr>
                                             <td class="px-4 py-3 border-b">
@@ -373,9 +384,7 @@
                                 $balance = $total_loan - $total_amount_paid;
                                 if ($balance < 0) {
                                     $balance = 0;
-                                }
-                            @endphp
-                            <tr>
+                            } @endphp <tr>
                                 <td class="px-4 py-3 border-b"></td>
                                 <td class="px-4 py-3 border-b">Balance: {{ number_format($balance, 2) }}</td>
                             </tr>
@@ -421,4 +430,5 @@
             }
         </script>
     </div>
+
 </x-app-layout>

@@ -43,7 +43,7 @@
                 },
                 jsPDF: {
                     unit: 'in',
-                    format: [14, 9], // Custom format for long paper (14" x 8.5")
+                    format: [15, 9], // Custom format for long paper (14" x 8.5")
                     orientation: 'portrait'
                 }
             };

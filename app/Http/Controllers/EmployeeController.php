@@ -16,6 +16,7 @@ use App\Models\EmployeeSickLeave;
 use App\Models\Loan;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class EmployeeController extends Controller
@@ -262,21 +263,36 @@ class EmployeeController extends Controller
         return Excel::download(new EmployeesExport, 'employee-masterlist.xlsx');
     }
     public function uploadPds(Request $request, Employee $employee)
-    {
-        try {
-            $request->validate([
-                'pds' => 'required|file|mimes:pdf,docx',
-            ]);
-            $file_name = md5($request->pds . microtime()) . '.' . $request->pds->extension();
-            $request->pds->storeAs('public/pds', $file_name);
-            $employee->data->update([
-                'pds' => $file_name
-            ]);
-            return back()->with('success', 'Personal data sheet uploaded successfully. ');
-        } catch (\Throwable $th) {
-            return back()->with('error', $th->getMessage());
+{
+    try {
+        // Validate the request input
+        $request->validate([
+            'pds' => 'required|file|mimes:pdf,docx|max:2048', // Add file size limit (e.g., 2MB)
+        ]);
+
+        // Check if the employee already has a PDS and delete it if it exists
+        if ($employee->data->pds) {
+            Storage::delete('public/app/pds/' . $employee->data->pds);
         }
+
+        // Generate a new file name for the uploaded PDS
+        $file_name = md5($request->pds->getClientOriginalName() . microtime()) . '.' . $request->pds->extension();
+
+        // Store the new PDS in the 'public/pds' directory
+        $request->pds->storeAs('public/pds', $file_name);
+
+        // Update the employee's data with the new PDS file name
+        $employee->data->update([
+            'pds' => $file_name,
+        ]);
+
+        // Return a success message
+        return back()->with('success', 'Personal data sheet uploaded successfully.');
+    } catch (\Throwable $th) {
+        // Return an error message
+        return back()->with('error', $th->getMessage());
     }
+}
     public function downloadPds(Employee $employee)
     {
 
