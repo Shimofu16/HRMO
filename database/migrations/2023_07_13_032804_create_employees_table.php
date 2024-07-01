@@ -86,6 +86,7 @@ return new class extends Migration
             $table->integer('days');
             $table->double('points');
             $table->double('deducted_points');
+            $table->text('letter')->nullable();
             $table->enum('type', [
                 'maternity_leave', 'vacation_leave', 'sick_leave', 'force_leave', 'special_leave'
             ]);
@@ -104,7 +105,7 @@ return new class extends Migration
             $table->double('salary')->nullable();
             $table->bigInteger('hours')->nullable();
             $table->enum('type', [
-                'maternity_leave', 'vacation_leave', 'sick_leave', 'force_leave', 'special_leave'
+                'attendance','maternity_leave', 'vacation_leave', 'sick_leave', 'force_leave', 'special_leave'
             ])->default('attendance');
             $table->dateTime('absent_at')->nullable();
             $table->boolean('isPresent')->default(false);

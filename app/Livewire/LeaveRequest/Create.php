@@ -7,9 +7,12 @@ use App\Models\Employee;
 use App\Models\EmployeeLeaveRequest;
 use Carbon\Carbon;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class Create extends Component
 {
+    use WithFileUploads;
+
     public array $types;
     public int $employee_id;
     public  $employees;
@@ -64,9 +67,13 @@ class Create extends Component
             $end = Carbon::parse($this->end);
             //count the days between start and end
             $this->days_leave = getDatesBetween($start, $end, false);
-            if ($this->days_leave >= $this->days && $this->days_leave != $this->days) {
-                return session()->flash('error', 'The number of days exceeds the allowed limit.');
+            if (!$this->isAnyOfTheSelectedCategories) {
+                if ($this->days_leave >= $this->days && $this->days_leave != $this->days) {
+                    return session()->flash('error', 'The number of days exceeds the allowed limit.');
+                }
+                # code...
             }
+            
         }
     }
 
@@ -81,6 +88,9 @@ class Create extends Component
             $leave_points = $this->points - $this->days_leave;
             if ($this->type == 'force_leave' || $this->type == 'special_leave') {
                 $leave_points = 0;
+                if (($this->type == 'force_leave' && $this->days_leave >= $this->fl_points) || ($this->type == 'special_leave' && $this->days_leave >= $this->sl_points)){
+                    return session()->flash('error', 'The number of days exceeds the allowed limit.');
+                }
             }else{
                 if ($this->points <= 0) {
                     return session()->flash('error', "Employee:" . $this->employee->full_name . " doesn`t have leave points");
@@ -89,6 +99,14 @@ class Create extends Component
                     return session()->flash('error', 'The number of days exceeds the allowed limit.');
                 }
             }
+            $file_name = '';
+            if ($this->letter) {
+                // Generate a new file name for the uploaded PDS
+                $file_name = md5($this->letter->getClientOriginalName() . microtime()) . '.' . $this->letter->extension();
+    
+                // Store the new PDS in the 'public/pds' directory
+                $this->letter->storeAs('public/letters', $file_name);
+            }
             $leave_request = EmployeeLeaveRequest::create([
                 'employee_id' => $this->employee_id,
                 'start' => $this->start,
@@ -96,6 +114,7 @@ class Create extends Component
                 'type' => $this->type,
                 'status' => 'accepted',
                 'points' => $leave_points,
+                'letter' => $file_name,
                 'deducted_points' => $this->days_leave,
                 'days' => $this->days_leave,
             ]);

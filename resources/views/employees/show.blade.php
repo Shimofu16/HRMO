@@ -176,7 +176,17 @@
                                         {{ date('M, d Y', strtotime($leave_request->end)) }}
                                     </td>
                                     <td class="px-2 py-2 border-b">{{ $leave_request->days }}</td>
-                                    <td class="px-2 py-2 border-b">{{ number_format($leave_request->points, 2) }}</td>
+                                    <td class="px-2 py-2 border-b">
+                                        @php
+                                            $points = $leave_request->points;
+                                            if ($leave_request->type == "force_leave") {
+                                                $points = 5 - \App\Models\Attendance::where('type',  $leave_request->type)->whereYear('created_at', now()->format('Y'))->count();
+                                            }
+                                            if ($leave_request->type == "special_leave") {
+                                                $points = 3 - \App\Models\Attendance::where('type',  $leave_request->type)->whereYear('created_at', now()->format('Y'))->count();
+                                            }
+                                        @endphp
+                                        {{ number_format($points, 2) }}</td>
                                     <td class="px-2 py-2 border-b">
                                         {{ number_format($leave_request->deducted_points, 2) }}
                                     </td>

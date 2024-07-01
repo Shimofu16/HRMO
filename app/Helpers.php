@@ -475,7 +475,7 @@ if (!function_exists('getLateByMinutes')) {
 }
 if (!function_exists('getDatesBetween')) {
 
-    function getDatesBetween($startDate, $endDate, $returnDates)
+    function getDatesBetween($startDate, $endDate, $returnDates, $includeGap = false)
     {
         $dates = [];
         $currentDate = strtotime($startDate);
@@ -489,14 +489,16 @@ if (!function_exists('getDatesBetween')) {
                 $days++;
             }
 
-            $currentDate = strtotime('+1 day', $currentDate);
+            // Add 1 day gap if the flag is set
+            $currentDate = $includeGap ? strtotime('+2 days', $currentDate) : strtotime('+1 day', $currentDate);
         }
         if ($returnDates) {
-            return  $dates;
+            return $dates;
         }
-        return  $days;
+        return $days;
     }
 }
+
 if (!function_exists('getColor')) {
 
     function getColor($type = '', $returnAllColors = false)
