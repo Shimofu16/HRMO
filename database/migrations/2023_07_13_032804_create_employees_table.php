@@ -103,7 +103,9 @@ return new class extends Migration
             $table->double('time_out_deduction')->nullable();
             $table->double('salary')->nullable();
             $table->bigInteger('hours')->nullable();
-            $table->enum('type', ['attendance', 'seminar','travel_order','maternity_leave', 'vacation_leave', 'sick_leave', 'force_leave'])->default('attendance');
+            $table->enum('type', [
+                'maternity_leave', 'vacation_leave', 'sick_leave', 'force_leave', 'special_leave'
+            ])->default('attendance');
             $table->dateTime('absent_at')->nullable();
             $table->boolean('isPresent')->default(false);
             $table->timestamps();

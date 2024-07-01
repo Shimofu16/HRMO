@@ -43,9 +43,9 @@ class Create extends Component
         $this->name = $this->employee->full_name;
         $this->department = $this->employee->data->department->dep_name;
         $this->points = ($this->employee->data->sick_leave_points) ? $this->employee->data->sick_leave_points : 0;
-        if ($this->points <= 0) {
-            session()->flash('error', "Employee:" . $this->employee->full_name . " doesn`t have leave points");
-        }
+        // if ($this->points <= 0) {
+        //     session()->flash('error', "Employee:" . $this->employee->full_name . " doesn`t have leave points");
+        // }
         if ($this->employee->data->category->category_code == 'PERM' || $this->employee->data->category->category_code == 'COTERM' || $this->employee->data->category->category_code == 'CAS') {
             $this->isAnyOfTheSelectedCategories = true;
             $this->types = [
@@ -74,18 +74,20 @@ class Create extends Component
     {
         try {
             $this->validate();
-            if ($this->points <= 0) {
-                return session()->flash('error', "Employee:" . $this->employee->full_name . " doesn`t have leave points");
-            }
-            if ($this->days_leave >= $this->days && $this->days_leave != $this->days) {
-                return session()->flash('error', 'The number of days exceeds the allowed limit.');
-            }
+            
             if ($this->checkIfEmployeeAlreadyAttendance()) {
                 return session()->flash('error', 'Cannot add leave, employee already have an attendance record. Please try submitting leave for a different date.');
             }
             $leave_points = $this->points - $this->days_leave;
             if ($this->type == 'force_leave' || $this->type == 'special_leave') {
                 $leave_points = 0;
+            }else{
+                if ($this->points <= 0) {
+                    return session()->flash('error', "Employee:" . $this->employee->full_name . " doesn`t have leave points");
+                }
+                if ($this->days_leave >= $this->days && $this->days_leave != $this->days) {
+                    return session()->flash('error', 'The number of days exceeds the allowed limit.');
+                }
             }
             $leave_request = EmployeeLeaveRequest::create([
                 'employee_id' => $this->employee_id,
