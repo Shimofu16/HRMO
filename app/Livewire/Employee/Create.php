@@ -66,6 +66,7 @@ class Create extends Component
 
     public bool  $isJOSelected = false;
     public bool  $isCOSSelected = false;
+    public bool  $isElectSelected = false;
     public bool  $isWithHoldingTax = false;
     public bool $isAlreadyLogIn = false;
 
@@ -118,6 +119,7 @@ class Create extends Component
     {
         $this->isJOSelected = false;
         $this->isCOSSelected = false;
+        $this->isElectSelected = false;
         if ($value) {
             $category = Category::find($value);
             if ($category->category_code == "JO") {
@@ -125,6 +127,9 @@ class Create extends Component
             }
             if ($category->category_code == "COS") {
                 $this->isCOSSelected = true;
+            }
+            if ($category->category_code == "ELECT") {
+                $this->isElectSelected = true;
             }
             if ($this->department_id) {
                 $department = Department::find($value);

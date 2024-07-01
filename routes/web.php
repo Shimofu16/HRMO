@@ -235,6 +235,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Attendance
     Route::get('attendances/{filter_by?}/{filter_id?}', [AttendanceController::class, 'index'])->name('attendances.index');
+    Route::post('attendances/upload', [AttendanceController::class, 'uploadAttendance'])->name('attendances.upload');
     // Attendance
     Route::get('/create/attendances/manually', [CreateAttendanceController::class, 'create'])->name('create.attendances.manually');
     Route::post('/create/attendances/manually', [CreateAttendanceController::class, 'store'])->name('store.attendances.manually');

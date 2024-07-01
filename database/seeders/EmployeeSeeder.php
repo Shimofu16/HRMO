@@ -51,7 +51,7 @@ class EmployeeSeeder extends Seeder
 
             $gender = $faker->randomElement(['male', 'female']);
             $employee = Employee::create([
-                'employee_number' => $employee_number,
+                'employee_number' => $i + 1,
                 'ordinance_number' => str_pad($faker->numberBetween(00, 99), 2, '0', STR_PAD_LEFT) . '-' . Str::ucfirst($faker->randomLetter()),
                 'first_name' => $faker->firstName($gender),
                 'middle_name' => $faker->lastName($gender),

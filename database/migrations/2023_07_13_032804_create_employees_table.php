@@ -86,7 +86,9 @@ return new class extends Migration
             $table->integer('days');
             $table->double('points');
             $table->double('deducted_points');
-            $table->enum('type', ['vacation_leave', 'sick_leave', 'force_leave','maternity_leave']);
+            $table->enum('type', [
+                'maternity_leave', 'vacation_leave', 'sick_leave', 'force_leave', 'special_leave'
+            ]);
             $table->enum('status', ['accepted', 'pending', 'rejected']);
             $table->timestamps();
         });

@@ -13,18 +13,24 @@ class Create extends Component
     public array $types;
     public int $employee_id;
     public  $employees;
-    public  $employee;
+    public Employee $employee;
+    public string $name;
+    public string $department;
     public  $start;
     public  $end;
     public $type;
+    public $letter;
     public int $points = 0;
+    public int $fl_points = 0;
+    public int $sl_points = 0;
     public float $points_per_day = 1;
     public int $days = 0;
     public int $days_leave = 0;
+    public bool $isAnyOfTheSelectedCategories = false;
 
     protected $rules = [
         'start' => 'required|after:today',
-        'end' => 'required|after:start',
+        'end' => 'required',
     ];
     protected $validationAttributes = [
         'start' => 'Start Date',
@@ -32,12 +38,22 @@ class Create extends Component
     ];
     public function updatedEmployeeId($value)
     {
+        $this->isAnyOfTheSelectedCategories = false;
         $this->employee = Employee::find($value);
+        $this->name = $this->employee->full_name;
+        $this->department = $this->employee->data->department->dep_name;
         $this->points = ($this->employee->data->sick_leave_points) ? $this->employee->data->sick_leave_points : 0;
         if ($this->points <= 0) {
-            return session()->flash('error', "Employee:" . $this->employee->full_name . " doesn`t have leave points");
+            session()->flash('error', "Employee:" . $this->employee->full_name . " doesn`t have leave points");
         }
-
+        if ($this->employee->data->category->category_code == 'PERM' || $this->employee->data->category->category_code == 'COTERM' || $this->employee->data->category->category_code == 'CAS') {
+            $this->isAnyOfTheSelectedCategories = true;
+            $this->types = [
+                'maternity_leave', 'vacation_leave', 'sick_leave', 'force_leave', 'special_leave'
+            ];
+        }
+        $this->fl_points =  5 - Attendance::where('type', 'force_leave')->whereYear('created_at', now()->format('Y'))->count();
+        $this->sl_points = 3 - Attendance::where('type', 'special_leave')->whereYear('created_at', now()->format('Y'))->count();
         // calculate the total days based on points
         $this->days =  $this->points;
     }
@@ -67,13 +83,17 @@ class Create extends Component
             if ($this->checkIfEmployeeAlreadyAttendance()) {
                 return session()->flash('error', 'Cannot add leave, employee already have an attendance record. Please try submitting leave for a different date.');
             }
+            $leave_points = $this->points - $this->days_leave;
+            if ($this->type == 'force_leave' || $this->type == 'special_leave') {
+                $leave_points = 0;
+            }
             $leave_request = EmployeeLeaveRequest::create([
                 'employee_id' => $this->employee_id,
                 'start' => $this->start,
                 'end' => $this->end,
                 'type' => $this->type,
                 'status' => 'accepted',
-                'points' => $this->points - $this->days_leave,
+                'points' => $leave_points,
                 'deducted_points' => $this->days_leave,
                 'days' => $this->days_leave,
             ]);
@@ -134,6 +154,7 @@ class Create extends Component
     }
     public function mount()
     {
+
         $this->employees = Employee::all();
         $this->types = [
             'maternity_leave', 'vacation_leave', 'sick_leave', 'force_leave'

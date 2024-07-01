@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\AttendanceImport;
 use App\Models\Attendance;
 use App\Models\Department;
 use App\Models\Employee;
@@ -9,18 +10,19 @@ use App\Models\EmployeeSalary;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AttendanceController extends Controller
 {
     public function index($filter_by = null, $filter_id = null)
     {
         $attendances = Attendance::query()->with('employee')->whereDate('time_in', now());
-        if ($filter_by =="department") {
+        if ($filter_by == "department") {
             $attendances->whereHas('employee.data', function ($query) use ($filter_id) {
                 $query->where('department_id', $filter_id);
             });
         }
-        if ($filter_by =="date") {
+        if ($filter_by == "date") {
             $attendances->whereHas('employee.data', function ($query) use ($filter_id) {
                 $query->where('department_id', $filter_id);
             });
@@ -85,5 +87,19 @@ class AttendanceController extends Controller
         $attendances = Attendance::with('employee')->whereDate('time_in', $date)->get();
 
         return view('attendances.show', compact('attendances', 'date'));
+    }
+    public function uploadAttendance(Request $request)
+    {
+        $request->validate([
+            'attendance' => 'required|mimes:xlsx,xls,csv|max:2048',
+        ]);
+
+        try {
+            Excel::import(new AttendanceImport, $request->file('attendance'));
+
+            return back()->with('success', 'Attendance data imported successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 }
