@@ -71,7 +71,6 @@ class Create extends Component
                 if ($this->days_leave >= $this->days && $this->days_leave != $this->days) {
                     return session()->flash('error', 'The number of days exceeds the allowed limit.');
                 }
-                # code...
             }
             
         }

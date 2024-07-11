@@ -356,7 +356,7 @@ if (!function_exists('calculateSalary')) {
             }
         }
 
-        if ($hourWorked > $requiredHoursWork) {
+        if ($hourWorked > $requiredHoursWork && ($isJO || $isCOS)) {
             $hourWorked =  8;
         }
         if ($hourWorked < 0) {

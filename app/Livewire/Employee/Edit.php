@@ -9,6 +9,7 @@ use App\Models\Deduction;
 use App\Models\Department;
 use App\Models\Designation;
 use App\Models\Employee;
+use App\Models\EmployeeAllowance;
 use App\Models\Level;
 use App\Models\Loan;
 use App\Models\SalaryGrade;
@@ -172,6 +173,7 @@ class Edit extends Component
 
     public function save()
     {
+        // dd($this->allowances);
         $file_name = $this->employee->employee_photo;
         if ($this->employee_photo) {
             $file_name = md5($this->employee_photo . microtime()) . '.' . $this->employee_photo->extension();
@@ -231,10 +233,16 @@ class Edit extends Component
                         }
                     }
                     if ($department->dep_code == "MHO" && $allowance->allowance_code == 'Hazard') {
-                        $this->employee->allowances()->create([
-                            'allowance_id' => $allowance->id,
-                            'amount' => getHazard($salary_grade->id, $this->employee->data->salary_grade_step_amount)
-                        ]);
+                    //   $allowance =  EmployeeAllowance::create([
+                    //         'employee_id' => $this->employee->id,
+                    //         'allowance_id' => $allowance->id,
+                    //         'amount' => getHazard($salary_grade->id, $this->employee->data->salary_grade_step_amount)
+                    //     ]);
+                    $this->employee->allowances()->create([
+                        'allowance_id' => $allowance->id,
+                        'amount' => getHazard($salary_grade->id, $this->employee->data->salary_grade_step_amount)
+                    ]);
+                    // dd($this->employee->allowances);
                     }
                     if ($department->dep_code == "MHO" && $allowance->allowance_code == 'Subsistence') {
                         $this->employee->allowances()->create([

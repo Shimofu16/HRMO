@@ -197,44 +197,42 @@ class Employee extends Model
 
         return $totalSalary;
     }
-    public function getAllowance($allowance_id, $range  = null)
+    public function getAllowance($allowance_id, $range = null)
     {
-        if ($range) {
-            $allowance = $this->allowances()->where('allowance_id', $allowance_id)->first();
-            if ($allowance) {
-                foreach ($allowance->allowance->allowance_ranges as $key => $allowance_range) {
-                    if ($range == $allowance_range) {
-                        if ($allowance->allowance->allowance_code == 'Hazard' || $allowance->allowance->allowance_code == 'Representation' || $allowance->allowance->allowance_code == 'Transportation') {
-                            if ($allowance->allowance->allowance_code == 'Hazard') {
-                                return getHazard($this->data->salary_grade_id, $this->data->monthly_salary);
-                            } else {
-                                // dd(getHazard($this->data->salary_grade_id, $this->data->monthly_salary));
-                                return $allowance->amount;
-                            }
-                        } else {
-                            return $allowance->allowance->allowance_amount;
-                        }
-                    }
-                }
-            }
-            return 0;
-        } else {
-            $allowance = $this->allowances()->where('allowance_id', $allowance_id)->first();
-            if ($allowance) {
-                if ($allowance->allowance->allowance_code == 'Hazard' || $allowance->allowance->allowance_code == 'Representation' || $allowance->allowance->allowance_code == 'Transportation') {
-                    if ($allowance->allowance->allowance_code == 'Hazard') {
-                        return getHazard($this->data->salary_grade_id, $this->data->monthly_salary);
-                    } else {
-                        // dd(getHazard($this->data->salary_grade_id, $this->data->monthly_salary));
-                        return $allowance->amount;
-                    }
-                } else {
-                    return $allowance->allowance->allowance_amount;
-                }
-            }
+        $allowance = Allowance::find($allowance_id);
+        if (!$allowance) {
             return 0;
         }
+
+        $isSpecialAllowance = in_array($allowance->allowance_code, ['Hazard', 'Representation', 'Transportation']);
+
+        if ($range) {
+            foreach ($allowance->allowance_ranges as $allowance_range) {
+                if ($range == $allowance_range) {
+                    if ($isSpecialAllowance) {
+                        return $this->calculateSpecialAllowance($allowance);
+                    }
+                    return $allowance->allowance_amount;
+                }
+            }
+            return 0; // Range not found
+        }
+
+        if ($isSpecialAllowance) {
+            return $this->calculateSpecialAllowance($allowance);
+        }
+
+        return $allowance->allowance_amount;
     }
+
+    private function calculateSpecialAllowance($allowance)
+    {
+        if ($allowance->allowance_code == 'Hazard') {
+            return getHazard($this->data->salary_grade_id, $this->data->monthly_salary);
+        }
+        return $allowance->amount;
+    }
+
     public function getDeduction($deduction_id, $range)
     {
         $deduction = $this->deductions()->where('deduction_id', $deduction_id)->first();

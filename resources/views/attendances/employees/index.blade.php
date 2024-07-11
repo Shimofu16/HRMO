@@ -53,7 +53,7 @@
                             </div>
                             <div class="mt-4 text-center">
                                 <button class="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
-                                    type="button" onclick="take_snapshot()">Submit</button>
+                                    type="submit">Submit</button>
                             </div>
                         </form>
                     </div>

@@ -317,21 +317,20 @@
                         </thead>
                         <tbody>
                             @foreach ($employee->allowances as $allowance)
-                                @if ($employee->getAllowance($allowance->id) != 0)
-                                    @php
-                                        $total_allowances = $total_allowances + $employee->getAllowance($allowance->id);
-                                    @endphp
-                                    <tr>
-                                        <td class="px-4 py-3 border-b">
-                                            {{ $loop->iteration }}
-                                        </td>
-                                        <td class="px-4 py-3 border-b">{{ $allowance->allowance->allowance_code }}
-                                        </td>
-                                        <td class="px-4 py-3 border-b">
-                                            {{ number_format($employee->getAllowance($allowance->id), 2) }}
-                                        </td>
-                                    </tr>
-                                @endif
+                            @php
+                                $total_allowances = $total_allowances + $employee->getAllowance($allowance->allowance->id);
+                            @endphp
+                            <tr>
+                                <td class="px-4 py-3 border-b">
+                                    {{ $loop->iteration }}
+                                </td>
+                                <td class="px-4 py-3 border-b">{{ $allowance->allowance->allowance_code }}
+                                </td>
+                                <td class="px-4 py-3 border-b">
+                                    {{ number_format($employee->getAllowance($allowance->allowance->id), 2) }}
+                                </td>
+                            </tr>
+
                             @endforeach
                         </tbody>
                         <tfoot>
