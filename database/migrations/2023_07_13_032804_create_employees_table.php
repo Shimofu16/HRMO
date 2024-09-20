@@ -105,7 +105,7 @@ return new class extends Migration
             $table->double('salary')->nullable();
             $table->bigInteger('hours')->nullable();
             $table->enum('type', [
-                'attendance','maternity_leave', 'vacation_leave', 'sick_leave', 'force_leave', 'special_leave'
+                'attendance','maternity_leave', 'vacation_leave', 'sick_leave', 'force_leave', 'special_leave','seminar'
             ])->default('attendance');
             $table->dateTime('absent_at')->nullable();
             $table->boolean('isPresent')->default(false);

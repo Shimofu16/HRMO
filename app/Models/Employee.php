@@ -199,11 +199,13 @@ class Employee extends Model
     }
     public function getAllowance($allowance_id, $range = null)
     {
-        $allowance = Allowance::find($allowance_id);
+        $allowance = $this->allowances()->where('allowance_id', $allowance_id)->first();
+
+        // dd($allowance,$allowance_id);
         if (!$allowance) {
             return 0;
         }
-
+        $allowance = $allowance->allowance;
         $isSpecialAllowance = in_array($allowance->allowance_code, ['Hazard', 'Representation', 'Transportation']);
 
         if ($range) {
