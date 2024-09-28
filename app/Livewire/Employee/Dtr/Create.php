@@ -40,8 +40,9 @@ class Create extends Component
             $this->halfday = $data['halfday'];
             $this->under_time = $data['under_time'];
             $this->total_man_hour = $data['total_man_hour'];
-            
+
             $this->attendances = $data['attendances'];
+            // dd($this->attendances);
         }
     }
     public function updatedSelectedMonth($value)
@@ -54,7 +55,7 @@ class Create extends Component
             }
             $from = $dates[0];
             $to = $dates[1];
-            
+
 
 
             $data = attendanceCount($this->employee, $this->selected_month, now()->format('Y'), $from, $to, $this->isMonthly);
@@ -80,7 +81,7 @@ class Create extends Component
         $this->under_time = 0;
         $this->total_man_hour = 0;
         $this->attendances = collect();
-    
+
         if ($this->selected_month) {
             if ($this->isMonthly) {
                 // Set date range for the entire month
@@ -95,7 +96,7 @@ class Create extends Component
                 // No specific date range selected
                 return;
             }
-    
+
             // Fetch attendance data
             $data = attendanceCount($this->employee, $this->selected_month, now()->format('Y'), $from, $to, $this->isMonthly);
             $this->present = $data['present'];
@@ -109,7 +110,7 @@ class Create extends Component
             $this->attendances = $data['attendances'];
         }
     }
-    
+
     public function mount()
     {
         $this->months = Attendance::selectRaw('MONTH(time_in) as month, MIN(time_in) as earliest_time_in')
@@ -132,6 +133,7 @@ class Create extends Component
             ->groupByRaw('MONTH(time_in)')
             ->orderByRaw('MONTH(time_in)')
             ->get();
+
         return view('livewire.employee.dtr.create');
     }
 }

@@ -46,11 +46,12 @@ class SeminarController extends Controller
                 'location' => 'required',
                 'type' => 'required',
                 'departments' => 'required',
-                'start_date' => 'required|date|after:today',
-                'end_date' => 'required|date|after:start_date',
+                'start_date' => 'required|date|after_or_equal:today',
+                'end_date' => 'required|date|after_or_equal:start_date',
                 'reason' => 'required',
                 'letter' => 'required|file|mimes:pdf,docx',
             ]);
+
             if ($request->hasFile('letter')) {
 
                 $file_name = md5($request->letter . microtime()) . '.' . $request->letter->extension();

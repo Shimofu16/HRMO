@@ -168,139 +168,138 @@ if (!function_exists('getInterval')) {
 if (!function_exists('attendanceCount')) {
 
     function attendanceCount($employee, $month, $year, $from, $to, $isMonthly = false)
-{
-    $month = date('m', strtotime($month));
-    $year = date('Y', strtotime($year));
-    $lastDayOfTheMonth = $to;
-    if (!checkdate($month, $to, $year)) {
-        $lastDayOfTheMonth = date('t', mktime(0, 0, 0, $month, 1, $year)); // get last day of the month
-    }
+    {
+        $month = date('m', strtotime($month));
+        $year = date('Y', strtotime($year));
+        $lastDayOfTheMonth = $to;
+        if (!checkdate($month, $to, $year)) {
+            $lastDayOfTheMonth = date('t', mktime(0, 0, 0, $month, 1, $year)); // get last day of the month
+        }
 
-    $total_man_hour = 0;
-    $total_salary = 0;
-    $present = 0;
-    $absent = 0;
-    $late = 0;
-    $underTime = 0;
-    $totalUnderTimeHours = 0;
-    $totalUnderTimeMinutes = 0;
-    $regularDays = 0;
-    $Saturdays = 0;
-    $halfday = 0;
-    $attendances = [];
-    if ($isMonthly) {
-        $loopStart = 1;
-        $loopEnd = $lastDayOfTheMonth;
-    } else {
-        $loopStart = ($to == 15) ? 1 : 16;
-        $loopEnd = ($to == 15) ? 15 : $lastDayOfTheMonth;
-    }
+        $total_man_hour = 0;
+        $total_salary = 0;
+        $present = 0;
+        $absent = 0;
+        $late = 0;
+        $underTime = 0;
+        $totalUnderTimeHours = 0;
+        $totalUnderTimeMinutes = 0;
+        $regularDays = 0;
+        $Saturdays = 0;
+        $halfday = 0;
+        $attendances = [];
+        if ($isMonthly) {
+            $loopStart = 1;
+            $loopEnd = $lastDayOfTheMonth;
+        } else {
+            $loopStart = ($to == 15) ? 1 : 16;
+            $loopEnd = ($to == 15) ? 15 : $lastDayOfTheMonth;
+        }
 
-    $from = Carbon::parse(sprintf('%04d-%02d-%02d', $year, $month, $from))->format('Y-m-d');
-    $to = Carbon::parse(sprintf('%04d-%02d-%02d', $year, $month, $loopEnd))->format('Y-m-d');
+        $from = Carbon::parse(sprintf('%04d-%02d-%02d', $year, $month, $from))->format('Y-m-d');
+        $to = Carbon::parse(sprintf('%04d-%02d-%02d', $year, $month, $loopEnd))->format('Y-m-d');
 
-    for ($i = $loopStart; $i <= $loopEnd; $i++) {
-        $day = str_pad($i, 2, '0', STR_PAD_LEFT);
-        $date = Carbon::parse(sprintf('%04d-%02d-%02d', $year, $month, $day));
-        $attendance = $employee->attendances()
-            ->whereDate('time_in', $date)
-            ->where('isPresent', 1)
-            ->first();
-        $isWeekend = $date->isWeekend();
-        $date = $date->format('Y-m-d');
+        for ($i = $loopStart; $i <= $loopEnd; $i++) {
+            $day = str_pad($i, 2, '0', STR_PAD_LEFT);
+            $date = Carbon::parse(sprintf('%04d-%02d-%02d', $year, $month, $day));
+            $attendance = $employee->attendances()
+                ->whereDate('time_in', $date)
+                ->where('isPresent', 1)
+                ->first();
+            $isWeekend = $date->isWeekend();
+            $date = $date->format('Y-m-d');
 
-        if ($attendance) {
-            $manhours = $attendance->hours;
-            $timeInInterval = getInterval($attendance->time_in, true, true);
-            $timeOutInterval = getInterval($attendance->time_out, false, true);
+            if ($attendance) {
+                $manhours = $attendance->hours;
+                $timeInInterval = getInterval($attendance->time_in, true, true);
+                $timeOutInterval = getInterval($attendance->time_out, false, true);
 
-            if ($isWeekend && $employee->data->category->category_code !== 'JO') {
+                if ($isWeekend && $employee->data->category->category_code !== 'JO') {
+                    $attendances[$i] = [
+                        'day' => ($isMonthly) ? date('d', strtotime($date)) :  date('d', strtotime($date)) . '-' . Str::substr(date('l', strtotime($date)), 0, 3),
+                        'time_in' => '',
+                        'time_in_interval' => '',
+                        'time_out' => '',
+                        'time_out_interval' => '',
+                        'manhours' => '',
+                        'under_time_hours' => 0,
+                        'under_time_minutes' => 0,
+                        'isWeekend' => $isWeekend,
+                        'color' => '',
+                    ];
+                } else {
+                    $under_time_hours = 0;
+                    $under_time_minutes = 0;
+                    if ($attendance->time_out_status == 'Under-time') {
+                        $underTime++;
+                        $defaultTimeOut = Carbon::parse('17:00:00');
+                        $formattedTimeOut = Carbon::parse($attendance->time_out)->format('H:i:s');
+                        $underTimeMinutes = $defaultTimeOut->diffInMinutes($formattedTimeOut);
+
+                        $under_time_hours = ($underTimeMinutes > 60) ? $defaultTimeOut->diffInHours($formattedTimeOut) : 0;
+                        $under_time_minutes = ($underTimeMinutes > 60) ? 0 : $underTimeMinutes;
+                        $totalUnderTimeHours += $under_time_hours;
+                        $totalUnderTimeMinutes += $under_time_minutes;
+                    }
+
+                    $attendances[$i] = [
+                        'day' => ($isMonthly) ? date('d', strtotime($date)) :  date('d', strtotime($date)) . '-' . Str::substr(date('l', strtotime($date)), 0, 3),
+                        'time_in' => $attendance->time_in,
+                        'time_in_interval' => $timeInInterval,
+                        'time_in_status' => $attendance->time_in_status,
+                        'time_out' => $attendance->time_out,
+                        'time_out_status' => $attendance->time_out_status,
+                        'time_out_interval' => $timeOutInterval,
+                        'deduction' => $attendance->time_in_deduction + $attendance->time_out_deduction,
+                        'manhours' => $manhours,
+                        'total_salary' => $attendance->salary,
+                        'under_time_hours' => $under_time_hours,
+                        'under_time_minutes' => $under_time_minutes,
+                        'isWeekend' => $isWeekend,
+                        'color' => getColor($attendance->type),
+                    ];
+
+                    if ($attendance->time_in_status == 'Late') {
+                        $late++;
+                    }
+                    if ($attendance->time_in_status == 'Half-Day' || $attendance->time_out_status == 'Half-Day') {
+                        $halfday++;
+                    }
+                    $total_man_hour += $manhours;
+                    $total_salary += $attendance->salary;
+                    $present++;
+                }
+            } else {
+                if (!$isWeekend || $employee->category == 'JO') {
+                    $absent++;
+                }
                 $attendances[$i] = [
                     'day' => ($isMonthly) ? date('d', strtotime($date)) :  date('d', strtotime($date)) . '-' . Str::substr(date('l', strtotime($date)), 0, 3),
-                    'time_in' => '-----',
-                    'time_in_interval' => '-----',
-                    'time_out' => '-----',
-                    'time_out_interval' => '-----',
-                    'manhours' => 0,
+                    'time_in' => '',
+                    'time_in_interval' => '',
+                    'time_out' => '',
+                    'time_out_interval' => '',
+                    'manhours' => '',
                     'under_time_hours' => 0,
                     'under_time_minutes' => 0,
-                    'isWeekend' => $isWeekend,
                     'color' => '',
                 ];
-            } else {
-                $under_time_hours = 0;
-                $under_time_minutes = 0;
-                if ($attendance->time_out_status == 'Under-time') {
-                    $underTime++;
-                    $defaultTimeOut = Carbon::parse('17:00:00');
-                    $formattedTimeOut = Carbon::parse($attendance->time_out)->format('H:i:s');
-                    $underTimeMinutes = $defaultTimeOut->diffInMinutes($formattedTimeOut);
-
-                    $under_time_hours = ($underTimeMinutes > 60) ? $defaultTimeOut->diffInHours($formattedTimeOut) : 0;
-                    $under_time_minutes = ($underTimeMinutes > 60) ? 0 : $underTimeMinutes;
-                    $totalUnderTimeHours += $under_time_hours;
-                    $totalUnderTimeMinutes += $under_time_minutes;
-                }
-
-                $attendances[$i] = [
-                    'day' => ($isMonthly) ? date('d', strtotime($date)) :  date('d', strtotime($date)) . '-' . Str::substr(date('l', strtotime($date)), 0, 3),
-                    'time_in' => $attendance->time_in,
-                    'time_in_interval' => $timeInInterval,
-                    'time_in_status' => $attendance->time_in_status,
-                    'time_out' => $attendance->time_out,
-                    'time_out_status' => $attendance->time_out_status,
-                    'time_out_interval' => $timeOutInterval,
-                    'deduction' => $attendance->time_in_deduction + $attendance->time_out_deduction,
-                    'manhours' => $manhours,
-                    'total_salary' => $attendance->salary,
-                    'under_time_hours' => $under_time_hours,
-                    'under_time_minutes' => $under_time_minutes,
-                    'isWeekend' => $isWeekend,
-                    'color' => getColor($attendance->type),
-                ];
-
-                if ($attendance->time_in_status == 'Late') {
-                    $late++;
-                }
-                if ($attendance->time_in_status == 'Half-Day' || $attendance->time_out_status == 'Half-Day') {
-                    $halfday++;
-                }
-                $total_man_hour += $manhours;
-                $total_salary += $attendance->salary;
-                $present++;
             }
-        } else {
-            if (!$isWeekend || $employee->category == 'JO') {
-                $absent++;
-            }
-            $attendances[$i] = [
-                'day' => ($isMonthly) ? date('d', strtotime($date)) :  date('d', strtotime($date)) . '-' . Str::substr(date('l', strtotime($date)), 0, 3),
-                'time_in' => '',
-                'time_in_interval' => '',
-                'time_out' => '',
-                'time_out_interval' => '',
-                'manhours' => '',
-                'under_time_hours' => 0,
-                'under_time_minutes' => 0,
-                'color' => '',
-            ];
         }
+
+        return [
+            'present' => $present,
+            'absent' => $absent,
+            'late' => $late,
+            'under_time' => $underTime,
+            'halfday' => $halfday,
+            'total_man_hour' => $total_man_hour,
+            'total_salary' => $total_salary,
+            'totalUnderTimeHours' => $totalUnderTimeHours,
+            'totalUnderTimeMinutes' => $totalUnderTimeMinutes,
+            'attendances' => $attendances,
+        ];
     }
-
-    return [
-        'present' => $present,
-        'absent' => $absent,
-        'late' => $late,
-        'under_time' => $underTime,
-        'halfday' => $halfday,
-        'total_man_hour' => $total_man_hour,
-        'total_salary' => $total_salary,
-        'totalUnderTimeHours' => $totalUnderTimeHours,
-        'totalUnderTimeMinutes' =>$totalUnderTimeMinutes,
-        'attendances' => $attendances,
-    ];
-}
-
 }
 if (!function_exists('calculateSalary')) {
 
