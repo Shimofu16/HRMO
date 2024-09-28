@@ -256,7 +256,7 @@ class Create extends Component
 
             // Attach selected allowances using their IDs
             foreach ($this->allowances as $allowance) {
-                if ($allowance->allowance_code == "ACA&PER") {
+                if ($allowance->allowance_code == "ACA&PERA") {
                     $temp = $allowance->whereHas('categories', function ($query) use ($category) {
                         $query->where('category_id', $category->id);
                     })->get();
