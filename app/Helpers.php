@@ -214,7 +214,7 @@ if (!function_exists('attendanceCount')) {
                 $timeInInterval = getInterval($attendance->time_in, true, true);
                 $timeOutInterval = getInterval($attendance->time_out, false, true);
 
-                if ($isWeekend && $employee->data->category->category_code !== 'JO') {
+                if ($isWeekend && $employee->data->category->category_code !== 'JO' && $attendance->type !== 'seminar') {
                     $attendances[$i] = [
                         'day' => ($isMonthly) ? date('d', strtotime($date)) :  date('d', strtotime($date)) . '-' . Str::substr(date('l', strtotime($date)), 0, 3),
                         'time_in' => '',
@@ -355,9 +355,9 @@ if (!function_exists('calculateSalary')) {
             }
         }
 
-        if ($hourWorked > $requiredHoursWork && ($isJO || $isCOS)) {
-            $hourWorked =  8;
-        }
+        // if ($hourWorked > $requiredHoursWork && ($isJO || $isCOS)) {
+        //     $hourWorked =  8;
+        // }
         if ($hourWorked < 0) {
             $hourWorked =  0;
         }
