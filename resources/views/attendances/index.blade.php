@@ -90,9 +90,9 @@
                     <th class="px-4 py-2 text-left border-b">Employee</th>
                     <th class="px-4 py-2 text-left border-b">Time In</th>
                     <th class="px-4 py-2 text-left border-b">Late</th>
-                    <th class="px-4 py-2 text-left border-b">Status</th>
+                    <!-- <th class="px-4 py-2 text-left border-b">Status</th> -->
                     <th class="px-4 py-2 border-b ext-left">Time Out</th>
-                    <th class="px-4 py-2 text-left border-b">Status</th>
+                    <!-- <th class="px-4 py-2 text-left border-b">Status</th> -->
                     {{-- <th class="px-4 py-2 text-left border-b">Action</th> --}}
                 </tr>
             </thead>
@@ -110,14 +110,14 @@
                                 {{ getLate($attendance->time_in, true) }}
                             @endif
                         </td>
-                        <td class="px-4 py-2 border-b">{{ $attendance->time_in_status }}</td>
+                        <!-- <td class="px-4 py-2 border-b">{{ $attendance->time_in_status }}</td> -->
 
                         <td class="px-4 py-2 border-b">
                             @if ($attendance->time_out)
                                 {{ date('h:i A', strtotime($attendance->time_out)) }}
                             @endif
                         </td>
-                        <td class="px-4 py-2 border-b">{{ $attendance->time_out_status }}</td>
+                        <!-- <td class="px-4 py-2 border-b">{{ $attendance->time_out_status }}</td> -->
                 @endforeach
             </tbody>
         </table>

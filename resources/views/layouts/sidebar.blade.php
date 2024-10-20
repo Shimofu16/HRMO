@@ -5,16 +5,20 @@
         <ul class="space-y-2 font-medium pb-4">
             <li>
                 <a href="{{ route('signatures.index') }}"
-                    class="flex items-center p-2 text-gray-900 rounded-lg   group {{ request()->routeIs('signatures.index') ? 'text-white bg-purple-700 ' : ' hover:bg-gray-100' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg"  fill="currentColor"
-                        class="w-5 h-5 text-gray-500 transition duration-75   {{ request()->routeIs('signatures.index') ? 'text-white' : 'group-hover:text-gray-900' }}">
-                        <path
-                            d="M192 128c0-17.7 14.3-32 32-32s32 14.3 32 32v7.8c0 27.7-2.4 55.3-7.1 82.5l-84.4 25.3c-40.6 12.2-68.4 49.6-68.4 92v71.9c0 40 32.5 72.5 72.5 72.5c26 0 50-13.9 62.9-36.5l13.9-24.3c26.8-47 46.5-97.7 58.4-150.5l94.4-28.3-12.5 37.5c-3.3 9.8-1.6 20.5 4.4 28.8s15.7 13.3 26 13.3H544c17.7 0 32-14.3 32-32s-14.3-32-32-32H460.4l18-53.9c3.8-11.3 .9-23.8-7.4-32.4s-20.7-11.8-32.2-8.4L316.4 198.1c2.4-20.7 3.6-41.4 3.6-62.3V128c0-53-43-96-96-96s-96 43-96 96v32c0 17.7 14.3 32 32 32s32-14.3 32-32V128zm-9.2 177l49-14.7c-10.4 33.8-24.5 66.4-42.1 97.2l-13.9 24.3c-1.5 2.6-4.3 4.3-7.4 4.3c-4.7 0-8.5-3.8-8.5-8.5V335.6c0-14.1 9.3-26.6 22.8-30.7zM24 368c-13.3 0-24 10.7-24 24s10.7 24 24 24H64.3c-.2-2.8-.3-5.6-.3-8.5V368H24zm592 48c13.3 0 24-10.7 24-24s-10.7-24-24-24H305.9c-6.7 16.3-14.2 32.3-22.3 48H616z" />
+                    class="flex items-center p-2 text-gray-900 rounded-lg group {{ request()->routeIs('signatures.index') ? 'text-white bg-purple-700' : 'hover:bg-gray-100' }}">
+
+                    <!-- Heroicon for Signature (Pencil Icon) -->
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                        class="w-5 h-5 transition duration-75 {{ request()->routeIs('signatures.index') ? 'text-white' : 'text-gray-500 group-hover:text-gray-900' }}"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M16.862 3.487c.895-.895 2.395-.26 2.395 1.005V5.52a1.5 1.5 0 01-.44 1.06l-1.41 1.41m-2.121 2.121L6.45 19.291a1.5 1.5 0 01-.796.448l-2.25.451a.75.75 0 01-.883-.883l.451-2.25a1.5 1.5 0 01.448-.796l8.586-8.586a1.5 1.5 0 011.06-.44h1.027c1.265 0 1.9 1.5 1.005 2.395z" />
                     </svg>
-                    
+
                     <span class="ms-3">Signatures</span>
                 </a>
             </li>
+
             <li>
                 <a href="{{ route('departments.index') }}"
                     class="flex items-center p-2 text-gray-900 rounded-lg   group {{ request()->routeIs('departments.index') ? 'text-white bg-purple-700 ' : ' hover:bg-gray-100' }}">
@@ -111,60 +115,63 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('with-holding-taxes.index') }}"
-                    class="flex items-center p-2 text-gray-900 rounded-lg   group {{ request()->routeIs('with-holding-taxes.index') ? 'text-white bg-purple-700 ' : ' hover:bg-gray-100' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                        class="w-5 h-5 text-gray-500 transition duration-75   {{ request()->routeIs('with-holding-taxes.index') ? 'text-white' : 'group-hover:text-gray-900' }}">
-                        <path d="M4.5 3.75a3 3 0 0 0-3 3v.75h21v-.75a3 3 0 0 0-3-3h-15Z" />
-                        <path fill-rule="evenodd"
-                            d="M22.5 9.75h-21v7.5a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-7.5Zm-18 3.75a.75.75 0 0 1 .75-.75h6a.75.75 0 0 1 0 1.5h-6a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Z"
-                            clip-rule="evenodd" />
-                    </svg>
+    <a href="{{ route('with-holding-taxes.index') }}"
+        class="flex items-center p-2 text-gray-900 rounded-lg group {{ request()->routeIs('with-holding-taxes.index') ? 'text-white bg-purple-700' : 'hover:bg-gray-100' }}">
 
-                    <span class="ms-3">With Holding Taxes</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('levels.index') }}"
-                    class="flex items-center p-2 text-gray-900 rounded-lg   group {{ request()->routeIs('levels.index') ? 'text-white bg-purple-700 ' : ' hover:bg-gray-100' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                        class="w-5 h-5 text-gray-500 transition duration-75   {{ request()->routeIs('levels.index') ? 'text-white' : 'group-hover:text-gray-900' }}">
-                        <path d="M4.5 3.75a3 3 0 0 0-3 3v.75h21v-.75a3 3 0 0 0-3-3h-15Z" />
-                        <path fill-rule="evenodd"
-                            d="M22.5 9.75h-21v7.5a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-7.5Zm-18 3.75a.75.75 0 0 1 .75-.75h6a.75.75 0 0 1 0 1.5h-6a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Z"
-                            clip-rule="evenodd" />
-                    </svg>
+        <!-- Heroicon for Document Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+            class="w-5 h-5 transition duration-75 {{ request()->routeIs('with-holding-taxes.index') ? 'text-white' : 'text-gray-500 group-hover:text-gray-900' }}">
+            <path fill-rule="evenodd" d="M12 2c-.83 0-1.5.67-1.5 1.5v1H7.5C6.67 4.5 6 5.17 6 6v12c0 .83.67 1.5 1.5 1.5h9c.83 0 1.5-.67 1.5-1.5V8.5l-6-6H12zm1.5 1.5l6 6h-5.5a1 1 0 0 1-1-1V3.5zM7 7h10v10H7V7z" clip-rule="evenodd" />
+        </svg>
 
-                    <span class="ms-3">Classification</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('holidays.index') }}"
-                    class="flex items-center p-2 text-gray-900 rounded-lg   group {{ request()->routeIs('holidays.index') ? 'text-white bg-purple-700 ' : ' hover:bg-gray-100' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                        class="w-5 h-5 text-gray-500 transition duration-75   {{ request()->routeIs('holidays.index') ? 'text-white' : 'group-hover:text-gray-900' }}">
-                        <path d="M4.5 3.75a3 3 0 0 0-3 3v.75h21v-.75a3 3 0 0 0-3-3h-15Z" />
-                        <path fill-rule="evenodd"
-                            d="M22.5 9.75h-21v7.5a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-7.5Zm-18 3.75a.75.75 0 0 1 .75-.75h6a.75.75 0 0 1 0 1.5h-6a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Z"
-                            clip-rule="evenodd" />
-                    </svg>
+        <span class="ml-3">With Holding Taxes</span>
+    </a>
+</li>
 
-                    <span class="ms-3">Holiday</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('salary-grades.index') }}"
-                    class="flex items-center p-2 text-gray-900 rounded-lg   group {{ request()->routeIs('salary-grades.index') ? 'text-white bg-purple-700 ' : ' hover:bg-gray-100' }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                        class="w-5 h-5 text-gray-500 transition duration-75   {{ request()->routeIs('salary-grades.index') ? 'text-white' : 'group-hover:text-gray-900' }}">
-                        <path fill-rule="evenodd"
-                            d="M3 2.25a.75.75 0 0 0 0 1.5v16.5h-.75a.75.75 0 0 0 0 1.5H15v-18a.75.75 0 0 0 0-1.5H3ZM6.75 19.5v-2.25a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75v2.25a.75.75 0 0 1-.75.75h-3a.75.75 0 0 1-.75-.75ZM6 6.75A.75.75 0 0 1 6.75 6h.75a.75.75 0 0 1 0 1.5h-.75A.75.75 0 0 1 6 6.75ZM6.75 9a.75.75 0 0 0 0 1.5h.75a.75.75 0 0 0 0-1.5h-.75ZM6 12.75a.75.75 0 0 1 .75-.75h.75a.75.75 0 0 1 0 1.5h-.75a.75.75 0 0 1-.75-.75ZM10.5 6a.75.75 0 0 0 0 1.5h.75a.75.75 0 0 0 0-1.5h-.75Zm-.75 3.75A.75.75 0 0 1 10.5 9h.75a.75.75 0 0 1 0 1.5h-.75a.75.75 0 0 1-.75-.75ZM10.5 12a.75.75 0 0 0 0 1.5h.75a.75.75 0 0 0 0-1.5h-.75ZM16.5 6.75v15h5.25a.75.75 0 0 0 0-1.5H21v-12a.75.75 0 0 0 0-1.5h-4.5Zm1.5 4.5a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75h-.008a.75.75 0 0 1-.75-.75v-.008Zm.75 2.25a.75.75 0 0 0-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 0 0 .75-.75v-.008a.75.75 0 0 0-.75-.75h-.008ZM18 17.25a.75.75 0 0 1 .75-.75h.008a.75.75 0 0 1 .75.75v.008a.75.75 0 0 1-.75.75h-.008a.75.75 0 0 1-.75-.75v-.008Z"
-                            clip-rule="evenodd" />
-                    </svg>
+<li>
+    <a href="{{ route('levels.index') }}"
+        class="flex items-center p-2 text-gray-900 rounded-lg group {{ request()->routeIs('levels.index') ? 'text-white bg-purple-700' : 'hover:bg-gray-100' }}">
 
-                    <span class="ms-3">Salary Grade</span>
-                </a>
-            </li>
+        <!-- Heroicon for Bars Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+            class="w-5 h-5 transition duration-75 {{ request()->routeIs('levels.index') ? 'text-white' : 'text-gray-500 group-hover:text-gray-900' }}">
+            <path fill-rule="evenodd" d="M4 6h16a1 1 0 1 1 0 2H4a1 1 0 1 1 0-2zm0 5h16a1 1 0 1 1 0 2H4a1 1 0 1 1 0-2zm0 5h16a1 1 0 1 1 0 2H4a1 1 0 1 1 0-2z" clip-rule="evenodd"/>
+        </svg>
+
+        <span class="ml-3">Classification</span>
+    </a>
+</li>
+
+<li>
+    <a href="{{ route('holidays.index') }}"
+        class="flex items-center p-2 text-gray-900 rounded-lg group {{ request()->routeIs('holidays.index') ? 'text-white bg-purple-700' : 'hover:bg-gray-100' }}">
+
+        <!-- Calendar Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+            class="w-5 h-5 transition duration-75 {{ request()->routeIs('holidays.index') ? 'text-white' : 'text-gray-500 group-hover:text-gray-900' }}">
+            <path d="M3 3h18a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm0 2v14h18V5H3z" />
+            <path d="M7 7h2v2H7V7zm4 0h2v2h-2V7zm4 0h2v2h-2V7z" />
+        </svg>
+
+        <span class="ml-3">Holiday</span>
+    </a>
+</li>
+
+<li>
+    <a href="{{ route('salary-grades.index') }}"
+        class="flex items-center p-2 text-gray-900 rounded-lg group {{ request()->routeIs('salary-grades.index') ? 'text-white bg-purple-700' : 'hover:bg-gray-100' }}">
+
+        <!-- Dollar Icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+            class="w-5 h-5 transition duration-75 {{ request()->routeIs('salary-grades.index') ? 'text-white' : 'text-gray-500 group-hover:text-gray-900' }}">
+            <path fill-rule="evenodd"
+                d="M12 1.5a.75.75 0 0 1 .75.75V3h1.5a.75.75 0 0 1 0 1.5h-1.56a4.8 4.8 0 0 1 .878 2.04c1.002.159 2.005.578 2.76 1.304C17.797 9.643 18 10.778 18 12c0 1.222-.203 2.357-.672 3.156-.755.726-1.758 1.145-2.76 1.304a4.8 4.8 0 0 1-.878 2.04H14.25a.75.75 0 0 1 0 1.5h-1.5v.75a.75.75 0 0 1-1.5 0v-.75h-1.5a.75.75 0 0 1 0-1.5h1.56a4.8 4.8 0 0 1-.878-2.04c-1.002-.159-2.005-.578-2.76-1.304C6.203 14.357 6 13.222 6 12c0-1.222.203-2.357.672-3.156.755-.726 1.758-1.145 2.76-1.304a4.8 4.8 0 0 1 .878-2.04H9.75A.75.75 0 0 1 9.75 3h1.5V2.25A.75.75 0 0 1 12 1.5Zm-2.79 12.117a3.29 3.29 0 0 0 1.788.743v-4.62c-.654.144-1.276.405-1.788.857-.38.352-.663.879-.663 1.62 0 .742.283 1.27.663 1.62Zm3.58-5.535v4.62c.654-.144 1.276-.405 1.788-.857.38-.352.663-.879.663-1.62 0-.742-.283-1.27-.663-1.62a3.29 3.29 0 0 0-1.788-.743Z"
+                clip-rule="evenodd" />
+        </svg>
+
+        <span class="ml-3">Salary Grade</span>
+    </a>
+</li>
 
 
 

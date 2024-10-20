@@ -70,7 +70,7 @@
                     </x-nav-link>
                 </li>
                 <li>
-                    <x-nav-link :href="route('departments.index')" :active="request()->routeIs('departments.index')">
+                    <x-nav-link :href="route('signatures.index')" :active="request()->routeIs('signatures.index')">
                         {{ __('Settings') }}
                     </x-nav-link>
                 </li>

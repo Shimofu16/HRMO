@@ -334,9 +334,7 @@ if (!function_exists('calculateSalary')) {
                 } else {
                     $status = 'Under-time';
                 }
-                $hourWorked = $defaultTimeIn->diffInHours($attendanceTimeOut, true) - 1;
             } else {
-                $hourWorked = $defaultTimeIn->diffInHours($defaultTimeOut, true) - 1;
                 $status = 'Time-out';
             }
         } else {
@@ -348,12 +346,11 @@ if (!function_exists('calculateSalary')) {
                 } else {
                     $status = 'Under-time';
                 }
-                $hourWorked = $attendanceTimeIn->diffInHours($attendanceTimeOut, true) - 1;
             } else {
-                $hourWorked = $attendanceTimeIn->diffInHours($defaultTimeOut, true) - 1;
                 $status = 'Time-out';
             }
         }
+        $hourWorked = $attendanceTimeIn->diffInHours($attendanceTimeOut, true) - 1;
 
         // if ($hourWorked > $requiredHoursWork && ($isJO || $isCOS)) {
         //     $hourWorked =  8;
@@ -411,7 +408,6 @@ if (!function_exists('calculateSalary')) {
                 if ($attendance->time_in_status === 'Half-Day' || ($status === 'Half-Day' || $status === 'Under-time')) {
                     $totalSalaryForToday = $salaryGrade / 2;
                 }
-                # code...
             }
         }
 

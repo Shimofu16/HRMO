@@ -32,24 +32,36 @@ class SignatureController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        try {
-            $request->validate([
-                'name' => 'required',
-                'position' => 'required',
-            ]);
-            if (Signature::count() >= 4) {
-                return back()->with('error', 'You can only add up to 4 signatures.');
-            }
-            Signature::create([
-                'name' => $request->name,
-                'position' => $request->position,
-            ]);
-            return back()->with('success', 'Successfully Created');
-        } catch (\Throwable $th) {
-            return back()->with('error', $th->getMessage());
+{
+    try {
+        // Validate the input
+        $request->validate([
+            'name' => 'required',
+            'position' => 'required',
+        ]);
+
+        // Check if the position is 'Municipal Mayor' and if one already exists
+        if ($request->position === 'Municipal Mayor' && Signature::where('position', 'Municipal Mayor')->exists()) {
+            return back()->with('error', 'A Municipal Mayor already exists.');
         }
+
+        // Check if the signatures count is at or exceeds the limit
+        // if (Signature::count() >= 4) {
+        //     return back()->with('error', 'You can only add up to 4 signatures.');
+        // }
+
+        // Create the new signature
+        Signature::create([
+            'name' => $request->name,
+            'position' => $request->position,
+        ]);
+
+        return back()->with('success', 'Successfully Created');
+    } catch (\Throwable $th) {
+        return back()->with('error', $th->getMessage());
     }
+}
+
 
     /**
      * Display the specified resource.

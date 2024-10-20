@@ -98,7 +98,23 @@ class PayrollController extends Controller
             ->groupByRaw('MONTH(time_in)')
             ->orderByRaw('MONTH(time_in)')
             ->get();
+        // Fetch employees belonging to the department
+        $employees = Employee::whereHas('data', function ($query) use ($department) {
+            $query->where('department_id', $department->id);
+        })->get();
 
+        // Check if no employees found for the given department
+        if ($employees->isEmpty()) {
+            return back()->withErrors(['error' => 'No employees found for the selected department.']);
+        }
+        
+        // Fetch signatures
+        $signatures = Signature::all();
+
+        // Check if no signatures are found
+        if ($signatures->isEmpty()) {
+            return back()->withErrors(['error' => 'No signatures available. Please set up the required signatures.']);
+        }
         $payrolls = $this->getPayroll($department, $months);
         // Pass the payroll record to the view
         return view('payrolls.show', compact('payrolls', 'department'));
@@ -131,38 +147,58 @@ class PayrollController extends Controller
     // }
     public function generalPayslip($payroll)
     {
-        $payroll = json_decode(urldecode($payroll), true);
-        $dates = explode('-', $payroll['date_from_to']);
-        $from = $dates[0];
-        $to = $dates[1];
-        $department = Department::find($payroll['department_id']);
+        try {
+            // Decode and extract payroll data
+            $payroll = json_decode(urldecode($payroll), true);
+            $dates = explode('-', $payroll['date_from_to']);
+            $from = $dates[0];
+            $to = $dates[1];
+            $department = Department::find($payroll['department_id']);
 
-        $filename = "General Payroll - {$payroll['department']}";
+            // Filename and date title for display purposes
+            $filename = "General Payroll - {$payroll['department']}";
+            $dateTitle = "{$payroll['month']} {$payroll['date_from_to']}, {$payroll['year']}";
 
-        $dateTitle = "{$payroll['month']} {$payroll['date_from_to']}, {$payroll['year']}";
-        // $allowances = Allowance::whereJsonContains('allowance_ranges', $payroll['date_from_to'])->get();
-        // $deductions = Deduction::where('deduction_range', $payroll['date_from_to'])->get();
-        // dd($payroll);
+            // Fetch employees belonging to the department
+            $employees = Employee::whereHas('data', function ($query) use ($payroll) {
+                $query->where('department_id', $payroll['department_id']);
+            })->get();
 
-        // Pass the payroll record to the view
-        return view(
-            'payrolls.general-payslip.index',
-            [
-                'filename' => $filename,
-                'dateTitle' => $dateTitle,
-                'payroll' => $payroll,
-                'from' => $from,
-                'to' => $to,
-                'department' => $department,
-                'loans' => Loan::all(),
-                'deductions' => Deduction::all(),
-                'signatures' => Signature::all(),
-                'employees' => Employee::whereHas('data', function ($query) use ($payroll) {
-                    $query->where('department_id', $payroll['department_id']);
-                })->get(),
-            ]
-        );
+            // Check if no employees found for the given department
+            if ($employees->isEmpty()) {
+                return back()->withErrors(['error' => 'No employees found for the selected department.']);
+            }
+
+            // Fetch signatures
+            $signatures = Signature::all();
+
+            // Check if no signatures are found
+            if ($signatures->isEmpty()) {
+                return back()->withErrors(['error' => 'No signatures available. Please set up the required signatures.']);
+            }
+
+            // Pass the payroll record and other necessary data to the view
+            return view(
+                'payrolls.general-payslip.index',
+                [
+                    'filename' => $filename,
+                    'dateTitle' => $dateTitle,
+                    'payroll' => $payroll,
+                    'from' => $from,
+                    'to' => $to,
+                    'department' => $department,
+                    'loans' => Loan::all(),
+                    'deductions' => Deduction::all(),
+                    'signatures' => $signatures,
+                    'employees' => $employees,
+                ]
+            );
+        } catch (\Exception $e) {
+            // Handle any exceptions
+            return back()->withErrors(['error' => 'An error occurred while generating the payroll: ' . $e->getMessage()]);
+        }
     }
+
 
     /**
      * Show the form for editing the specified payroll record.

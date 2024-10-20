@@ -922,7 +922,7 @@
         }
 
         .wallpaper-welcome {
-            background-image: url("images/welcome.png");
+            background-image: url("images/Home.png");
             background-size: cover;
             background-repeat: no-repeat;
             height: 20vh
@@ -954,11 +954,24 @@
                         class="px-4 py-2 bg-white rounded hover:bg-blue-600 txt-white">Dashboard</a>
                 @else
                     <a href="{{ route('login') }}"
-                        class="p-6 text-white bg-purple-600 rounded-lg shadow-md hover:bg-purple-800 mt-7 btn-txt">LOGIN</a>
+                        class="p-3 text-white bg-purple-600 rounded-lg shadow-md hover:bg-purple-800 mt-15 btn-txt custom-width text-center flex items-center justify-center">LOGIN</a>
 
-                    <a href="{{ route('employee.attendance.index') }}"
-                        class="p-6 ml-4 text-white bg-purple-600 rounded-lg shadow-md hover:bg-purple-800 mt-7 btn-txt">Attendance</a>
-                   
+                    <style>
+                        .custom-width {
+                            width: 200px;
+                            /* Set your desired width */
+                            display: flex;
+                            align-items: center;
+                            /* Vertically centers the content */
+                            justify-content: center;
+                            /* Horizontally centers the content */
+                        }
+                    </style>
+
+
+                    <!-- <a href="{{ route('employee.attendance.index') }}"
+                            class="p-6 ml-4 text-white bg-purple-600 rounded-lg shadow-md hover:bg-purple-800 mt-7 btn-txt">Attendance</a> -->
+
                 @endauth
             @endif
         </div>

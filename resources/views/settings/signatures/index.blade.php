@@ -3,7 +3,6 @@
     Signature
 @endsection
 @section('contents')
-
     <div class="bg-white mt-8 p-5 mx-8 shadow rounded-md">
         <form action="{{ route('signatures.store') }}" method="POST">
             @csrf
@@ -18,7 +17,14 @@
                     <label for="position" class="block font-medium text-gray-700">
                         Position
                     </label>
-                    <input type="text" name="position" id="position" class="block w-full mt-1 rounded" required>
+                    <select name="position" id="position" class="block w-full mt-1 rounded" required>
+                        <option value="" disabled selected>Select a position</option>
+                        <option value="Municipal Mayor">Municipal Mayor</option>
+                        <option value="HRMO II">HRMO II</option>
+                        <option value="OIC-Municipal Accountant">OIC Municipal Accountant</option>
+                        <option value="Disbursing Officer">Disbursing Officer</option>
+                        <option value="Municipal Engineer">Municipal Engineer</option>
+                    </select>
                 </div>
             </div>
             <div class=" py-3 text-right sm:px-6">
