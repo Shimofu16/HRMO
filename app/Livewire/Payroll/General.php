@@ -2,10 +2,18 @@
 
 namespace App\Livewire\Payroll;
 
+use App\Models\Employee;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 class General extends Component
 {
+    // Public properties for the component
+    public ?string $payment_method = null;  // Nullable string, to handle uninitialized values
+    public ?string $employment_type = null; // Nullable string
+    public array $selected_signatures = [];     // Nullable string for signature
+
+    // Other properties needed for the component
     public $filename;
     public $dateTitle;
     public $payroll;
@@ -15,26 +23,25 @@ class General extends Component
     public $loans;
     public $deductions;
     public $signatures;
-    public $employees;
+    public $dbemployees;
+    public  bool $isEmpty = false;
 
-    public function mount($filename, $dateTitle, $payroll, $from, $to, $department, $loans, $deductions, $signatures, $employees)
-    {
-        // Assign values to the component properties from the passed parameters
-        $this->filename = $filename;
-        $this->dateTitle = $dateTitle;
-        $this->payroll = $payroll;
-        $this->from = $from;
-        $this->to = $to;
-        $this->department = $department;
-        $this->loans = $loans;
-        $this->deductions = $deductions;
-        $this->signatures = $signatures;
-        $this->employees = $employees;
-    }
-
+    // Render the component view with the necessary data
     public function render()
     {
-        // Return the view with the necessary data for rendering
+        $employees  =$this->dbemployees;
+        $this->isEmpty = false;
+        if ($this->employment_type) {
+            // Filter the employees collection in memory using the filter method
+            $employees = $employees->filter(function ($employee) {
+                return Str::upper($employee->data->category->category_code) === Str::upper($this->employment_type);
+            });
+            if (count($employees) == 0) {
+                $this->isEmpty = true;
+            }
+            // dd($employees,count($employees), $this->isEmpty);
+        }
+        // Ensure the view has all the variables it needs
         return view('livewire.payroll.general', [
             'filename' => $this->filename,
             'dateTitle' => $this->dateTitle,
@@ -45,7 +52,10 @@ class General extends Component
             'loans' => $this->loans,
             'deductions' => $this->deductions,
             'signatures' => $this->signatures,
-            'employees' => $this->employees
+            'payment_method' => $this->payment_method,
+            'employment_type' => $this->employment_type,
+            'selected_signatures' => $this->selected_signatures,
+            'employees' => $employees,
         ]);
     }
 }

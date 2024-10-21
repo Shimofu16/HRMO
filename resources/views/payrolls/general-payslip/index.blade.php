@@ -82,9 +82,10 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-sans antialiased overflow-auto">
+<body class="overflow-auto font-sans antialiased">
+    <livewire:payroll.general :filename="$filename" :dateTitle="$dateTitle" :payroll="$payroll" :from="$from" :to="$to"
+        :department="$department" :loans="$loans" :deductions="$deductions" :signatures="$signatures" :dbemployees="$employees" />
 
-    @livewire('payroll.general', ['filename' => $filename, 'dateTitle' => $dateTitle, 'payroll' => $payroll, 'from' => $from, 'to' => $to, 'department' => $department, 'loans' => $loans, 'deductions' => $deductions, 'signatures' => $signatures, 'employees' => $employees]))
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"
         integrity="sha512-YcsIPGdhPK4P/uRW6/sruonlYj+Q7UHWeKfTAkBW+g83NKM+jMJFJ4iAPfSnVp7BKD4dKMHmVSvICUbE/V1sSw=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
