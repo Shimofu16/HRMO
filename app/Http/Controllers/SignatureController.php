@@ -41,8 +41,8 @@ class SignatureController extends Controller
         ]);
 
         // Check if the position is 'Municipal Mayor' and if one already exists
-        if ($request->position === 'Municipal Mayor' && Signature::where('position', 'Municipal Mayor')->exists()) {
-            return back()->with('error', 'A Municipal Mayor already exists.');
+        if (Signature::where('position', $request->input('position'))->exists()) {
+            return back()->with('error', "Position: {$request->input('position')} already exists.");
         }
 
         // Check if the signatures count is at or exceeds the limit

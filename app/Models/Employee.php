@@ -19,7 +19,7 @@ class Employee extends Model
      */
     protected $guarded = [];
 
-    protected $appends = ['full_name'];
+    protected $appends = ['full_name', 'financial_allowance'];
 
     /**
      * The attributes the full name of employee.
@@ -27,6 +27,15 @@ class Employee extends Model
      * @var array
      */
     public function getFullNameAttribute()
+    {
+        return "{$this->first_name} {$this->middle_name} {$this->last_name}";
+    }
+    /**
+     * The attributes the full name of employee.
+     *
+     * @var array
+     */
+    public function getFinancialAllowanceAttribute()
     {
         return "{$this->first_name} {$this->middle_name} {$this->last_name}";
     }
