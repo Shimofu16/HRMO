@@ -124,6 +124,17 @@
                     </select>
                 </div>
                 <div class="col-span-6 sm:col-span-2">
+                    <label for="payroll_type" class="block font-medium text-gray-700">Payroll Type</label>
+                    <select name="payroll_type" id="payroll_type" wire:model='payroll_type'
+                        class="block w-full mt-1 rounded form-select" required>
+                        <option value="" selected>--Please select here--</option>
+
+                        <option value="ATM" {{ $employee->data->payroll_type == 'ATM' ? 'selected' : ''}}>ATM</option>
+                        <option value="Cash" {{ $employee->data->payroll_type == 'Cash' ? 'selected' : '' }}>Cash</option>
+
+                    </select>
+                </div>
+                <div class="col-span-6 sm:col-span-2">
                     <label for="employee_photo"
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Picture</label>
                     <input type="file" name="employee_photo" id="employee_photo" wire:model='employee_photo'

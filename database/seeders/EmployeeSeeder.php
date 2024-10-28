@@ -76,6 +76,7 @@ class EmployeeSeeder extends Seeder
                     'level_id' => ($category->category_code == "COS") ?  null : $level->id,
                     'cos_monthly_salary' => $cos_monthly_salary,
                     'has_holding_tax' =>  $has_holding_tax,
+                    'payroll_type' =>  $faker->randomElement(['ATM', 'Cash']),
                 ]);
             }
             if ($category->category_code != "JO" && $category->category_code != "COS") {
@@ -98,6 +99,7 @@ class EmployeeSeeder extends Seeder
                     'sick_leave_points' => $sick_leave_points,
                     'type' => ($hasType == 1) ? $rataTypes[$type]['type'] : null,
                     'has_holding_tax' =>  $has_holding_tax,
+                    'payroll_type' =>  $faker->randomElement(['ATM', 'Cash']),
                 ]);
 
 

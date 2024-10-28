@@ -31,10 +31,10 @@ class General extends Component
     {
         $employees  =$this->dbemployees;
         $this->isEmpty = false;
-        if ($this->employment_type) {
+        if ($this->employment_type && $this->payment_method) {
             // Filter the employees collection in memory using the filter method
             $employees = $employees->filter(function ($employee) {
-                return Str::upper($employee->data->category->category_code) === Str::upper($this->employment_type);
+                return Str::upper($employee->data->category->category_code) === Str::upper($this->employment_type) && Str::upper($employee->data->payroll_type)=== Str::upper($this->payment_method);
             });
             if (count($employees) == 0) {
                 $this->isEmpty = true;

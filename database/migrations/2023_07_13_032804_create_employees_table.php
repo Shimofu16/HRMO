@@ -61,6 +61,7 @@ return new class extends Migration
             $table->double('sick_leave_points')->nullable();
             $table->boolean('has_holding_tax')->default(false);
             $table->double('cos_monthly_salary')->nullable();
+            $table->string('payroll_type');
             $table->timestamps();
         });
 

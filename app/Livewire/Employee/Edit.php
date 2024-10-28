@@ -27,6 +27,7 @@ class Edit extends Component
     public $first_name;
     public $middle_name;
     public $last_name;
+    public $payroll_type;
 
     public $category_id;
     public $department_id;
@@ -203,6 +204,7 @@ class Edit extends Component
                 'level_id' => $this->level_id,
                 'cos_monthly_salary' => ($this->isCOSSelected) ? $this->cos_monthly_salary : null,
                 'has_holding_tax' => $this->isWithHoldingTax,
+                'payroll_type' => $this->payroll_type,
             ]);
         } else {
             $this->employee->data()->update([
@@ -213,6 +215,7 @@ class Edit extends Component
                 'salary_grade_step' => $this->salary_grade_step,
                 // 'sick_leave_points' => $this->sick_leave_points,
                 'has_holding_tax' => $this->isWithHoldingTax,
+                'payroll_type' => $this->payroll_type,
             ]);
         }
 
@@ -334,6 +337,7 @@ class Edit extends Component
         $this->last_name = $this->employee->last_name;
         $this->category_id = $this->employee->data->category_id;
         $this->department_id = $this->employee->data->department_id;
+        $this->payroll_type = $this->employee->data->payroll_type;
         if ($this->isJOSelected) {
             $this->level_id = $this->employee->data->level_id;
         }

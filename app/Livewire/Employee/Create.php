@@ -31,6 +31,7 @@ class Create extends Component
     public $first_name;
     public $middle_name;
     public $last_name;
+    public $payroll_type;
 
     public $category_id;
     public $department_id;
@@ -237,6 +238,7 @@ class Create extends Component
                 'level_id' => $this->level_id,
                 'cos_monthly_salary' => ($this->isCOSSelected) ? $this->cos_monthly_salary : null,
                 'has_holding_tax' => $this->isWithHoldingTax,
+                'payroll_type' => $this->payroll_type,
             ]);
         } else {
             $employee->data()->create([
@@ -248,6 +250,7 @@ class Create extends Component
                 'sick_leave_points' => $this->sick_leave_points,
                 'has_holding_tax' => $this->isWithHoldingTax,
                 'type' => ($this->selected_rata_types) ? $this->rataTypes[$this->selected_rata_types]['type'] : null,
+                'payroll_type' => $this->payroll_type,
             ]);
 
             $category = Category::find($this->category_id);

@@ -225,6 +225,7 @@
                     <h3><strong>Department: </strong>{{ $employee->data->department->dep_name }}</h3>
                     <h3><strong>Designation: </strong>{{ $employee->data->designation->designation_name }}</h3>
                     <h3><strong>Type of Employment: </strong>{{ $employee->data->category->category_name }}</h3>
+                    <h3><strong>Type of Payroll: </strong>{{ $employee->data->payroll_type }}</h3>
                     @if ($employee->data->category->category_code == 'JO')
                         <h3><strong>Level: </strong> {{ $employee->data->level->name }}</h3>
                     @elseif ($employee->data->category->category_code != 'COS' && $employee->data->category->category_code != 'JO')

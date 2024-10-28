@@ -172,7 +172,7 @@ class EmployeeController extends Controller
     {
         $employee = Employee::with('data')->find($id);
         $allowances = Allowance::all();
-        // dd($employee->data->salary_grade_id);
+        // dd($employee->data);
         return view('employees.show', compact('employee', 'allowances'));
     }
 
