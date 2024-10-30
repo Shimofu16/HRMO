@@ -42,7 +42,7 @@
                 $totalDeduction = 0;
                 $netpay = 0;
                 $filter = explode('-', $payroll['date_from_to']);
-                $period = "{$payroll['month']} {$payroll['date_from_to']}, {$year}";
+                $period = "{$payroll['month']} {$payroll['date_from_to']}, {$payroll['year']}";
                 $date = $amountEarned = attendanceCount($employee, $payroll['month'], $year, $filter[0], $filter[1])[
                     'total_salary'
                 ];
@@ -50,7 +50,7 @@
             @endphp
             <div class="flex flex-col p-2 border border-dark">
                 <div class="head">
-                    <h1 class="text-xs font-bold text-center">MUNICIPALITY OF CALAUAN</h1>
+                    <h1 class="text-xs font-bold text-center">MUNICIPALITY OF CALAUAN {{  $year  }}</h1>
                     <h1 class="text-[10px] text-center font-bold">{{ $employee->data->department->dep_name }}</h1>
                     <h1 class="text-[10px] font-bold mt-3">Payslip for the period of: {{ $period }}</h1>
                 </div>

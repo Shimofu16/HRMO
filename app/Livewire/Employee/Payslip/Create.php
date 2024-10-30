@@ -26,14 +26,16 @@ class Create extends Component
         if ($value) {
             // dd($value);
             $this->month = null;
+            $this->year = $value;
             $this->payrolls = $this->getPayroll();
+            // dd($this->payrolls, $this->year, $this->months);
         }
         // $this->year = null;
     }
     public function updatedMonth($value)
     {
         if ($value) {
-            // dd($value);
+            $this->month = $value;
             $this->payrolls = $this->getPayroll();
         }
         // $this->month = null;
@@ -68,50 +70,59 @@ class Create extends Component
     private function getPayroll()
     {
         $payrolls = [];
-        $months = Attendance::query()->selectRaw('MONTH(time_in) as month, MIN(time_in) as earliest_time_in')
-            ->where('employee_id', $this->employee->id)
-            ->where('isPresent', 1)
-            ->groupByRaw('MONTH(time_in)')
-            ->orderByRaw('MONTH(time_in)');
-            if ($this->month) {
-                $months->whereMonth('time_in', date('m', strtotime($this->month)));
-            }
-            if ($this->year) {
-                $months->whereYear('time_in', date('Y', strtotime($this->year)));
-            }
+        $attendances = Attendance::query()
+        ->selectRaw('YEAR(time_in) as year, MONTH(time_in) as month, MIN(time_in) as earliest_time_in')
+        ->where('employee_id', $this->employee->id)
+        ->where('isPresent', 1)
+        ->groupByRaw('YEAR(time_in), MONTH(time_in)')
+        ->orderByRaw('YEAR(time_in), MONTH(time_in)');
+        
+        if (!empty($this->year)) {
+            $attendances->whereYear('time_in', $this->year);
+        }
+        $this->months = $this->getMonths($attendances->get());
+        if (!empty($this->month)) {
+            $attendances->whereMonth('time_in', date('n', strtotime($this->month)));
+        }
+
+        
+        // dd($attendances);
+
         $fromTo = ['1-15', '16-31'];
-        foreach ($months->get() as $month) {
+        foreach ($attendances->get() as $attendance) {
                 foreach ($fromTo as $itemDay) {
                     // Create a unique key for the payroll record
-                    $uniqueKey = "{$month->month}_{$itemDay}";
+                    $uniqueKey = "{$attendance->month}_{$itemDay}";
 
                     // Only create a new payroll record if it doesn't exist
                     if (!isset($payrolls[$uniqueKey])) {
                         $payrolls[$uniqueKey] = [
                             'key' => $uniqueKey,
-                            'month' => date('F', strtotime($month->earliest_time_in)),
-                            'year' => date('Y', strtotime($month->earliest_time_in)),
+                            'month' => date('F', strtotime($attendance->earliest_time_in)),
+                            'year' => date('Y', strtotime($attendance->earliest_time_in)),
                             'date_from_to' => $itemDay,
-                            'date' => $month->earliest_time_in,
+                            'date' => $attendance->earliest_time_in,
                         ];
                     }
                 }
         }
+
         return $payrolls;
     }
     public function mount()
     {
-        $months = Attendance::selectRaw('MONTH(time_in) as month, MIN(time_in) as earliest_time_in')
-            ->where('employee_id', $this->employee->id)
-            ->where('isPresent', 1)
-            ->groupByRaw('MONTH(time_in)')
-            ->orderByRaw('MONTH(time_in)')
+        $attendances = Attendance::query()
+        ->selectRaw('YEAR(time_in) as year, MONTH(time_in) as month, MIN(time_in) as earliest_time_in')
+        ->where('employee_id', $this->employee->id)
+        ->where('isPresent', 1)
+        ->groupByRaw('YEAR(time_in), MONTH(time_in)')
+        ->orderByRaw('YEAR(time_in), MONTH(time_in)')
             ->get();
 
         $this->payrolls = collect();
-        $this->years = $this->getYears($months);
-        $this->months = $this->getMonths($months);
-        // dd($this->years, $this->months);
+        $this->years = $this->getYears($attendances);
+        $this->months = collect();
+        // dd($this->years, $this->months, $attendances);
         $this->allowances = Allowance::all();
         $this->deductions = Deduction::all();
         $this->loans = Loan::all();
