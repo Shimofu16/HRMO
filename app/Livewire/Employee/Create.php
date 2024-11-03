@@ -259,36 +259,7 @@ class Create extends Component
 
             // Attach selected allowances using their IDs
             foreach ($this->allowances as $allowance) {
-                if ($allowance->allowance_code == "ACA&PERA") {
-                    $temp = $allowance->whereHas('categories', function ($query) use ($category) {
-                        $query->where('category_id', $category->id);
-                    })->get();
-                    if ($temp || $department->dep_code == "MHO") {
-                        $employee->allowances()->create(['allowance_id' => $allowance->id]);
-                    }
-                }
-                if ($department->dep_code == "MHO" && $allowance->allowance_code == 'Hazard') {
-                    $employee->allowances()->create([
-                        'allowance_id' => $allowance->id,
-                        'amount' => getHazard($salary_grade->id, $employee->data->salary_grade_step_amount)
-                    ]);
-                }
-                if ($department->dep_code == "MHO" && $allowance->allowance_code == 'Subsistence') {
-                    $employee->allowances()->create([
-                        'allowance_id' => $allowance->id,
-                    ]);
-                }
-                if ($department->dep_code == "MHO" && $allowance->allowance_code == 'Laundry') {
-                    $employee->allowances()->create([
-                        'allowance_id' => $allowance->id,
-                    ]);
-                }
-                if ($allowance->allowance_code == 'Representation' || $allowance->allowance_code == 'Transportation') {
-                    $employee->allowances()->create([
-                        'allowance_id' => $allowance->id,
-                        'amount' => $this->rataTypes[$this->selected_rata_types]['amount']
-                    ]);
-                }
+                $employee->allowances()->create(['allowance_id' => $allowance->id]);
             }
 
             foreach ($this->getDeductions() as $value) {

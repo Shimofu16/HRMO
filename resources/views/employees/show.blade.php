@@ -93,7 +93,6 @@
                             Upload
                         </button>
                         @if ($employee->data->pds)
-
                             <a href="{{ route('employees.pds', $employee) }}"
                                 class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                                 Download PDS
@@ -179,11 +178,19 @@
                                     <td class="px-2 py-2 border-b">
                                         @php
                                             $points = $leave_request->points;
-                                            if ($leave_request->type == "force_leave") {
-                                                $points = 5 - \App\Models\Attendance::where('type',  $leave_request->type)->whereYear('created_at', now()->format('Y'))->count();
+                                            if ($leave_request->type == 'force_leave') {
+                                                $points =
+                                                    5 -
+                                                    \App\Models\Attendance::where('type', $leave_request->type)
+                                                        ->whereYear('created_at', now()->format('Y'))
+                                                        ->count();
                                             }
-                                            if ($leave_request->type == "special_leave") {
-                                                $points = 3 - \App\Models\Attendance::where('type',  $leave_request->type)->whereYear('created_at', now()->format('Y'))->count();
+                                            if ($leave_request->type == 'special_leave') {
+                                                $points =
+                                                    3 -
+                                                    \App\Models\Attendance::where('type', $leave_request->type)
+                                                        ->whereYear('created_at', now()->format('Y'))
+                                                        ->count();
                                             }
                                         @endphp
                                         {{ number_format($points, 2) }}</td>
@@ -318,20 +325,20 @@
                         </thead>
                         <tbody>
                             @foreach ($employee->allowances as $allowance)
-                            @php
-                                $total_allowances = $total_allowances + $employee->getAllowance($allowance->allowance->id);
-                            @endphp
-                            <tr>
-                                <td class="px-4 py-3 border-b">
-                                    {{ $loop->iteration }}
-                                </td>
-                                <td class="px-4 py-3 border-b">{{ $allowance->allowance->allowance_code }}
-                                </td>
-                                <td class="px-4 py-3 border-b">
-                                    {{ number_format($employee->getAllowance($allowance->allowance->id), 2) }}
-                                </td>
-                            </tr>
-
+                                @php
+                                    $total_allowances =
+                                        $total_allowances + $employee->getAllowance($allowance->allowance->id);
+                                @endphp
+                                <tr>
+                                    <td class="px-4 py-3 border-b">
+                                        {{ $loop->iteration }}
+                                    </td>
+                                    <td class="px-4 py-3 border-b">{{ $allowance->allowance->allowance_code }}
+                                    </td>
+                                    <td class="px-4 py-3 border-b">
+                                        {{ number_format($employee->getAllowance($allowance->allowance->id), 2) }}
+                                    </td>
+                                </tr>
                             @endforeach
                         </tbody>
                         <tfoot>
@@ -350,17 +357,16 @@
                 <h3><strong>Loans</strong></h3>
                 @foreach ($employee->loans as $loan)
                     @php
-                        $balnce = 0;
-                        $total_loan = 0;
-                        $total_amount_paid = 0;
-                        $loan_balance = 0;
-                        $ranges = count($loan->ranges);
-                        $duration = $total_loan = $loan->amount * $loan->duration;
+                        $total_loan = $loan->amount * $loan->duration; // Total loan amount for the full duration
+                        $total_amount_paid = 0; // Initialize total amount paid to zero
+                        $balance = 0; // Initialize balance
+                        $ranges = count($loan->ranges); // Number of ranges for this loan
                     @endphp
+
                     <table class="min-w-full border mb-3">
                         <thead>
                             <tr>
-                                <th class="px-4 py-4 text-left border-b">
+                                <th class="px-4 py-4 text-left border-b flex justify-between">
                                     <strong>{{ $loan->loan->name }} - {{ number_format($total_loan, 2) }}</strong>
                                 </th>
                                 <th class="px-4 py-4 text-left border-b"></th>
@@ -373,12 +379,19 @@
                         <tbody>
                             @foreach (getMonthsFromAttendance($employee) as $month)
                                 @if (isBetweenDatesOfLoan($loan, $month->earliest_time_in))
-                                    @if ($total_amount_paid <= $total_loan)
-                                        @php$total_amount_paid = $total_amount_paid + $loan->amount * $ranges;
+                                    @if ($total_amount_paid < $total_loan)
+                                        <!-- Ensure that total paid does not exceed total loan -->
+                                        @php
+                                            // Calculate the payment for the current month based on ranges
+                                            $monthly_payment = min(
+                                                $loan->amount * $ranges,
+                                                $total_loan - $total_amount_paid,
+                                            );
+                                            $total_amount_paid += $monthly_payment; // Update total amount paid
                                         @endphp
                                         <tr>
                                             <td class="px-4 py-3 border-b">
-                                                {{ number_format($loan->amount * $ranges, 2) }}
+                                                {{ number_format($monthly_payment, 2) }}
                                             </td>
                                             <td class="px-4 py-3 border-b">
                                                 {{ date('m', strtotime($month->earliest_time_in)) }}/{{ $ranges > 1 ? 30 : 15 }}/{{ date('Y', strtotime($month->earliest_time_in)) }}
@@ -387,20 +400,20 @@
                                     @endif
                                 @endif
                             @endforeach
-
                         </tbody>
                         <tfoot>
                             @php
-                                $balance = $total_loan - $total_amount_paid;
-                                if ($balance < 0) {
-                                    $balance = 0;
-                            } @endphp <tr>
+                                // Calculate remaining balance after payments
+                                $balance = max(0, $total_loan - $total_amount_paid);
+                            @endphp
+                            <tr>
                                 <td class="px-4 py-3 border-b"></td>
                                 <td class="px-4 py-3 border-b">Balance: {{ number_format($balance, 2) }}</td>
                             </tr>
                         </tfoot>
                     </table>
                 @endforeach
+
             @endif
         </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"

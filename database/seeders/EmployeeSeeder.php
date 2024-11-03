@@ -105,7 +105,11 @@ class EmployeeSeeder extends Seeder
 
 
                 // Query for allowances based on the selected IDs
-                $allowances = Allowance::with('categories')->get();
+                $allowances = Allowance::with('categories')->whereHas('categories', function ($query) use ($category, $department) {
+                    $query->where('category_id', $category->id)
+                        ->orWhere('department_id', $department->id);
+                })
+                    ->get();
 
 
 

@@ -227,42 +227,7 @@ class Edit extends Component
                 $salary_grade = SalaryGrade::find($this->salary_grade_id);
                 // Attach selected allowances using their IDs
                 foreach ($this->allowances as $allowance) {
-                    if ($allowance->allowance_code == "ACA&PER") {
-                        $temp = $allowance->whereHas('categories', function ($query) use ($category) {
-                            $query->where('category_id', $category->id);
-                        })->get();
-                        if ($temp || $department->dep_code == "MHO") {
-                            $this->employee->allowances()->create(['allowance_id' => $allowance->id]);
-                        }
-                    }
-                    if ($department->dep_code == "MHO" && $allowance->allowance_code == 'Hazard') {
-                    //   $allowance =  EmployeeAllowance::create([
-                    //         'employee_id' => $this->employee->id,
-                    //         'allowance_id' => $allowance->id,
-                    //         'amount' => getHazard($salary_grade->id, $this->employee->data->salary_grade_step_amount)
-                    //     ]);
-                    $this->employee->allowances()->create([
-                        'allowance_id' => $allowance->id,
-                        'amount' => getHazard($salary_grade->id, $this->employee->data->salary_grade_step_amount)
-                    ]);
-                    // dd($this->employee->allowances);
-                    }
-                    if ($department->dep_code == "MHO" && $allowance->allowance_code == 'Subsistence') {
-                        $this->employee->allowances()->create([
-                            'allowance_id' => $allowance->id,
-                        ]);
-                    }
-                    if ($department->dep_code == "MHO" && $allowance->allowance_code == 'Laundry') {
-                        $this->employee->allowances()->create([
-                            'allowance_id' => $allowance->id,
-                        ]);
-                    }
-                    if ($allowance->allowance_code == 'Representation' || $allowance->allowance_code == 'Transportation') {
-                        $this->employee->allowances()->create([
-                            'allowance_id' => $allowance->id,
-                            'amount' => $this->rataTypes[$this->selected_rata_types]['amount']
-                        ]);
-                    }
+                    $this->employee->allowances()->create(['allowance_id' => $allowance->id]);
                 }
             }
             $this->employee->deductions()->delete();
@@ -298,7 +263,7 @@ class Edit extends Component
         createActivity('Update Employee', 'Employee ' . $this->employee->full_name . ' was updated.', request()->getClientIp(true));
 
         // Redirect to the index page with a success message
-        return redirect()->route('employees.index')->with('success', 'Employee created successfully.');
+        return redirect()->route('employees.index')->with('success', 'Employee Updated successfully.');
     }
     private function getDeductions()
     {
