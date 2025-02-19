@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Allowance;
 use App\Models\Category;
 use App\Models\Department;
+use App\Models\Rata;
 use Illuminate\Http\Request;
 
 class AllowanceController extends Controller
@@ -14,28 +15,7 @@ class AllowanceController extends Controller
         $allowances = Allowance::all();
         $categories = Category::all();
         $departments = Department::all();
-        $rataTypes  = [
-            [
-                'type' => 'OFFICER',
-                'amount' => 6375,
-            ],
-            [
-                'type' => 'HEAD',
-                'amount' => 6375,
-            ],
-            [
-                'type' => 'SB',
-                'amount' => 6375,
-            ],
-            [
-                'type' => 'MAYOR',
-                'amount' => 7650,
-            ],
-            [
-                'type' => 'VICE MAYOR',
-                'amount' => 7650,
-            ],
-        ];
+        $rataTypes  = Rata::all();
         return view('settings.allowances.index', compact('allowances', 'categories', 'departments', 'rataTypes'));
     }
 
@@ -47,28 +27,6 @@ class AllowanceController extends Controller
     public function store(Request $request)
     {
         // dd($request->all());
-        $rataTypes  = [
-            [
-                'type' => 'OFFICER',
-                'amount' => 6375,
-            ],
-            [
-                'type' => 'HEAD',
-                'amount' => 6375,
-            ],
-            [
-                'type' => 'SB',
-                'amount' => 6375,
-            ],
-            [
-                'type' => 'MAYOR',
-                'amount' => 7650,
-            ],
-            [
-                'type' => 'VICE MAYOR',
-                'amount' => 7650,
-            ],
-        ];
         $request->validate([
             'allowance_code' => 'required',
             'allowance_name' => 'required',
@@ -99,8 +57,7 @@ class AllowanceController extends Controller
         if ($rata_types) {
             foreach ($rata_types as $key => $rata_type) {
                 $allowance->categories()->create([
-                    'type' => $rataTypes[$rata_type]['type'],
-                    'amount' => $rataTypes[$rata_type]['amount'],
+                    'rata_id' => $rata_type,
                 ]);
             }
         }
@@ -114,28 +71,7 @@ class AllowanceController extends Controller
         $allowances = Allowance::all();
         $categories = Category::all();
         $departments = Department::all();
-        $rataTypes  = [
-            [
-                'type' => 'OFFICER',
-                'amount' => 6375,
-            ],
-            [
-                'type' => 'HEAD',
-                'amount' => 6375,
-            ],
-            [
-                'type' => 'SB',
-                'amount' => 6375,
-            ],
-            [
-                'type' => 'MAYOR',
-                'amount' => 7650,
-            ],
-            [
-                'type' => 'VICE MAYOR',
-                'amount' => 7650,
-            ],
-        ];
+        $rataTypes  = Rata::all();
         return view('settings.allowances.edit', compact('allowance', 'categories', 'departments', 'rataTypes'));
     }
 
@@ -148,28 +84,7 @@ class AllowanceController extends Controller
             'allowance_ranges' => 'required',
             'category_id' => 'required',
         ]);
-        $rataTypes  = [
-            [
-                'type' => 'OFFICER',
-                'amount' => 6375,
-            ],
-            [
-                'type' => 'HEAD',
-                'amount' => 6375,
-            ],
-            [
-                'type' => 'SB',
-                'amount' => 6375,
-            ],
-            [
-                'type' => 'MAYOR',
-                'amount' => 7650,
-            ],
-            [
-                'type' => 'VICE MAYOR',
-                'amount' => 7650,
-            ],
-        ];
+ 
         $allowance->update([
             'allowance_code' => $request->allowance_code,
             'allowance_name' => $request->allowance_name,
@@ -193,8 +108,7 @@ class AllowanceController extends Controller
         if ($rata_types) {
             foreach ($rata_types as $key => $rata_type) {
                 $allowance->categories()->create([
-                    'type' => $rataTypes[$rata_type]['type'],
-                    'amount' => $rataTypes[$rata_type]['amount'],
+                    'rata_id' => $rata_type,
                 ]);
             }
         }

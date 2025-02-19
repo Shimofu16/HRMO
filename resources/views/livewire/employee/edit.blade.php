@@ -37,7 +37,7 @@
                 </div>
                 <div class="col-span-6 sm:col-span-2">
                     <label for="department_id" class="block font-medium text-gray-700">Department</label>
-                    <select name="department_id" id="department_id" wire:model='department_id'
+                    <select name="department_id" id="department_id" wire:model.live='department_id'
                         class="block w-full mt-1 rounded form-select" required>
                         <option value="" selected>--Please select here--</option>
                         @foreach ($departments as $department)

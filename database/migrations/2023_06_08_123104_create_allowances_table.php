@@ -19,13 +19,19 @@ return new class extends Migration
             $table->double('allowance_amount');
             $table->timestamps();
         });
+        Schema::create('ratas', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('department_id')->nullable()->constrained('departments');
+            $table->string('type')->nullable();
+            $table->double('amount')->nullable();
+            $table->timestamps();
+        });
         Schema::create('allowance_categories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('allowance_id')->constrained('allowances');
             $table->foreignId('category_id')->nullable()->constrained('categories');
             $table->foreignId('department_id')->nullable()->constrained('departments');
-            $table->string('type')->nullable();
-            $table->double('amount')->nullable();
+            $table->foreignId('rata_id')->nullable()->constrained('ratas');
             $table->timestamps();
         });
     }

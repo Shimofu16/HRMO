@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Allowance;
+use App\Models\Rata;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -74,6 +75,11 @@ class AllowancesSeeder extends Seeder
             ],
             // Add more allowances here
         ];
+        foreach ($rataTypes as $rataType) {
+            Rata::create($rataType);
+        }
+
+        $rataTypes = Rata::all();
 
         foreach ($allowances as $allowance) {
             $allowance =  Allowance::create([
@@ -83,10 +89,9 @@ class AllowancesSeeder extends Seeder
                 'allowance_amount' => $allowance['allowance_amount'],
             ]);
             if ($allowance['allowance_code'] == 'Representation' || $allowance['allowance_code'] == 'Transportation') {
-                foreach ($rataTypes as $key => $type) {
+                foreach ($rataTypes as $rataType) {
                     $allowance->categories()->create([
-                        'type' => $type['type'],
-                        'amount' => $type['amount'],
+                        'rata_id' => $rataType->id
                     ]);
                 }
             }

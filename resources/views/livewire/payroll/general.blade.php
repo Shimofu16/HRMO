@@ -71,6 +71,8 @@
                                 <option value="cas">Casual</option>
                                 <option value="cos">Contract of Service</option>
                                 <option value="jo">Job Order</option>
+                                <option value="elect">Elective</option>
+                                <option value="coterm">Coterminous</option>
                             </select>
                         </div>
                     </div>
@@ -700,7 +702,7 @@
                         </div>
                         <div class="body">
                             <table class="table w-full table-bordered" style="width: 100%; table-layout: fixed;">
-                                @if ($employment_type == 'perm' || $employment_type == 'cas' || $employment_type == 'cos' || $employment_type == 'elect')
+                                @if ($employment_type == 'perm' || $employment_type == 'cas' || $employment_type == 'cos' || $employment_type == 'elect' || $employment_type == 'coterm')
                                     <thead>
                                         <tr class="border-top-2 ">
                                             <th class="border-right-2" style="width: 40px;">

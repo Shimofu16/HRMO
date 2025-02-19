@@ -13,6 +13,7 @@ use App\Models\Department;
 use App\Models\Designation;
 use App\Models\Employee;
 use App\Models\Level;
+use App\Models\Rata;
 use App\Models\SalaryGradeStep;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
@@ -61,7 +62,7 @@ class Create extends Component
     public $non_mandatory_deductions;
     public $cos_monthly_salary;
     public $rataTypes;
-    public $selected_rata_types;
+    public $selected_rata_id;
 
     public $password;
 
@@ -249,7 +250,7 @@ class Create extends Component
                 'salary_grade_step' => $this->salary_grade_step,
                 'sick_leave_points' => $this->sick_leave_points,
                 'has_holding_tax' => $this->isWithHoldingTax,
-                'type' => ($this->selected_rata_types) ? $this->rataTypes[$this->selected_rata_types]['type'] : null,
+                'rata_id' => $this->selected_rata_id ? $this->selected_rata_id : null,
                 'payroll_type' => $this->payroll_type,
             ]);
 
@@ -347,28 +348,7 @@ class Create extends Component
         $this->isJOSelected = false;
         $this->isWithHoldingTax = false;
         $this->isAlreadyLogIn = false;
-        $this->rataTypes  = [
-            [
-                'type' => 'OFFICER',
-                'amount' => 6375,
-            ],
-            [
-                'type' => 'HEAD',
-                'amount' => 6375,
-            ],
-            [
-                'type' => 'SB',
-                'amount' => 6375,
-            ],
-            [
-                'type' => 'MAYOR',
-                'amount' => 7650,
-            ],
-            [
-                'type' => 'VICE MAYOR',
-                'amount' => 7650,
-            ],
-        ];
+        $this->rataTypes  = Rata::all();
     }
 
     public function render()

@@ -36,14 +36,6 @@
                 </div>
             </a>
         @endif
-        @if (!Request::routeIs('leave-requests.index'))
-            <a href="{{ route('leave-requests.index', ['status' => 'accepted']) }}">
-                <div class="bg-white px-2 py-5 rounded-md text-center">
-                    <h2 class="font-semibold">
-                        Leave List
-                    </h2>
-                </div>
-            </a>
-        @endif
+   
 
     </div>

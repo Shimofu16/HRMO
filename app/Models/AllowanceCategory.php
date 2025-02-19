@@ -13,8 +13,7 @@ class AllowanceCategory extends Model
         'allowance_id',
         'category_id',
         'department_id',
-        'type',
-        'amount',
+        'rata_id',
     ];
 
     public function allowance()
@@ -28,5 +27,9 @@ class AllowanceCategory extends Model
     public function department()
     {
         return $this->belongsTo(Department::class, 'department_id');
+    }
+    public function rata()
+    {
+        return $this->belongsTo(Rata::class, 'rata_id');
     }
 }

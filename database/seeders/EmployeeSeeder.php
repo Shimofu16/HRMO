@@ -10,11 +10,11 @@ use App\Models\Allowance;
 use App\Models\Deduction;
 use App\Models\Department;
 use App\Models\Designation;
+use App\Models\Rata;
 use App\Models\SalaryGrade;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class EmployeeSeeder extends Seeder
 {
@@ -24,31 +24,8 @@ class EmployeeSeeder extends Seeder
     public function run(): void
     {
         $faker = Factory::create();
-        $rataTypes = [
-            [
-                'type' => 'OFFICER',
-                'amount' => 6375,
-            ],
-            [
-                'type' => 'HEAD',
-                'amount' => 6375,
-            ],
-            [
-                'type' => 'SB',
-                'amount' => 6375,
-            ],
-            [
-                'type' => 'MAYOR',
-                'amount' => 7650,
-            ],
-            [
-                'type' => 'VICE MAYOR',
-                'amount' => 7650,
-            ],
-        ];
+        $rataTypes = Rata::all();
         for ($i = 0; $i < 20; $i++) {
-            $employee_number = str_pad($i, 2, '0', STR_PAD_LEFT) . '-' . date('ymd') . '-' . mt_rand(0, 9999);
-
             $gender = $faker->randomElement(['male', 'female']);
             $employee = Employee::create([
                 'employee_number' => $i + 1,
@@ -81,11 +58,12 @@ class EmployeeSeeder extends Seeder
             }
             if ($category->category_code != "JO" && $category->category_code != "COS") {
                 $sick_leave_points = $faker->randomFloat(null, 10, 15);
-                $type = $faker->numberBetween(0, count($rataTypes) - 1);
+                $type = $faker->numberBetween(1, $rataTypes->count());
                 $hasType = $faker->numberBetween(0, 1);
                 $salary_grade = SalaryGrade::find($faker->numberBetween(1, SalaryGrade::count()));
                 $salary_grade_step = 'Step ' . $faker->numberBetween(1, count($salary_grade->steps));
-                foreach ($salary_grade->steps as $key => $salary_grade_steps) {
+
+                foreach ($salary_grade->steps as $salary_grade_steps) {
                     if ($salary_grade_step == $salary_grade_steps['step'] && $salary_grade_steps['amount'] > $limit) {
                         $has_holding_tax = true;
                     }
@@ -95,14 +73,12 @@ class EmployeeSeeder extends Seeder
                     'designation_id' => $designation->id,
                     'category_id' => $category->id,
                     'salary_grade_id' => $salary_grade->id,
+                    'rata_id' => ($hasType == 1) ? $rataTypes->find($type)->id : null,
                     'salary_grade_step' => $salary_grade_step,
                     'sick_leave_points' => $sick_leave_points,
-                    'type' => ($hasType == 1) ? $rataTypes[$type]['type'] : null,
                     'has_holding_tax' =>  $has_holding_tax,
                     'payroll_type' =>  $faker->randomElement(['ATM', 'Cash']),
                 ]);
-
-
 
                 // Query for allowances based on the selected IDs
                 $allowances = Allowance::with('categories')->whereHas('categories', function ($query) use ($category, $department) {
@@ -110,8 +86,6 @@ class EmployeeSeeder extends Seeder
                         ->orWhere('department_id', $department->id);
                 })
                     ->get();
-
-
 
                 // Attach selected allowances using their IDs
                 foreach ($allowances as $allowance) {
@@ -140,12 +114,11 @@ class EmployeeSeeder extends Seeder
                         if ($allowance->allowance_code == 'Representation' || $allowance->allowance_code == 'Transportation') {
                             $employee->allowances()->create([
                                 'allowance_id' => $allowance->id,
-                                'amount' => $rataTypes[$type]['amount']
+                                'amount' => $rataTypes->find($type)->amount
                             ]);
                         }
                     }
                 }
-
 
                 foreach ($this->getDeductions() as $deduction) {
                     $employee->deductions()->create(['deduction_id' => $deduction]);
@@ -184,23 +157,22 @@ class EmployeeSeeder extends Seeder
             }
         }
     }
+
     private function getDeductions()
     {
         $mandatory_deductions = Deduction::where('deduction_type', 'Mandatory')->get();
         $non_mandatory_deductions = Deduction::where('deduction_type', 'Non-Mandatory')->get();
         $array_mandatory_deductions = [];
         $array_non_mandatory_deductions = [];
-        foreach ($mandatory_deductions as $key => $mandatory_deduction) {
+        foreach ($mandatory_deductions as $mandatory_deduction) {
             $array_mandatory_deductions[] = $mandatory_deduction->id;
         }
-        foreach ($non_mandatory_deductions as $key => $mandatory_deduction) {
+        foreach ($non_mandatory_deductions as $mandatory_deduction) {
             if (random_int(0, 1) == 1) {
                 $array_non_mandatory_deductions[] = $mandatory_deduction->id;
             }
         }
 
-
         return array_merge($array_mandatory_deductions, $array_non_mandatory_deductions);
     }
-
 }

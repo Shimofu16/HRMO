@@ -26,7 +26,8 @@
                             <div class="col-span-6 sm:col-span-2">
                                 <label for="allowance_amount" class="block font-medium text-gray-700">Amount</label>
                                 <input type="number" name="allowance_amount" id="allowance_amount"
-                                    class="block w-full mt-1 rounded" value="{{ $allowance->allowance_amount }}" required>
+                                    class="block w-full mt-1 rounded" value="{{ $allowance->allowance_amount }}"
+                                    required>
                             </div>
                         </div>
                         <div class="grid grid-cols-6 gap-6">
@@ -63,8 +64,8 @@
                                 <select name="rata_types[]" id="rata_types"
                                     class="block w-full mt-1 rounded form-select" multiple="multiple">
                                     @foreach ($rataTypes as $key => $rataType)
-                                        <option value="{{ $key }}">{{ $rataType['type'] }} -
-                                            {{ $rataType['amount'] }}</option>
+                                        <option value="{{ $rataType->id }}">{{ $rataType->type }} -
+                                            {{ $rataType->amount }}</option>
                                     @endforeach
                                 </select>
                             </div>

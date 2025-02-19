@@ -37,6 +37,7 @@
                     onclick="window.dispatchEvent(new CustomEvent('open-modal', { detail: 'leaveRequests' }))">
                     Leave Requests
                 </button>
+
                 <button type="button"
                     class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
                     onclick="window.dispatchEvent(new CustomEvent('open-modal', { detail: 'promotionHistory' }))">
@@ -207,6 +208,84 @@
                 </div>
                 <!-- Modal footer -->
                 <div
+                    class="flex justify-between items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                    <a href="{{ route('leave-requests.create', $employee) }}"
+                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        Create Request
+                    </a>
+                    <div>
+                        <button type="button"
+                        class="text-white ms-3 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        onclick="generatePDF('{{ $employee->full_name }} - leave requests', 'leaveRequestsPdf')">
+                        Download
+                    </button>
+                    <button type="button" x-on:click="$dispatch('close')"
+                        class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                        Close
+                    </button>
+                    </div>
+                   
+                </div>
+            </x-modal>
+            {{-- <x-modal name="leaveList" headerTitle="Leave List">
+                <!-- Modal body -->
+                <div class="p-4 md:p-5 space-y-4" id="leaveRequestsPdf">
+                    <h1 class="text-xl font-bold hide" id="employee-name">Employee: {{ $employee->full_name }}</h1>
+                    <h1 class="text-xl font-bold hide" id="employee-number">Employee #:
+                        {{ $employee->employee_number }}
+                    </h1>
+                    <div class="flex justify-between items-center">
+                    </div>
+                    <table class="min-w-full border">
+                        <thead>
+                            <tr>
+                                <th class="px-2 py-4 text-left border-b">#</th>
+                                <th class="px-4 py-2 text-left border-b">Date</th>
+                                <th class="px-4 py-2 text-left border-b">Days Leave</th>
+                                <th class="px-4 py-2 text-left border-b">Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($employee->leaveRequests as $leave_request)
+                                <tr>
+                                    <td class="px-2 py-2 border-b">{{ $loop->iteration }}</td>
+                                    <td class="px-2 py-2 border-b">
+                                        {{ date('M, d Y', strtotime($leave_request->start)) }} to
+                                        {{ date('M, d Y', strtotime($leave_request->end)) }}
+                                    </td>
+                                    <td class="px-2 py-2 border-b">{{ $leave_request->days }}</td>
+                                    <td class="px-2 py-2 border-b">
+                                        @php
+                                            $points = $leave_request->points;
+                                            if ($leave_request->type == 'force_leave') {
+                                                $points =
+                                                    5 -
+                                                    \App\Models\Attendance::where('type', $leave_request->type)
+                                                        ->whereYear('created_at', now()->format('Y'))
+                                                        ->count();
+                                            }
+                                            if ($leave_request->type == 'special_leave') {
+                                                $points =
+                                                    3 -
+                                                    \App\Models\Attendance::where('type', $leave_request->type)
+                                                        ->whereYear('created_at', now()->format('Y'))
+                                                        ->count();
+                                            }
+                                        @endphp
+                                        {{ number_format($points, 2) }}</td>
+                                    <td class="px-2 py-2 border-b">
+                                        {{ number_format($leave_request->deducted_points, 2) }}
+                                    </td>
+                                    <td class="px-2 py-2 border-b">
+                                        {{ Str::ucfirst(Str::replaceFirst('_', ' ', $leave_request->type)) }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Modal footer -->
+                <div
                     class="flex justify-end items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
                     <button type="button"
                         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
@@ -216,7 +295,7 @@
                     <button type="button" x-on:click="$dispatch('close')"
                         class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Close</button>
                 </div>
-            </x-modal>
+            </x-modal> --}}
         </div>
         <div class="w-3/4 p-5 bg-white rounded-md shadow" id="employeeData">
             <div class="mb-3 border-b border-gray-100">

@@ -13,18 +13,6 @@
                 </div>
                 <div class="grid grid-cols-12 gap-6 mb-3">
                     <div class="col-span-6 sm:col-span-6">
-                        <label for="employee_id" class="block font-medium text-gray-700">Employee</label>
-                        <select name="employee_id" id="employee_id" wire:model.live='employee_id'
-                            class="block w-full mt-1 rounded form-select">
-                            <option value="" selected>--Please select here--</option>
-                            @foreach ($employees as $employee)
-                            <option value="{{ $employee->id }}" wire:key='{{ $employee->id }}'>
-                                {{ $employee->full_name }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-span-6 sm:col-span-6">
                         <h4 class="text-md">Employee Data</h4>
                         <h6>Name: {{ $name }}</h6>
                         <h6>Department: {{ $department }}</h6>

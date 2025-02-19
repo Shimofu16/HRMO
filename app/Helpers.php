@@ -211,6 +211,9 @@ if (!function_exists('attendanceCount')) {
 
             if ($attendance) {
                 $manhours = $attendance->hours;
+                if (($attendance->time_in_status == 'Half-Day' || $attendance->time_out_status == 'Half-Day') && ($employee->data->category->category_code === 'JO') || $employee->data->category->category_code === 'COS') {
+                    $manhours = 4;
+                }
                 $timeInInterval = getInterval($attendance->time_in, true, true);
                 $timeOutInterval = getInterval($attendance->time_out, false, true);
 
@@ -379,27 +382,22 @@ if (!function_exists('calculateSalary')) {
             }
         }
 
-
-
-        if (!$isJO && ($status === 'Half-Day' || $status === 'Under-time')) {
-            $notWorkedHour = $defaultTimeOut->diffInHours($attendanceTimeOut);
-            $minutes = $defaultTimeOut->diffInMinutes($attendanceTimeOut);
-            $deduction =  $notWorkedHour * getLateByMinutes($minutes);
-            $sickLeave = $sickLeave - $deduction;
-            if ($sickLeave > 0) {
-                $salaryPerHour = $salaryPerHour - $notWorkedHour;
-            }
-            if ($sickLeave < 0 || $sickLeave <= 0) {
-                $sickLeave = 0;
-                $deduction = 0;
-            }
-        }
-        // Calculate total salary for the day (applicable only for non-JO employees)
+   
         if (!$isJO && !$isCOS) {
             $totalSalaryForToday = ($salaryPerHour * $hourWorked);
             $totalSalaryForToday = ($totalSalaryForToday > 0) ? $totalSalaryForToday : 0;
             if ($attendance->time_in_status === 'Late' || ($status === 'Half-Day' || $status === 'Under-time')) {
-                // $totalSalaryForToday = $totalSalaryForToday - ($sickLeave === 0) ? getLateByMinutes($minutesLate) : 0;
+                $notWorkedHour = $defaultTimeOut->diffInHours($attendanceTimeOut);
+                $minutes = $defaultTimeOut->diffInMinutes($attendanceTimeOut);
+                $deduction =  $notWorkedHour * getLateByMinutes($minutes);
+                $sickLeave = $sickLeave - $deduction;
+                if ($sickLeave > 0) {
+                    $salaryPerHour = $salaryPerHour - $notWorkedHour;
+                }
+                if ($sickLeave < 0) {
+                    $sickLeave = 0;
+                    $deduction = 0;
+                }
                 $employee->data->update(['sick_leave_points' => $sickLeave]);
             }
         } else {

@@ -22,6 +22,7 @@ use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PayslipController;
+use App\Http\Controllers\RataController;
 use App\Http\Controllers\SalaryGradeStepController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SeminarController;
@@ -135,7 +136,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     ]);
 
     Route::resource('salary-grades', SalaryGradeController::class)->only([
-        'index', 'create', 'store', 'edit', 'update',
+        'index',
+        'create',
+        'store',
+        'edit',
+        'update',
     ]);
 
 
@@ -148,6 +153,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         'update' => 'allowances.update',
         'destroy' => 'allowances.destroy',
     ]);
+    Route::resource('ratas', RataController::class);
 
 
     Route::resource('deductions', DeductionController::class)->names([
@@ -283,9 +289,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('password-code', [PasswordController::class, 'index'])->name('password-code.index');
     Route::put('password-code/update', [PasswordController::class, 'update'])->name('password-code.update');
 
+    Route::get('leave-requests/create/{employee}', [LeaveController::class, 'create'])
+        ->name('leave-requests.create');
+
     Route::resource('leave-requests', LeaveController::class)->only([
-        'create', 'store', 'edit', 'update',
+        'store',
+        'edit',
+        'update',
     ]);
+
 
     Route::get('{status}', [LeaveController::class, 'index'])->name('leave-requests.index');
 });

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attendance;
+use App\Models\Employee;
 use App\Models\EmployeeLeaveRequest;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -23,17 +24,9 @@ class LeaveController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Employee $employee)
     {
-        $types = [
-            'vacation',
-            'sick',
-            'force',
-        ];
-
-        return view('leaves.create', [
-            'types' => $types
-        ]);
+        return view('leaves.create', compact('employee'));
     }
 
     /**

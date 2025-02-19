@@ -56,7 +56,7 @@
                     <select name="rata_types[]" id="rata_types" class="block w-full mt-1 rounded form-select"
                         multiple="multiple">
                         @foreach ($rataTypes as $key => $rataType)
-                            <option value="{{ $key }}">{{ $rataType['type'] }} - {{ $rataType['amount'] }}</option>
+                            <option value="{{ $rataType->id }}">{{ $rataType->type }} - {{ $rataType->amount }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -108,7 +108,7 @@
                             @endforeach
                         </td>
                         <td class="px-4 py-2 border-b">
-                            @if ($allowance->categories())
+                            @if ($allowance->categories)
                                 @foreach ($allowance->categories as $category)
                                     @if ($loop->last)
                                         @if (count($allowance->categories) > 1)
@@ -131,8 +131,8 @@
                                         @if ($category->department)
                                             {{ $category->department->dep_code }}
                                         @endif
-                                        @if ($category->type)
-                                            {{ $category->type }} - {{ number_format($category->amount) }}
+                                        @if ($category->rata)
+                                            {{ $category->rata->type }} - {{ number_format($category->rata->amount) }}
                                         @endif
                                         @if (count($allowance->categories) > 2)
                                             ,

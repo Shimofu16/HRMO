@@ -55,7 +55,7 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained('categories', 'id');
             $table->foreignId('salary_grade_id')->nullable()->constrained('salary_grades', 'id');
             $table->foreignId('level_id')->nullable()->constrained('levels', 'id');
-            $table->string('type')->nullable();
+            $table->foreignId('rata_id')->nullable()->constrained('ratas', 'id');
             $table->string('salary_grade_step')->nullable();
             $table->string('pds')->nullable();
             $table->double('sick_leave_points')->nullable();

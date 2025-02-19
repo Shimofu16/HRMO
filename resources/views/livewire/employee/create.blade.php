@@ -111,15 +111,15 @@
                             </select>
                         </div>
                         <div class="col-span-6 sm:col-span-2">
-                            <label for="selected_rata_types" class="block font-medium text-gray-700">RA/TA
+                            <label for="selected_rata_id" class="block font-medium text-gray-700">RA/TA
                                 Type</label>
-                            <select name="selected_rata_types" id="selected_rata_types"
-                                wire:model.live='selected_rata_types' class="block w-full mt-1 rounded form-select">
+                            <select name="selected_rata_id" id="selected_rata_id"
+                                wire:model.live='selected_rata_id' class="block w-full mt-1 rounded form-select">
                                 <option value="" selected>--Please select here--</option>
-                                @foreach ($rataTypes as $key => $rataType)
-                                    <option value="{{ $key }}">
-                                        {{ $rataType['type'] }} -
-                                        {{ number_format($rataType['amount']) }}
+                                @foreach ($rataTypes as $rataType)
+                                    <option value="{{ $rataType->id }}">
+                                        {{ $rataType->type }} -
+                                        {{ number_format($rataType->amount) }}
                                     </option>
                                 @endforeach
 

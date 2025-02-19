@@ -31,6 +31,7 @@ class General extends Component
     {
         $employees  =$this->dbemployees;
         $this->isEmpty = false;
+        // dd( $employees );
         if ($this->employment_type && $this->payment_method) {
             // Filter the employees collection in memory using the filter method
             $employees = $employees->filter(function ($employee) {
