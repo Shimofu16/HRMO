@@ -147,7 +147,7 @@
                         class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Close</button>
                 </div>
             </x-modal>
-            <x-modal name="leaveRequests" headerTitle="Leave Requests">
+            <x-modal name="leaveRequests" maxWidth="6xl" headerTitle="Leave Requests">
                 <!-- Modal body -->
                 <div class="p-4 md:p-5 space-y-4" id="leaveRequestsPdf">
                     <h1 class="text-xl font-bold hide" id="employee-name">Employee: {{ $employee->full_name }}</h1>
@@ -162,13 +162,14 @@
                                 <th class="px-2 py-4 text-left border-b">#</th>
                                 <th class="px-2 py-4 text-left border-b">Date</th>
                                 <th class="px-2 py-4 text-left border-b">Days Leave</th>
-                                <th class="px-2 py-4 text-left border-b">Points</th>
+                                <th class="px-2 py-4 text-left border-b">Remaining Points</th>
                                 <th class="px-2 py-4 text-left border-b">Deducted Points</th>
                                 <th class="px-2 py-4 text-left border-b">Type</th>
+                                {{-- <th class="px-2 py-4 text-left border-b">File</th> --}}
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($employee->leaveRequests as $leave_request)
+                            @foreach ($employee->leaveRequests()->orderBy('created_at', 'desc')->get() as $leave_request)
                                 <tr>
                                     <td class="px-2 py-2 border-b">{{ $loop->iteration }}</td>
                                     <td class="px-2 py-2 border-b">
@@ -201,6 +202,16 @@
                                     <td class="px-2 py-2 border-b">
                                         {{ Str::ucfirst(Str::replaceFirst('_', ' ', $leave_request->type)) }}
                                     </td>
+                                    {{-- <td class="px-2 py-2 border-b">
+                                        @if ($leave_request->file)
+                                            <a href="{{ route('leave-requests.download', $leave_request) }}"
+                                                class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
+                                                Download
+                                            </a>
+                                        @else
+                                            No file
+                                        @endif
+                                    </td> --}}
                                 </tr>
                             @endforeach
                         </tbody>

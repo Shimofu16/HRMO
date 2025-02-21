@@ -214,6 +214,10 @@ if (!function_exists('attendanceCount')) {
                 if (($attendance->time_in_status == 'Half-Day' || $attendance->time_out_status == 'Half-Day') && ($employee->data->category->category_code === 'JO') || $employee->data->category->category_code === 'COS') {
                     $manhours = 4;
                 }
+
+                if ($employee->data->category->category_code === 'JO' || $employee->data->category->category_code === 'COS') {
+                    $manhours = 8;
+                }
                 $timeInInterval = getInterval($attendance->time_in, true, true);
                 $timeOutInterval = getInterval($attendance->time_out, false, true);
 

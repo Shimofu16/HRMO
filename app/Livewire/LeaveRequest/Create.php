@@ -56,7 +56,8 @@ class Create extends Component
                 'vacation_leave',
                 'sick_leave',
                 'force_leave',
-                'special_leave'
+                'special_leave',
+
             ];
         }
         $this->fl_points =  5 - Attendance::where('type', 'force_leave')->whereYear('created_at', now()->format('Y'))->count();
@@ -79,7 +80,7 @@ class Create extends Component
         }
     }
 
-    public  function save()
+    public function save()
     {
         try {
             $this->validate();
@@ -87,9 +88,8 @@ class Create extends Component
             if ($this->checkIfEmployeeAlreadyAttendance()) {
                 return session()->flash('error', 'Cannot add leave, employee already have an attendance record. Please try submitting leave for a different date.');
             }
-            $leave_points = $this->points - $this->days_leave;
+            $leave_points = $this->points;
             if ($this->type == 'force_leave' || $this->type == 'special_leave') {
-                $leave_points = 0;
                 if (($this->type == 'force_leave' && $this->days_leave >= $this->fl_points) || ($this->type == 'special_leave' && $this->days_leave >= $this->sl_points)) {
                     return session()->flash('error', 'The number of days exceeds the allowed limit.');
                 }
@@ -100,9 +100,13 @@ class Create extends Component
                 if ($this->days_leave >= $this->days && $this->days_leave != $this->days) {
                     return session()->flash('error', 'The number of days exceeds the allowed limit.');
                 }
+                $leave_points -= $this->days_leave;
             }
             $file_name = '';
-            if ($this->letter) {
+            if ($this->isAnyOfTheSelectedCategories) {
+                if (!$this->letter) {
+                    return session()->flash('error', 'Please upload a letter for special leave.');
+                }
                 // Generate a new file name for the uploaded PDS
                 $file_name = md5($this->letter->getClientOriginalName() . microtime()) . '.' . $this->letter->extension();
 
@@ -117,12 +121,14 @@ class Create extends Component
                 'status' => 'accepted',
                 'points' => $leave_points,
                 'letter' => $file_name,
-                'deducted_points' => $this->days_leave,
+                'deducted_points' => ($this->type == 'force_leave' || $this->type == 'special_leave') ? 0 : $this->days_leave,
                 'days' => $this->days_leave,
             ]);
 
             $this->takeAttendance($leave_request, getDatesBetween($leave_request->start, $leave_request->end, true));
-            $leave_request->employee->data->update(['sick_leave_points' => ($leave_request->employee->data->sick_leave_points - ($this->points_per_day * $leave_request->days))]);
+            if ($this->type != 'force_leave' && $this->type != 'special_leave') {
+                $leave_request->employee->data->update(['sick_leave_points' => ($leave_request->employee->data->sick_leave_points - ($this->points_per_day * $leave_request->days))]);
+            }
             // Create activity
             createActivity('Create Employee Leave Request', 'Create Employee Leave Request for ' . $this->employee->full_name . '.', request()->getClientIp(true));
 
@@ -182,7 +188,12 @@ class Create extends Component
         $this->name = $this->employee->full_name;
         $this->department = $this->employee->data->department->dep_name;
         $this->points = ($this->employee->data->sick_leave_points) ? $this->employee->data->sick_leave_points : 0;
-
+        $this->types = [
+            'maternity_leave',
+            'vacation_leave',
+            'sick_leave',
+            'force_leave'
+        ];
         if ($this->employee->data->category->category_code == 'PERM' || $this->employee->data->category->category_code == 'COTERM' || $this->employee->data->category->category_code == 'CAS') {
             $this->isAnyOfTheSelectedCategories = true;
             $this->types = [
@@ -197,12 +208,6 @@ class Create extends Component
         $this->sl_points = 3 - Attendance::where('type', 'special_leave')->whereYear('created_at', now()->format('Y'))->count();
         // calculate the total days based on points
         $this->days =  $this->points;
-        $this->types = [
-            'maternity_leave',
-            'vacation_leave',
-            'sick_leave',
-            'force_leave'
-        ];
     }
 
     public function render()

@@ -52,7 +52,7 @@
                     <div class="col-span-6 sm:col-span-6">
                         <label for="letter"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Letter</label>
-                        <input type="file" name="letter" id="letter" wire:model='employee_photo'
+                        <input type="file" name="letter" id="letter" wire:model='letter'
                             class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                             required>
                     </div>
