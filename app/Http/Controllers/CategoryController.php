@@ -22,10 +22,11 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'category_code' => 'required',
+            // 'category_code' => 'required',
             'category_name' => 'required',
         ]);
 
+        $request->merge(['category_code' => strtoupper(substr($request->category_name, 0, 3)) . rand(100, 999)]);
         Category::create($request->all());
 
         createActivity('Create Category', 'Category '.$request->category_name.' created successfully.', request()->getClientIp(true));

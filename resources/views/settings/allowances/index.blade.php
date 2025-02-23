@@ -51,15 +51,6 @@
                         @endforeach
                     </select>
                 </div>
-                 <div class="col-span-6 sm:col-span-3">
-                    <label for="rata_types" class="block font-medium text-gray-700">RA/TA Type</label>
-                    <select name="rata_types[]" id="rata_types" class="block w-full mt-1 rounded form-select"
-                        multiple="multiple">
-                        @foreach ($rataTypes as $key => $rataType)
-                            <option value="{{ $rataType->id }}">{{ $rataType->type }} - {{ $rataType->amount }}</option>
-                        @endforeach
-                    </select>
-                </div>
             </div>
 
             <div class="py-3 text-right sm:px-6">
@@ -80,7 +71,7 @@
                     <th class="px-4 py-2 text-left border-b">Name</th>
                     <th class="px-4 py-2 text-left border-b">Amount</th>
                     <th class="px-4 py-2 text-left border-b">Rage</th>
-                    <th class="px-4 py-2 text-left border-b">Category/Department/Type</th>
+                    <th class="px-4 py-2 text-left border-b">Category/Department</th>
                     <th class="px-4 py-2 border-b">Actions</th>
                 </tr>
             </thead>
@@ -120,9 +111,7 @@
                                         @if ($category->department)
                                             {{ $category->department->dep_code }}
                                         @endif
-                                        @if ($category->type)
-                                            {{ $category->type }} - {{ number_format($category->amount) }}
-                                        @endif
+                                        
                                     @endif
                                     @if (!$loop->last)
                                         @if ($category->category)
@@ -130,9 +119,6 @@
                                         @endif
                                         @if ($category->department)
                                             {{ $category->department->dep_code }}
-                                        @endif
-                                        @if ($category->rata)
-                                            {{ $category->rata->type }} - {{ number_format($category->rata->amount) }}
                                         @endif
                                         @if (count($allowance->categories) > 2)
                                             ,

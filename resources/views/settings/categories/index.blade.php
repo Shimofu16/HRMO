@@ -7,11 +7,11 @@
         <form action="{{ route('categories.store') }}" method="POST">
             @csrf
                 <div class="grid grid-cols-6 gap-6">
-                    <div class="col-span-6 sm:col-span-3">
+                    {{-- <div class="col-span-6 sm:col-span-3">
                         <label for="category_code" class="block font-medium text-gray-700">Code</label>
                         <input type="text" name="category_code" id="category_code" class="block w-full mt-1 rounded"
                             required>
-                    </div>
+                    </div> --}}
                     <div class="col-span-6 sm:col-span-3">
                         <label for="category_name" class="block font-medium text-gray-700">Name</label>
                         <input type="text" name="category_name" id="category_name" class="block w-full mt-1 rounded"
@@ -32,7 +32,7 @@
             <thead>
                 <tr>
                     <th class="border-b px-4 py-2 text-left">#</th>
-                    <th class="border-b px-4 py-2 text-left">Code</th>
+                    {{-- <th class="border-b px-4 py-2 text-left">Code</th> --}}
                     <th class="border-b px-4 py-2 text-left">Name</th>
                     <th class="border-b px-4 py-2">Actions</th>
                 </tr>
@@ -41,11 +41,11 @@
                 @foreach ($categories as $category)
                     <tr>
                         <td class="border-b px-4 py-2">{{ $loop->iteration }}</td>
-                        <td class="border-b px-4 py-2">{{ $category->category_code }}</td>
+                        {{-- <td class="border-b px-4 py-2">{{ $category->category_code }}</td> --}}
                         <td class="border-b px-4 py-2">{{ $category->category_name }}</td>
                         <td class="border-b px-4 py-2">
-                            <a href="{{ route('categories.edit', $category) }}"
-                                class="text-blue-500 hover:text-blue-700">Edit</a>
+                            {{-- <a href="{{ route('categories.edit', $category) }}"
+                                class="text-blue-500 hover:text-blue-700">Edit</a> --}}
                             {{-- <form class="inline-block" action="{{ route('categories.destroy', $category) }}" method="POST">
                                 @csrf
                                 @method('DELETE')

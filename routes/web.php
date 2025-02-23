@@ -17,6 +17,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeductionController;
 use App\Http\Controllers\EmployeeAttendanceController;
 use App\Http\Controllers\EmployeeLoansController;
+use App\Http\Controllers\HazardController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\LevelController;
@@ -154,6 +155,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         'destroy' => 'allowances.destroy',
     ]);
     Route::resource('ratas', RataController::class);
+    Route::resource('hazards', HazardController::class);
 
 
     Route::resource('deductions', DeductionController::class)->names([

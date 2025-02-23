@@ -43,12 +43,7 @@ class AllowancesSeeder extends Seeder
                 'allowance_ranges' => ['1-15', '16-31'],
                 'allowance_amount' => '1000',
             ],
-            [
-                'allowance_code' => 'Hazard',
-                'allowance_name' => 'Hazard Pay',
-                'allowance_ranges' => ['1-15'],
-                'allowance_amount' => '2500',
-            ],
+         
             [
                 'allowance_code' => 'Subsistence',
                 'allowance_name' => 'Subsistence Allowance',
@@ -88,13 +83,7 @@ class AllowancesSeeder extends Seeder
                 'allowance_ranges' => $allowance['allowance_ranges'],
                 'allowance_amount' => $allowance['allowance_amount'],
             ]);
-            if ($allowance['allowance_code'] == 'Representation' || $allowance['allowance_code'] == 'Transportation') {
-                foreach ($rataTypes as $rataType) {
-                    $allowance->categories()->create([
-                        'rata_id' => $rataType->id
-                    ]);
-                }
-            }
+       
             if ($allowance['allowance_code'] != 'Representation' && $allowance['allowance_code'] != 'Transportation') {
                 $allowance->categories()->create(['department_id' => 4]);
             }
@@ -106,5 +95,7 @@ class AllowancesSeeder extends Seeder
                 $allowance->categories()->create(['department_id' => 4]);
             }
         }
+
+        
     }
 }

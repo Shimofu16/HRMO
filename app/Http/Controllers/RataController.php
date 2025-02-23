@@ -35,14 +35,14 @@ class RataController extends Controller
         $request->validate([
             'type' => 'required|string',
             'amount' => 'required|integer',
+            'ranges' => 'required|array',
         ]);
 
         $rata = new Rata();
         $rata->type = $request->input('type');
         $rata->amount = $request->input('amount');
+        $rata->ranges = $request->input('ranges');
         $rata->save();
-
-
 
         createActivity('Create Rata', 'Rata type ' . $request->type . ' created successfully.', request()->getClientIp(true));
         return redirect()->back()->with('success', 'Rata created successfully.');
@@ -74,10 +74,12 @@ class RataController extends Controller
         $request->validate([
             'type' => 'required|string',
             'amount' => 'required|integer',
+            'ranges' => 'required|array',
         ]);
 
         $rata->type = $request->input('type');
         $rata->amount = $request->input('amount');
+        $rata->ranges = $request->input('ranges');
         $rata->save();
 
         createActivity('Update Rata', 'Rata type ' . $request->type . ' updated successfully.', request()->getClientIp(true));

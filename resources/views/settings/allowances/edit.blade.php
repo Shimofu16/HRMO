@@ -59,16 +59,6 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-span-6 sm:col-span-3">
-                                <label for="rata_types" class="block font-medium text-gray-700">RA/TA Type</label>
-                                <select name="rata_types[]" id="rata_types"
-                                    class="block w-full mt-1 rounded form-select" multiple="multiple">
-                                    @foreach ($rataTypes as $key => $rataType)
-                                        <option value="{{ $rataType->id }}">{{ $rataType->type }} -
-                                            {{ $rataType->amount }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
                         </div>
                         <p id="helper-text-explanation" class="mt-2 text-sm text-gray-500 dark:text-gray-400">
                             Note:To update the range and category, select all the data you want to change.
