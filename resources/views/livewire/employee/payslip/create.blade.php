@@ -50,8 +50,11 @@
                 $hazards = \App\Models\Hazard::where('category_id', $employee->data->category_id)
                                                     ->orWhere('department_id', $employee->data->department_id)
                                                     ->whereJsonContains('ranges',  $filter[0].'-'. $filter[1])
+                                                    ->whereHas('salaryGrades', function ($query) use ($employee) {
+                                                        $query->where('salary_grade_id', $employee->data->salary_grade_id);
+                                                    })
                                                     ->get();
-                    $rata_types = \App\Models\Rata::whereJsonContains('ranges',  $filter[0].'-'. $filter[1])->get();                           
+                    $rata_types = \App\Models\Rata::where('id', $employee->data->rata_id)->get();                     
                         // dd($hazards, $rata_types,  $filter[0].'-'. $filter[1]);
             @endphp
             <div class="flex flex-col p-2 border border-dark">

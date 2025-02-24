@@ -132,10 +132,13 @@ class Employee extends Model
                 }
             }
             $hazards = \App\Models\Hazard::where('category_id', $this->data->category_id)
-                ->orWhere('department_id', $this->data->department_id)
+                ->where('department_id', $this->data->department_id)
                 ->whereJsonContains('ranges',  $range)
+                ->whereHas('salaryGrades', function ($query) {
+                    $query->where('salary_grade_id', $this->data->salary_grade_id);
+                })
                 ->get();
-            $rata_types = \App\Models\Rata::whereJsonContains('ranges',  $range)->get();
+            $rata_types = \App\Models\Rata::where('id', $this->data->rata_id)->get();
             if ($hazards) {
                 foreach ($rata_types as $rata) {
                     if ($rata->amount_type == 'percentage') {
