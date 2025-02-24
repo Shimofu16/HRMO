@@ -131,10 +131,31 @@ class Employee extends Model
                     }
                 }
             }
+            $hazards = \App\Models\Hazard::where('category_id', $this->data->category_id)
+                ->orWhere('department_id', $this->data->department_id)
+                ->whereJsonContains('ranges',  $range)
+                ->get();
+            $rata_types = \App\Models\Rata::whereJsonContains('ranges',  $range)->get();
+            if ($hazards) {
+                foreach ($rata_types as $rata) {
+                    if ($rata->amount_type == 'percentage') {
+                        $totalAllowance += ($this->data->monthly_salary * $rata->amount) / 100;
+                    } else {
+                        $totalAllowance += $rata->amount;
+                    }
+                }
+            }
+            if ($rata_types) {
+                foreach ($rata_types as $rata) {
+                    $totalAllowance += $rata->amount;
+                }
+            }
         }
 
         return $totalAllowance;
     }
+
+
 
     public function computeDeduction($range = null)
     {

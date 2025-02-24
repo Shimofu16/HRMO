@@ -93,6 +93,7 @@
         <div id="element-to-print" class="">
             @php
                 $count = 1;
+                
             @endphp
             @foreach ($employees as $employee)
                 @if ($count > 3)
@@ -112,6 +113,12 @@
                         'total_salary'
                     ];
                     $monthlySalary = $employee->data->monthly_salary;
+                    $hazards = \App\Models\Hazard::where('category_id', $employee->data->category_id)
+                                                    ->orWhere('department_id', $employee->data->department_id)
+                                                    ->whereJsonContains('ranges', $from.'-'.$to)
+                                                    ->get();
+                    $rata_types = \App\Models\Rata::whereJsonContains('ranges', $from.'-'.$to)->get();                           
+                        // dd($hazards, $rata_types, $from.'-'.$to);
                 @endphp
                 <div class="flex flex-col p-2 border border-dark">
                     <div class="head">
@@ -197,6 +204,16 @@
                                                             $allowance->id,
                                                             $payroll['date_from_to'],
                                                         );
+                                                    
+                                                    // add totalallwance to hazards
+                                                    foreach ($hazards as $hazard) {
+                                                        // check if percentage
+                                                        if ($hazard->amount_type == 'percentage') {
+                                                            $totalAllowance += ($monthlySalary * $hazard->amount) / 100;
+                                                        } else {
+                                                            $totalAllowance += $hazard->amount;
+                                                        }
+                                                    }
                                                 @endphp
                                                 <span>
                                                     {{ number_format($employee->getAllowance($allowance->id, $payroll['date_from_to']), 2) }}
@@ -210,6 +227,44 @@
                                         <td><span class="text-[10px]"></span></td>
                                     </tr>
                                 @endforeach
+                                @if($hazards)
+                                @foreach ($hazards as $hazard)
+                                    <tr>
+                                        <td>
+                                            <span class="text-[10px]">{{ $hazard->name }}:</span>
+                                        </td>
+                                        <td><span class="text-[10px]"></span></td>
+                                        <td class="text-[10px] text-center">
+                                                <span>
+                                                    @if ($hazard->amount_type == 'percentage')
+                                                        {{ $hazard->amount }} %
+                                                    @else
+                                                        {{ number_format($hazard->amount, 2) }}
+                                                    @endif
+                                                </span>
+                                         
+                                        </td>
+                                        <td><span class="text-[10px]"></span></td>
+                                    </tr>
+                                @endforeach
+                                @endif
+                                @if($rata_types)
+                                @foreach ($rata_types as $rata)
+                                    <tr>
+                                        <td>
+                                            <span class="text-[10px]">{{ $rata->type }}:</span>
+                                        </td>
+                                        <td><span class="text-[10px]"></span></td>
+                                        <td class="text-[10px] text-center">
+                                                <span>
+                                                    {{ number_format($rata->amount, 2) }}
+                                                </span>
+                                         
+                                        </td>
+                                        <td><span class="text-[10px]"></span></td>
+                                    </tr>
+                                @endforeach
+                                @endif
                                 @php
                                     $totalAmountEarned = $amountEarned + $totalAllowance;
                                 @endphp
