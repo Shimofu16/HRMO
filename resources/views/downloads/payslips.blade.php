@@ -237,7 +237,7 @@
                                         <td class="text-[10px] text-center">
                                                 <span>
                                                     @if ($hazard->amount_type == 'percentage')
-                                                        {{ $hazard->amount }} %
+                                                        {{ number_format($monthlySalary * $hazard->amount,2) }}
                                                     @else
                                                         {{ number_format($hazard->amount, 2) }}
                                                     @endif
