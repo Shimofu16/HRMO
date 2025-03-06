@@ -235,7 +235,7 @@
                         Close
                     </button>
                     </div>
-                   
+
                 </div>
             </x-modal>
             {{-- <x-modal name="leaveList" headerTitle="Leave List">
@@ -308,203 +308,217 @@
                 </div>
             </x-modal> --}}
         </div>
-        <div class="w-3/4 p-5 bg-white rounded-md shadow" id="employeeData">
-            <div class="mb-3 border-b border-gray-100">
-                <h1 class="text-2xl font-bold">Personal Information</h1>
+        <div class="w-full bg-white rounded-md shadow" id="employeeData">
+            <div class="mb-3 p-2 flex justify-between items-center">
+                <div><img src="{{ asset('assets/images/cl-logo.png') }}" alt="calauan logo" class="h-20"></div>
+                <div class="text-center">
+                    <h1 class="text-md font-bold">Republic of the Philippines</h1>
+                    <h1 class="text-md font-bold">Province of Laguna</h1>
+                    <h1 class="text-md font-bold">Municipality of Calauan</h1>
+                </div>
+                <div><img src="{{ asset('assets/images/cl-pnp-logo.png') }}" alt="calauan logo" class="h-20"></div>
             </div>
-            <div class="flex justify-between">
-
-                <div>
-                    <h3><strong>Employee No.: </strong>{{ $employee->employee_number }}</h3>
-                    <h3><strong>Ordinance Item No.: </strong>{{ $employee->ordinance_number }}</h3>
-                    <h3><strong>Name: </strong>{{ $employee->full_name }}</h3>
-
-                    <h3><strong>Department: </strong>{{ $employee->data->department->dep_name }}</h3>
-                    <h3><strong>Designation: </strong>{{ $employee->data->designation->designation_name }}</h3>
-                    <h3><strong>Type of Employment: </strong>{{ $employee->data->category->category_name }}</h3>
-                    <h3><strong>Type of Payroll: </strong>{{ $employee->data->payroll_type }}</h3>
-                    @if ($employee->data->category->category_code == 'JO')
-                        <h3><strong>Level: </strong> {{ $employee->data->level->name }}</h3>
-                    @elseif ($employee->data->category->category_code != 'COS' && $employee->data->category->category_code != 'JO')
-                        <h3><strong>Salary Grade: </strong> Salary Grade {{ $employee->data->salary_grade_id }}</h3>
-                        <h3><strong>Salary Grade Step: </strong> {{ $employee->data->salary_grade_step }} </h3>
-                    @endif
-                    <h3><strong>Monthly Salary: </strong>
-                        {{ number_format($employee->data->monthly_salary, 2) }}</h3>
-                    @if ($employee->data->category->category_code != 'JO')
-                        <h3><strong>Sick Leave Points:
-                            </strong>{{ number_format($employee->data->sick_leave_points, 2) }}</h3>
-                    @endif
+            <div class="p-5">
+                <div class="mb-3 border-b border-gray-100">
+                    <h1 class="text-2xl font-bold">Personal Information</h1>
                 </div>
-                <div class="mr-3">
-                    <img src="{{ asset('storage/photos/' . $employee->employee_photo) }}" class="rounded"
-                        style="height: 170px; width: 170px;">
+                <div class="flex justify-between">
+    
+                    <div>
+                        <h3><strong>Employee No.: </strong>{{ $employee->employee_number }}</h3>
+                        <h3><strong>Ordinance Item No.: </strong>{{ $employee->ordinance_number }}</h3>
+                        <h3><strong>Name: </strong>{{ $employee->full_name }}</h3>
+    
+                        <h3><strong>Department: </strong>{{ $employee->data->department->dep_name }}</h3>
+                        <h3><strong>Designation: </strong>{{ $employee->data->designation->designation_name }}</h3>
+                        <h3><strong>Type of Employment: </strong>{{ $employee->data->category->category_name }}</h3>
+                        <h3><strong>Type of Payroll: </strong>{{ $employee->data->payroll_type }}</h3>
+                        @if ($employee->data->category->category_code == 'JO')
+                            <h3><strong>Level: </strong> {{ $employee->data->level->name }}</h3>
+                        @elseif ($employee->data->category->category_code != 'COS' && $employee->data->category->category_code != 'JO')
+                            <h3><strong>Salary Grade: </strong> Salary Grade {{ $employee->data->salary_grade_id }}</h3>
+                            <h3><strong>Salary Grade Step: </strong> {{ $employee->data->salary_grade_step }} </h3>
+                        @endif
+                        <h3><strong>Monthly Salary: </strong>
+                            {{ number_format($employee->data->monthly_salary, 2) }}</h3>
+                        @if ($employee->data->category->category_code != 'JO')
+                            <h3><strong>Sick Leave Points:
+                                </strong>{{ number_format($employee->data->sick_leave_points, 2) }}</h3>
+                        @endif
+                    </div>
+                    <div class="mr-3">
+                        <img src="{{ asset('storage/photos/' . $employee->employee_photo) }}" class="rounded"
+                            style="height: 170px; width: 170px;">
+                    </div>
                 </div>
-            </div>
-
-            @if ($employee->data->category->category_code != 'JO')
-                <div class="my-3 border-b border-gray-100">
-                    <h1 class="text-2xl font-bold">Deductions & Allowances</h1>
+                <div class="text-right">
+                    <h3><strong></strong>{{ \Carbon\Carbon::now()->format('F Y') }}</h3>
                 </div>
-                @if (count($employee->deductions) > 0)
-                    <h3><strong>Deductions</strong></h3>
-                    @php
-                        $total_deductions = $employee->computeDeduction();
-                    @endphp
-                    <table class="min-w-full border">
-                        <thead>
-                            <tr>
-                                <th class="px-4 py-4 text-left border-b">#</th>
-                                <th class="px-4 py-4 text-left border-b">Deduction</th>
-                                <th class="px-4 py-4 text-left border-b">Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($employee->deductions as $deduction)
+                <hr class="h-px mb-3 bg-gray-200 border-0 dark:bg-gray-700">
+                @if ($employee->data->category->category_code != 'JO')
+                    <div class="my-3 border-b border-gray-100">
+                        <h1 class="text-2xl font-bold">Deductions & Allowances</h1>
+                    </div>
+                    @if (count($employee->deductions) > 0)
+                        <h3><strong>Deductions</strong></h3>
+                        @php
+                            $total_deductions = $employee->computeDeduction();
+                        @endphp
+                        <table class="min-w-full border">
+                            <thead>
                                 <tr>
-                                    <td class="px-4 py-3 border-b">
-                                        {{ $loop->iteration }}
-                                    </td>
-                                    <td class="px-4 py-3 border-b">{{ $deduction->deduction->deduction_name }}</td>
-                                    <td class="px-4 py-3 border-b">
-                                        {{ number_format($employee->getDeduction($deduction->deduction_id, null), 2) }}
-                                    </td>
+                                    <th class="px-4 py-4 text-left border-b">#</th>
+                                    <th class="px-4 py-4 text-left border-b">Deduction</th>
+                                    <th class="px-4 py-4 text-left border-b">Amount</th>
                                 </tr>
-                            @endforeach
-                            @if ($employee->data->has_holding_tax)
-                                @php
-                                    $total_deductions =
-                                        $total_deductions +
-                                        computeHoldingTax(
-                                            $employee->data->monthly_salary,
-                                            $employee->computeDeduction(),
-                                        );
-                                @endphp
-                                <tr>
-                                    <td class="px-4 py-3 border-b">
-                                        {{ count($employee->deductions) + 1 }}
-                                    </td>
-                                    <td class="px-4 py-3 border-b">With Holding Tax</td>
-                                    <td class="px-4 py-3 border-b">
-                                        {{ number_format(computeHoldingTax($employee->data->monthly_salary, $employee->computeDeduction()), 2) }}
-                                    </td>
-                                </tr>
-                            @endif
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td class="px-4 py-3 border-b"></td>
-                                <td class="px-4 py-3 border-b"></td>
-                                <td class="px-4 py-3 border-b">Total: {{ number_format($total_deductions, 2) }}</td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                @endif
-                @if (count($employee->allowances) > 0)
-                    <h3 class="mt-3"><strong>Allowances</strong></h3>
-                    @php
-                        $total_allowances = 0;
-                    @endphp
-                    <table class="min-w-full border mb-3">
-                        <thead>
-                            <tr>
-                                <th class="px-4 py-4 text-left border-b">#</th>
-                                <th class="px-4 py-4 text-left border-b">Allowance</th>
-                                <th class="px-4 py-4 text-left border-b">Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($employee->allowances as $allowance)
-                                @php
-                                    $total_allowances =
-                                        $total_allowances + $employee->getAllowance($allowance->allowance->id);
-                                @endphp
-                                <tr>
-                                    <td class="px-4 py-3 border-b">
-                                        {{ $loop->iteration }}
-                                    </td>
-                                    <td class="px-4 py-3 border-b">{{ $allowance->allowance->allowance_code }}
-                                    </td>
-                                    <td class="px-4 py-3 border-b">
-                                        {{ number_format($employee->getAllowance($allowance->allowance->id), 2) }}
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td class="px-4 py-3 border-b"></td>
-                                <td class="px-4 py-3 border-b"></td>
-                                <td class="px-4 py-3 border-b">Total: {{ number_format($total_allowances, 2) }}</td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                @endif
-
-            @endif
-            <div class="page-break"></div> <!-- Page break for printing -->
-            @if (count($employee->loans) > 0)
-                <h3><strong>Loans</strong></h3>
-                @foreach ($employee->loans as $loan)
-                    @php
-                        $total_loan = $loan->amount * $loan->duration; // Total loan amount for the full duration
-                        $total_amount_paid = 0; // Initialize total amount paid to zero
-                        $balance = 0; // Initialize balance
-                        $ranges = count($loan->ranges); // Number of ranges for this loan
-                    @endphp
-
-                    <table class="min-w-full border mb-3">
-                        <thead>
-                            <tr>
-                                <th class="px-4 py-4 text-left border-b flex justify-between">
-                                    <strong>{{ $loan->loan->name }} - {{ number_format($total_loan, 2) }}</strong>
-                                </th>
-                                <th class="px-4 py-4 text-left border-b"></th>
-                            </tr>
-                            <tr>
-                                <th class="px-4 py-4 text-left border-b">Amount</th>
-                                <th class="px-4 py-4 text-left border-b">Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (getMonthsFromAttendance($employee) as $month)
-                                @if (isBetweenDatesOfLoan($loan, $month->earliest_time_in))
-                                    @if ($total_amount_paid < $total_loan)
-                                        <!-- Ensure that total paid does not exceed total loan -->
-                                        @php
-                                            // Calculate the payment for the current month based on ranges
-                                            $monthly_payment = min(
-                                                $loan->amount * $ranges,
-                                                $total_loan - $total_amount_paid,
+                            </thead>
+                            <tbody>
+                                @foreach ($employee->deductions as $deduction)
+                                    <tr>
+                                        <td class="px-4 py-3 border-b">
+                                            {{ $loop->iteration }}
+                                        </td>
+                                        <td class="px-4 py-3 border-b">{{ $deduction->deduction->deduction_name }}</td>
+                                        <td class="px-4 py-3 border-b">
+                                            {{ number_format($employee->getDeduction($deduction->deduction_id, null), 2) }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                @if ($employee->data->has_holding_tax)
+                                    @php
+                                        $total_deductions =
+                                            $total_deductions +
+                                            computeHoldingTax(
+                                                $employee->data->monthly_salary,
+                                                $employee->computeDeduction(),
                                             );
-                                            $total_amount_paid += $monthly_payment; // Update total amount paid
-                                        @endphp
-                                        <tr>
-                                            <td class="px-4 py-3 border-b">
-                                                {{ number_format($monthly_payment, 2) }}
-                                            </td>
-                                            <td class="px-4 py-3 border-b">
-                                                {{ date('m', strtotime($month->earliest_time_in)) }}/{{ $ranges > 1 ? 30 : 15 }}/{{ date('Y', strtotime($month->earliest_time_in)) }}
-                                            </td>
-                                        </tr>
-                                    @endif
+                                    @endphp
+                                    <tr>
+                                        <td class="px-4 py-3 border-b">
+                                            {{ count($employee->deductions) + 1 }}
+                                        </td>
+                                        <td class="px-4 py-3 border-b">With Holding Tax</td>
+                                        <td class="px-4 py-3 border-b">
+                                            {{ number_format(computeHoldingTax($employee->data->monthly_salary, $employee->computeDeduction()), 2) }}
+                                        </td>
+                                    </tr>
                                 @endif
-                            @endforeach
-                        </tbody>
-                        <tfoot>
-                            @php
-                                // Calculate remaining balance after payments
-                                $balance = max(0, $total_loan - $total_amount_paid);
-                            @endphp
-                            <tr>
-                                <td class="px-4 py-3 border-b"></td>
-                                <td class="px-4 py-3 border-b">Balance: {{ number_format($balance, 2) }}</td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                @endforeach
-
-            @endif
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td class="px-4 py-3 border-b"></td>
+                                    <td class="px-4 py-3 border-b"></td>
+                                    <td class="px-4 py-3 border-b">Total: {{ number_format($total_deductions, 2) }}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    @endif
+                    @if (count($employee->allowances) > 0)
+                        <h3 class="mt-3"><strong>Allowances</strong></h3>
+                        @php
+                            $total_allowances = 0;
+                        @endphp
+                        <table class="min-w-full border mb-3">
+                            <thead>
+                                <tr>
+                                    <th class="px-4 py-4 text-left border-b">#</th>
+                                    <th class="px-4 py-4 text-left border-b">Allowance</th>
+                                    <th class="px-4 py-4 text-left border-b">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($employee->allowances as $allowance)
+                                    @php
+                                        $total_allowances =
+                                            $total_allowances + $employee->getAllowance($allowance->allowance->id);
+                                    @endphp
+                                    <tr>
+                                        <td class="px-4 py-3 border-b">
+                                            {{ $loop->iteration }}
+                                        </td>
+                                        <td class="px-4 py-3 border-b">{{ $allowance->allowance->allowance_code }}
+                                        </td>
+                                        <td class="px-4 py-3 border-b">
+                                            {{ number_format($employee->getAllowance($allowance->allowance->id), 2) }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td class="px-4 py-3 border-b"></td>
+                                    <td class="px-4 py-3 border-b"></td>
+                                    <td class="px-4 py-3 border-b">Total: {{ number_format($total_allowances, 2) }}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    @endif
+    
+                @endif
+                <div class="page-break"></div> <!-- Page break for printing -->
+                @if (count($employee->loans) > 0)
+                    <h3><strong>Loans</strong></h3>
+                    @foreach ($employee->loans as $loan)
+                        @php
+                            $total_loan = $loan->amount * $loan->duration; // Total loan amount for the full duration
+                            $total_amount_paid = 0; // Initialize total amount paid to zero
+                            $balance = 0; // Initialize balance
+                            $ranges = count($loan->ranges); // Number of ranges for this loan
+                        @endphp
+    
+                        <table class="min-w-full border mb-3">
+                            <thead>
+                                <tr>
+                                    <th class="px-4 py-4 text-left border-b flex justify-between">
+                                        <strong>{{ $loan->loan->name }} - {{ number_format($total_loan, 2) }}</strong>
+                                    </th>
+                                    <th class="px-4 py-4 text-left border-b"></th>
+                                </tr>
+                                <tr>
+                                    <th class="px-4 py-4 text-left border-b">Amount</th>
+                                    <th class="px-4 py-4 text-left border-b">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (getMonthsFromAttendance($employee) as $month)
+                                    @if (isBetweenDatesOfLoan($loan, $month->earliest_time_in))
+                                        @if ($total_amount_paid < $total_loan)
+                                            <!-- Ensure that total paid does not exceed total loan -->
+                                            @php
+                                                // Calculate the payment for the current month based on ranges
+                                                $monthly_payment = min(
+                                                    $loan->amount * $ranges,
+                                                    $total_loan - $total_amount_paid,
+                                                );
+                                                $total_amount_paid += $monthly_payment; // Update total amount paid
+                                            @endphp
+                                            <tr>
+                                                <td class="px-4 py-3 border-b">
+                                                    {{ number_format($monthly_payment, 2) }}
+                                                </td>
+                                                <td class="px-4 py-3 border-b">
+                                                    {{ date('m', strtotime($month->earliest_time_in)) }}/{{ $ranges > 1 ? 30 : 15 }}/{{ date('Y', strtotime($month->earliest_time_in)) }}
+                                                </td>
+                                            </tr>
+                                        @endif
+                                    @endif
+                                @endforeach
+                            </tbody>
+                            <tfoot>
+                                @php
+                                    // Calculate remaining balance after payments
+                                    $balance = max(0, $total_loan - $total_amount_paid);
+                                @endphp
+                                <tr>
+                                    <td class="px-4 py-3 border-b"></td>
+                                    <td class="px-4 py-3 border-b">Balance: {{ number_format($balance, 2) }}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    @endforeach
+    
+                @endif
+            </div>
         </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"
             integrity="sha512-YcsIPGdhPK4P/uRW6/sruonlYj+Q7UHWeKfTAkBW+g83NKM+jMJFJ4iAPfSnVp7BKD4dKMHmVSvICUbE/V1sSw=="

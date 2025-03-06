@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use App\Models\Rata;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\DB;
 
 class Employee extends Model
 {
@@ -108,57 +109,45 @@ class Employee extends Model
     public function computeAllowance($range = null)
     {
         $totalAllowance = 0;
-        // If no specific range provided, compute allowance for all range
+
+        // Compute allowance for all ranges if no specific range is provided
         if (!$range) {
-            foreach ($this->allowances as $allowance) {
-                $totalAllowance += $allowance->allowance->allowance_amount;
+            return array_reduce($this->allowances, fn($total, $allowance) =>
+                $total + $allowance->allowance->allowance_amount, 0);
+        }
+
+        // Compute allowance for a specific range
+        foreach ($this->allowances as $allowance) {
+            if (in_array($range, $allowance->allowance->allowance_ranges)) {
+                $code = $allowance->allowance->allowance_code;
+                $totalAllowance += in_array($code, ['Representation', 'Transportation'])
+                    ? $allowance->amount
+                    : $allowance->allowance->allowance_amount;
             }
-        } else {
-            // Compute allowance for specific dates
-            foreach ($this->allowances as $allowance) {
-                foreach ($allowance->allowance->allowance_ranges as $key => $allowance_range) {
-                    if ($range == $allowance_range) {
-                        if ($allowance->allowance->allowance_code == 'Hazard' || $allowance->allowance->allowance_code == 'Representation' || $allowance->allowance->allowance_code == 'Transportation') {
-                            if ($allowance->allowance->allowance_code == 'Hazard') {
-                                $totalAllowance = $totalAllowance + getHazard($this->data->salary_grade_id, $this->data->monthly_salary);
-                            } else {
-                                // dd(getHazard($this->data->salary_grade_id, $this->data->monthly_salary));
-                                $totalAllowance = $totalAllowance + $allowance->amount;
-                            }
-                        } else {
-                            $totalAllowance = $totalAllowance + $allowance->allowance->allowance_amount;
-                        }
-                    }
-                }
+        }
+
+        // Add hazard allowances
+        $hazards = Hazard::where('category_id', $this->data->category_id)
+            ->where('department_id', $this->data->department_id)
+            ->whereJsonContains('ranges', $range)
+            ->whereHas('salaryGrades', fn($query) =>
+                $query->where('salary_grade_id', $this->data->salary_grade_id))
+            ->get();
+        if($hazards){
+            foreach ($hazards as $hazard) {
+                $totalAllowance += $hazard->amount_type == 'percentage'
+                    ? ($this->data->monthly_salary * $hazard->amount) / 100
+                    : $hazard->amount;
             }
-            $hazards = \App\Models\Hazard::where('category_id', $this->data->category_id)
-                ->where('department_id', $this->data->department_id)
-                ->whereJsonContains('ranges',  $range)
-                ->whereHas('salaryGrades', function ($query) {
-                    $query->where('salary_grade_id', $this->data->salary_grade_id);
-                })
-                ->get();
-            $rata_types = \App\Models\Rata::where('id', $this->data->rata_id)->get();
-            if ($hazards) {
-                foreach ($rata_types as $rata) {
-                    if ($rata->amount_type == 'percentage') {
-                        $totalAllowance += ($this->data->monthly_salary * $rata->amount) / 100;
-                    } else {
-                        $totalAllowance += $rata->amount;
-                    }
-                }
-            }
-            if ($rata_types) {
-                foreach ($rata_types as $rata) {
-                    $totalAllowance += $rata->amount;
-                }
-            }
+        }
+
+        // Add RATA allowance if applicable
+        if ($rata_type = Rata::find($this->data->rata_id)) {
+            $totalAllowance += $rata_type->amount;
         }
 
         return $totalAllowance;
     }
-
-
 
     public function computeDeduction($range = null)
     {

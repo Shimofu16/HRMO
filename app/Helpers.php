@@ -188,7 +188,12 @@ if (!function_exists('attendanceCount')) {
                 $dateFormatted = $date->format('Y-m-d');
 
                 if ($attendance) {
-                    $manhours = ($attendance->time_in_status == 'Half-Day' || $attendance->time_out_status == 'Half-Day') && ($employee->data->category->category_code === 'JO' || $employee->data->category->category_code === 'COS') ? 4 : 8;
+                    $timeOut = Carbon::parse($attendance->time_out);
+                    $startTime = Carbon::parse('08:00:00');
+                    $manhours = $timeOut->diffInHours($startTime);
+                    if ($attendance->time_in_status == 'Half-Day' || $attendance->time_out_status == 'Half-Day') {
+                        $manhours = ($employee->data->category->category_code === 'JO' || $employee->data->category->category_code === 'COS') ? 4 : $manhours;
+                    }
                     $timeInInterval = getInterval($attendance->time_in, true, true);
                     $timeOutInterval = getInterval($attendance->time_out, false, true);
 
@@ -350,7 +355,7 @@ if (!function_exists('calculateSalary')) {
             }
         }
 
-   
+
         if (!$isJO && !$isCOS) {
             $totalSalaryForToday = ($salaryPerHour * $hourWorked);
             $totalSalaryForToday = ($totalSalaryForToday > 0) ? $totalSalaryForToday : 0;

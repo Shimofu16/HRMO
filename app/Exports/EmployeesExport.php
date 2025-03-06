@@ -15,7 +15,11 @@ class EmployeesExport implements FromCollection, WithHeadings, WithMapping, Shou
     */
     public function collection()
     {
-        return Employee::all();
+        return Employee::with('data.department', 'data.designation', 'data.category')
+            ->get()
+            ->sortBy(function($employee) {
+            return $employee->data->department->dep_code;
+            });
     }
     public function map($employee): array
     {
