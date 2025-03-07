@@ -118,6 +118,7 @@ class Create extends Component
         ->groupByRaw('YEAR(time_in), MONTH(time_in)')
         ->orderByRaw('YEAR(time_in), MONTH(time_in)')
             ->get();
+            // dd($attendances);
 
         $this->payrolls = collect();
         $this->years = $this->getYears($attendances);

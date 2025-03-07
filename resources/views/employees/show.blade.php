@@ -226,14 +226,14 @@
                     </a>
                     <div>
                         <button type="button"
-                        class="text-white ms-3 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                        onclick="generatePDF('{{ $employee->full_name }} - leave requests', 'leaveRequestsPdf')">
-                        Download
-                    </button>
-                    <button type="button" x-on:click="$dispatch('close')"
-                        class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                        Close
-                    </button>
+                            class="text-white ms-3 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                            onclick="generatePDF('{{ $employee->full_name }} - leave requests', 'leaveRequestsPdf')">
+                            Download
+                        </button>
+                        <button type="button" x-on:click="$dispatch('close')"
+                            class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                            Close
+                        </button>
                     </div>
 
                 </div>
@@ -316,19 +316,20 @@
                     <h1 class="text-md font-bold">Province of Laguna</h1>
                     <h1 class="text-md font-bold">Municipality of Calauan</h1>
                 </div>
-                <div><img src="{{ asset('assets/images/cl-pnp-logo.png') }}" alt="calauan logo" class="h-20"></div>
+                <div><img src="{{ asset('assets/images/cl-pnp-logo.png') }}" alt="calauan logo" class="h-20">
+                </div>
             </div>
             <div class="p-5">
                 <div class="mb-3 border-b border-gray-100">
                     <h1 class="text-2xl font-bold">Personal Information</h1>
                 </div>
                 <div class="flex justify-between">
-    
+
                     <div>
                         <h3><strong>Employee No.: </strong>{{ $employee->employee_number }}</h3>
                         <h3><strong>Ordinance Item No.: </strong>{{ $employee->ordinance_number }}</h3>
                         <h3><strong>Name: </strong>{{ $employee->full_name }}</h3>
-    
+
                         <h3><strong>Department: </strong>{{ $employee->data->department->dep_name }}</h3>
                         <h3><strong>Designation: </strong>{{ $employee->data->designation->designation_name }}</h3>
                         <h3><strong>Type of Employment: </strong>{{ $employee->data->category->category_name }}</h3>
@@ -336,7 +337,8 @@
                         @if ($employee->data->category->category_code == 'JO')
                             <h3><strong>Level: </strong> {{ $employee->data->level->name }}</h3>
                         @elseif ($employee->data->category->category_code != 'COS' && $employee->data->category->category_code != 'JO')
-                            <h3><strong>Salary Grade: </strong> Salary Grade {{ $employee->data->salary_grade_id }}</h3>
+                            <h3><strong>Salary Grade: </strong> Salary Grade {{ $employee->data->salary_grade_id }}
+                            </h3>
                             <h3><strong>Salary Grade Step: </strong> {{ $employee->data->salary_grade_step }} </h3>
                         @endif
                         <h3><strong>Monthly Salary: </strong>
@@ -378,7 +380,8 @@
                                         <td class="px-4 py-3 border-b">
                                             {{ $loop->iteration }}
                                         </td>
-                                        <td class="px-4 py-3 border-b">{{ $deduction->deduction->deduction_name }}</td>
+                                        <td class="px-4 py-3 border-b">{{ $deduction->deduction->deduction_name }}
+                                        </td>
                                         <td class="px-4 py-3 border-b">
                                             {{ number_format($employee->getDeduction($deduction->deduction_id, null), 2) }}
                                         </td>
@@ -408,7 +411,8 @@
                                 <tr>
                                     <td class="px-4 py-3 border-b"></td>
                                     <td class="px-4 py-3 border-b"></td>
-                                    <td class="px-4 py-3 border-b">Total: {{ number_format($total_deductions, 2) }}</td>
+                                    <td class="px-4 py-3 border-b">Total: {{ number_format($total_deductions, 2) }}
+                                    </td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -448,15 +452,67 @@
                                 <tr>
                                     <td class="px-4 py-3 border-b"></td>
                                     <td class="px-4 py-3 border-b"></td>
-                                    <td class="px-4 py-3 border-b">Total: {{ number_format($total_allowances, 2) }}</td>
+                                    <td class="px-4 py-3 border-b">Total: {{ number_format($total_allowances, 2) }}
+                                    </td>
                                 </tr>
                             </tfoot>
                         </table>
                     @endif
-    
+
+                    @if ($employee->data->has_holding_tax)
+                        <div class="page-break"></div>
+                        <h3 class="mt-3"><strong>Holding Tax</strong></h3>
+                        @php
+                            $total_holding_tax = 0; // Initialize total holding tax
+                            // dd($employee->attendances()->selectRaw('YEAR(time_in) as year, MONTH(time_in) as month, MIN(time_in) as earliest_time_in')->where('isPresent', 1)
+                            // ->groupByRaw('YEAR(time_in), MONTH(time_in)')
+                            // ->orderByRaw('YEAR(time_in), MONTH(time_in)')
+                            //     ->get());
+                        @endphp
+                        <table class="min-w-full border mb-3">
+                            <thead>
+                                <tr>
+                                    <th class="px-4 py-4 text-left border-b">#</th>
+                                    <th class="px-4 py-4 text-left border-b">Month</th>
+                                    <th class="px-4 py-4 text-left border-b">Amount per 15 days</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($employee->attendances()->selectRaw('YEAR(time_in) as year, MONTH(time_in) as month, MIN(time_in) as earliest_time_in')->where('isPresent', 1)->groupByRaw('YEAR(time_in), MONTH(time_in)')->orderByRaw('YEAR(time_in), MONTH(time_in)')->get() as $month => $attendance)
+                                    @php
+                                        // Calculate monthly holding tax
+                                        $monthly_holding_tax =
+                                            computeHoldingTax(
+                                                $employee->data->monthly_salary,
+                                                $employee->computeDeduction('1-15'),
+                                            ) / 2;
+                                        $total_holding_tax += $monthly_holding_tax; // Add to total holding tax
+                                    @endphp
+                                    <tr>
+                                        <td class="px-4 py-3 border-b">{{ $loop->iteration }}</td>
+                                        <td class="px-4 py-3 border-b">
+                                            {{ date('F', strtotime($attendance->earliest_time_in)) }} -
+                                            {{ $attendance->year }}</td>
+                                        <td class="px-4 py-3 border-b">
+                                            {{ number_format($monthly_holding_tax, 2) }}
+                                            <!-- Split into two halves -->
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td class="px-4 py-3 border-b"></td>
+                                    <td class="px-4 py-3 border-b"></td>
+                                    <td class="px-4 py-3 border-b">Total: {{ number_format($total_holding_tax, 2) }}
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    @endif
                 @endif
-                <div class="page-break"></div> <!-- Page break for printing -->
                 @if (count($employee->loans) > 0)
+                    <div class="page-break"></div> <!-- Page break for printing -->
                     <h3><strong>Loans</strong></h3>
                     @foreach ($employee->loans as $loan)
                         @php
@@ -465,7 +521,7 @@
                             $balance = 0; // Initialize balance
                             $ranges = count($loan->ranges); // Number of ranges for this loan
                         @endphp
-    
+
                         <table class="min-w-full border mb-3">
                             <thead>
                                 <tr>
@@ -516,7 +572,7 @@
                             </tfoot>
                         </table>
                     @endforeach
-    
+
                 @endif
             </div>
         </div>
