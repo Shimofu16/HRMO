@@ -194,6 +194,7 @@
                                                         ->whereYear('created_at', now()->format('Y'))
                                                         ->count();
                                             }
+                                            @php;
                                         @endphp
                                         {{ number_format($points, 2) }}</td>
                                     <td class="px-2 py-2 border-b">
@@ -447,6 +448,31 @@
                                         </td>
                                     </tr>
                                 @endforeach
+                                @if ($employee->data->rata_id)
+                                    @php
+                                        $total_allowances = $total_allowances + $employee->data->rata->amount * 2;
+                                    @endphp
+                                    <tr>
+                                        <td class="px-4 py-3 border-b">
+                                            {{ count($employee->allowances) + 1 }}
+                                        </td>
+                                        <td class="px-4 py-3 border-b">Representation
+                                        </td>
+                                        <td class="px-4 py-3 border-b">
+                                            {{ number_format($employee->data->rata->amount, 2) }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-3 border-b">
+                                            {{ count($employee->allowances) + 2 }}
+                                        </td>
+                                        <td class="px-4 py-3 border-b">Transportation
+                                        </td>
+                                        <td class="px-4 py-3 border-b">
+                                            {{ number_format($employee->data->rata->amount, 2) }}
+                                        </td>
+                                    </tr>
+                                @endif
                             </tbody>
                             <tfoot>
                                 <tr>
@@ -511,35 +537,41 @@
                         </table>
                     @endif
                 @endif
-                @if (count($employee->loans) > 0)
+                @if ($employee->loans->count() > 0)
                     <div class="page-break"></div> <!-- Page break for printing -->
-                    <h3><strong>Loans</strong></h3>
-                    @foreach ($employee->loans as $loan)
+                    @php
+                        // Group loans by loan_id
+                        $loansGrouped = $employee->loans->groupBy('loan_id');
+                    @endphp
+
+                    @foreach ($loansGrouped as $loanId => $loans)
                         @php
-                            $total_loan = $loan->amount * $loan->duration; // Total loan amount for the full duration
-                            $total_amount_paid = 0; // Initialize total amount paid to zero
-                            $balance = 0; // Initialize balance
-                            $ranges = count($loan->ranges); // Number of ranges for this loan
+                            $ranges = count($loans) > 1 ? 2 : 1; // Set ranges based on the number of loans with the same ID
                         @endphp
 
-                        <table class="min-w-full border mb-3">
-                            <thead>
-                                <tr>
-                                    <th class="px-4 py-4 text-left border-b flex justify-between">
-                                        <strong>{{ $loan->loan->name }} - {{ number_format($total_loan, 2) }}</strong>
-                                    </th>
-                                    <th class="px-4 py-4 text-left border-b"></th>
-                                </tr>
-                                <tr>
-                                    <th class="px-4 py-4 text-left border-b">Amount</th>
-                                    <th class="px-4 py-4 text-left border-b">Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (getMonthsFromAttendance($employee) as $month)
-                                    @if (isBetweenDatesOfLoan($loan, $month->earliest_time_in))
-                                        @if ($total_amount_paid < $total_loan)
-                                            <!-- Ensure that total paid does not exceed total loan -->
+                        @foreach ($loans as $loan)
+                            @php
+                                $total_loan = $loan->amount * $loan->duration; // Total loan amount for the full duration
+                                $total_amount_paid = 0; // Initialize total amount paid to zero
+                            @endphp
+
+                            <table class="min-w-full border mb-3">
+                                <thead>
+                                    <tr>
+                                        <th class="px-4 py-4 text-left border-b flex justify-between">
+                                            <strong>{{ $loan->loan->name }} -
+                                                {{ number_format($total_loan, 2) }}</strong>
+                                        </th>
+                                        <th class="px-4 py-4 text-left border-b"></th>
+                                    </tr>
+                                    <tr>
+                                        <th class="px-4 py-4 text-left border-b">Amount</th>
+                                        <th class="px-4 py-4 text-left border-b">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (getMonthsFromAttendance($employee) as $month)
+                                        @if (isBetweenDatesOfLoan($loan, $month->earliest_time_in) && $total_amount_paid < $total_loan)
                                             @php
                                                 // Calculate the payment for the current month based on ranges
                                                 $monthly_payment = min(
@@ -550,29 +582,24 @@
                                             @endphp
                                             <tr>
                                                 <td class="px-4 py-3 border-b">
-                                                    {{ number_format($monthly_payment, 2) }}
-                                                </td>
+                                                    {{ number_format($monthly_payment, 2) }}</td>
                                                 <td class="px-4 py-3 border-b">
                                                     {{ date('m', strtotime($month->earliest_time_in)) }}/{{ $ranges > 1 ? 30 : 15 }}/{{ date('Y', strtotime($month->earliest_time_in)) }}
                                                 </td>
                                             </tr>
                                         @endif
-                                    @endif
-                                @endforeach
-                            </tbody>
-                            <tfoot>
-                                @php
-                                    // Calculate remaining balance after payments
-                                    $balance = max(0, $total_loan - $total_amount_paid);
-                                @endphp
-                                <tr>
-                                    <td class="px-4 py-3 border-b"></td>
-                                    <td class="px-4 py-3 border-b">Balance: {{ number_format($balance, 2) }}</td>
-                                </tr>
-                            </tfoot>
-                        </table>
+                                    @endforeach
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td class="px-4 py-3 border-b"></td>
+                                        <td class="px-4 py-3 border-b">Balance:
+                                            {{ number_format(max(0, $total_loan - $total_amount_paid), 2) }}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        @endforeach
                     @endforeach
-
                 @endif
             </div>
         </div>

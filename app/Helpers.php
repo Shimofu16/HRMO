@@ -189,7 +189,7 @@ if (!function_exists('attendanceCount')) {
 
                 if ($attendance) {
                     $timeOut = Carbon::parse($attendance->time_out);
-                    $startTime = Carbon::parse('08:00:00');
+                    $startTime = Carbon::parse($timeOut->format('Y-m-d') . ' 08:00:00');
                     $manhours = $timeOut->diffInHours($startTime);
                     if ($attendance->time_in_status == 'Half-Day' || $attendance->time_out_status == 'Half-Day') {
                         $manhours = ($employee->data->category->category_code === 'JO' || $employee->data->category->category_code === 'COS') ? 4 : $manhours;

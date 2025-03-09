@@ -40,7 +40,7 @@ return new class extends Migration
             $table->foreignId('employee_id')->constrained('employees', 'id');
             $table->foreignId('loan_id')->constrained('loans', 'id');
             $table->double('amount');
-            $table->json('ranges');
+            $table->string('period');
             $table->double('deduction')->nullable();
             $table->bigInteger('duration');
             $table->date('start_date');

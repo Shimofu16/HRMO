@@ -68,6 +68,10 @@ class EmployeeData extends Model
     {
         return $this->belongsTo(Level::class, 'level_id');
     }
+    public function rata()
+    {
+        return $this->belongsTo(Rata::class, 'rata_id');
+    }
 
     // public function getMonthlySalary($month = null, $year = null)
     // {

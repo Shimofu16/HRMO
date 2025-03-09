@@ -127,29 +127,30 @@ class EmployeeSeeder extends Seeder
                 $loanDetails = [
                     1 => [ // Loan ID as key
                         'amount' => 600,
-                        'duration' => 12,
-                        'range' => ['1-15', '16-31'], // Sample loan range selection
+                        'period' => 1-15,
+                        'start_date' => Carbon::now()->subMonths(3)->format('Y-m-d'),
+                        'end_date' => Carbon::now()->addMonths(3)->format('Y-m-d'),
                     ],
                     2 => [ // Loan ID as key
                         'amount' => 500,
-                        'start_date' => 12,
-                        'end_date' => 12,
-                        'range' => ['1-15', '16-31'], // Sample loan range selection
+                        'period' => 1-15,
+                        'start_date' => Carbon::now()->subMonths(2)->format('Y-m-d'),
+                        'end_date' => Carbon::now()->addMonths(3)->format('Y-m-d'),
                     ],
                 ];
                 $loansData = [];
 
-                foreach ($loanDetails as $loanId => $loanDetails) {
-                    $start_date = Carbon::now()->subMonths($faker->numberBetween(2,3));
-                    $end_date = Carbon::now()->addMonths(3);
-                    $duration = $start_date->diffInMonths(Carbon::parse($end_date));
+                foreach ($loanDetails as $loanId => $loanDetail) {
+                    $start_date = Carbon::parse($loanDetail['start_date']);
+                    $end_date = Carbon::parse($loanDetail['end_date']);
+                    $duration = $start_date->diffInMonths($end_date);
                     $loansData[] = [
                         'loan_id' => $loanId,
-                        'amount' => $loanDetails['amount'],
-                        'start_date' => $start_date->format('Y-m-d'),
-                        'end_date' => $end_date->format('Y-m-d'),
+                        'amount' => $loanDetail['amount'],
+                        'period' => $loanDetail['period'],
+                        'start_date' => $loanDetail['start_date'],
+                        'end_date' => $loanDetail['end_date'],
                         'duration' => $duration,
-                        'ranges' => $loanDetails['range'],
                     ];
                 }
                 // Create loans for the employee

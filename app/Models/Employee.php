@@ -105,6 +105,8 @@ class Employee extends Model
     {
         return $this->hasOne(EmployeeData::class, 'employee_id');
     }
+    
+
 
     public function computeAllowance($range = null)
     {
@@ -142,8 +144,8 @@ class Employee extends Model
         }
 
         // Add RATA allowance if applicable
-        if ($rata_type = Rata::find($this->data->rata_id)) {
-            $totalAllowance += $rata_type->amount;
+        if ($this->data->rata_id) {
+            $totalAllowance += $this->data->rata->amount;
         }
 
         return $totalAllowance;
@@ -182,11 +184,9 @@ class Employee extends Model
         }
         if ($this->loans) {
             foreach ($this->loans as $key => $loan) {
-                foreach ($loan->ranges as $key => $loan_range) {
-                    if ($range == $loan_range) {
+                    if ($loan->period == $range) {
                         $totalDeduction += $loan->amount;
                     }
-                }
             }
         }
 
@@ -289,10 +289,8 @@ class Employee extends Model
             $current_date = Carbon::parse($date);
             $start_date = Carbon::parse($loan->start_date);
             $end_date = Carbon::parse($loan->end_date);
-            foreach ($loan->ranges as $key => $ranges) {
-                if ($ranges == $range && $current_date->between($start_date, $end_date)) {
-                    return $loan->amount;
-                }
+            if ($loan->range == $range && $current_date->between($start_date, $end_date)) {
+                return $loan->amount;
             }
         }
         return 0;
