@@ -37,6 +37,11 @@
                     onclick="window.dispatchEvent(new CustomEvent('open-modal', { detail: 'leaveRequests' }))">
                     Leave Requests
                 </button>
+                <button type="button"
+                    class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
+                    onclick="window.dispatchEvent(new CustomEvent('open-modal', { detail: 'holdingTaxModal' }))">
+                    Holding Tax
+                </button>
 
                 <button type="button"
                     class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
@@ -147,6 +152,64 @@
                         class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Close</button>
                 </div>
             </x-modal>
+            @if($employee->data->rata_id)
+            <x-modal name="holdingTaxModal" headerTitle="Holding Tax">
+                <!-- Modal body -->
+                <div class="p-4 md:p-5 space-y-4">
+                    @php
+                            $total_holding_tax = 0; // Initialize total holding tax
+                     
+                        @endphp
+                        <table class="min-w-full border mb-3">
+                            <thead>
+                                <tr>
+                                    <th class="px-4 py-4 text-left border-b">#</th>
+                                    <th class="px-4 py-4 text-left border-b">Month</th>
+                                    <th class="px-4 py-4 text-left border-b">Amount per 15 days</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($employee->attendances()->selectRaw('YEAR(time_in) as year, MONTH(time_in) as month, MIN(time_in) as earliest_time_in')->where('isPresent', 1)->groupByRaw('YEAR(time_in), MONTH(time_in)')->orderByRaw('YEAR(time_in), MONTH(time_in)')->get() as $month => $attendance)
+                                    @php
+                                        // Calculate monthly holding tax
+                                        $monthly_holding_tax =
+                                            computeHoldingTax(
+                                                $employee->data->monthly_salary,
+                                                $employee->computeDeduction('1-15'),
+                                            ) / 2;
+                                        $total_holding_tax += $monthly_holding_tax; // Add to total holding tax
+                                    @endphp
+                                    <tr>
+                                        <td class="px-4 py-3 border-b">{{ $loop->iteration }}</td>
+                                        <td class="px-4 py-3 border-b">
+                                            {{ date('F', strtotime($attendance->earliest_time_in)) }} -
+                                            {{ $attendance->year }}</td>
+                                        <td class="px-4 py-3 border-b">
+                                            {{ number_format($monthly_holding_tax, 2) }}
+                                            <!-- Split into two halves -->
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td class="px-4 py-3 border-b"></td>
+                                    <td class="px-4 py-3 border-b"></td>
+                                    <td class="px-4 py-3 border-b">Total: {{ number_format($total_holding_tax, 2) }}
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                </div>
+                <!-- Modal footer -->
+                <div
+                    class="flex justify-end items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+
+                    <button type="button" x-on:click="$dispatch('close')"
+                        class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Close</button>
+                </div>
+            </x-modal>
+            @endif
             <x-modal name="leaveRequests" maxWidth="6xl" headerTitle="Leave Requests">
                 <!-- Modal body -->
                 <div class="p-4 md:p-5 space-y-4" id="leaveRequestsPdf">
@@ -359,6 +422,14 @@
                 </div>
                 <hr class="h-px mb-3 bg-gray-200 border-0 dark:bg-gray-700">
                 @if ($employee->data->category->category_code != 'JO')
+                    @php
+                        $hazards = \App\Models\Hazard::where('category_id', $employee->data->category_id)
+                                                    ->where('department_id', $employee->data->department_id)
+                                                    ->whereHas('salaryGrades', function ($query) use ($employee) {
+                                                        $query->where('salary_grade_id', $employee->data->salary_grade_id);
+                                                    })
+                                                    ->get();
+                    @endphp
                     <div class="my-3 border-b border-gray-100">
                         <h1 class="text-2xl font-bold">Deductions & Allowances</h1>
                     </div>
@@ -473,6 +544,35 @@
                                         </td>
                                     </tr>
                                 @endif
+                                @if($hazards)
+                                    @foreach ($hazards as $hazard)
+                                        @php
+                                                if ($hazard->amount_type == 'percentage') {
+                                                    $total_allowances = $total_allowances + ($employee->data->monthly_salary * ($hazard->amount / 100));
+                                                } else {
+                                                    $total_allowances = $total_allowances + $hazard->amount;
+                                                }
+                                        @endphp
+                                        <tr>
+                                            <td class="px-4 py-3 border-b">
+                                                @if($employee->data->rata_id)
+                                                    {{ count($employee->allowances) + 2 + $loop->iteration }}
+                                                @else
+                                                    {{ count($employee->allowances) + $loop->iteration }}
+                                                @endif
+                                            </td>
+                                            <td class="px-4 py-3 border-b">{{ $hazard->name }}
+                                            </td>
+                                            <td class="px-4 py-3 border-b">
+                                                @if ($hazard->amount_type == 'percentage')
+                                                    {{ number_format($employee->data->monthly_salary * ($hazard->amount / 100), 2) }}
+                                                @else
+                                                    {{ number_format($hazard->amount, 2) }}
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
                             </tbody>
                             <tfoot>
                                 <tr>
@@ -485,71 +585,31 @@
                         </table>
                     @endif
 
-                    @if ($employee->data->has_holding_tax)
+                    {{-- @if ($employee->data->has_holding_tax)
                         <div class="page-break"></div>
                         <h3 class="mt-3"><strong>Holding Tax</strong></h3>
-                        @php
-                            $total_holding_tax = 0; // Initialize total holding tax
-                            // dd($employee->attendances()->selectRaw('YEAR(time_in) as year, MONTH(time_in) as month, MIN(time_in) as earliest_time_in')->where('isPresent', 1)
-                            // ->groupByRaw('YEAR(time_in), MONTH(time_in)')
-                            // ->orderByRaw('YEAR(time_in), MONTH(time_in)')
-                            //     ->get());
-                        @endphp
-                        <table class="min-w-full border mb-3">
-                            <thead>
-                                <tr>
-                                    <th class="px-4 py-4 text-left border-b">#</th>
-                                    <th class="px-4 py-4 text-left border-b">Month</th>
-                                    <th class="px-4 py-4 text-left border-b">Amount per 15 days</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($employee->attendances()->selectRaw('YEAR(time_in) as year, MONTH(time_in) as month, MIN(time_in) as earliest_time_in')->where('isPresent', 1)->groupByRaw('YEAR(time_in), MONTH(time_in)')->orderByRaw('YEAR(time_in), MONTH(time_in)')->get() as $month => $attendance)
-                                    @php
-                                        // Calculate monthly holding tax
-                                        $monthly_holding_tax =
-                                            computeHoldingTax(
-                                                $employee->data->monthly_salary,
-                                                $employee->computeDeduction('1-15'),
-                                            ) / 2;
-                                        $total_holding_tax += $monthly_holding_tax; // Add to total holding tax
-                                    @endphp
-                                    <tr>
-                                        <td class="px-4 py-3 border-b">{{ $loop->iteration }}</td>
-                                        <td class="px-4 py-3 border-b">
-                                            {{ date('F', strtotime($attendance->earliest_time_in)) }} -
-                                            {{ $attendance->year }}</td>
-                                        <td class="px-4 py-3 border-b">
-                                            {{ number_format($monthly_holding_tax, 2) }}
-                                            <!-- Split into two halves -->
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td class="px-4 py-3 border-b"></td>
-                                    <td class="px-4 py-3 border-b"></td>
-                                    <td class="px-4 py-3 border-b">Total: {{ number_format($total_holding_tax, 2) }}
-                                    </td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    @endif
+                        
+                    @endif --}}
                 @endif
                 @if ($employee->loans->count() > 0)
                     <div class="page-break"></div> <!-- Page break for printing -->
                     @php
                         // Group loans by loan_id
                         $loansGrouped = $employee->loans->groupBy('loan_id');
-                        // dd( $loansGrouped);
                     @endphp
 
                     @foreach ($loansGrouped as $loanId => $loans)
                         @php
-                        // dd($loans->first()->amount * $loans->first()->duration);
                             $ranges = count($loans) > 1 ? 2 : 1; // Set ranges based on the number of loans with the same ID
-                            $total_loan = $loans->first()->amount * $loans->first()->duration; // Total loan amount for the full duration
+                            $total_loan = 0; // Total loan amount for the full duration
+                            $loan_name = '';
+                            foreach($loans->sortBy('period') as $loan){
+                                if(!$loan_name)
+                                {
+                                    $loan_name = $loan->loan->name;
+                                }
+                                $total_loan = $total_loan + ($loan->amount * $loan->duration);
+                            }
                             $total_amount_paid = 0; // Initialize total amount paid to zero
                         @endphp
 
@@ -557,7 +617,7 @@
                             <thead>
                                 <tr>
                                     <th class="px-4 py-4 text-left border-b flex justify-between">
-                                        <strong>{{ $loans->first()->loan->name }} -
+                                        <strong>{{ $loan_name }} -
                                             {{ number_format($total_loan, 2) }}</strong>
                                     </th>
                                     <th class="px-4 py-4 text-left border-b"></th>
@@ -567,25 +627,25 @@
                                     <th class="px-4 py-4 text-left border-b">Date</th>
                                 </tr>
                             </thead>
-                            
-                            
+
+
                             <tbody>
-                                    @foreach ($loans as $loan)
-                                        @foreach (getMonthsFromAttendance($employee) as $month)
+                                    @foreach ($loans->sortBy('period') as $loan)
+                                        @php
+                                        // dd($loans->orderBy('start_date', 'asc'));
+                                        @endphp
+                                        @foreach (getMonthsFromAttendance($employee)->sortBy('earliest_time_in') as $month)
                                             @if (isBetweenDatesOfLoan($loan, $month->earliest_time_in) && $total_amount_paid < $total_loan)
                                                 @php
                                                     // Calculate the payment for the current month based on ranges
-                                                    $monthly_payment = min(
-                                                        $loan->amount * $ranges,
-                                                        $total_loan - $total_amount_paid,
-                                                    );
-                                                    $total_amount_paid += $monthly_payment; // Update total amount paid
+                                                    
+                                                    $total_amount_paid += $loan->amount; // Update total amount paid
                                                 @endphp
                                                 <tr>
                                                     <td class="px-4 py-3 border-b">
-                                                        {{ number_format($monthly_payment, 2) }}</td>
+                                                        {{ number_format($loan->amount, 2) }}</td>
                                                     <td class="px-4 py-3 border-b">
-                                                        {{ date('m', strtotime($month->earliest_time_in)) }}/{{ $ranges > 1 ? 30 : 15 }}/{{ date('Y', strtotime($month->earliest_time_in)) }}
+                                                        {{ date('F', strtotime($month->earliest_time_in)) }}/{{ $loan->period }}/{{ date('Y', strtotime($month->earliest_time_in)) }}
                                                     </td>
                                                 </tr>
                                             @endif

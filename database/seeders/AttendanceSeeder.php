@@ -22,6 +22,7 @@ class AttendanceSeeder extends Seeder
             Carbon::now()->subMonths(3),
             Carbon::now()->subMonths(2),
             Carbon::now()->subMonths(1),
+            Carbon::now()->addMonths(1),
         ];
         foreach ($months as $index => $month) {
             foreach ($employees as $key => $employee) {

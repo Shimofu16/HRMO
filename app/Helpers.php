@@ -777,6 +777,7 @@ if (!function_exists('isBetweenDatesOfLoan')) {
         $start_date = Carbon::parse($loan->start_date);
         $end_date = Carbon::parse($loan->end_date);
         $date = Carbon::parse($date);
+        // dd($date, $start_date, $end_date, $date->between($start_date, $end_date));
         return $date->between($start_date, $end_date);
     }
 }

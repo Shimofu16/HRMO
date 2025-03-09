@@ -125,27 +125,43 @@ class EmployeeSeeder extends Seeder
                 }
 
                 $loanDetails = [
-                    1 => [ // Loan ID as key
+                    [ // Loan ID as key
+                        'loan_id' => 1,
                         'amount' => 600,
-                        'period' => 1-15,
+                        'period' => '1-15',
                         'start_date' => Carbon::now()->subMonths(3)->format('Y-m-d'),
                         'end_date' => Carbon::now()->addMonths(3)->format('Y-m-d'),
                     ],
-                    2 => [ // Loan ID as key
+                    [ // Loan ID as key
+                        'loan_id' => 1,
+                        'amount' => 200,
+                        'period' => '16-31',
+                        'start_date' => Carbon::now()->subMonths(3)->format('Y-m-d'),
+                        'end_date' => Carbon::now()->addMonths(3)->format('Y-m-d'),
+                    ],
+                    [ // Loan ID as key
+                        'loan_id' => 2,
                         'amount' => 500,
-                        'period' => 1-15,
+                        'period' => '1-15',
+                        'start_date' => Carbon::now()->subMonths(2)->format('Y-m-d'),
+                        'end_date' => Carbon::now()->addMonths(3)->format('Y-m-d'),
+                    ],
+                    [ // Loan ID as key
+                        'loan_id' => 2,
+                        'amount' => 100,
+                        'period' => '16-31',
                         'start_date' => Carbon::now()->subMonths(2)->format('Y-m-d'),
                         'end_date' => Carbon::now()->addMonths(3)->format('Y-m-d'),
                     ],
                 ];
                 $loansData = [];
 
-                foreach ($loanDetails as $loanId => $loanDetail) {
+                foreach ($loanDetails as $key => $loanDetail) {
                     $start_date = Carbon::parse($loanDetail['start_date']);
                     $end_date = Carbon::parse($loanDetail['end_date']);
                     $duration = $start_date->diffInMonths($end_date);
                     $loansData[] = [
-                        'loan_id' => $loanId,
+                        'loan_id' => $loanDetail['loan_id'],
                         'amount' => $loanDetail['amount'],
                         'period' => $loanDetail['period'],
                         'start_date' => $loanDetail['start_date'],
