@@ -207,16 +207,6 @@
                                                             $allowance->id,
                                                             $payroll['date_from_to'],
                                                         );
-                                                    
-                                                    // add totalallwance to hazards
-                                                    foreach ($hazards as $hazard) {
-                                                        // check if percentage
-                                                        if ($hazard->amount_type == 'percentage') {
-                                                            $totalAllowance += ($monthlySalary * $hazard->amount) / 100;
-                                                        } else {
-                                                            $totalAllowance += $hazard->amount;
-                                                        }
-                                                    }
                                                 @endphp
                                                 <span>
                                                     {{ number_format($employee->getAllowance($allowance->id, $payroll['date_from_to']), 2) }}
@@ -232,6 +222,13 @@
                                 @endforeach
                                 @if($hazards)
                                 @foreach ($hazards as $hazard)
+                                    @php
+                                        if($hazard->amount_type == 'percentage'){
+                                            $totalAllowance = $totalAllowance + ($monthlySalary * ($hazard->amount / 100));
+                                        }else{
+                                            $totalAllowance = $totalAllowance + $hazard->amount;
+                                        }
+                                    @endphp
                                     <tr>
                                         <td>
                                             <span class="text-[10px]">{{ $hazard->name }}:</span>

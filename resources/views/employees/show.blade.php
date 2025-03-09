@@ -37,12 +37,13 @@
                     onclick="window.dispatchEvent(new CustomEvent('open-modal', { detail: 'leaveRequests' }))">
                     Leave Requests
                 </button>
+                @if($employee->data->has_holding_tax)
                 <button type="button"
                     class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
                     onclick="window.dispatchEvent(new CustomEvent('open-modal', { detail: 'holdingTaxModal' }))">
                     Holding Tax
                 </button>
-
+                @endif
                 <button type="button"
                     class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
                     onclick="window.dispatchEvent(new CustomEvent('open-modal', { detail: 'promotionHistory' }))">
@@ -152,13 +153,13 @@
                         class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Close</button>
                 </div>
             </x-modal>
-            @if($employee->data->rata_id)
+            @if($employee->data->has_holding_tax)
             <x-modal name="holdingTaxModal" headerTitle="Holding Tax">
                 <!-- Modal body -->
                 <div class="p-4 md:p-5 space-y-4">
                     @php
                             $total_holding_tax = 0; // Initialize total holding tax
-                     
+
                         @endphp
                         <table class="min-w-full border mb-3">
                             <thead>
@@ -588,7 +589,7 @@
                     {{-- @if ($employee->data->has_holding_tax)
                         <div class="page-break"></div>
                         <h3 class="mt-3"><strong>Holding Tax</strong></h3>
-                        
+
                     @endif --}}
                 @endif
                 @if ($employee->loans->count() > 0)
@@ -617,8 +618,7 @@
                             <thead>
                                 <tr>
                                     <th class="px-4 py-4 text-left border-b flex justify-between">
-                                        <strong>{{ $loan_name }} -
-                                            {{ number_format($total_loan, 2) }}</strong>
+                                        <strong>{{ $loan_name }}</strong>
                                     </th>
                                     <th class="px-4 py-4 text-left border-b"></th>
                                 </tr>
@@ -638,7 +638,7 @@
                                             @if (isBetweenDatesOfLoan($loan, $month->earliest_time_in) && $total_amount_paid < $total_loan)
                                                 @php
                                                     // Calculate the payment for the current month based on ranges
-                                                    
+
                                                     $total_amount_paid += $loan->amount; // Update total amount paid
                                                 @endphp
                                                 <tr>
@@ -656,7 +656,7 @@
                                     <tr>
                                         <td class="px-4 py-3 border-b"></td>
                                         <td class="px-4 py-3 border-b">Balance:
-                                            {{ number_format(max(0, $total_loan - $total_amount_paid), 2) }}</td>
+                                            {{ number_format(max(0, $total_amount_paid), 2) }}</td>
                                     </tr>
                                 </tfoot>
                             </table>

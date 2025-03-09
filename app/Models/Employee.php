@@ -283,13 +283,13 @@ class Employee extends Model
     }
     public function getLoan($loan_id, $range, $date)
     {
-        $loan = $this->loans()->where('loan_id', $loan_id)->first();
+        $loan = $this->loans()->where('loan_id', $loan_id)->where('period', $range)->first();
 
         if ($loan) {
             $current_date = Carbon::parse($date);
             $start_date = Carbon::parse($loan->start_date);
             $end_date = Carbon::parse($loan->end_date);
-            if ($loan->range == $range && $current_date->between($start_date, $end_date)) {
+            if ($current_date->between($start_date, $end_date)) {
                 return $loan->amount;
             }
         }

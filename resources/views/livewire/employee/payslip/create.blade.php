@@ -166,6 +166,13 @@
                             @endforeach
                             @if($hazards)
                                 @foreach ($hazards as $hazard)
+                                    @php
+                                        if($hazard->amount_type == 'percentage'){
+                                            $totalAllowance = $totalAllowance + ($monthlySalary * ($hazard->amount / 100));
+                                        }else{
+                                            $totalAllowance = $totalAllowance + $hazard->amount;
+                                        }
+                                    @endphp
                                     <tr>
                                         <td>
                                             <span class="text-[10px]">{{ $hazard->name }}:</span>
