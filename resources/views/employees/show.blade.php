@@ -542,52 +542,54 @@
                     @php
                         // Group loans by loan_id
                         $loansGrouped = $employee->loans->groupBy('loan_id');
+                        // dd( $loansGrouped);
                     @endphp
 
                     @foreach ($loansGrouped as $loanId => $loans)
                         @php
+                        // dd($loans->first()->amount * $loans->first()->duration);
                             $ranges = count($loans) > 1 ? 2 : 1; // Set ranges based on the number of loans with the same ID
+                            $total_loan = $loans->first()->amount * $loans->first()->duration; // Total loan amount for the full duration
+                            $total_amount_paid = 0; // Initialize total amount paid to zero
                         @endphp
 
-                        @foreach ($loans as $loan)
-                            @php
-                                $total_loan = $loan->amount * $loan->duration; // Total loan amount for the full duration
-                                $total_amount_paid = 0; // Initialize total amount paid to zero
-                            @endphp
-
-                            <table class="min-w-full border mb-3">
-                                <thead>
-                                    <tr>
-                                        <th class="px-4 py-4 text-left border-b flex justify-between">
-                                            <strong>{{ $loan->loan->name }} -
-                                                {{ number_format($total_loan, 2) }}</strong>
-                                        </th>
-                                        <th class="px-4 py-4 text-left border-b"></th>
-                                    </tr>
-                                    <tr>
-                                        <th class="px-4 py-4 text-left border-b">Amount</th>
-                                        <th class="px-4 py-4 text-left border-b">Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (getMonthsFromAttendance($employee) as $month)
-                                        @if (isBetweenDatesOfLoan($loan, $month->earliest_time_in) && $total_amount_paid < $total_loan)
-                                            @php
-                                                // Calculate the payment for the current month based on ranges
-                                                $monthly_payment = min(
-                                                    $loan->amount * $ranges,
-                                                    $total_loan - $total_amount_paid,
-                                                );
-                                                $total_amount_paid += $monthly_payment; // Update total amount paid
-                                            @endphp
-                                            <tr>
-                                                <td class="px-4 py-3 border-b">
-                                                    {{ number_format($monthly_payment, 2) }}</td>
-                                                <td class="px-4 py-3 border-b">
-                                                    {{ date('m', strtotime($month->earliest_time_in)) }}/{{ $ranges > 1 ? 30 : 15 }}/{{ date('Y', strtotime($month->earliest_time_in)) }}
-                                                </td>
-                                            </tr>
-                                        @endif
+                        <table class="min-w-full border mb-3">
+                            <thead>
+                                <tr>
+                                    <th class="px-4 py-4 text-left border-b flex justify-between">
+                                        <strong>{{ $loans->first()->loan->name }} -
+                                            {{ number_format($total_loan, 2) }}</strong>
+                                    </th>
+                                    <th class="px-4 py-4 text-left border-b"></th>
+                                </tr>
+                                <tr>
+                                    <th class="px-4 py-4 text-left border-b">Amount</th>
+                                    <th class="px-4 py-4 text-left border-b">Date</th>
+                                </tr>
+                            </thead>
+                            
+                            
+                            <tbody>
+                                    @foreach ($loans as $loan)
+                                        @foreach (getMonthsFromAttendance($employee) as $month)
+                                            @if (isBetweenDatesOfLoan($loan, $month->earliest_time_in) && $total_amount_paid < $total_loan)
+                                                @php
+                                                    // Calculate the payment for the current month based on ranges
+                                                    $monthly_payment = min(
+                                                        $loan->amount * $ranges,
+                                                        $total_loan - $total_amount_paid,
+                                                    );
+                                                    $total_amount_paid += $monthly_payment; // Update total amount paid
+                                                @endphp
+                                                <tr>
+                                                    <td class="px-4 py-3 border-b">
+                                                        {{ number_format($monthly_payment, 2) }}</td>
+                                                    <td class="px-4 py-3 border-b">
+                                                        {{ date('m', strtotime($month->earliest_time_in)) }}/{{ $ranges > 1 ? 30 : 15 }}/{{ date('Y', strtotime($month->earliest_time_in)) }}
+                                                    </td>
+                                                </tr>
+                                            @endif
+                                        @endforeach
                                     @endforeach
                                 </tbody>
                                 <tfoot>
@@ -598,7 +600,6 @@
                                     </tr>
                                 </tfoot>
                             </table>
-                        @endforeach
                     @endforeach
                 @endif
             </div>
