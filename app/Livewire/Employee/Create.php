@@ -214,7 +214,7 @@ class Create extends Component
 
     public function save()
     {
-        // $this->validateData();
+        $this->validateData();
         // dd($this->arraySelectedLoans);
         $file_name = md5($this->employee_photo . microtime()) . '.' . $this->employee_photo->extension();
         $this->employee_photo->storeAs('public/photos', $file_name);
@@ -253,10 +253,6 @@ class Create extends Component
                 'rata_id' => $this->selected_rata_id ? $this->selected_rata_id : null,
                 'payroll_type' => $this->payroll_type,
             ]);
-
-            $category = Category::find($this->category_id);
-            $department = Department::find($this->department_id);
-            $salary_grade = SalaryGrade::find($this->salary_grade_id);
 
             // Attach selected allowances using their IDs
             foreach ($this->allowances as $allowance) {
