@@ -238,19 +238,29 @@ class Edit extends Component
                 $loansData = [];
 
                 foreach ($this->arraySelectedLoans as $loanId => $loanDetails) {
-                    $loanAmount = $loanDetails['amount'];
+                    $amount_1_15 = $loanDetails['amount_1_15'];
+                    $amount_16_31 = $loanDetails['amount_16_31'];
                     $startDate = $loanDetails['start_date'];
                     $endDate = $loanDetails['end_date'];
                     $duration = Carbon::parse($loanDetails['start_date'])->diffInMonths(Carbon::parse($loanDetails['end_date']));
-                    $selectedRanges = array_keys(array_filter($loanDetails['range'], 'boolval'));
 
+                    // Create separate rows for 1-15 and 16-31
                     $loansData[] = [
                         'loan_id' => $loanId,
-                        'amount' => $loanAmount,
+                        'amount' => $amount_1_15,
+                        'period' => '1-15',
                         'start_date' => $startDate,
                         'end_date' => $endDate,
                         'duration' => $duration,
-                        'ranges' => $selectedRanges,
+                    ];
+
+                    $loansData[] = [
+                        'loan_id' => $loanId,
+                        'amount' => $amount_16_31,
+                        'period' => '16-31',
+                        'start_date' => $startDate,
+                        'end_date' => $endDate,
+                        'duration' => $duration,
                     ];
                 }
                 // Create loans for the employee

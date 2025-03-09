@@ -215,7 +215,7 @@ class Create extends Component
     public function save()
     {
         // $this->validateData();
-        dd($this->arraySelectedLoans);
+        // dd($this->arraySelectedLoans);
         $file_name = md5($this->employee_photo . microtime()) . '.' . $this->employee_photo->extension();
         $this->employee_photo->storeAs('public/photos', $file_name);
 
