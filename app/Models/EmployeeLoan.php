@@ -18,11 +18,7 @@ class EmployeeLoan extends Model
         'start_date',
         'end_date',
         'duration',
-        'ranges',
-    ];
-
-    protected $casts = [
-        'ranges' => Json::class,
+        'period',
     ];
 
     public function employee()
