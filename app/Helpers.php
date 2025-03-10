@@ -288,18 +288,18 @@ if (!function_exists('calculateSalary')) {
         $deduction = 0;
         $hourWorked = 0;
         $sickLeave = 0;
-    
+
         // Carbon instances for attendance and defaults
         $attendanceTimeIn = Carbon::parse(date('H:i:s', strtotime($attendance->time_in)));
         $attendanceTimeOut = Carbon::parse(date('H:i:s', strtotime($currentTime)));
         $formattedTimeIn = $attendanceTimeIn->copy()->format('H:i:s');
         $formattedTimeout = $attendanceTimeOut->copy()->format('H:i:s');
-    
+
         $defaultTimeIn = Carbon::parse($timeIn);
         $defaultTimeOut = Carbon::parse($timeOut);
         $formattedDefaultTimeIn = $defaultTimeIn->copy()->format('H:i:s');
         $formattedDefaultTimeOut = $defaultTimeOut->copy()->format('H:i:s');
-    
+
         // Calculate hours worked, handling negative values and exceeding 8 hours
         if ($formattedTimeIn <= $formattedDefaultTimeIn) {
             // early 8am
@@ -326,12 +326,12 @@ if (!function_exists('calculateSalary')) {
                 $status = 'Time-out';
             }
         }
-        $hourWorked = $attendanceTimeIn->diffInHours($attendanceTimeOut, true) - 1;
-    
+        $hourWorked = $defaultTimeIn->diffInHours($attendanceTimeOut, true) - 1;
+
         if ($hourWorked < 0) {
             $hourWorked =  0;
         }
-    
+
         // Calculate minutes late
         $minutesLate = $attendanceTimeIn->diffInMinutes($attendanceTimeIn);
         if (!$isJO) {
@@ -343,7 +343,7 @@ if (!function_exists('calculateSalary')) {
                     $totalSalaryForToday = $salaryGrade / 22;
                 }
             }
-    
+
             // Deduct sick leave points only if the status is Late, Half-Day, or Under-time
             if ($attendance->time_in_status === 'Late' || $status === 'Half-Day' || $status === 'Under-time') {
                 $sickLeave = $employee->data->sick_leave_points;
@@ -352,24 +352,27 @@ if (!function_exists('calculateSalary')) {
                 }
             }
         }
-    
+
         if (!$isJO && !$isCOS) {
             $totalSalaryForToday = ($salaryPerHour * $hourWorked);
             $totalSalaryForToday = ($totalSalaryForToday > 0) ? $totalSalaryForToday : 0;
-    
+            $deduction = 0;
+            if($attendance->time_in_status === 'Late' || $attendance->time_in_status === 'Half-Day'){
+                $deduction = $deduction + $attendance->time_in_deduction;
+            }
             // Deduct sick leave points only if the status is Late, Half-Day, or Under-time
-            if ($attendance->time_in_status === 'Late' || $status === 'Half-Day' || $status === 'Under-time') {
+            if ($status === 'Half-Day' || $status === 'Under-time') {
                 $notWorkedHour = $defaultTimeOut->diffInHours($attendanceTimeOut);
                 $minutes = $defaultTimeOut->diffInMinutes($attendanceTimeOut);
-                $deduction =  $notWorkedHour * getLateByMinutes($minutes);
+                $deduction = $deduction + ($notWorkedHour * getLateByMinutes($minutes));
                 // $sickLeave = $sickLeave - $deduction;
                 if ($employee->data->sick_leave_points <= 0) {
                     $salaryPerHour = $salaryPerHour - $notWorkedHour;
                     $sickLeave = 0;
                     $deduction = 0;
                 }
-                $employee->data->update(['sick_leave_points' => $sickLeave]);
             }
+            $employee->data->update(['sick_leave_points' => $sickLeave]);
         } else {
             if ($isJO) {
                 $totalSalaryForToday = $salaryGrade;
@@ -378,7 +381,7 @@ if (!function_exists('calculateSalary')) {
                 }
             }
         }
-    
+
         return [
             'salary' => $totalSalaryForToday,
             'status' => $status,

@@ -93,7 +93,7 @@
         <div id="element-to-print" class="">
             @php
                 $count = 1;
-                
+
             @endphp
             @foreach ($employees as $employee)
                 @if ($count > 3)
@@ -109,7 +109,7 @@
                     $totalAllowance = 0;
                     $totalDeduction = 0;
                     $netpay = 0;
-                    $date = $amountEarned = attendanceCount($employee, $payroll['month'], $payroll['year'], $from, $to)[
+                    $amountEarned = attendanceCount($employee, $payroll['month'], $payroll['year'], $from, $to)[
                         'total_salary'
                     ];
                     $monthlySalary = $employee->data->monthly_salary;
@@ -120,7 +120,7 @@
                                                         $query->where('salary_grade_id', $employee->data->salary_grade_id);
                                                     })
                                                     ->get();
-                    $rata_types = \App\Models\Rata::where('id', $employee->data->rata_id)->get();                           
+                    $rata_types = \App\Models\Rata::where('id', $employee->data->rata_id)->get();
                         // dd($hazards, $rata_types, $from.'-'.$to, $employee->data->salary_grade_id);
                 @endphp
                 <div class="flex flex-col p-2 border border-dark">
@@ -242,7 +242,7 @@
                                                         {{ number_format($hazard->amount, 2) }}
                                                     @endif
                                                 </span>
-                                         
+
                                         </td>
                                         <td><span class="text-[10px]"></span></td>
                                     </tr>
@@ -259,7 +259,7 @@
                                                 <span>
                                                     {{ number_format($rata->amount, 2) }}
                                                 </span>
-                                         
+
                                         </td>
                                         <td><span class="text-[10px]"></span></td>
                                     </tr>
