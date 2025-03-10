@@ -168,7 +168,7 @@ class Create extends Component
             return $salaryGrade / 22;
         }
         $salaryPerHour = ($salaryGrade / 22) / 8;
-        return max(0, $salaryPerHour); // Ensure non-negative
+        return max(0, $salaryPerHour * 8); // Ensure non-negative
     }
     public function checkIfEmployeeAlreadyAttendance()
     {
