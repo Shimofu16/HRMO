@@ -105,7 +105,7 @@ class Employee extends Model
     {
         return $this->hasOne(EmployeeData::class, 'employee_id');
     }
-    
+
 
 
     public function computeAllowance($range = null)
@@ -145,7 +145,7 @@ class Employee extends Model
 
         // Add RATA allowance if applicable
         if ($this->data->rata_id) {
-            $totalAllowance += $this->data->rata->amount;
+            $totalAllowance += $this->data->rata->amount * 2;
         }
 
         return $totalAllowance;

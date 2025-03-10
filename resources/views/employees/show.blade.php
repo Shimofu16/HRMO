@@ -157,9 +157,8 @@
             <x-modal name="holdingTaxModal" headerTitle="Holding Tax">
                 <!-- Modal body -->
                 <div class="p-4 md:p-5 space-y-4">
-                    @php
+                        @php
                             $total_holding_tax = 0; // Initialize total holding tax
-
                         @endphp
                         <table class="min-w-full border mb-3">
                             <thead>
@@ -176,8 +175,8 @@
                                         $monthly_holding_tax =
                                             computeHoldingTax(
                                                 $employee->data->monthly_salary,
-                                                $employee->computeDeduction('1-15'),
-                                            ) / 2;
+                                                $employee->computeDeduction(),
+                                            );
                                         $total_holding_tax += $monthly_holding_tax; // Add to total holding tax
                                     @endphp
                                     <tr>
