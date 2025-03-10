@@ -332,8 +332,7 @@ if (!function_exists('calculateSalary')) {
             $hourWorked =  0;
         }
 
-        // Calculate minutes late
-        $minutesLate = $attendanceTimeIn->diffInMinutes($attendanceTimeIn);
+
         if (!$isJO) {
             $salaryPerHour = ($salaryGrade / 22) / $requiredHoursWork;
             if ($isCOS) {
@@ -346,6 +345,8 @@ if (!function_exists('calculateSalary')) {
 
             // Deduct sick leave points only if the status is Late, Half-Day, or Under-time
             if ($attendance->time_in_status === 'Late' || $status === 'Half-Day' || $status === 'Under-time') {
+                 // Calculate minutes late
+                $minutesLate = $defaultTimeIn->diffInMinutes($attendanceTimeIn);
                 $sickLeave = $employee->data->sick_leave_points;
                 if ($sickLeave > 0) {
                     $sickLeave = computeSickLeave($sickLeave, $minutesLate);
@@ -357,14 +358,11 @@ if (!function_exists('calculateSalary')) {
             $totalSalaryForToday = ($salaryPerHour * $hourWorked);
             $totalSalaryForToday = ($totalSalaryForToday > 0) ? $totalSalaryForToday : 0;
             $deduction = 0;
-            if($attendance->time_in_status === 'Late' || $attendance->time_in_status === 'Half-Day'){
-                $deduction = $deduction + $attendance->time_in_deduction;
-            }
             // Deduct sick leave points only if the status is Late, Half-Day, or Under-time
             if ($status === 'Half-Day' || $status === 'Under-time') {
                 $notWorkedHour = $defaultTimeOut->diffInHours($attendanceTimeOut);
                 $minutes = $defaultTimeOut->diffInMinutes($attendanceTimeOut);
-                $deduction = $deduction + ($notWorkedHour * getLateByMinutes($minutes));
+                $deduction = $notWorkedHour * getLateByMinutes($minutes);
                 // $sickLeave = $sickLeave - $deduction;
                 if ($employee->data->sick_leave_points <= 0) {
                     $salaryPerHour = $salaryPerHour - $notWorkedHour;
