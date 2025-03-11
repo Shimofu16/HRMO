@@ -203,11 +203,14 @@
                             $total_deductions_for_nar = 0;
                             $total_allowances_for_nar = 0;
                             $total_amount_earned_for_nar[$employee->id] = 0;
-                            $total_deductions_for_nar = ($sub_total_monthly_salary[$employee->id] * 0.12) + ($sub_total_monthly_salary[$employee->id] * 0.025) + 200 + 100;
-                            foreach ($deductions as $deduction) {
-                                $total_deductions_for_nar += $sub_total_deductions[$employee->id][$deduction->id];
-                            }
+                           
+                            
+                        
                             if ($employment_type != 'jo') {
+                                $total_deductions_for_nar = ($sub_total_monthly_salary[$employee->id] * 0.12) + ($sub_total_monthly_salary[$employee->id] * 0.025) + 200 + 100;
+                                foreach ($deductions as $deduction) {
+                                    $total_deductions_for_nar += $sub_total_deductions[$employee->id][$deduction->id];
+                                }
                                 foreach ($loans as $loan) {
                                     $total_deductions_for_nar += $sub_total_loans[$employee->id][$loan->id];
                                 }
