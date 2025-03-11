@@ -257,7 +257,6 @@
                                                         ->whereYear('created_at', now()->format('Y'))
                                                         ->count();
                                             }
-                                            @php;
                                         @endphp
                                         {{ number_format($points, 2) }}</td>
                                     <td class="px-2 py-2 border-b">
