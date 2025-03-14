@@ -370,7 +370,9 @@ if (!function_exists('calculateSalary')) {
                     $deduction = 0;
                 }
             }
-            $employee->data->update(['sick_leave_points' => $sickLeave]);
+            if ($attendance->time_in_status === 'Late' || $status === 'Half-Day' || $status === 'Under-time') {
+               $employee->data->update(['sick_leave_points' => $sickLeave]);
+            }
         } else {
             if ($isJO) {
                 $totalSalaryForToday = $salaryGrade;
