@@ -118,6 +118,7 @@
                     $total_monthly_salary = 0;
                     $sub_total_deductions = [];
                     $sub_total_amount_earned = [];
+                    $total_amount_earned_for_nar = [];
                     $total_attendance = 0;
                 @endphp
                 @foreach ($employees as $employee)
@@ -130,8 +131,6 @@
                             $sub_total_holding_tax[$employee->id] = 0;
                             $total_attendance += $attendance['present'];
                         }
-                        $sub_total_loans = [];
-                        $sub_total_deductions = [];
                         $sub_total_monthly_salary[$employee->id] = $employee->data->monthly_salary;
                         $total_monthly_salary += $sub_total_monthly_salary[$employee->id];
                         if ($employment_type != 'jo') {
@@ -206,11 +205,11 @@
 
 
 
+                            // $total_deductions_for_nar = ($sub_total_monthly_salary[$employee->id] * 0.12) + ($sub_total_monthly_salary[$employee->id] * 0.025) + 200 + 100;
+                            foreach ($deductions as $deduction) {
+                                $total_deductions_for_nar += $sub_total_deductions[$employee->id][$deduction->id];
+                            }
                             if ($employment_type != 'jo') {
-                                // $total_deductions_for_nar = ($sub_total_monthly_salary[$employee->id] * 0.12) + ($sub_total_monthly_salary[$employee->id] * 0.025) + 200 + 100;
-                                foreach ($deductions as $deduction) {
-                                    $total_deductions_for_nar += $sub_total_deductions[$employee->id][$deduction->id];
-                                }
                                 foreach ($loans as $loan) {
                                     $total_deductions_for_nar += $sub_total_loans[$employee->id][$loan->id];
                                 }
@@ -226,6 +225,7 @@
                             if ($total_amount_earned_for_nar[$employee->id] < 0) {
                                 $total_amount_earned_for_nar[$employee->id] = 0;
                             }
+                         
                         @endphp
                         <td class="pl-2 text-xs border-right-2 border-bottom-2" style="font-weight: bold;">{{ number_format($total_amount_earned_for_nar[$employee->id], 2) }}</td>
                     </tr>
@@ -240,12 +240,16 @@
                 @endphp
                 @foreach ($employees as $employee)
                     @php
-                        foreach ($deductions as $deduction) {
-                            $total_deductions[$deduction->id] += $sub_total_deductions[$employee->id][$deduction->id];
-                        }
+                            foreach ($deductions as $deduction) {
+                                if($employee->getDeduction($deduction->id, $payroll['date_from_to']) != 0){
+                                    $total_deductions[$deduction->id] += $sub_total_deductions[$employee->id][$deduction->id];
+                                }
+                            }
                         if ($employment_type != 'jo') {
                             foreach ($loans as $loan) {
-                                $total_loans[$loan->id] += $sub_total_loans[$employee->id][$loan->id];
+                                if($employee->getLoan($loan->id, $payroll['date_from_to'], $payroll['date']) != 0){
+                                    $total_loans[$loan->id] += $sub_total_loans[$employee->id][$loan->id];
+                                }
                             }
                             $total_holding_tax += $sub_total_holding_tax[$employee->id];
                         }
@@ -253,6 +257,7 @@
                         $total_gsis += $employee->data->monthly_salary * 0.12;
                         $total_medicare += $employee->data->monthly_salary * 0.025;
                         $total_net_amount_received += $total_amount_earned_for_nar[$employee->id];
+                //    dd($total_amount_earned_for_nar);        
                     @endphp
                 @endforeach
                 <tr class="border-bottom-2">
