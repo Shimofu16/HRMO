@@ -120,8 +120,8 @@
                                                         $query->where('salary_grade_id', $employee->data->salary_grade_id);
                                                     })
                                                     ->get();
-                    $rata_types = \App\Models\Rata::where('id', $employee->data->rata_id)->get();
-                        // dd($hazards, $rata_types, $from.'-'.$to, $employee->data->salary_grade_id);
+                                                    // dd($hazards, $rata_types, $from.'-'.$to, $employee->data->salary_grade_id);
+                                                    $rata_types = \App\Models\Rata::where('id', $employee->data->rata_id)->get();
                 @endphp
                 <div class="flex flex-col p-2 border border-dark">
                     <div class="head">

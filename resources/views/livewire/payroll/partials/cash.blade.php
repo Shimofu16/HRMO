@@ -172,7 +172,7 @@
                                 $employee->id
                             ] = $employee->computeAllowance(
                                 $payroll['date_from_to'],
-                            ); 
+                            );
                         @endphp
                         {{-- @dd($total_monthly_salary) --}}
                         <tr>
@@ -234,7 +234,7 @@
                                 {{ $loop->iteration }}
                             </td>
                             @php
-                                $subtotal = 
+                                $subtotal =
                                     $total_financial_assistance[$employee->id] + $total_amount_earned[$employee->id];
                                 $total_net_amount_earned[$employee->id] = ($total_financial_assistance[$employee->id] - $total_deductions[$employee->id]) + $subtotal
                             @endphp
@@ -249,6 +249,7 @@
 
                             </td>
                         </tr>
+                        @endforeach
                         <tr>
                             <td class="border-bottom-2">
 
@@ -291,7 +292,6 @@
 
                             </td>
                         </tr>
-                    @endforeach
                 </tbody>
                 <tfoot>
                     <tr class="mb-5">
