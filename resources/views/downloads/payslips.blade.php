@@ -231,49 +231,32 @@
                                     </tr>
                                 @endforeach
                                 @if($hazards)
-                                @foreach ($hazards as $hazard)
-                                    @php
-                                        if($hazard->amount_type == 'percentage'){
-                                            $totalAllowance = $totalAllowance + ($monthlySalary * ($hazard->amount / 100));
-                                        }else{
-                                            $totalAllowance = $totalAllowance + $hazard->amount;
-                                        }
-                                    @endphp
-                                    <tr>
-                                        <td>
-                                            <span class="text-[10px]">{{ $hazard->name }}:</span>
-                                        </td>
-                                        <td><span class="text-[10px]"></span></td>
-                                        <td class="text-[10px] text-center">
-                                                <span>
-                                                    @if ($hazard->amount_type == 'percentage')
-                                                        {{ number_format($monthlySalary * $hazard->amount,2) }}
-                                                    @else
-                                                        {{ number_format($hazard->amount, 2) }}
-                                                    @endif
-                                                </span>
+                                    @foreach ($hazards as $hazard)
+                                        @php
+                                            if($hazard->amount_type == 'percentage'){
+                                                $totalAllowance = $totalAllowance + ($monthlySalary * ($hazard->amount / 100));
+                                            }else{
+                                                $totalAllowance = $totalAllowance + $hazard->amount;
+                                            }
+                                        @endphp
+                                        <tr>
+                                            <td>
+                                                <span class="text-[10px]">{{ $hazard->name }}:</span>
+                                            </td>
+                                            <td><span class="text-[10px]"></span></td>
+                                            <td class="text-[10px] text-center">
+                                                    <span>
+                                                        @if ($hazard->amount_type == 'percentage')
+                                                            {{ number_format($monthlySalary * $hazard->amount,2) }}
+                                                        @else
+                                                            {{ number_format($hazard->amount, 2) }}
+                                                        @endif
+                                                    </span>
 
-                                        </td>
-                                        <td><span class="text-[10px]"></span></td>
-                                    </tr>
-                                @endforeach
-                                @endif
-                                @if($rata_types)
-                                @foreach ($rata_types as $rata)
-                                    <tr>
-                                        <td>
-                                            <span class="text-[10px]">{{ $rata->type }}:</span>
-                                        </td>
-                                        <td><span class="text-[10px]"></span></td>
-                                        <td class="text-[10px] text-center">
-                                                <span>
-                                                    {{ number_format($rata->amount, 2) }}
-                                                </span>
-
-                                        </td>
-                                        <td><span class="text-[10px]"></span></td>
-                                    </tr>
-                                @endforeach
+                                            </td>
+                                            <td><span class="text-[10px]"></span></td>
+                                        </tr>
+                                    @endforeach
                                 @endif
                                 @php
                                     $totalAmountEarned = $amountEarned + $totalAllowance;
