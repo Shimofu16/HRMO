@@ -121,7 +121,7 @@
                                                     })
                                                     ->get();
                                                     // dd($hazards, $rata_types, $from.'-'.$to, $employee->data->salary_grade_id);
-                                                    $rata_types = \App\Models\Rata::where('id', $employee->data->rata_id)->get();
+                                                    // $rata_types = \App\Models\Rata::where('id', $employee->data->rata_id)->get();
                 @endphp
                 <div class="flex flex-col p-2 border border-dark">
                     <div class="head">
@@ -212,9 +212,19 @@
                                                     {{ number_format($employee->getAllowance($allowance->id, $payroll['date_from_to']), 2) }}
                                                 </span>
                                             @else
-                                                <span class="text-center">
-                                                    -
-                                                </span>
+                                            @if($employee->data->rata_id && ($allowance->allowance_code === "Representation" || $allowance->allowance_code === "Transportation"))
+                                            @php
+                                                $totalAllowance =
+                                                $totalAllowance + $employee->data->rata->amount;
+                                            @endphp
+                                            <span>
+                                                {{ number_format($employee->data->rata->amount, 2) }}
+                                            </span>
+                                        @else
+                                            <span class="text-center">
+                                                -
+                                            </span>
+                                        @endif
                                             @endif
                                         </td>
                                         <td><span class="text-[10px]"></span></td>
